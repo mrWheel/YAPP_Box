@@ -149,53 +149,110 @@ text_label="Text";
 // Calculated globals
 //pin_height = bottomWall_height + topWall_height - standoff_height; 
 
-module pcb()
+module pcb(posX, posY, posZ)
 {
-  translate([pcbX, pcbY, bottomPlane_thickness+standoff_height])
+  translate([posX, posY, posZ])
   {
     color("red", 0.1)
       cube([pcb_length, pcb_width, pcb_thickness]);
-  }
+
+    if (showMarkers)
+    {
+      markerHeight=bottomPlane_thickness+bottomWall_height+pcb_thickness;
+    
+      translate([0, 0, 0])
+        color("black")
+          cylinder(
+              r = .5,
+              h = markerHeight,
+              center = true,
+              $fn = 20);
+
+      translate([0, pcb_width, 0])
+        color("black")
+          cylinder(
+              r = .5,
+              h = markerHeight,
+              center = true,
+              $fn = 20);
+
+      translate([pcb_length, pcb_width, 0])
+        color("black")
+          cylinder(
+              r = .5,
+              h = markerHeight,
+              center = true,
+              $fn = 20);
+
+      translate([pcb_length, 0, 0])
+        color("black")
+          cylinder(
+              r = .5,
+              h = markerHeight,
+              center = true,
+              $fn = 20);
+
+      translate([((box_length-(wall_thickness*2))/2), 0, pcb_thickness])
+        rotate([0,90,0])
+          color("red")
+            cylinder(
+                r = .5,
+                h = box_length+(wall_thickness*2),
+                center = true,
+                $fn = 20);
+    
+      translate([((box_length-(wall_thickness*2))/2), pcb_width, pcb_thickness])
+        rotate([0,90,0])
+          color("red")
+            cylinder(
+                r = .5,
+                h = box_length+(wall_thickness*2),
+                center = true,
+                $fn = 20);
+                
+    } // show_markers
+  } // translate
+  
 } // pcb()
 
 
-module halfBox(do_show, do_color, width, length, height) 
+module halfBox(do_show, do_color, width, length, wallHeight, plane_thickness) 
 {
   // Floor
   color(do_color)
-    cube([length, width, bottomPlane_thickness]);
+    cube([length, width, plane_thickness]);
   
   if (do_show)
   {
     color(do_color)
     {
     // Left wall
-    translate([0, 0, bottomPlane_thickness])
+    translate([0, 0, plane_thickness])
         cube([
             length,
             wall_thickness,
-            height]);
+            wallHeight]);
     
     // Right wall
-    translate([0, width-wall_thickness, bottomPlane_thickness])
+    translate([0, width-wall_thickness, plane_thickness])
         cube([
             length,
             wall_thickness,
-            height]);
+            wallHeight]);
    
     // Rear wall
-    translate([length - wall_thickness, wall_thickness, bottomPlane_thickness])
+    translate([length - wall_thickness, wall_thickness, plane_thickness])
         cube([
             wall_thickness,
             width - 2 * wall_thickness,
-            height]);
+            wallHeight]);
    
     // Front wall
-    translate([0, wall_thickness, bottomPlane_thickness])
+    translate([0, wall_thickness, plane_thickness])
         cube([
             wall_thickness,
             width - 2 * wall_thickness,
-            height]);
+            wallHeight]);
             
      } // color
   } // do_show
@@ -260,6 +317,7 @@ module cutoutSquare(color, w, h)
 } // cutoutSquare()
 
 
+//===========================================================
 module bottom_case() 
 {
     floor_width = pcb_length + padding_front + padding_back + wall_thickness * 2;
@@ -267,7 +325,7 @@ module bottom_case()
     
     module box() 
     {
-      halfBox(showBottom, colorBottom, floor_length, floor_width, bottomWall_height);        
+      halfBox(showBottom, colorBottom, floor_length, floor_width, bottomWall_height, bottomPlane_thickness);        
       
       if (showBottom)
       {
@@ -470,6 +528,7 @@ module bottom_case()
 } //  bottom_case() 
 
 
+//===========================================================
 module top_case() 
 {
     floor_width = pcb_length + padding_front + padding_back + wall_thickness * 2;
@@ -481,7 +540,7 @@ module top_case()
       {
         difference() 
         {
-          halfBox(showTop, colorTop, floor_length, floor_width, topWall_height - ridge_height);
+          halfBox(showTop, colorTop, floor_length, floor_width, topWall_height - ridge_height, topPlane_thickness);
           sLen=len(text_label) * fsize;
           echo("label[", text_label,"] len:", sLen);
           translate([floor_width/sLen+7, floor_length/2.2, 0]) 
@@ -552,14 +611,17 @@ module top_case()
         echo("pcbReceiver-----");
         echo(receiver);
         posx=pcbX+receiver[0];
-        //-- pcbY=wall_thickness+padding_left;
-        posy=(pcbY-padding_left)+(padding_right+receiver[1]);
         //-- pcbYtop=wall_thickness+pcb_width+padding_right;
-        posy=(pcbYtop-pcb_width)+receiver[1];
+        posy=(pcbYtop+padding_right+padding_left+(wall_thickness*1))-(pcb_width+receiver[1]);
+        posy=(pcbY+pcb_width)-(receiver[1]+padding_right+wall_thickness);
+        posy=(pcbY+receiver[1]);
+        
+        height=(bottomWall_height+topWall_height+bottomPlane_thickness)
+                        -(standoff_height+pcb_thickness+topPlane_thickness);
         height=(bottomWall_height+topWall_height+bottomPlane_thickness)
                         -(standoff_height+pcb_thickness+topPlane_thickness);
         echo("posx:", posx,", posy:", posy, ",height:",height);
-        translate([posx, posy, bottomPlane_thickness])
+        translate([posx, posy, topPlane_thickness])
           pcb_standoff("yellow", height, 0);
       }
         
@@ -604,16 +666,19 @@ module top_case()
         }
         else if (cutOut[4]==yappXZcircle)
         {
-          posy=box_width-(wall_thickness+padding_left+cutOut[0]);//+cutOut[2]);
+          posy=box_width-(pcbY+(cutOut[0]-(cutOut[2]/2)));
+
           //-- calculate part that sticks out of the bottom
           used_height=bottomWall_height-(bottomPlane_thickness+standoff_height+pcb_thickness+cutOut[1]);
-          rest_height=(cutOut[2])-used_height;
-          posz=(topWall_height+topPlane_thickness)-rest_height;
-
-          posy=box_width-(pcbY+(cutOut[0]-(cutOut[2]/2)));
+          rest_height=cutOut[2]-used_height;
+          posz=pcbZ-(topWall_height+topPlane_thickness)-rest_height;
           //posz=pcbZ-(topWall_height-pcb_thickness));
-          posz=pcbZ-(cutOut[1]-(cutOut[2]/2));
-          posz=pcbZtop-(cutOut[1]-(cutOut[2]/2)+0)+0;
+//          posz=pcbZ+standoff_height-(cutOut[1]+pcb_thickness+topPlane_thickness);
+          //posz=pcbZtop-(cutOut[1]-(cutOut[2]/2)+0)+0;
+          echo("--");
+          echo("pcbZ:", pcbZ, ", pcbZtop:", pcbZtop, ", cutOut[2]:", cutOut[2], ", posz:", posz);
+          echo("--");
+          //posz=13.5;
 
           echo("topFront(circle) posy:", posy, ", pcbZ:", pcbZ,", posz:", posz, ", used:", used_height, ", rest:",rest_height);
           //if (rest_height > 0)
@@ -759,7 +824,11 @@ module top_case()
 
     } // diff 
     
-    pcb_receivers();
+    shift=(pcbY+pcb_width+padding_right+(wall_thickness*1))*-1;
+    mirror([1,1,0])
+      rotate([0,0,270])
+        translate([0,shift,0])
+          pcb_receivers();
     
 } //  top_case() 
 
@@ -781,6 +850,7 @@ echo("===========================");
 
 if (showMarkers)
 {
+  //-- box[0,0] marker --
   translate([0, 0, 8])
     color("white")
       cylinder(
@@ -788,43 +858,14 @@ if (showMarkers)
               h = 20,
               center = true,
               $fn = 20);
-
-  translate([pcbX, pcbY, 8])
-    color("black")
-      cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-
-  translate([pcbX, pcbY+pcb_width, 8])
-    color("black")
-      cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-
-  translate([pcbX+pcb_length, pcbY+pcb_width, 8])
-    color("black")
-      cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-
-  translate([pcbX+pcb_length, pcbY, 8])
-    color("black")
-      cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
 }
 
-if (showPCB) pcb();
 
-if (printBottom) bottom_case();
+if (printBottom) 
+{
+  if (showPCB) pcb(pcbX, pcbY, bottomPlane_thickness+standoff_height);
+  bottom_case();
+}
 
 if (printTop)
 {
@@ -835,11 +876,20 @@ if (printTop)
       5 + pcb_width + standoff_diameter + padding_front + padding_right + wall_thickness * 2,
       0])
     {
+      if (showPCB) 
+      {
+        posZ=(bottomWall_height+topWall_height+bottomPlane_thickness)
+                        -(standoff_height);
+        rotate([0,180,0])
+          pcb((pcb_length+wall_thickness+padding_front)*-1,
+               padding_right+wall_thickness,
+               (posZ)*-1);
+      }
       top_case();
       if (showMarkers)
       {
         translate([pcbX, pcbYtop, 8])
-          color("black")
+          color("red")
             cylinder(
               r = .5,
               h = 20,
@@ -847,14 +897,14 @@ if (printTop)
               $fn = 20);
         
         translate([pcbX, pcbYtop-pcb_width, 8])
-          color("black")
+          color("red")
             cylinder(
               r = .5,
               h = 20,
               center = true,
               $fn = 20);
         translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
-          color("black")
+          color("red")
             cylinder(
               r = .5,
               h = 20,
@@ -862,14 +912,14 @@ if (printTop)
               $fn = 20);
         
         translate([pcbX+pcb_length, pcbYtop, 8])
-          color("black")
+          color("red")
             cylinder(
               r = .5,
               h = 20,
               center = true,
               $fn = 20);
-      }
-    }
+      } // show_markers
+    } // translate
   }
   else  //  show on top of each other
   {
@@ -920,9 +970,9 @@ if (printTop)
         } // showMarkers
       } //  rotate
     } //  translate
-  }
+  } // show "on-top"
 
-}
+} // printTop()
 
 /*
 ****************************************************************************

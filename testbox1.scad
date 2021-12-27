@@ -27,25 +27,29 @@ include <./library/YAPP_lib.scad>
         0    X-as --->
                           LEFT
 */
-// Edit these parameters for your own board dimensions
-wall_thickness        = 4.0;
-bottomPlane_thickness = 1.0;
-topPlane_thickness    = 1.0;
 
-bottomWall_height = 12;
+printTop          = true;
+printBottom       = true;
+
+// Edit these parameters for your own board dimensions
+wall_thickness        = 3.0;
+bottomPlane_thickness = 3.0;
+topPlane_thickness    = 2.0;
+
+bottomWall_height = 10;
 topWall_height    = 6;
 
 // Total height of box = bottomPlane_thickness + topPlane_thickness 
 //                     + bottomWall_height + topWall_height
-pcb_length        = 34.5;
-pcb_width         = 65;
-pcb_thickness     = 4;
+pcb_length        = 60;
+pcb_width         = 30;
+pcb_thickness     = 1.5;
                             
 // padding between pcb and inside wall
 padding_front     = 2;
 padding_back      = 3;
-padding_right     = 10;
-padding_left      = 8;
+padding_right     = 20;
+padding_left      = 4;
 
 // ridge where bottom and top off box can overlap
 // Make sure this isn't less than topWall_height
@@ -56,44 +60,41 @@ standoff_diameter = 4;
 
 // How much the PCB needs to be raised from the bottom
 // to leave room for solderings and whatnot
-standoff_height   = 4.0;
-
-printTop          = true;
-printBottom       = true;
+standoff_height   = 7.0;
 
 //-- D E B U G -------------------
 show_side_by_side = false;
-showTop           = true;
+showTop           = false;
 colorTop          = "yellow";
 showBottom        = true;
 colorBottom       = "white";
 showPCB           = true;
-showMarkers       = true;
+showMarkers       = false;
 
 
 //-- pcb_standoffs  -- origin is pcb-0,0
 pcbStands = [  // x,    y, {0=hole | 1=stift}
-                [3,  3, 1] 
-               ,[3,  pcb_width-3, 0]
+                [3,  12, 1] 
+               ,[3,  pcb_width-3, 1]
             // ,[0,  pcb_width, 0]
             // ,[0, 0, 0]
             // ,[pcb_length, 0, 0]
             // ,[pcb_length,  pcb_width, 0]
-               ,[pcb_length-3,  3, 0]
+               ,[pcb_length-12,  12, 1]
                ,[pcb_length-3, pcb_width-3, 1]
              ];
 
 //-- front plane  -- origin is pcb-0,0 (blue)
 cutoutsFront =  [//[ [0]pcb_x, [1]pcb_z, [2]width, [3]height, {yappXZorg | yappXZcenterd | yappXZcircle} ]
-                 [0, 0, 8, 5, yappXZorg]      // microUSB
+                 [0, 0, 8, 5, yappXZcenter]      // microUSB
                , [20, -2, 8, 5, yappXZcircle]  // microUSB
-               , [35, 2, 8, 5, yappXZcircle]  // microUSB
+               , [35, 2, 8, 5, yappXZcenter]  // microUSB
             //    , [0, 2, 8, 5]
               ];
 
 //-- back plane  -- origin is pcb-0,0 (red)
 cutoutsBack = [ // left_x,  floor_z, square_width, square_height
-                  [0, 0, 8, 5]
+            ///      [0, 0, 8, 5]
             // , [10, 0, 12.5, 7]
               ];
 

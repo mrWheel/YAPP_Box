@@ -2,7 +2,7 @@
 ***************************************************************************  
 **  Yet Another Parameterised Projectbox library
 **
-**  Version "v0.0.1 (26-12-2021)"
+**  Version "v0.0.1 (28-12-2021)"
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
 **
@@ -392,20 +392,17 @@ module bottom_case()
     } // pcb_holder()
    
     //-- place front & back cutOuts
-    //difference() 
+    difference() 
     {
       box();        
       
       //--[ [0]pcb_x, [1]pcb_z, [2]width, [3]height, {yappXZorg | yappXZcenter | yappXZcircle} ]
       for ( cutOut = cutoutsBack )
       {
-        echo(" ");
-        echo("[bottomBack]", cutOut);
         if (cutOut[4]==yappXZorg)
         {
           posy=pcbY+cutOut[0];
           posz=pcbZ+cutOut[1];
-          echo("[bottomBack(org)] posy:", posy, ", posz:", posz);
           translate([0, posy, posz])
             cutoutSquare("blue", cutOut[2], cutOut[3]+bottomWall_height);
         }
@@ -413,7 +410,6 @@ module bottom_case()
         {
           posy=pcbY+(cutOut[0]-(cutOut[2]/2));
           posz=pcbZ+(cutOut[1]-(cutOut[3]/2));
-          echo("[bottomBack(center)] posy:", posy, ", posz:", posz);
           translate([0, posy, posz])
             cutoutSquare("blue", cutOut[2], cutOut[3]+bottomWall_height);
         }
@@ -498,11 +494,8 @@ module bottom_case()
       //
       for ( cutOut = cutoutsLeft )
       {
-        echo(" ");
-        echo("[BottomLeft]", cutOut);
         posx=pcbX+cutOut[1];
         posz=pcbZ+cutOut[0];
-        echo("[bottomLeft] posx:", posx, ", posz:", posz);
         translate([posx, wall_thickness, posz])
           rotate(270)
             cutoutSquare("brown", cutOut[2], cutOut[3]);
@@ -510,11 +503,8 @@ module bottom_case()
       // z_pos,  pos_x, length, height 
       for ( cutOut = cutoutsRight )
       {
-        echo(" ");
-        echo("BottonLeft:", cutOut);
         posx=pcbX+cutOut[1];
         posz=pcbZ+cutOut[0];
-        echo("bottomLeft; posx:", posx, ", posz:", posz);
         //translate([posx, (wall_thickness*2)+pcb_width+padding_left+padding_right, posz])
         translate([posx, (wall_thickness*2)+pcb_width+padding_left+padding_right, posz])
           rotate(270)
@@ -561,7 +551,7 @@ module top_case()
       translate([
             0,
             0,
-            bottomPlane_thickness + topWall_height - ridge_height])
+            topPlane_thickness + topWall_height - ridge_height])
             cube([
                 wall_thickness / 2,
                 floor_length,
@@ -571,7 +561,7 @@ module top_case()
       translate([
             floor_width - wall_thickness / 2,
             0,
-            bottomPlane_thickness + topWall_height - ridge_height])
+            topPlane_thickness + topWall_height - ridge_height])
             cube([
                 wall_thickness / 2,
                 floor_length,
@@ -581,7 +571,7 @@ module top_case()
       translate([
             wall_thickness / 2,
             floor_length - wall_thickness / 2,
-            bottomPlane_thickness + topWall_height - ridge_height])
+            topPlane_thickness + topWall_height - ridge_height])
             cube([
                 floor_width - wall_thickness,
                 wall_thickness / 2,
@@ -591,7 +581,7 @@ module top_case()
       translate([
             wall_thickness / 2,
             0,
-            bottomPlane_thickness + topWall_height - ridge_height])
+            topPlane_thickness + topWall_height - ridge_height])
             cube([
                 floor_width - wall_thickness,
                 wall_thickness / 2,
@@ -608,19 +598,15 @@ module top_case()
       //-- place pcb Standoff-receivers
       for ( receiver = pcbStands )
       {
-        echo("pcbReceiver-----");
-        echo(receiver);
         posx=pcbX+receiver[0];
         //-- pcbYtop=wall_thickness+pcb_width+padding_right;
         posy=(pcbYtop+padding_right+padding_left+(wall_thickness*1))-(pcb_width+receiver[1]);
         posy=(pcbY+pcb_width)-(receiver[1]+padding_right+wall_thickness);
         posy=(pcbY+receiver[1]);
-        
-        height=(bottomWall_height+topWall_height+bottomPlane_thickness)
-                        -(standoff_height+pcb_thickness+topPlane_thickness);
-        height=(bottomWall_height+topWall_height+bottomPlane_thickness)
-                        -(standoff_height+pcb_thickness+topPlane_thickness);
-        echo("posx:", posx,", posy:", posy, ",height:",height);
+        ///height=(bottomWall_height+topWall_height+bottomPlane_thickness)
+        ///                -(standoff_height+topPlane_thickness);
+        height=(bottomWall_height+topWall_height)
+                        -(standoff_height+pcb_thickness);
         translate([posx, posy, topPlane_thickness])
           pcb_standoff("yellow", height, 0);
       }
@@ -628,14 +614,12 @@ module top_case()
     } // pcb_receiver()
    
     //-- place front & back cutOuts
-    //difference() 
+    difference() 
     {
       box();        
       // [0]pcb_x, [1]pcb_z, [2]width, [3]height, [4]{yappXZorg | yappXZcenterd | yappXZcircle} 
       for ( cutOut = cutoutsFront )
       {
-        echo(" ");
-        echo("topFront:", cutOut);
         if (cutOut[4]==yappXZorg)
         {
           posy=box_width-(wall_thickness+padding_left+cutOut[0]+cutOut[2]);
@@ -643,11 +627,10 @@ module top_case()
           used_height=bottomWall_height-(bottomPlane_thickness+standoff_height+pcb_thickness+cutOut[1]);
           rest_height=cutOut[3]-used_height;
           posz=(topWall_height+topPlane_thickness)-rest_height;
-          echo("topFront(org) posy:", posy, ", posz:", posz, ", used:", used_height, ", rest:",rest_height);
           if (rest_height > 0)
           {
             translate([box_length-wall_thickness, posy, posz])
-              cutoutSquare("red", cutOut[2], rest_height);
+              cutoutSquare("green", cutOut[2], rest_height);
           }
         }
         else if (cutOut[4]==yappXZcenter)
@@ -657,45 +640,29 @@ module top_case()
           used_height=bottomWall_height-(bottomPlane_thickness+standoff_height+pcb_thickness+cutOut[1]);
           rest_height=cutOut[3]-used_height;
           posz=(topWall_height+topPlane_thickness)-rest_height;
-          echo("topFront(center) posy:", posy, ", posz:", posz, ", used:", used_height, ", rest:",rest_height);
+          posz=topZpcb-cutOut[1];
           if (rest_height > 0)
           {
             translate([box_length-wall_thickness, posy, posz])
-              cutoutSquare("red", cutOut[2], rest_height);
+              cutoutSquare("green", cutOut[2], rest_height);
           }
         }
         else if (cutOut[4]==yappXZcircle)
         {
           posy=box_width-(pcbY+(cutOut[0]-(cutOut[2]/2)));
-
-          //-- calculate part that sticks out of the bottom
-          used_height=bottomWall_height-(bottomPlane_thickness+standoff_height+pcb_thickness+cutOut[1]);
-          rest_height=cutOut[2]-used_height;
-          posz=pcbZ-(topWall_height+topPlane_thickness)-rest_height;
-          //posz=pcbZ-(topWall_height-pcb_thickness));
-//          posz=pcbZ+standoff_height-(cutOut[1]+pcb_thickness+topPlane_thickness);
-          //posz=pcbZtop-(cutOut[1]-(cutOut[2]/2)+0)+0;
-          echo("--");
-          echo("pcbZ:", pcbZ, ", pcbZtop:", pcbZtop, ", cutOut[2]:", cutOut[2], ", posz:", posz);
-          echo("--");
-          //posz=13.5;
-
-          echo("topFront(circle) posy:", posy, ", pcbZ:", pcbZ,", posz:", posz, ", used:", used_height, ", rest:",rest_height);
-          //if (rest_height > 0)
-          {
-            translate([box_length, posy, posz])
-              rotate([0,270,0])
+          posz=(bottomWall_height+topWall_height+topPlane_thickness)
+                        -(standoff_height+pcb_thickness);
+          posz=topZpcb-cutOut[1];
+          translate([box_length, posy, posz])
+            rotate([0,270,0])
               color("green")
                 cylinder(h=wall_thickness, d=cutOut[2], $fn=20);
-          }
         }
       }
       
       //-- left_x[0], floor_z[1], square_width[2],  square_height[3] 
       for ( cutOut = cutoutsBack )
       {
-        echo(" ");
-        echo("topBack:", cutOut);
         //-- calculate part that sticks out of the bottom
         //       +=============== bottomPlane_thickness
         //       |     +---+          ---
@@ -715,7 +682,6 @@ module top_case()
         used_height=bottomWall_height-(bottomPlane_thickness+standoff_height+pcb_thickness+cutOut[1]);
         rest_height=cutOut[3]-used_height;
         posz=(topWall_height+topPlane_thickness)-rest_height;
-        echo("topBack posy:", posy, ", posz:", posz, ", used:", used_height, ", rest:",rest_height);
         if (rest_height > 0)
         {
           translate([0, posy, posz])
@@ -773,21 +739,16 @@ module top_case()
       //
       for ( cutOut = cutoutsLeft )
       {
-        echo("[topLeft]===========");
-        echo("[topLeft]", cutOut);
         posx=pcbX+cutOut[1];
         //-- calculate part that sticks out of the bottom
         start_z=pcbZ+cutOut[0];
-        echo("[topLeft] start_Z:", start_z);
         used_height=start_z+cutOut[3];
         rest_height=used_height-(bottomPlane_thickness+standoff_height+bottomWall_height);
         if (rest_height<0)
         {
-          echo("[topLeft] set rest to 0!");
           rest_height=0;
         }
         posz=(topWall_height+topPlane_thickness)-(rest_height+ridge_height);
-        echo("[topLeft] posx:", posx, ", posz:", posz, ", used:", used_height, ", rest:", rest_height);
         if (rest_height>0)
         {
           translate([posx, (wall_thickness*2)+padding_left+pcb_width+padding_right, posz])
@@ -799,21 +760,16 @@ module top_case()
       // z_pos,  pos_x, length, height 
       for ( cutOut = cutoutsRight )
       {
-        echo("[topRight]====");
-        echo("[topRight]", cutOut);
         posx=pcbX+cutOut[1];
         //-- calculate part that sticks out of the bottom
         start_z=pcbZ+cutOut[0];
-        echo("[topRight] start_Z:", start_z);
         used_height=start_z+cutOut[3];
         rest_height=used_height-(bottomPlane_thickness+standoff_height+bottomWall_height);
         if (rest_height<0)
         {
-          echo("[topRight] set rest to 0!");
           rest_height=0;
         }
         posz=(topWall_height+topPlane_thickness)-(rest_height+ridge_height);
-        echo("[topRight] posx:", posx, ", posz:", posz, ", used:", used_height, ", rest:", rest_height);
         if(rest_height>0)
         {
           translate([posx, wall_thickness, posz])
@@ -839,13 +795,17 @@ pcbX=wall_thickness+padding_back;
 pcbY=wall_thickness+padding_left;
 pcbYtop=wall_thickness+pcb_width+padding_right;
 pcbZ=bottomPlane_thickness+standoff_height+pcb_thickness;
-pcbZtop=bottomPlane_thickness-(standoff_height+pcb_thickness);
+topZpcb=(bottomWall_height+topWall_height+bottomPlane_thickness)-(standoff_height);
+topZpcb=(bottomWall_height+topWall_height+topPlane_thickness)
+                        -(standoff_height+pcb_thickness);
+
 
 echo("===========================");
 echo("*      pcbX [", pcbX,"]");
 echo("*      pcbY [", pcbY,"]");
 echo("* pcbY(top) [", pcbYtop,"]");
 echo("*      pcbZ [", pcbZ,"]");
+echo("*   topZpcb [", topZpcb,"]");
 echo("===========================");
 
 if (showMarkers)

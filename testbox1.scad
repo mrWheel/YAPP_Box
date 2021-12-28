@@ -33,11 +33,11 @@ printBottom       = true;
 
 // Edit these parameters for your own board dimensions
 wall_thickness        = 3.0;
-bottomPlane_thickness = 3.0;
-topPlane_thickness    = 2.0;
+bottomPlane_thickness = 2.0;
+topPlane_thickness    = 3.0;
 
-bottomWall_height = 10;
-topWall_height    = 6;
+bottomWall_height = 8;
+topWall_height    = 8;
 
 // Total height of box = bottomPlane_thickness + topPlane_thickness 
 //                     + bottomWall_height + topWall_height
@@ -60,13 +60,13 @@ standoff_diameter = 4;
 
 // How much the PCB needs to be raised from the bottom
 // to leave room for solderings and whatnot
-standoff_height   = 7.0;
+standoff_height   = 4.0;
 
 //-- D E B U G -------------------
 show_side_by_side = false;
 showTop           = false;
 colorTop          = "yellow";
-showBottom        = true;
+showBottom        = false;
 colorBottom       = "white";
 showPCB           = true;
 showMarkers       = false;
@@ -87,7 +87,7 @@ pcbStands = [  // x,    y, {0=hole | 1=stift}
 //-- front plane  -- origin is pcb-0,0 (blue)
 cutoutsFront =  [//[ [0]pcb_x, [1]pcb_z, [2]width, [3]height, {yappXZorg | yappXZcenterd | yappXZcircle} ]
                  [0, 0, 8, 5, yappXZcenter]      // microUSB
-               , [20, -2, 8, 5, yappXZcircle]  // microUSB
+               , [20, 0, 8, 5, yappXZcircle]  // microUSB
                , [35, 2, 8, 5, yappXZcenter]  // microUSB
             //    , [0, 2, 8, 5]
               ];

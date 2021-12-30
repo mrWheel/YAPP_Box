@@ -90,68 +90,68 @@ intersect         = 0;  //-> 0=none (>0 from front, <0 from back)
 */
 
 //-- constants, do not change
-yappRectOrg       = 0;
-yappRectCenter    = 1;
-yappCircleCenter  = 2;
-yappBoth          = 0;
-yappTopOnly       = 1;
-yappBottomOnly    = 2;
-yappHole          = 0;
-yappPin           = 1;
+yappRectOrg     = 0;
+yappRectCenter  = 1;
+yappCircle      = 2;
+yappBoth        = 3;
+yappTopOnly     = 4;
+yappBottomOnly  = 5;
+yappHole        = 6;
+yappPin         = 7;
 
 //-- pcb_standoffs  -- origin is pcb-0,0
 pcbStands = [//[ [0]posx, [1]posy
              //       , [2]{yappBoth|yappTopOnly|yappBottomOnly}
-             //       ,  [3]{yappHole|yappPin} ]
+             //       , [3]{yappHole|yappPin} ]
 //               [3,  3, yappBoth, yappHole] 
 //              ,[3,  pcb_width-3, yappBoth, yappPin]
              ];
 
 //-- front plane  -- origin is pcb-0,0 (red)
 cutoutsFront = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
-                //      , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+                //      , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
 //                 [(pcb_width/2)-(12/2), -5, 12, 9, yappRectOrg]
-//               , [10, 0, 12.5, 7, yappCircleCenter]
+//               , [10, 0, 12.5, 7, yappCircle]
                 ];
 
 //-- back plane   -- origin is pcb-0,0 (blue)
 cutoutsBack = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
-               //     , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+               //     , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
 //                  [0, 0, 8, 5]
 //                , [0, 2, 8, 5]
                ];
 
 //-- top plane    -- origin is pcb-0,0
 cutoutsTop = [//[ [0]pcb_x,  [1]pcb_y, [2]width, [3]length
-              //    , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+              //    , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
 //                  [0, 6, (pcb_length-12), 4, yappRectOrg]
 //                , [pcb_width-4, 6, pcb_length-12, 4, yappCircel]
 //             // , [0, 5, 8, 4, yappRectCenter]
               ];
 
 //-- bottom plane -- origin is pcb-0,0
-cutoutsBottom = [//[ pcb_x,  pcb_y, width, length
-                 //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
+cutoutsBottom = [//[ [0]pcb_x,  [1]pcb_y, [2]width, [3]length
+                 //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
 //                   [0, 6, (pcb_length-12), 5, true]
 //                 , [pcb_width-5, 6, pcb_length-12, 5, false]
                  ];
 
 //-- left plane   -- origin is pcb-0,0
 cutoutsLeft = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
-               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
+               //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
 //                [0, 10, 5, 2]
 //              , [pcb_length-5, 6, 7,7]
                ];
 
 //-- right plane   -- origin is pcb-0,0
 cutoutsRight = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
-               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
+               //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
 //                 [0, 1, 5, 2]
                  ];
 
 //-- origin of labels is box [0,0]
-labelsTop = [// [ x_pos, y_pos, orientation, size, "text" ]
-              [10, 10, 0, 5, "TextLabel" ]
+labelsTop = [// [0]x_pos, [1]y_pos, [2]orientation, [3]font, [4]size, [5]"text"]
+              [10, 10, 0, "Liberation Mono:style=bold", 5, "TextLabel" ]
             ];
 
 //-------------------------------------------------------------------
@@ -427,7 +427,7 @@ module bottom_case()
       box();        
       
       //-- [0]pcb_y, [1]pcb_z, [2]width, [3]height,
-      //--                   [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} 
+      //--                   [4]{yappRectOrg | yappRectCenterd | yappCircle} 
       for ( cutOut = cutoutsFront )
       {
 
@@ -445,7 +445,7 @@ module bottom_case()
           translate([box_length-wall_thickness, posy, posz])
             cutoutSquare("red", cutOut[2], cutOut[3]+bottomWall_height);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posy=pcbY+cutOut[0]-(cutOut[2]/2);
           posz=pcbZ+cutOut[1];
@@ -457,7 +457,7 @@ module bottom_case()
       }
       
       //--[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
-      //--        , {yappRectOrg | yappRectCenter | yappCircleCenter} ]
+      //--        , {yappRectOrg | yappRectCenter | yappCircle} ]
       for ( cutOut = cutoutsBack )
       {
         if (cutOut[4]==yappRectOrg)
@@ -474,7 +474,7 @@ module bottom_case()
           translate([0, posy, posz])
             cutoutSquare("red", cutOut[2], cutOut[3]+bottomWall_height);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posy=pcbY+cutOut[0]-(cutOut[2]/2);  // width = diameter
           posz=pcbZ+cutOut[1];
@@ -488,7 +488,7 @@ module bottom_case()
       //-- place cutOuts in Left Plane Bottom Box
       
       //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, 
-      //--                      {yappRectOrg | yappRectCenterd | yappCircleCenter}           
+      //--                      {yappRectOrg | yappRectCenterd | yappCircle}           
       //         
       //      [0]pos_x->|
       //                |
@@ -523,7 +523,7 @@ module bottom_case()
             //cutoutSquare("brown", cutOut[2], cutOut[3]+bottomWall_height);
               cutoutSquare("brown", cutOut[2], cutOut[3]);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posx=pcbX+cutOut[0];
           posz=pcbZ+cutOut[1];
@@ -537,7 +537,7 @@ module bottom_case()
       } // for cutOut's ..
       
       //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, 
-      //--                {yappRectOrg | yappRectCenterd | yappCircleCenter}           
+      //--                {yappRectOrg | yappRectCenterd | yappCircle}           
       for ( cutOut = cutoutsRight )
       {
 
@@ -557,7 +557,7 @@ module bottom_case()
             rotate([0,0,270])
               cutoutSquare("AntiqueWhite", cutOut[2], cutOut[3]+bottomWall_height);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posx=pcbX+cutOut[0];
           posz=pcbZ+cutOut[1];
@@ -571,7 +571,7 @@ module bottom_case()
 
       //-- place cutOuts in Bottom Box
       
-      // [0]pcb_x, [1]pcb_x, [2]width, [3]length, [4]{yappRectOrg | yappRectCenter | yappCircleCenter}
+      // [0]pcb_x, [1]pcb_x, [2]width, [3]length, [4]{yappRectOrg | yappRectCenter | yappCircle}
       for ( cutOut = cutoutsBottom )
       {
         if (cutOut[4]==yappRectOrg)  // org pcb_x/y
@@ -590,7 +590,7 @@ module bottom_case()
             linear_extrude(bottomPlane_thickness)
               square([cutOut[3],cutOut[2]], false);
         }
-        else if (cutOut[4]==yappCircleCenter)  // circle centered around x/y
+        else if (cutOut[4]==yappCircle)  // circle centered around x/y
         {
           posx=pcbX+cutOut[0];
           posy=pcbY+(cutOut[1]+cutOut[2]/2)-cutOut[2]/2;
@@ -741,7 +741,7 @@ module top_case()
       //-- place cutOuts in Top Plane
       
       //-- [0]pcb_x,  [1]pcb_y, [2]width, [3]length
-      //--          , [4]{yappRectOrg | yappRectCenter | yappCircleCenter}
+      //--          , [4]{yappRectOrg | yappRectCenter | yappCircle}
       for ( cutOut = cutoutsTop )
       {
         //-- left 0,0
@@ -764,7 +764,7 @@ module top_case()
               color("white")
                 square([cutOut[3],cutOut[2]], false);
           }
-        else if (cutOut[4]==yappCircleCenter)  // circle centered around x/y
+        else if (cutOut[4]==yappCircle)  // circle centered around x/y
         {
           posx=pcbX+cutOut[0];
           posy=(pcbY-padding_left)+padding_right+(pcb_width-(cutOut[2]/2)-(cutOut[1]-(cutOut[2]/2)));
@@ -775,7 +775,7 @@ module top_case()
         }
       }
 
-      // [0]pcb_y, [1]pcb_z, [2]width, [3]height, [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} 
+      // [0]pcb_y, [1]pcb_z, [2]width, [3]height, [4]{yappRectOrg | yappRectCenterd | yappCircle} 
       for ( cutOut = cutoutsFront )
       {
         if (cutOut[4]==yappRectOrg)
@@ -792,7 +792,7 @@ module top_case()
           translate([box_length-wall_thickness, posy, posz])
             cutoutSquare("gray", cutOut[2], cutOut[3]);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posy=box_width-(pcbY+(cutOut[0]-(cutOut[2]/2)));
           posz=topZpcb-cutOut[1];
@@ -804,7 +804,7 @@ module top_case()
       }
       
       //-- [0]pcb_y, [1]pcb_z, [2]width, [3]height, 
-      //--  [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} 
+      //--  [4]{yappRectOrg | yappRectCenterd | yappCircle} 
       for ( cutOut = cutoutsBack )
       {
         //-- calculate part that sticks out of the bottom
@@ -835,7 +835,7 @@ module top_case()
           translate([0, posy, posz])
             cutoutSquare("green", cutOut[2], cutOut[3]);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posy=box_width-(pcbY+(cutOut[0]+(cutOut[2]/2)));
           posz=(bottomWall_height+topWall_height+topPlane_thickness)
@@ -851,7 +851,7 @@ module top_case()
       }
    
       //-- place cutOuts in left plane
-      //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, {yappRectOrg | yappRectCenterd | yappCircleCenter}           
+      //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, {yappRectOrg | yappRectCenterd | yappCircle}           
       //         
       //      [0]pos_x->|
       //                |
@@ -883,7 +883,7 @@ module top_case()
             rotate(270)
               cutoutSquare("black", cutOut[2], cutOut[3]);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posx=pcbX+cutOut[0];
           posz=topZpcb-cutOut[1];
@@ -896,7 +896,7 @@ module top_case()
       } //   for cutOut's ..
 
       //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height,
-      //--                      {yappRectOrg | yappRectCenterd | yappCircleCenter}
+      //--                      {yappRectOrg | yappRectCenterd | yappCircle}
       for ( cutOut = cutoutsRight )
       {
         if (cutOut[4]==yappRectOrg)
@@ -923,7 +923,7 @@ module top_case()
             rotate(270)
               cutoutSquare("purple", cutOut[2], cutOut[3]);
         }
-        else if (cutOut[4]==yappCircleCenter)
+        else if (cutOut[4]==yappCircle)
         {
           posx=pcbX+cutOut[0];
           posz=topZpcb-cutOut[1];

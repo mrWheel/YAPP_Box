@@ -82,13 +82,13 @@ pcbStands = [//[ [0]posx, [1]posy
              //       , [3]{yappHole|yappPin} ]
                  [3.4,  3, yappBoth, yappPin]                    // back-left
                , [3.4,  pcb_width-3, yappBoth, yappHole]         // back-right
-               , [pcb_length-3,  7, yappBoth, yappHole]          // front-left
+               , [pcb_length-3,  7.5, yappBoth, yappHole]          // front-left
                , [pcb_length-3, pcb_width-3, yappBoth, yappPin]  // front-right
              ];
 
 //-- front plane  -- origin is pcb-0,0 (red)
 cutoutsFront = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
-                //      , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+                //      , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
                  [14, 0, 12, 10, yappRectCenter]  // microUSB
               ];
 
@@ -99,22 +99,22 @@ cutoutsBack = [ // left_x,  floor_z, square_width, square_height
 
 //-- top plane    -- origin is pcb-0,0
 cutoutsTop = [//[ pcb_x,  pcb_y, width, length
-              //    , {yappRectOrg | yappRectCenterd | yappCircleCenter} ]
-                 [6, 0, 5, (pcb_length-12), yappRectOrg]           // left-header
-               , [6, pcb_width-5, 5, pcb_length-12, yappRectOrg]   // right-header
-               , [18.7, 8.8, 2, 0, yappCircleCenter]               // blue led
+              //    , {yappRectOrg | yappRectCenterd | yappCircle} ]
+                 [6, -1, 5, (pcb_length-12), yappRectOrg]           // left-header
+               , [6, pcb_width-4, 5, pcb_length-12, yappRectOrg]   // right-header
+               , [18.7, 8.8, 2, 0, yappCircle]               // blue led
               ];
 
 //-- bottom plane -- origin is pcb-0,0
 cutoutsBottom = [//[ pcb_x,  pcb_y, width, length
-                 //   , {yappRectOrg | yappRectCenter | yappCircleCenter} ]
-                  [6, 0, 5, (pcb_length-12), yappRectOrg]           // left-header
-                , [6, pcb_width-5, 5, pcb_length-12, yappRectOrg]   // right-header
+                 //   , {yappRectOrg | yappRectCenter | yappCircle} ]
+                  [6, -1, 5, (pcb_length-12), yappRectOrg]           // left-header
+                , [6, pcb_width-4, 5, pcb_length-12, yappRectOrg]   // right-header
                  ];
 
 //-- left plane   -- origin is pcb-0,0
 cutoutsLeft = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
-               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
+               //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
                   [31, 0.5, 4.5, 3, yappRectCenter]      // reset button
                  ];
 
@@ -124,14 +124,3 @@ cutoutsRight = [ // z_pos,  x_pos, width, height
              //   [0, 5, 8, 5]
                  ];
 
-box_width=(pcb_width+(wall_thickness*2)+padding_left+padding_right);
-box_length=(pcb_length+(wall_thickness*2)+padding_front+padding_back);
-echo("box_width: ",box_width, ", box_length: ", box_length);
-
-//Label text
-print_label=1;
-font="Arial: style=bold";
-fsize=4;
-align="right";
-text_extrude=0.5;
-text_label="ESP8266";

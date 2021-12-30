@@ -32,51 +32,53 @@ include <./library/YAPPgenerator.scad>
                           LEFT
 */
 
+//-- whitch half do you want to print?
 printTop          = true;
 printBottom       = true;
 
-// Edit these parameters for your own board dimensions
+//-- Edit these parameters for your own board dimensions
 wall_thickness        = 2.5;
 bottomPlane_thickness = 1.0;
 topPlane_thickness    = 1.5;
 
-//-- box height: standoff_height+pcb_thickness+7
-//--           :    2 +3.5 +7 => 12.5
-bottomWall_height = 6;
-topWall_height    = 4;
-
 // Total height of box = bottomPlane_thickness + topPlane_thickness 
 //                     + bottomWall_height + topWall_height
+//-- box height: standoff_height+pcb_thickness+7
+bottomWall_height = 6;
+topWall_height    = 4.5;
+
+//-- pcb dimensions
 pcb_length        = 68.5;
 pcb_width         = 53.3;
 pcb_thickness     = 1.5;
                             
-// padding between pcb and inside wall
+//-- padding between pcb and inside wall
 padding_front     = 2;
 padding_back      = 2;
 padding_right     = 2;
 padding_left      = 2;
 
-// ridge where bottom and top off box can overlap
-// Make sure this isn't less than topWall_height
+//-- ridge where bottom and top off box can overlap
+//-- Make sure this isn't less than topWall_height
 ridge_height      = 2;
 
+//-- How much the PCB needs to be raised from the bottom
+//-- to leave room for solderings and whatnot
+standoff_height   = 3.5;
 pin_diameter      = 2.8;
 standoff_diameter = 4;
 
-// How much the PCB needs to be raised from the bottom
-// to leave room for solderings and whatnot
-standoff_height   = 3.5;
 
-//-- D E B U G -------------------
-show_side_by_side = false;
-showTop           = true;
-colorTop          = "yellow";
-showBottom        = true;
+//-- D E B U G ----------------------------
+show_side_by_side = false;       //-> true
+showTop           = true;       //-> true
+colorTop          = "yellow";   
+showBottom        = true;       //-> true
 colorBottom       = "white";
-showPCB           = false;
-showMarkers       = false;
-intersect         = 0;  // 0=none, >0 from front, <0 from back
+showPCB           = true;      //-> false
+showMarkers       = true;      //-> false
+intersect         = 0;  //-> 0=none (>0 from front, <0 from back)
+//-- D E B U G ----------------------------
 
 
 //-- pcb_standoffs  -- origin is pcb-0,0 
@@ -90,7 +92,7 @@ pcbStands = [// posx, posy, {yappBoth|yappTopOnly|yappBottomOnly}
 
 //-- top plane    -- origin is pcb-0,0
 cutoutsTop =  [// [0]pcb_x,  [1]pcb_y, [2]width, [3]length
-               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter}
+               //   , [4]{yappRectOrg | yappRectCenter | yappCircle}
                  [0, 31.5-1, 12.2+2, 11, yappRectOrg]         // USB (right)
                , [0, 3.5-1, 12, 13.5, yappRectOrg]            // Power Jack
                , [29-1, 12.5-1, 8.5+2, 35+2,  yappRectOrg]  // ATmega328
@@ -98,9 +100,9 @@ cutoutsTop =  [// [0]pcb_x,  [1]pcb_y, [2]width, [3]length
                , [26.5-1, 1-1, 5, 38+2,  yappRectOrg]       // left headers
                , [65.5, 28.5, 8.0, 5.5,  yappRectCenter]    // ICSP1
                , [18.0, 45.5, 6.5, 8.0,  yappRectCenter]    // ICSP2
-               , [6, 49, 8, 0, yappCircleCenter]            // reset button
-               , [18.0, 8.6, 7.2, 0, yappCircleCenter]      // elco1
-               , [26.0, 8.6, 7.2, 0, yappCircleCenter]      // elco2
+               , [6, 49, 8, 0, yappCircle]            // reset button
+               , [18.0, 8.6, 7.2, 0, yappCircle]      // elco1
+               , [26.0, 8.6, 7.2, 0, yappCircle]      // elco2
                , [21.5, 8.6, 7.2, 7, yappRectCenter]        // connect elco's
                , [28.2, 35.2, 5, 3.5, yappRectCenter]       // TX/RX leds
                , [28.2, 42.5, 3, 3.5, yappRectCenter]       // led13
@@ -109,7 +111,7 @@ cutoutsTop =  [// [0]pcb_x,  [1]pcb_y, [2]width, [3]length
 
 //-- back plane  -- origin is pcb-0,0 (red/green)
 cutoutsBack = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
-               //    , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+               //    , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
                  [31.5-1, -1, 12.2+2, 12, yappRectOrg]  // USB
                , [3.5-1, 0, 12, 11, yappRectOrg]          // Power Jack
               ];

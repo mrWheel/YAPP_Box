@@ -1,11 +1,11 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  Yhis is a box for a Generic Arduino UNO
+//  Yhis is a box for <template>
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator.scad>
+include <./library/YAPP_lib.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -36,13 +36,13 @@ printTop          = true;
 printBottom       = true;
 
 // Edit these parameters for your own board dimensions
-wall_thickness        = 2.5;
+wall_thickness        = 2.0;
 bottomPlane_thickness = 1.0;
-topPlane_thickness    = 1.5;
+topPlane_thickness    = 1.0;
 
 //-- box height: standoff_height+pcb_thickness+7
 //--           :    2 +3.5 +7 => 12.5
-bottomWall_height = 6;
+bottomWall_height = 5;
 topWall_height    = 4;
 
 // Total height of box = bottomPlane_thickness + topPlane_thickness 
@@ -61,15 +61,15 @@ padding_left      = 2;
 // Make sure this isn't less than topWall_height
 ridge_height      = 2;
 
-pin_diameter      = 2.8;
-standoff_diameter = 4;
+pin_diameter      = 2.5;
+standoff_diameter = 5;
 
 // How much the PCB needs to be raised from the bottom
 // to leave room for solderings and whatnot
 standoff_height   = 3.5;
 
 //-- D E B U G -------------------
-show_side_by_side = false;
+show_side_by_side = true;
 showTop           = true;
 colorTop          = "yellow";
 showBottom        = true;
@@ -82,43 +82,49 @@ intersect         = 0;  // 0=none, >0 from front, <0 from back
 //-- pcb_standoffs  -- origin is pcb-0,0 
 pcbStands = [// posx, posy, {yappBoth|yappTopOnly|yappBottomOnly}
              //       , {yappHole, YappPin}
-                 [14, 2.5, yappBoth, yappPin]         // back-left
-               , [15.3, 50.7,yappBottomOnly, yappPin] // back-right
-               , [66.1, 7.6, yappBoth, yappPin]       // front-left
-               , [66.1, 35.5, yappBoth, yappPin]      // front-right
+                [14, 2.5, yappBoth, yappPin]    // back-left
+               ,[15.3, 50.7,yappBottomOnly, yappPin]  // back-right
+               ,[66.1, 7.6, yappBoth, yappPin]  // front-left
+               ,[66.1, 35.5, yappBoth, yappPin] // front-right
              ];
 
 //-- top plane    -- origin is pcb-0,0
-cutoutsTop =  [// [0]pcb_x,  [1]pcb_y, [2]width, [3]length
-               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter}
-                 [0, 31.5-1, 12.2+2, 11, yappRectOrg]         // USB (right)
-               , [0, 3.5-1, 12, 13.5, yappRectOrg]            // Power Jack
-               , [29-1, 12.5-1, 8.5+2, 35+2,  yappRectOrg]  // ATmega328
+cutoutsTop =  [// pcb_x,  pcb_y, width, length
+               //    , {yappRectOrg | yappRectCenter | yappCircleCenter}
+                 [0, 31.5-1, 12.2+2, 11, yappRectOrg]       // USB (right)
+               , [0, 4.1, 10, 11, yappRectOrg]              // Power Jack
+               , [29-1, 11-1, 10+2, 35+2,  yappRectOrg]     // ATmega328
                , [17.2-1, 49.5-1, 5, 47.4+2,  yappRectOrg]  // right headers
-               , [26.5-1, 1-1, 5, 38+2,  yappRectOrg]       // left headers
-               , [65.5, 28.5, 8.0, 5.5,  yappRectCenter]    // ICSP1
-               , [18.0, 45.5, 6.5, 8.0,  yappRectCenter]    // ICSP2
-               , [6, 49, 8, 0, yappCircleCenter]            // reset button
-               , [18.0, 8.6, 7.2, 0, yappCircleCenter]      // elco1
-               , [26.0, 8.6, 7.2, 0, yappCircleCenter]      // elco2
-               , [21.5, 8.6, 7.2, 7, yappRectCenter]        // connect elco's
-               , [28.2, 35.2, 5, 3.5, yappRectCenter]       // TX/RX leds
-               , [28.2, 42.5, 3, 3.5, yappRectCenter]       // led13
-               , [58.5, 37, 3, 3.5, yappRectCenter]         // ON led
+               , [26.5-1, 1.3-1, 5, 38+2,  yappRectOrg]     // left headers
+               , [65.5, 29, 10, 10,  yappRectCenter]        // ICSP1
+               , [18.5, 45.2, 10, 10,  yappRectCenter]      // ICSP2
+               , [6.5, 49, 8, 0, yappCircleCenter]          // reset button
+               , [18.5, 10.5, 7, 0, yappCircleCenter]         // elco1
+               , [25, 10.5, 7, 0, yappCircleCenter]         // elco2
               ];
+
+//-- bottom plane -- origin is pcb-0,0
+cutoutsBottom = [ // pcb_x,  pcb_y, width, length, {yappRectOrg | yappRectCenter | yappCircleCenter} 
+                 ];
 
 //-- back plane  -- origin is pcb-0,0 (red/green)
 cutoutsBack = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
-               //    , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+               //     , {yappRectOrg | yappRectCenterd | yappCircleCenter} ]
                  [31.5-1, -1, 12.2+2, 12, yappRectOrg]  // USB
-               , [3.5-1, 0, 12, 11, yappRectOrg]          // Power Jack
+               , [4.1, 0, 10, 11, yappRectOrg]          // Power Jack
               ];
 
 labelsTop = [// [ x_pos, y_pos, orientation, font, size, "text" ]
-               [5, 28, 0, "Arial:style=bold", 5, "Arduino UNO" ]
-             , [57, 33, 90, "Liberation Mono:style=bold", 5, "YAPP" ]
-             , [35, 36, 0, "Liberation Mono:style=bold", 3, "RX" ]
-             , [35, 40.5, 0, "Liberation Mono:style=bold", 3, "TX" ]
-             , [35, 45.6, 0, "Liberation Mono:style=bold", 3, "13" ]
+               [5, 27, 0, "Arial:style=bold", 4, "Arduino UNO" ]
+             , [60, 30, 90,"Liberation Mono:style=bold", 4, "YAPP" ]
             ];
+
+module logo()
+{
+        translate([0,0,12])
+// linear_extrude(2)
+ projection()
+  color("yellow",1)
+    import("ArduinoUNO.stl", convexity=3);
+}
 

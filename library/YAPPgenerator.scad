@@ -2,7 +2,7 @@
 ***************************************************************************  
 **  Yet Another Parameterised Projectbox library
 **
-**  Version "v0.0.1 (29-12-2021)"
+**  Version "v0.9 (30-12-2021)"
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
 **
@@ -36,51 +36,58 @@
         0    X-as --->
                           LEFT
 */
-// Edit these parameters for your own board dimensions
+
+//-- whitch half do you want to print?
+printTop          = true;
+printBottom       = true;
+
+//-- Edit these parameters for your own board dimensions
 wall_thickness        = 2.0;
 bottomPlane_thickness = 1.0;
 topPlane_thickness    = 1.0;
 
+//-- Total height of box = bottomPlane_thickness + topPlane_thickness 
+//--                     + bottomWall_height + topWall_height
 bottomWall_height = 6;
 topWall_height    = 5;
 
-printTop          = true;
-printBottom       = true;
+//-- ridge where bottom and top off box can overlap
+//-- Make sure this isn't less than topWall_height
+ridge_height      = 2;
 
-//-- D E B U G -------------------
-show_side_by_side = true;
-showTop           = true;
-colorTop          = "yellow";
-showBottom        = true;
-colorBottom       = "orange";
-showPCB           = false;
-showMarker        = false;
-intersect         = 0;  // 0=none, 1 .. pcb_length
-//-- D E B U G -------------------
 
-// Total height of box = bottomPlane_thickness + topPlane_thickness 
-//                     + bottomWall_height + topWall_height
-
+//-- pcb dimensions
 pcb_length        = 30;
 pcb_width         = 20;
 pcb_thickness     = 1.5;
 
-// ridge where bottom and top off box can overlap
-// Make sure this isn't less than topWall_height
-ridge_height      = 2;
-
+//-- How much the PCB needs to be raised from the bottom
+//-- to leave room for solderings and whatnot
+standoff_height   = 4.0;
 pin_diameter      = 1.0;
 standoff_diameter = 3;
-
-// How much the PCB needs to be raised from the bottom
-// to leave room for solderings and whatnot
-standoff_height   = 4.0;
                             
-// padding between pcb and inside wall
+//-- padding between pcb and inside wall
 padding_front = 1;
 padding_back  = 1;
 padding_right = 1;
 padding_left  = 1;
+
+
+//-- D E B U G ----------------------------
+show_side_by_side = true;       //-> true
+showTop           = true;       //-> true
+colorTop          = "yellow";   
+showBottom        = true;       //-> true
+colorBottom       = "white";
+showPCB           = false;      //-> false
+showMarkers       = false;      //-> false
+intersect         = 0;  //-> 0=none (>0 from front, <0 from back)
+//-- D E B U G ----------------------------
+
+/*
+********* don't change anything below this line ***************
+*/
 
 //-- constants, do not change
 yappRectOrg       = 0;
@@ -101,38 +108,44 @@ pcbStands = [//[ [0]posx, [1]posy
              ];
 
 //-- front plane  -- origin is pcb-0,0 (red)
-cutoutsFront = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height, {yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+cutoutsFront = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
+                //      , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
 //                 [(pcb_width/2)-(12/2), -5, 12, 9, yappRectOrg]
 //               , [10, 0, 12.5, 7, yappCircleCenter]
                 ];
 
 //-- back plane   -- origin is pcb-0,0 (blue)
-cutoutsBack = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height, {yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+cutoutsBack = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
+               //     , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
 //                  [0, 0, 8, 5]
 //                , [0, 2, 8, 5]
                ];
 
 //-- top plane    -- origin is pcb-0,0
-cutoutsTop = [//[ pcb_x,  pcb_y, width, length, {yappRectOrg | yappRectCenterd | yappCircleCenter} ]
+cutoutsTop = [//[ [0]pcb_x,  [1]pcb_y, [2]width, [3]length
+              //    , [4]{yappRectOrg | yappRectCenterd | yappCircleCenter} ]
 //                  [0, 6, (pcb_length-12), 4, yappRectOrg]
 //                , [pcb_width-4, 6, pcb_length-12, 4, yappCircel]
 //             // , [0, 5, 8, 4, yappRectCenter]
               ];
 
 //-- bottom plane -- origin is pcb-0,0
-cutoutsBottom = [//[ pcb_x,  pcb_y, width, length, {yappRectOrg | yappRectCenter | yappCircleCenter} ]
+cutoutsBottom = [//[ pcb_x,  pcb_y, width, length
+                 //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
 //                   [0, 6, (pcb_length-12), 5, true]
 //                 , [pcb_width-5, 6, pcb_length-12, 5, false]
                  ];
 
 //-- left plane   -- origin is pcb-0,0
-cutoutsLeft = [//[ z_pos,  x_pos, width, height ]
+cutoutsLeft = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
+               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
 //                [0, 10, 5, 2]
 //              , [pcb_length-5, 6, 7,7]
                ];
 
 //-- right plane   -- origin is pcb-0,0
-cutoutsRight = [//[ z_pos,  x_pos, width, height ]
+cutoutsRight = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
+               //   , [4]{yappRectOrg | yappRectCenter | yappCircleCenter} ]
 //                 [0, 1, 5, 2]
                  ];
 
@@ -140,13 +153,6 @@ cutoutsRight = [//[ z_pos,  x_pos, width, height ]
 labelsTop = [// [ x_pos, y_pos, orientation, size, "text" ]
               [10, 10, 0, 5, "TextLabel" ]
             ];
-//-- Label text
-print_label=1;
-font="Arial: style=bold";
-fsize=4;
-align="right";
-text_extrude=0.5;
-text_label="Text";
 
 //-------------------------------------------------------------------
 
@@ -168,7 +174,7 @@ module pcb(posX, posY, posZ)
     
         translate([0, 0, 0])
           color("black")
-            cylinder(
+            %cylinder(
               r = .5,
               h = markerHeight,
               center = true,
@@ -176,7 +182,7 @@ module pcb(posX, posY, posZ)
 
         translate([0, pcb_width, 0])
           color("black")
-            cylinder(
+            %cylinder(
               r = .5,
               h = markerHeight,
               center = true,
@@ -184,7 +190,7 @@ module pcb(posX, posY, posZ)
 
         translate([pcb_length, pcb_width, 0])
           color("black")
-            cylinder(
+            %cylinder(
               r = .5,
               h = markerHeight,
               center = true,
@@ -192,7 +198,7 @@ module pcb(posX, posY, posZ)
 
         translate([pcb_length, 0, 0])
           color("black")
-            cylinder(
+            %cylinder(
               r = .5,
               h = markerHeight,
               center = true,
@@ -201,7 +207,7 @@ module pcb(posX, posY, posZ)
         translate([((box_length-(wall_thickness*2))/2), 0, pcb_thickness])
           rotate([0,90,0])
             color("red")
-              cylinder(
+              %cylinder(
                 r = .5,
                 h = box_length+(wall_thickness*2),
                 center = true,
@@ -210,7 +216,7 @@ module pcb(posX, posY, posZ)
         translate([((box_length-(wall_thickness*2))/2), pcb_width, pcb_thickness])
           rotate([0,90,0])
             color("red")
-              cylinder(
+              %cylinder(
                 r = .5,
                 h = box_length+(wall_thickness*2),
                 center = true,
@@ -497,11 +503,12 @@ module bottom_case()
       //
       for ( cutOut = cutoutsLeft )
       {
-
+        //echo("bottomLeft:", cutOut);
         if (cutOut[4]==yappRectOrg)
         {
           posx=pcbX+cutOut[0];
           posz=pcbZ+cutOut[1];
+          //echo("(org) - pcbX:",pcbX,", posx:", posx,", pcbZ:",pcbZ,", posz:",posz);
           translate([posx, wall_thickness*2, posz])
             rotate([0,0,270])
               cutoutSquare("brown", cutOut[2], cutOut[3]);
@@ -509,15 +516,18 @@ module bottom_case()
         else if (cutOut[4]==yappRectCenter)
         {
           posx=pcbX+cutOut[0]-(cutOut[2]/2);
-          posz=pcbZ+cutOut[1]-(cutOut[3]/2);;
-          translate([posx, wall_thickness*2, posz])
+          posz=pcbZ+cutOut[1]-(cutOut[3]/2);
+          //echo("(center) - pcbX:",pcbX,", posx:", posx,", pcbZ:",pcbZ,", posz:",posz);
+          translate([posx, wall_thickness+1, posz])
             rotate([0,0,270])
-            cutoutSquare("brown", cutOut[2], cutOut[3]+bottomWall_height);
+            //cutoutSquare("brown", cutOut[2], cutOut[3]+bottomWall_height);
+              cutoutSquare("brown", cutOut[2], cutOut[3]);
         }
         else if (cutOut[4]==yappCircleCenter)
         {
           posx=pcbX+cutOut[0];
           posz=pcbZ+cutOut[1];
+          echo("(circle) - pcbX:",pcbX,", posx:", posx,", pcbZ:",pcbZ,", posz:",posz);
           translate([posx, wall_thickness+1, posz])
             rotate([90,0,0])
               color("brown")
@@ -605,38 +615,35 @@ module top_case()
   
     module box() 
     {
-      if (print_label==1)
+      difference() 
       {
-        difference() 
+        halfBox(showTop, colorTop, floor_length, floor_width, topWall_height 
+                                            -ridge_height, topPlane_thickness);
+        for ( label = labelsTop )
         {
-          halfBox(showTop, colorTop, floor_length, floor_width, topWall_height 
-                                              -ridge_height, topPlane_thickness);
-          for ( label = labelsTop )
+          // [0]x_pos, [1]y_pos, [2]orientation, [3]font, [4]size, [5]"text" 
+
+          translate([label[0], box_width-label[1], 0]) 
           {
-            // [0]x_pos, [1]y_pos, [2]orientation, [3]font, [4]size, [5]"text" 
-
-            translate([label[0], box_width-label[1], 0]) 
+            linear_extrude(0.5) 
             {
-              linear_extrude(0.5) 
+              rotate([0,0,(180-label[2])])
               {
-                rotate([0,0,(180-label[2])])
+                mirror(v=[1,0,0]) 
                 {
-                  mirror(v=[1,0,0]) 
-                  {
-                    text(label[5]
-                          , font=label[3]
-                          , size=label[4]
-                          , direction="ltr"
-                          , halign="left"
-                          , valign="bottom");
-                  } // mirror..
-                } // rotate
-              } // extrude
-            } // translate
-          } // for labels...
+                  text(label[5]
+                        , font=label[3]
+                        , size=label[4]
+                        , direction="ltr"
+                        , halign="left"
+                        , valign="bottom");
+                } // mirror..
+              } // rotate
+            } // extrude
+          } // translate
+        } // for labels...
 
-        } // diff
-      } // if..
+      } // diff
 
       if (showTop)
       {
@@ -712,11 +719,13 @@ module top_case()
         if (intersect < 0)
         {
           translate([box_length+intersect, -1, -1])
+          color("gray", 0.2)
             cube([box_length, box_width+2, box_height+2], false);
         }
         else if (intersect > 0)
         {
           translate([intersect-box_length, -1, -1])
+          color("gray", 0.2)
             cube([box_length, box_width+2, box_height+2], false);
         }
         
@@ -760,7 +769,7 @@ module top_case()
           posx=pcbX+cutOut[0];
           posy=(pcbY-padding_left)+padding_right+(pcb_width-(cutOut[2]/2)-(cutOut[1]-(cutOut[2]/2)));
           translate([posx, posy, 0])
-            linear_extrude(bottomPlane_thickness)
+            linear_extrude(bottomPlane_thickness+1)
               color("white")
                 circle(d=cutOut[2], $fn=20);
         }
@@ -935,6 +944,39 @@ module top_case()
     
 } //  top_case() 
 
+module showOrientation()
+{
+  translate([-10, 10, 0])
+    rotate(90)
+     linear_extrude(1) 
+          %text("BACK"
+            , font="Liberation Mono:style=bold"
+            , size=8
+            , direction="ltr"
+            , halign="left"
+            , valign="bottom");
+
+  translate([box_length+15, 10, 0])
+    rotate(90)
+     linear_extrude(1) 
+          %text("FRONT"
+            , font="Liberation Mono:style=bold"
+            , size=8
+            , direction="ltr"
+            , halign="left"
+            , valign="bottom");
+
+  translate([15, -15, 0])
+     linear_extrude(1) 
+          %text("LEFT"
+            , font="Liberation Mono:style=bold"
+            , size=8
+            , direction="ltr"
+            , halign="left"
+            , valign="bottom");
+
+} // showOrientation()
+
 
 //========= MAIN CALL's ===========================================================
 
@@ -953,7 +995,7 @@ box_height=bottomPlane_thickness+bottomWall_height+topWall_height+topPlane_thick
 echo("===========================");
 echo("*       pcbX [", pcbX,"]");
 echo("*       pcbY [", pcbY,"]");
-echo("*  pcbY(top) [", pcbYtop,"]");
+echo("*    pcbYtop [", pcbYtop,"]");
 echo("*       pcbZ [", pcbZ,"]");
 echo("*    topZpcb [", topZpcb,"]");
 echo("*  box width [", box_width,"]");
@@ -965,18 +1007,18 @@ if (showMarkers)
 {
   //-- box[0,0] marker --
   translate([0, 0, 8])
-    color("white")
-      cylinder(
+    color("blue")
+      %cylinder(
               r = .5,
               h = 20,
               center = true,
               $fn = 20);
-}
+} //  showMarkers
 
 
 if (printBottom) 
 {
-  if (showPCB) pcb(pcbX, pcbY, bottomPlane_thickness+standoff_height);
+  if (showPCB) %pcb(pcbX, pcbY, bottomPlane_thickness+standoff_height);
   difference()
   {
     bottom_case();
@@ -991,7 +1033,11 @@ if (printBottom)
         cube([box_length, box_width+2, box_height+2], false);
     }
   }
-}
+  
+  showOrientation();
+  
+} // if printBottom ..
+
 
 if (printTop)
 {
@@ -1007,7 +1053,7 @@ if (printTop)
         posZ=(bottomWall_height+topWall_height+bottomPlane_thickness)
                         -(standoff_height);
         rotate([0,180,0])
-          pcb((pcb_length+wall_thickness+padding_front)*-1,
+          %pcb((pcb_length+wall_thickness+padding_front)*-1,
                padding_right+wall_thickness,
                (posZ)*-1);
       }
@@ -1029,7 +1075,7 @@ if (printTop)
       {
         translate([pcbX, pcbYtop, 8])
           color("red")
-            cylinder(
+            %cylinder(
               r = .5,
               h = 20,
               center = true,
@@ -1037,14 +1083,14 @@ if (printTop)
         
         translate([pcbX, pcbYtop-pcb_width, 8])
           color("red")
-            cylinder(
+            %cylinder(
               r = .5,
               h = 20,
               center = true,
               $fn = 20);
         translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
           color("red")
-            cylinder(
+            %cylinder(
               r = .5,
               h = 20,
               center = true,
@@ -1052,12 +1098,24 @@ if (printTop)
         
         translate([pcbX+pcb_length, pcbYtop, 8])
           color("red")
-            cylinder(
+            %cylinder(
               r = .5,
               h = 20,
               center = true,
               $fn = 20);
+              
       } // show_markers
+      
+      translate([box_length-15, box_width+15, 0])
+        linear_extrude(1) 
+          rotate(180)
+          %text("LEFT"
+            , font="Liberation Mono:style=bold"
+            , size=8
+            , direction="ltr"
+            , halign="left"
+            , valign="bottom");
+
     } // translate
   }
   else  //  show on top of each other
@@ -1089,7 +1147,7 @@ if (printTop)
         {
           translate([pcbX, pcbYtop, 8])
             color("red")
-              cylinder(
+              %cylinder(
                 r = .5,
                 h = 20,
                 center = true,
@@ -1097,7 +1155,7 @@ if (printTop)
         
           translate([pcbX, pcbYtop-pcb_width, 8])
             color("red")
-              cylinder(
+              %cylinder(
                 r = .5,
                 h = 20,
                 center = true,
@@ -1105,7 +1163,7 @@ if (printTop)
           
           translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
             color("red")
-              cylinder(
+              %cylinder(
                 r = .5,
                 h = 20,
                 center = true,
@@ -1113,7 +1171,7 @@ if (printTop)
         
           translate([pcbX+pcb_length, pcbYtop, 8])
             color("red")
-              cylinder(
+              %cylinder(
                 r = .5,
                 h = 20,
                 center = true,

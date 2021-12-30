@@ -458,7 +458,6 @@ module bottom_case()
         {
           posy=pcbY+cutOut[0];
           posz=pcbZ+cutOut[1];
-          echo("posz:", posz);
           translate([0, posy, posz])
             cutoutSquare("red", cutOut[2], cutOut[3]+bottomWall_height);
         }

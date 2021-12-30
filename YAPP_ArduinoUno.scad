@@ -69,21 +69,21 @@ standoff_diameter = 5;
 standoff_height   = 3.5;
 
 //-- D E B U G -------------------
-show_side_by_side = false;
+show_side_by_side = true;
 showTop           = true;
 colorTop          = "yellow";
 showBottom        = true;
 colorBottom       = "white";
 showPCB           = false;
 showMarkers       = false;
-intersect         = -5;  // 0=none, >0 from front, <0 from back
+intersect         = 0;  // 0=none, >0 from front, <0 from back
 
 
 //-- pcb_standoffs  -- origin is pcb-0,0 
 pcbStands = [// posx, posy, {yappBoth|yappTopOnly|yappBottomOnly}
              //       , {yappHole, YappPin}
                 [14, 2.5, yappBoth, yappPin]    // back-left
-               ,[15.3, 50.7,yappBoth, yappPin]  // back-right
+               ,[15.3, 50.7,yappBottomOnly, yappPin]  // back-right
                ,[66.1, 7.6, yappBoth, yappPin]  // front-left
                ,[66.1, 35.5, yappBoth, yappPin] // front-right
              ];
@@ -119,4 +119,12 @@ labelsTop = [// [ x_pos, y_pos, orientation, font, size, "text" ]
              , [60, 30, 90,"Liberation Mono:style=bold", 4, "YAPP" ]
             ];
 
-//import("Arduino_ipt.stl", convexity=3);
+module logo()
+{
+        translate([0,0,12])
+// linear_extrude(2)
+ projection()
+  color("yellow",1)
+    import("ArduinoUNO.stl", convexity=3);
+}
+

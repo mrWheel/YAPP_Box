@@ -1,8 +1,8 @@
 /*
 ***************************************************************************  
-**  Yet Another Parameterised Projectbox library
+**  Yet Another Parameterised Projectbox generator
 **
-**  Version "v0.9 (30-12-2021)"
+**  Version "v1.0 (01-01-2022)"
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
 **
@@ -37,7 +37,7 @@
                           LEFT
 */
 
-//-- whitch half do you want to print?
+//-- which half do you want to print?
 printTop          = true;
 printBottom       = true;
 
@@ -48,13 +48,14 @@ topPlane_thickness    = 1.0;
 
 //-- Total height of box = bottomPlane_thickness + topPlane_thickness 
 //--                     + bottomWall_height + topWall_height
+//-- space between pcb and topPlane :=
+//--      (bottonWall_height+topWall_heigth) - (standoff_heigth+pcb_thickness)
 bottomWall_height = 6;
 topWall_height    = 5;
 
 //-- ridge where bottom and top off box can overlap
 //-- Make sure this isn't less than topWall_height
 ridge_height      = 2;
-
 
 //-- pcb dimensions
 pcb_length        = 30;
@@ -100,7 +101,7 @@ yappHole        = 6;
 yappPin         = 7;
 
 //-- pcb_standoffs  -- origin is pcb-0,0
-pcbStands = [//[ [0]posx, [1]posy
+pcbStands = [//[ [0]pos_x, [1]pos_y
              //       , [2]{yappBoth|yappTopOnly|yappBottomOnly}
              //       , [3]{yappHole|yappPin} ]
 //               [3,  3, yappBoth, yappHole] 
@@ -108,21 +109,21 @@ pcbStands = [//[ [0]posx, [1]posy
              ];
 
 //-- front plane  -- origin is pcb-0,0 (red)
-cutoutsFront = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
+cutoutsFront = [//[ [0]y_pos, [1]z_pos, [2]width, [3]height
                 //      , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
 //                 [(pcb_width/2)-(12/2), -5, 12, 9, yappRectOrg]
 //               , [10, 0, 12.5, 7, yappCircle]
                 ];
 
 //-- back plane   -- origin is pcb-0,0 (blue)
-cutoutsBack = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
+cutoutsBack = [//[ [0]y_pos, [1]z_pos, [2]width, [3]height
                //     , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
 //                  [0, 0, 8, 5]
 //                , [0, 2, 8, 5]
                ];
 
 //-- top plane    -- origin is pcb-0,0
-cutoutsTop = [//[ [0]pcb_x,  [1]pcb_y, [2]width, [3]length
+cutoutsTop = [//[ [0]x_pos,  [1]y_pos, [2]width, [3]length
               //    , [4]{yappRectOrg | yappRectCenterd | yappCircle} ]
 //                  [0, 6, (pcb_length-12), 4, yappRectOrg]
 //                , [pcb_width-4, 6, pcb_length-12, 4, yappCircel]
@@ -130,7 +131,7 @@ cutoutsTop = [//[ [0]pcb_x,  [1]pcb_y, [2]width, [3]length
               ];
 
 //-- bottom plane -- origin is pcb-0,0
-cutoutsBottom = [//[ [0]pcb_x,  [1]pcb_y, [2]width, [3]length
+cutoutsBottom = [//[ [0]x_pos,  [1]y_pos, [2]width, [3]length
                  //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
 //                   [0, 6, (pcb_length-12), 5, true]
 //                 , [pcb_width-5, 6, pcb_length-12, 5, false]
@@ -145,13 +146,13 @@ cutoutsLeft = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
 
 //-- right plane   -- origin is pcb-0,0
 cutoutsRight = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
-               //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
+                //   , [4]{yappRectOrg | yappRectCenter | yappCircle} ]
 //                 [0, 1, 5, 2]
                  ];
 
 //-- origin of labels is box [0,0]
 labelsTop = [// [0]x_pos, [1]y_pos, [2]orientation, [3]font, [4]size, [5]"text"]
-              [10, 10, 0, "Liberation Mono:style=bold", 5, "TextLabel" ]
+              [10, 10, 0, "Liberation Mono:style=bold", 5, "YAPP" ]
             ];
 
 //-------------------------------------------------------------------
@@ -165,7 +166,7 @@ module pcb(posX, posY, posZ)
   {
     translate([posX, posY, posZ])
     {
-      color("red", 0.1)
+      color("red")
         cube([pcb_length, pcb_width, pcb_thickness]);
     
       if (showMarkers)
@@ -317,7 +318,7 @@ module pcb_standoff(color, height, type)
               $fn = 20);
         } // standhole()
         
-        if (type == 1)  // pin
+        if (type == yappPin)  // pin
         {
          standoff(color);
          stand_pin(color);
@@ -695,22 +696,22 @@ module top_case()
 
     } // box()
 
-    module pcb_receivers() 
+    module pcb_pushdown() 
     {        
-      //-- place pcb Standoff-receivers
+      //-- place pcb Standoff-pushdown
       difference()
       {
-        for ( receiver = pcbStands )
+        for ( pushdown = pcbStands )
         {
           //-- [0]posx, [1]posy, [2]{yappBoth|yappTopOnly|yappBottomOnly}
           //--          , [3]{yappHole|YappPin}
           //
           //-- stands in Top are alway's holes!
-          posx=pcbX+receiver[0];
-          posy=(pcbY+receiver[1]);
+          posx=pcbX+pushdown[0];
+          posy=(pcbY+pushdown[1]);
           height=(bottomWall_height+topWall_height)
                         -(standoff_height+pcb_thickness);
-          if (receiver[2] != yappBottomOnly)
+          if (pushdown[2] != yappBottomOnly)
           {
             translate([posx, posy, topPlane_thickness])
               pcb_standoff("yellow", height, yappHole);
@@ -731,7 +732,7 @@ module top_case()
         
       } // intersect.
         
-    } // pcb_receiver()
+    } // pcb_pushdown()
    
     //-- place front & back cutOuts in Top Plane
     difference() 
@@ -768,8 +769,8 @@ module top_case()
         {
           posx=pcbX+cutOut[0];
           posy=(pcbY-padding_left)+padding_right+(pcb_width-(cutOut[2]/2)-(cutOut[1]-(cutOut[2]/2)));
-          translate([posx, posy, 0])
-            linear_extrude(bottomPlane_thickness+1)
+          translate([posx, posy, -1])
+            linear_extrude(topPlane_thickness+2)
               color("white")
                 circle(d=cutOut[2], $fn=20);
         }
@@ -940,7 +941,7 @@ module top_case()
     mirror([1,1,0])
       rotate([0,0,270])
         translate([0,shift,0])
-          pcb_receivers();
+          pcb_pushdown();
     
 } //  top_case() 
 

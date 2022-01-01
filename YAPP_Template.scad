@@ -1,7 +1,9 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  Yhis is a box for <template>
+//  This is a box for <template>
+//
+//  Version 1.0 (01-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -67,7 +69,7 @@ standoff_diameter = 5;
 standoff_height   = 2.0;
 
 //-- D E B U G -------------------
-show_side_by_side = false;
+show_side_by_side = true;
 showTop           = true;
 colorTop          = "yellow";
 showBottom        = true;

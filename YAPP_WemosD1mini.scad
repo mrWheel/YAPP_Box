@@ -1,7 +1,9 @@
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
 //
-//  This is a projectbox for a Wemos D1 mini
+//  Script to creates a box for a Wemos D1 mini
+//
+//  Version 1.0 (01-01-2022)
 //
 //---------------------------------------------------------
 include <./library/YAPPgenerator.scad>

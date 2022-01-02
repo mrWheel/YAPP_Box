@@ -147,10 +147,5 @@ labelsTop = [// [ x_pos, y_pos, orientation, font, size, "text" ]
              , [62, 5, 90,"Liberation Mono:style=bold", 4, "YAPP Box" ]
             ];
 
-//-- Label text
-print_label=1;
-font="Arial: style=bold";
-fsize=4;
-align="right";
-text_extrude=0.5;
-text_label="YAPPbox";
+//---- This is where the magic happens ----
+YAPPgenerate();

@@ -2,7 +2,7 @@
 ***************************************************************************  
 **  Yet Another Parameterised Projectbox generator
 **
-**  Version "v1.0 (01-01-2022)"
+**  Version "v1.0 (02-01-2022)"
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
 **
@@ -980,7 +980,7 @@ module showOrientation()
 
 
 //========= MAIN CALL's ===========================================================
-
+  
 pcbX=wall_thickness+padding_back;
 pcbY=wall_thickness+padding_left;
 pcbYtop=wall_thickness+pcb_width+padding_right;
@@ -993,6 +993,10 @@ box_width=(pcb_width+(wall_thickness*2)+padding_left+padding_right);
 box_length=(pcb_length+(wall_thickness*2)+padding_front+padding_back);
 box_height=bottomPlane_thickness+bottomWall_height+topWall_height+topPlane_thickness;
 
+
+module YAPPgenerate()
+{
+  
 echo("===========================");
 echo("*       pcbX [", pcbX,"]");
 echo("*       pcbY [", pcbY,"]");
@@ -1184,6 +1188,8 @@ if (printTop)
   } // show "on-top"
 
 } // printTop()
+
+} //  YAPPgenerate()
 
 /*
 ****************************************************************************

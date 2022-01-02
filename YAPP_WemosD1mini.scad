@@ -126,3 +126,5 @@ cutoutsRight = [ // z_pos,  x_pos, width, height
              //   [0, 5, 8, 5]
                  ];
 
+//--- this is where the magic happens ---
+YAPPgenerate();

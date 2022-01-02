@@ -129,3 +129,5 @@ labelsTop = [// [ x_pos, y_pos, orientation, font, size, "text" ]
              , [35, 45.6, 0, "Liberation Mono:style=bold", 3, "13" ]
             ];
 
+
+YAPPgenerate();

@@ -151,10 +151,5 @@ labelsTop = [// [ x_pos, y_pos, orientation, size, "text" ]
              , [10, 20, 90, 5, "YAPP Box" ]
             ];
 
-//-- Label text
-print_label=1;
-font="Arial: style=bold";
-fsize=4;
-align="right";
-text_extrude=0.5;
-text_label="YAPPbox";
+//--- this is where the magic hapens ---
+YAPPgenerate();

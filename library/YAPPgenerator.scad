@@ -993,150 +993,54 @@ box_width=(pcb_width+(wall_thickness*2)+padding_left+padding_right);
 box_length=(pcb_length+(wall_thickness*2)+padding_front+padding_back);
 box_height=bottomPlane_thickness+bottomWall_height+topWall_height+topPlane_thickness;
 
+module topHook()
+{
+  //echo("topHook(original) ..");
+} // topHook(dummy)
+
+module bottomHook()
+{
+  //echo("bottomHook(original) ..");
+} // bottomHook(dummy)
+
 
 module YAPPgenerate()
 {
-  
-echo("===========================");
-echo("*       pcbX [", pcbX,"]");
-echo("*       pcbY [", pcbY,"]");
-echo("*    pcbYtop [", pcbYtop,"]");
-echo("*       pcbZ [", pcbZ,"]");
-echo("*    topZpcb [", topZpcb,"]");
-echo("*  box width [", box_width,"]");
-echo("* box length [", box_length,"]");
-echo("* box height [", box_height,"]");
-echo("===========================");
-
-if (showMarkers)
-{
-  //-- box[0,0] marker --
-  translate([0, 0, 8])
-    color("blue")
-      %cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-} //  showMarkers
-
-
-if (printBottom) 
-{
-  if (showPCB) %pcb(pcbX, pcbY, bottomPlane_thickness+standoff_height);
-  difference()
-  {
-    bottom_case();
-    if (intersect < 0)
-    {
-      translate([box_length+intersect, -1, -1])
-        cube([box_length, box_width+2, box_height+2], false);
-    }
-    else if (intersect > 0)
-    {
-      translate([intersect-box_length, -1, -1])
-        cube([box_length, box_width+2, box_height+2], false);
-    }
-  }
-  
-  showOrientation();
-  
-} // if printBottom ..
-
-
-if (printTop)
-{
-  if (show_side_by_side)
-  {
-    translate([
-      0,
-      5 + pcb_width + standoff_diameter + padding_front + padding_right + wall_thickness * 2,
-      0])
-    {
-      if (showPCB) 
-      {
-        posZ=(bottomWall_height+topWall_height+bottomPlane_thickness)
-                        -(standoff_height);
-        rotate([0,180,0])
-          %pcb((pcb_length+wall_thickness+padding_front)*-1,
-               padding_right+wall_thickness,
-               (posZ)*-1);
-      }
-      difference()
-      {
-        top_case();
-        if (intersect < 0)
-        {
-          translate([box_length+intersect, -1, -1])
-            cube([box_length, box_width+2, box_height+2], false);
-        }
-        else if (intersect > 0)
-        {
-          translate([intersect-box_length, -1, -1])
-            cube([box_length, box_width+2, box_height+2], false);
-        }
-      }
+        
+      echo("===========================");
+      echo("*       pcbX [", pcbX,"]");
+      echo("*       pcbY [", pcbY,"]");
+      echo("*    pcbYtop [", pcbYtop,"]");
+      echo("*       pcbZ [", pcbZ,"]");
+      echo("*    topZpcb [", topZpcb,"]");
+      echo("*  box width [", box_width,"]");
+      echo("* box length [", box_length,"]");
+      echo("* box height [", box_height,"]");
+      echo("===========================");
+      
+            
       if (showMarkers)
       {
-        translate([pcbX, pcbYtop, 8])
-          color("red")
+        //-- box[0,0] marker --
+        translate([0, 0, 8])
+          color("blue")
             %cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-        
-        translate([pcbX, pcbYtop-pcb_width, 8])
-          color("red")
-            %cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-        translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
-          color("red")
-            %cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-        
-        translate([pcbX+pcb_length, pcbYtop, 8])
-          color("red")
-            %cylinder(
-              r = .5,
-              h = 20,
-              center = true,
-              $fn = 20);
-              
-      } // show_markers
+                    r = .5,
+                    h = 20,
+                    center = true,
+                    $fn = 20);
+      } //  showMarkers
       
-      translate([box_length-15, box_width+15, 0])
-        linear_extrude(1) 
-          rotate(180)
-          %text("LEFT"
-            , font="Liberation Mono:style=bold"
-            , size=8
-            , direction="ltr"
-            , halign="left"
-            , valign="bottom");
-
-    } // translate
-  }
-  else  //  show on top of each other
-  {
-    
-    translate([
-      0,
-      (wall_thickness*2)+padding_left+pcb_width+padding_right,
-      bottomPlane_thickness+bottomWall_height+topPlane_thickness+topWall_height
-    ])
-    {
-      rotate([180,0,0])
+      
+      if (printBottom) 
       {
+        if (showPCB) %pcb(pcbX, pcbY, bottomPlane_thickness+standoff_height);
+          
+        bottomHook();
+        
         difference()
         {
-          top_case();
+          bottom_case();
           if (intersect < 0)
           {
             translate([box_length+intersect, -1, -1])
@@ -1148,46 +1052,162 @@ if (printTop)
               cube([box_length, box_width+2, box_height+2], false);
           }
         }
-        if (showMarkers)
+        
+        showOrientation();
+        
+      } // if printBottom ..
+      
+      
+      if (printTop)
+      {
+        if (show_side_by_side)
         {
-          translate([pcbX, pcbYtop, 8])
-            color("red")
-              %cylinder(
-                r = .5,
-                h = 20,
-                center = true,
-                $fn = 20);
-        
-          translate([pcbX, pcbYtop-pcb_width, 8])
-            color("red")
-              %cylinder(
-                r = .5,
-                h = 20,
-                center = true,
-                $fn = 20);
+          translate([
+            0,
+            5 + pcb_width + standoff_diameter + padding_front + padding_right + wall_thickness * 2,
+            0])
+          {
+            if (showPCB) 
+            {
+              posZ=(bottomWall_height+topWall_height+bottomPlane_thickness)
+                              -(standoff_height);
+              rotate([0,180,0])
+                %pcb((pcb_length+wall_thickness+padding_front)*-1,
+                     padding_right+wall_thickness,
+                     (posZ)*-1);
+            }
+            
+            topHook();
+            
+            difference()
+            {
+              top_case();
+              if (intersect < 0)
+              {
+                translate([box_length+intersect, -1, -1])
+                  cube([box_length, box_width+2, box_height+2], false);
+              }
+              else if (intersect > 0)
+              {
+                translate([intersect-box_length, -1, -1])
+                  cube([box_length, box_width+2, box_height+2], false);
+              }
+            }
+            if (showMarkers)
+            {
+              translate([pcbX, pcbYtop, 8])
+                color("red")
+                  %cylinder(
+                    r = .5,
+                    h = 20,
+                    center = true,
+                    $fn = 20);
+              
+              translate([pcbX, pcbYtop-pcb_width, 8])
+                color("red")
+                  %cylinder(
+                    r = .5,
+                    h = 20,
+                    center = true,
+                    $fn = 20);
+              translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
+                color("red")
+                  %cylinder(
+                    r = .5,
+                    h = 20,
+                    center = true,
+                    $fn = 20);
+              
+              translate([pcbX+pcb_length, pcbYtop, 8])
+                color("red")
+                  %cylinder(
+                    r = .5,
+                    h = 20,
+                    center = true,
+                    $fn = 20);
+                    
+            } // show_markers
+            
+            translate([box_length-15, box_width+15, 0])
+              linear_extrude(1) 
+                rotate(180)
+                %text("LEFT"
+                  , font="Liberation Mono:style=bold"
+                  , size=8
+                  , direction="ltr"
+                  , halign="left"
+                  , valign="bottom");
+      
+          } // translate
+        }
+        else  //  show on top of each other
+        {
           
-          translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
-            color("red")
-              %cylinder(
-                r = .5,
-                h = 20,
-                center = true,
-                $fn = 20);
-        
-          translate([pcbX+pcb_length, pcbYtop, 8])
-            color("red")
-              %cylinder(
-                r = .5,
-                h = 20,
-                center = true,
-                $fn = 20);
-                
-        } // showMarkers
-      } //  rotate
-    } //  translate
-  } // show "on-top"
+          translate([
+            0,
+            (wall_thickness*2)+padding_left+pcb_width+padding_right,
+            bottomPlane_thickness+bottomWall_height+topPlane_thickness+topWall_height
+          ])
+          {
+            rotate([180,0,0])
+            {
+                          
+              topHook();
 
-} // printTop()
+              difference()
+              {
+                top_case();
+                if (intersect < 0)
+                {
+                  translate([box_length+intersect, -1, -1])
+                    cube([box_length, box_width+2, box_height+2], false);
+                }
+                else if (intersect > 0)
+                {
+                  translate([intersect-box_length, -1, -1])
+                    cube([box_length, box_width+2, box_height+2], false);
+                }
+              }
+              if (showMarkers)
+              {
+                translate([pcbX, pcbYtop, 8])
+                  color("red")
+                    %cylinder(
+                      r = .5,
+                      h = 20,
+                      center = true,
+                      $fn = 20);
+              
+                translate([pcbX, pcbYtop-pcb_width, 8])
+                  color("red")
+                    %cylinder(
+                      r = .5,
+                      h = 20,
+                      center = true,
+                      $fn = 20);
+                
+                translate([pcbX+pcb_length, pcbYtop-pcb_width, 8])
+                  color("red")
+                    %cylinder(
+                      r = .5,
+                      h = 20,
+                      center = true,
+                      $fn = 20);
+              
+                translate([pcbX+pcb_length, pcbYtop, 8])
+                  color("red")
+                    %cylinder(
+                      r = .5,
+                      h = 20,
+                      center = true,
+                      $fn = 20);
+                      
+              } // showMarkers
+            } //  rotate
+          } //  translate
+        } // show "on-top"
+      
+      } // printTop()
 
 } //  YAPPgenerate()
 

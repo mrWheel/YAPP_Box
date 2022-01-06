@@ -7,7 +7,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator.scad>
+include <./library/YAPPgenerator_v10.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -39,49 +39,52 @@ printTop          = true;
 printBottom       = true;
 
 //-- Edit these parameters for your own board dimensions
-wall_thickness        = 1.2;
-bottomPlane_thickness = 1.0;
-topPlane_thickness    = 1.7;
+wallThickness        = 1.2;
+bottomPlaneThickness = 1.0;
+topPlaneThickness    = 1.7;
 
-//-- Total height of box = bottomPlane_thickness + topPlane_thickness 
-//--                     + bottomWall_height + topWall_height
+//-- Total height of box = bottomPlaneThickness + topPlaneThickness 
+//--                     + bottomWallHeight + topWallHeight
 //-- space between pcb and topPlane :=
-//--      (bottonWall_height+topWall_heigth) - (standoff_heigth+pcb_thickness)
+//--      (bottonWallHeight+topWall_heigth) - (standoff_heigth+pcbThickness)
 //--      (6.2 + 4.5) - (3.5 + 1.5) ==> 5.7
-bottomWall_height = 6.2;
-topWall_height    = 4.5;
+bottomWallHeight = 6.2;
+topWallHeight    = 4.5;
 
 //-- pcb dimensions
-pcb_length        = 68.5;
-pcb_width         = 53.3;
-pcb_thickness     = 1.5;
+pcbLength        = 68.5;
+pcbWidth         = 53.3;
+pcbThickness     = 1.5;
                             
 //-- padding between pcb and inside wall
-padding_front     = 2;
-padding_back      = 2;
-padding_right     = 2;
-padding_left      = 2;
+paddingFront     = 2;
+paddingBack      = 2;
+paddingRight     = 2;
+paddingLeft      = 2;
 
 //-- ridge where bottom and top off box can overlap
-//-- Make sure this isn't less than topWall_height
-ridge_height      = 2;
+//-- Make sure this isn't less than topWallHeight
+ridgeHeight      = 2;
+roundRadius      = 2.0;
 
 //-- How much the PCB needs to be raised from the bottom
 //-- to leave room for solderings and whatnot
-standoff_height   = 3.5;
+standoffHeight   = 3.5;
 pin_diameter      = 2.8;
 standoff_diameter = 4;
 
 
 //-- D E B U G ----------------------------
-show_side_by_side = true;       //-> true
+showSideBySide    = true;       //-> true
+onTopGap          = 5;
 showTop           = true;       //-> true
 colorTop          = "yellow";   
 showBottom        = true;       //-> true
 colorBottom       = "white";
 showPCB           = false;      //-> false
 showMarkers       = false;      //-> false
-intersect         = 0;  //-> 0=none (>0 from front, <0 from back)
+intersectX         = 0;  //-> 0=none (>0 from front, <0 from back)
+intersectY         = 0;  //-> 0=none (>0 from front, <0 from back)
 //-- D E B U G ----------------------------
 
 

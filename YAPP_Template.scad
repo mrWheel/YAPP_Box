@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 1.0 (01-01-2022)
+//  Version 1.0 (07-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -34,54 +34,54 @@ include <./library/YAPPgenerator_v10.scad>
                           LEFT
 */
 
-printTop          = true;
-printBottom       = true;
+printBase         = true;
+printLid          = true;
 
 // Edit these parameters for your own board dimensions
-wallThickness        = 1.0;
-bottomPlaneThickness = 1.0;
-topPlaneThickness    = 1.0;
+wallThickness       = 1.0;
+basePlaneThickness  = 1.0;
+lidPlaneThickness   = 1.0;
 
-bottomWallHeight = 5;
-topWallHeight    = 4;
+baseWallHeight      = 5;
+lidWallHeight       = 4;
 
-// Total height of box = bottomPlaneThickness + topPlaneThickness 
-//                     + bottomWallHeight + topWallHeight
-pcbLength        = 60;
-pcbWidth         = 30;
-pcbThickness     = 1.5;
+// Total height of box = basePlaneThickness + lidPlaneThickness 
+//                     + baseWallHeight + lidWallHeight
+pcbLength           = 60;
+pcbWidth            = 30;
+pcbThickness        = 1.5;
                             
 // padding between pcb and inside wall
-paddingFront     = 2;
-paddingBack      = 2;
-paddingRight     = 2;
-paddingLeft      = 2;
+paddingFront        = 2;
+paddingBack         = 2;
+paddingRight        = 2;
+paddingLeft         = 2;
 
-// ridge where bottom and top off box can overlap
-// Make sure this isn't less than topWallHeight
-ridgeHeight      = 2;
-roundRadius      = 1.5;
+// ridge where base and lid off box can overlap
+// Make sure this isn't less than lidWallHeight
+ridgeHeight         = 2;
+roundRadius         = 1.5;
 
-pinDiameter      = 2.5;
-standoffDiameter = 5;
+pinDiameter         = 2.5;
+standoffDiameter    = 5;
 
-// How much the PCB needs to be raised from the bottom
+// How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight   = 2.0;
+standoffHeight      = 2.0;
 
 //-- D E B U G -------------------
-showSideBySide    = true;
-showTop           = true;
-colorTop          = "yellow";
-showBottom        = true;
-colorBottom       = "white";
-showPCB           = false;
-showMarkers       = false;
-intersectX        = 0;  // 0=none, >0 from front, <0 from back
+showSideBySide      = true;
+showLid             = true;
+colorLid            = "yellow";
+showBase            = true;
+colorBase           = "white";
+showPCB             = false;
+showMarkers         = false;
+inspectX          = 0;  // 0=none, >0 from front, <0 from back
 
 
 //-- pcb_standoffs  -- origin is pcb-0,0 
-pcbStands = [// posx, posy, {yappBoth|yappTopOnly|yappBottomOnly}
+pcbStands = [// posx, posy, {yappBoth|yappLidOnly|yappBaseOnly}
              //       , {yappHole, YappPin}
                 [3,  12, yappBoth, yappPin] 
                ,[3,  pcbWidth-3, yappBoth, yappPin]
@@ -89,8 +89,8 @@ pcbStands = [// posx, posy, {yappBoth|yappTopOnly|yappBottomOnly}
                ,[pcbLength-3, pcbWidth-3, yappBoth, yappPin]
              ];
 
-//-- top plane    -- origin is pcb-0,0
-cutoutsTop =  [// pcb_x,  pcb_y, width, length
+//-- Lid plane    -- origin is pcb-0,0
+cutoutsLid =  [// pcb_x,  pcb_y, width, length
                //    , {yappRectOrg | yappRectCenter | yappCircle}
                     [10, 10, 3, 4, yappRectCenter]              // back-right
                   , [0, pcbWidth, 5, 2, yappCircle]      // back-left
@@ -98,8 +98,8 @@ cutoutsTop =  [// pcb_x,  pcb_y, width, length
                   , [50, pcbWidth, 2, 4, yappRectCenter]       // front-right
               ];
 
-//-- bottom plane -- origin is pcb-0,0
-cutoutsBottom = [ // pcb_x,  pcb_y, width, length, {yappRectOrg | yappRectCenter | yappCircle} 
+//-- base plane -- origin is pcb-0,0
+cutoutsBase = [ // pcb_x,  pcb_y, width, length, {yappRectOrg | yappRectCenter | yappCircle} 
                     [0, 0, 3, 4, yappRectCenter]
                   , [0, pcbWidth, 5, 2, yappCircle]
                   , [pcbLength-15, 5, 10, 2, yappCircle]
@@ -143,7 +143,7 @@ cutoutsRight = [//[ [0]pcb_x, [1]pcb_z, [2]width, [3]height, {yappRectOrg | yapp
                  ];
 
 
-labelsTop = [// [ x_pos, y_pos, orientation, font, size, "text" ]
+labelsLid = [// [ x_pos, y_pos, orientation, font, size, "text" ]
                [2, 2, 0, "Arial:style=bold", 5, "Text-label" ]
              , [62, 5, 90,"Liberation Mono:style=bold", 4, "YAPP Box" ]
             ];

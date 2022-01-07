@@ -3,7 +3,7 @@
 //
 //  Script to creates a box for a Wemos D1 mini
 //
-//  Version 1.0 (01-01-2022)
+//  Version 1.0 (07-01-2022)
 //
 //---------------------------------------------------------
 include <./library/YAPPgenerator_v10.scad>
@@ -33,55 +33,55 @@ include <./library/YAPPgenerator_v10.scad>
                           LEFT
 */
 // Edit these parameters for your own board dimensions
-wallThickness        = 1.5;
-bottomPlaneThickness = 1.0;
-topPlaneThickness    = 1.0;
+wallThickness       = 1.5;
+basePlaneThickness  = 1.0;
+lidPlaneThickness   = 1.0;
 
-bottomWallHeight  = 4;
-topWallHeight     = 4;
+baseWallHeight      = 4;
+lidWallHeight       = 4;
 
-printTop          = true;
-printBottom       = true;
+printLid            = true;
+printBase           = true;
 
 //-- D E B U G -------------------
-showSideBySide    = true;
-showTop           = true;
-colorTop          = "yellow";
-showBottom        = true;
-colorBottom       = "white";
-showPCB           = false;
-showMarkers       = false;
-intersectX        = 0;  // 0=none, 1 .. pcbLength
+showSideBySide      = true;
+showLid             = true;
+colorLid            = "yellow";
+showBase            = true;
+colorBase           = "white";
+showPCB             = false;
+showMarkers         = false;
+inspectX            = 0;  // 0=none, 1 .. pcbLength
 //-- D E B U G -------------------
 
-// Total height of box = bottomPlaneThickness + topPlaneThickness 
-//                     + bottomWallHeight + topWallHeight
-pcbLength        = 35.0;
-pcbWidth         = 26.0;
-pcbThickness     = 1.0;
+// Total height of box = basePlaneThickness + lidPlaneThickness 
+//                     + baseWallHeight + lidWallHeight
+pcbLength           = 35.0;
+pcbWidth            = 26.0;
+pcbThickness        = 1.0;
                             
 // padding between pcb and inside wall
-paddingFront    = 1;
-paddingBack     = 1;
-paddingRight    = 1.5;
-paddingLeft     = 1.5;
+paddingFront        = 1;
+paddingBack         = 1;
+paddingRight        = 1.5;
+paddingLeft         = 1.5;
 
-// ridge where bottom and top off box can overlap
-// Make sure this isn't less than topWallHeight
-ridgeHeight     = 2;
-rounsRadius     = 1.5;
+// ridge where base and lid off box can overlap
+// Make sure this isn't less than lidWallHeight
+ridgeHeight         = 2;
+roundRadius         = 1.5;
 
-pinDiameter      = 1.8;
-standoffDiameter = 4;
+pinDiameter         = 1.8;
+standoffDiameter    = 4;
 
-// How much the PCB needs to be raised from the bottom
+// How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight = 2.0;
+standoffHeight      = 2.0;
 
 
 //-- pcb_standoffs  -- origin is pcb-0,0
 pcbStands = [//[ [0]posx, [1]posy
-             //       , [2]{yappBoth|yappTopOnly|yappBottomOnly}
+             //       , [2]{yappBoth|yappLidOnly|yappBaseOnly}
              //       , [3]{yappHole|yappPin} ]
                  [3.4,  3, yappBoth, yappPin]                    // back-left
                , [3.4,  pcbWidth-3, yappBoth, yappHole]         // back-right
@@ -95,16 +95,16 @@ cutoutsFront = [//[ [0]pcb_y, [1]pcb_z, [2]width, [3]height
                  [14, 1, 12, 10, yappRectCenter]  // microUSB
               ];
 
-//-- top plane    -- origin is pcb-0,0
-cutoutsTop = [//[ pcb_x,  pcb_y, width, length
+//-- lid plane    -- origin is pcb-0,0
+cutoutsLid = [//[ pcb_x,  pcb_y, width, length
               //    , {yappRectOrg | yappRectCenterd | yappCircle} ]
                  [6, -1, 5, (pcbLength-12), yappRectOrg]           // left-header
                , [6, pcbWidth-4, 5, pcbLength-12, yappRectOrg]   // right-header
                , [18.7, 8.8, 2, 0, yappCircle]               // blue led
               ];
 
-//-- bottom plane -- origin is pcb-0,0
-cutoutsBottom = [//[ pcb_x,  pcb_y, width, length
+//-- base plane -- origin is pcb-0,0
+cutoutsBase = [//[ pcb_x,  pcb_y, width, length
                  //   , {yappRectOrg | yappRectCenter | yappCircle} ]
                   [6, -1, 5, (pcbLength-12), yappRectOrg]           // left-header
                 , [6, pcbWidth-4, 5, pcbLength-12, yappRectOrg]   // right-header

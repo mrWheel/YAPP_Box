@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.1 (09-01-2022)";
+Version="v1.3 (09-01-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -189,8 +189,9 @@ cutoutsRight = [//[[0]x_pos,  [1]z_pos, [2]width, [3]height ]
 //-- base mounts -- origen = [0,0,0]
 baseMounts   = [//-- [0]x/y-pos, [1]screwDiameter, [2]width, [3]height
                 // [4-7]yappLeft/yappRight/yappFront/yappBack
-                     [10, 3, 10, 3, yappLeft, yappRight, yappMountCenter]
-                   , [20, 3, 10, 3, yappBack, yappFront, yappMountCenter]
+                     [-5, 3, 10, 3, yappLeft, yappRight]
+                   , [40, 3, 6, 3, yappLeft, yappRight]
+                   , [40, 3, 10, 3, yappBack, yappFront, yappMountCenter]
                 //   , [10, 4, 15, 3, yappLeft, yappRight, yappMountCenter]
                 //   , [10, 4, 4, 3, yappFront]
                 //   , [10, 4, 4, 3, yappFront, yappMountCenter]
@@ -308,6 +309,8 @@ module printBaseMounts()
     //--------------------------------------------------------
     function calcScrwPos(p, l, ax, c) = (c==1) ? (ax/2)-(l/2)
                                                : p;
+    function minPos(p, r) = (p<(r*2))        ? r*2     : p;
+    function maxPos(p, l1, l2, r) = (p>(l1-(l2+(r*2)))) ? l1-(l2+(r*2)) : p;
     //--------------------------------------------------------
 
     //--------------------------------------------------------
@@ -321,7 +324,7 @@ module printBaseMounts()
                 (baseWallHeight+basePlaneThickness)*-1])
     {
       color("red") %cylinder(r=2,h=40, center=true);
-
+      
       for (bm = baseMounts)
       {
         c = isTrue(yappMountCenter, bm, 5);
@@ -333,12 +336,13 @@ module printBaseMounts()
         if (isTrue(yappLeft, bm, 4))
         {
             echo("printBaseMount: LEFT!!");
-            scrwX1pos = calcScrwPos(bm[0], bm[2], shellLength, c);
+            tmpMinPos = calcScrwPos(bm[0], bm[2], shellLength, c);
+            scrwX1pos=minPos(tmpMinPos, bm[1]);
             scrwX2pos = scrwX1pos + bm[2];
             echo("LEFT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
-        //--oneMount(bm, scrwX1pos, scrwX2pos)--
+          //--oneMount(bm, scrwX1pos, scrwX2pos)--
             oneMount(bm, scrwX1pos, scrwX2pos);
-          
+            
         } //  if yappLeft
         
         if (isTrue(yappRight, bm, 4))
@@ -350,9 +354,10 @@ module printBaseMounts()
             {
               translate([0,shellWidth*-1, 0])
               {
-                scrwX1pos = calcScrwPos(bm[0], bm[2], shellLength, c);
+                tmpPos = calcScrwPos(bm[0], bm[2], shellLength, c);
+                scrwX1pos=minPos(tmpPos, bm[1]);
                 scrwX2pos = scrwX1pos + bm[2];
-                echo("LEFT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
+                echo("RIGHT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
             //--oneMount(bm, scrwX1pos, scrwX2pos)--
                 oneMount(bm, scrwX1pos, scrwX2pos);
               }
@@ -374,9 +379,10 @@ module printBaseMounts()
                 {
                   translate([0,shellLength*-1, (bm[3]*-1)])
                   {
-                    scrwX1pos = calcScrwPos(bm[0], bm[2], shellWidth, c);
+                    tmpPos = calcScrwPos(bm[0], bm[2], shellWidth, c);
+                    scrwX1pos=minPos(tmpPos, bm[1]);
                     scrwX2pos = scrwX1pos + bm[2];
-                    echo("BACK:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
+                    echo("FRONT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
                 //--oneMount(bm, scrwX1pos, scrwX2pos)--
                     oneMount(bm, scrwX1pos, scrwX2pos);
                   }
@@ -396,7 +402,8 @@ module printBaseMounts()
             {
               translate([0,0,(bm[3]*-1)])
               {
-                scrwX1pos = calcScrwPos(bm[0], bm[2], shellWidth, c);
+                tmpPos = calcScrwPos(bm[0], bm[2], shellWidth, c);
+                scrwX1pos=minPos(tmpPos, bm[1]);
                 scrwX2pos = scrwX1pos + bm[2];
                 echo("BACK:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
             //--oneMount(bm, scrwX1pos, scrwX2pos)--

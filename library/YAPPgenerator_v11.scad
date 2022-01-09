@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.3 (09-01-2022)";
+Version="v1.1 (09-01-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel

@@ -1,7 +1,7 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This will generate a projectbox for a "Generic Arduino UNO"
+//  This will generate a projectbox for a "Counterfit 'fake' Arduino UNO"
 //
 //  Version 1.0 (12-01-2022)
 //
@@ -39,8 +39,8 @@ printBase         = true;
 printLid          = true;
 
 //-- Edit these parameters for your own board dimensions
-wallThickness       = 1.2;
-basePlaneThickness  = 1.0;
+wallThickness       = 1.5;
+basePlaneThickness  = 1.2;
 lidPlaneThickness   = 1.7;
 
 //-- Total height of box = basePlaneThickness + lidPlaneThickness 
@@ -70,8 +70,8 @@ roundRadius       = 2.0;
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
 standoffHeight    = 3.5;
-pinDiameter       = 2.8;
-standoffDiameter  = 4;
+pinDiameter       = 3.0;
+standoffDiameter  = 5.2;
 
 
 //-- D E B U G ----------------------------
@@ -111,20 +111,34 @@ pcbStands = [
 cutoutsLid =  [
                  [0, 31.5-1, 12.2+2, 11, yappRectangle]       // USB (right)
                , [0, 3.5-1, 12, 13.5, yappRectangle]          // Power Jack
-               , [29-1, 12.5-1, 8.5+2, 35+2,  yappRectangle]  // ATmega328
                , [17.2-1, 49.5-1, 5, 47.4+2,  yappRectangle]  // right headers
                , [26.5-1, 1-1, 5, 38+2,  yappRectangle]       // left headers
                , [65.5, 28.5, 8.0, 5.5,  yappRectangle, yappCenter]    // ICSP1
-               , [18.0, 45.5, 6.5, 8.0,  yappRectangle, yappCenter]    // ICSP2
                , [6, 49, 8, 0, yappCircle]                  // reset button
 //-- if space between pcb and LidPlane > 5.5 we do'n need holes for the elco's --
 //             , [18.0, 8.6, 7.2, 0, yappCircle]            // elco1
 //             , [26.0, 8.6, 7.2, 0, yappCircle]            // elco2
-//             , [21.5, 8.6, 7.2, 7, yappRectangle, yappCenter]        // connect elco's
-               , [28.2, 35.2, 5, 3.5, yappRectangle, yappCenter]       // TX/RX leds
-               , [28.2, 42.5, 3, 3.5, yappRectangle, yappCenter]       // led13
-               , [58.5, 37, 3, 3.5, yappRectangle, yappCenter]         // ON led
+//             , [21.5, 8.6, 7.2, 7, yappRectangle, yappCenter]  // connect elco's
+               , [21, 22.5, 3, 3.5, yappRectangle, yappCenter]   // led 13
+               , [21, 29, 3, 3.5, yappRectangle, yappCenter]     // TX
+               , [21, 35, 3, 3.5, yappRectangle, yappCenter]     // RX
+               , [21, 42, 3, 3.5, yappRectangle, yappCenter]     // PWR
               ];
+//-- base plane    -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = width
+// (3) = length
+// (4) = { yappRectangle | yappCircle }
+// (5) = { yappCenter }
+cutoutsBase =   [
+                    [45, 13, 30, 2, yappRectangle, yappCenter]
+                  , [50, 13, 30, 2, yappRectangle, yappCenter]
+                  , [55, 13, 30, 2, yappRectangle, yappCenter]
+                  , [60, 13, 30, 2, yappRectangle, yappCenter]
+                  , [65, 13, 30, 2, yappRectangle, yappCenter]
+                  , [70, 13, 30, 2, yappRectangle, yappCenter]
+                ];
 
 //-- back plane  -- origin is pcb[0,0,0]
 // (0) = posy
@@ -147,11 +161,12 @@ cutoutsBack = [
 // (5) = size
 // (6) = "label text"
 labelsLid = [
-               [5,  28,   0, "lid", "Arial:style=bold", 5, "Arduino UNO" ]
-             , [57, 33,  90, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
-             , [35, 36,   0, "lid", "Liberation Mono:style=bold", 3, "RX" ]
-             , [35, 40.5, 0, "lid", "Liberation Mono:style=bold", 3, "TX" ]
-             , [35, 45.6, 0, "lid", "Liberation Mono:style=bold", 3, "13" ]
+               [30,  14,   0, "lid", "Arial:style=bold", 4, "Arduino FAKE" ]
+             , [57, 25,  90, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+             , [28, 23,   0, "lid", "Liberation Mono:style=bold", 4, "L13" ]
+             , [28, 30, 0, "lid", "Liberation Mono:style=bold", 4, "TX" ]
+             , [28, 36, 0, "lid", "Liberation Mono:style=bold", 4, "RX" ]
+             , [28, 43, 0, "lid", "Liberation Mono:style=bold", 4, "PWR" ]
             ];
 
 

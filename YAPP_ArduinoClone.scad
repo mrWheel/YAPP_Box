@@ -1,9 +1,9 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This will generate a projectbox for a "Counterfit 'fake' Arduino UNO"
+//  This will generate a projectbox for a "Arduino UNO 'clone'"
 //
-//  Version 1.0 (12-01-2022)
+//  Version 1.1 (13-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -35,8 +35,8 @@ include <./library/YAPPgenerator_v11.scad>
 */
 
 //-- which half do you want to print?
-printBase         = true;
-printLid          = true;
+printBaseShell    = true;
+printLidShell     = true;
 
 //-- Edit these parameters for your own board dimensions
 wallThickness       = 1.5;
@@ -49,7 +49,7 @@ lidPlaneThickness   = 1.7;
 //--      (baseWallHeight+lidWall_heigth) - (standoff_heigth+pcbThickness)
 //--      (6.2 + 4.5) - (3.5 + 1.5) ==> 5.7
 baseWallHeight    = 6.2;
-lidWallHeight     = 4.5;
+lidWallHeight     = 5.0;
 
 //-- pcb dimensions
 pcbLength         = 68.5;
@@ -78,9 +78,9 @@ standoffDiameter  = 5.2;
 showSideBySide    = true;       //-> true
 onLidGap          = 5;
 shiftLid          = 1;
-showLid           = true;       //-> true
+hideLidWalls      = false;      //-> false
 colorLid          = "yellow";   
-showBase          = true;       //-> true
+hideBaseWalls     = false;       //-> false
 colorBase         = "white";
 showPCB           = false;      //-> false
 showMarkers       = false;      //-> false
@@ -113,16 +113,16 @@ cutoutsLid =  [
                , [0, 3.5-1, 12, 13.5, yappRectangle]          // Power Jack
                , [17.2-1, 49.5-1, 5, 47.4+2,  yappRectangle]  // right headers
                , [26.5-1, 1-1, 5, 38+2,  yappRectangle]       // left headers
-               , [65.5, 28.5, 8.0, 5.5,  yappRectangle, yappCenter]    // ICSP1
+               , [64.5, 28.5, 8.0, 6.0,  yappRectangle, yappCenter]    // ICSP1
                , [6, 49, 8, 0, yappCircle]                  // reset button
 //-- if space between pcb and LidPlane > 5.5 we do'n need holes for the elco's --
 //             , [18.0, 8.6, 7.2, 0, yappCircle]            // elco1
 //             , [26.0, 8.6, 7.2, 0, yappCircle]            // elco2
 //             , [21.5, 8.6, 7.2, 7, yappRectangle, yappCenter]  // connect elco's
-               , [21, 22.5, 3, 3.5, yappRectangle, yappCenter]   // led 13
-               , [21, 29, 3, 3.5, yappRectangle, yappCenter]     // TX
-               , [21, 35, 3, 3.5, yappRectangle, yappCenter]     // RX
-               , [21, 42, 3, 3.5, yappRectangle, yappCenter]     // PWR
+               , [26, 22.5, 3, 3.5, yappRectangle, yappCenter]   // led 13
+               , [26, 29, 3, 3.5, yappRectangle, yappCenter]     // TX
+               , [26, 35, 3, 3.5, yappRectangle, yappCenter]     // RX
+               , [26, 42, 3, 3.5, yappRectangle, yappCenter]     // PWR
               ];
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -160,13 +160,13 @@ cutoutsBack = [
 // (4) = font
 // (5) = size
 // (6) = "label text"
-labelsLid = [
-               [30,  14,   0, "lid", "Arial:style=bold", 4, "Arduino FAKE" ]
-             , [57, 25,  90, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
-             , [28, 23,   0, "lid", "Liberation Mono:style=bold", 4, "L13" ]
-             , [28, 30, 0, "lid", "Liberation Mono:style=bold", 4, "TX" ]
-             , [28, 36, 0, "lid", "Liberation Mono:style=bold", 4, "RX" ]
-             , [28, 43, 0, "lid", "Liberation Mono:style=bold", 4, "PWR" ]
+labelsPlane = [
+               [28, 14,  0, "lid", "Arial:style=bold", 4, "Arduino CLONE" ]
+             , [57, 25, 90, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+             , [33, 23,  0, "lid", "Liberation Mono:style=bold", 4, "L13" ]
+             , [33, 30,  0, "lid", "Liberation Mono:style=bold", 4, "TX" ]
+             , [33, 36,  0, "lid", "Liberation Mono:style=bold", 4, "RX" ]
+             , [33, 43,  0, "lid", "Liberation Mono:style=bold", 4, "PWR" ]
             ];
 
 

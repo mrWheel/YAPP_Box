@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 1.1 (12-01-2022)
+//  Version 1.1 (13-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -35,7 +35,7 @@ include <./library/YAPPgenerator_v11.scad>
 */
 
 printBaseShell      = true;
-printLidShell       = false;
+printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
 wallThickness       = 2.0;
@@ -70,12 +70,12 @@ standoffDiameter    = 5;
 standoffHeight      = 4.0;
 
 //-- D E B U G -------------------
-showSideBySide      = false;
-showLid             = true;
+showSideBySide      = true;
+hideLidWalls        = false;
 onLidGap            = 4;
 shiftLid            = 10;
 colorLid            = "yellow";
-showBase            = true;
+hideBaseWalls       = false;
 colorBase           = "white";
 showPCB             = false;
 showMarkers         = false;
@@ -104,7 +104,7 @@ pcbStands = [
 // (5) = { yappCenter }
 cutoutsLid =  [
                     [20, 20, 10, 20, yappRectangle]  
-                  , [20, 50, 10, 20, yappRectangle, yappCenter]
+               //   , [20, 50, 10, 20, yappRectangle, yappCenter]
                   , [50, 50, 10, 2, yappCircle]
                   , [pcbLength-10, 20, 15, 0, yappCircle] 
                   , [50, pcbWidth, 5, 7, yappRectangle, yappCenter]
@@ -213,7 +213,7 @@ baseMounts   = [
 // (4) = font
 // (5) = size
 // (6) = "label text"
-labelsLid =    [
+labelsPlane =  [
                     [10,  10,   0, "lid",   "Liberation Mono:style=bold", 7, "YAPP" ]
                   , [100, 90, 180, "base",  "Liberation Mono:style=bold", 7, "Base" ]
                   , [8,    8,   0, "left",  "Liberation Mono:style=bold", 7, "Left" ]

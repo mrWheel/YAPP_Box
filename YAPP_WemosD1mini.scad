@@ -3,7 +3,7 @@
 //
 //  Script to creates a box for a Wemos D1 mini
 //
-//  Version 1.1 (12-01-2022)
+//  Version 1.1 (13-01-2022)
 //
 //---------------------------------------------------------
 include <./library/YAPPgenerator_v11.scad>
@@ -32,6 +32,10 @@ include <./library/YAPPgenerator_v11.scad>
         0    X-as --->
                           LEFT
 */
+
+printLidShell       = true;
+printBaseShell      = true;
+
 // Edit these parameters for your own board dimensions
 wallThickness       = 1.5;
 basePlaneThickness  = 1.0;
@@ -40,16 +44,13 @@ lidPlaneThickness   = 1.0;
 baseWallHeight      = 5;
 lidWallHeight       = 3;
 
-printLid            = true;
-printBase           = true;
-
 //-- D E B U G -------------------
 showSideBySide      = true;
 onLidGap            = 3;
 shiftLid            = 0;
-showLid             = true;
+hideLidWalls        = false;
 colorLid            = "yellow";
-showBase            = true;
+hideBaseWalls       = false;
 colorBase           = "white";
 showPCB             = false;
 showMarkers         = false;
@@ -127,7 +128,7 @@ cutoutsBase =   [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsFront =  [
-                  [2.5, 0, 12, 5, yappRectangle, yappCenter]         // microUSB
+                  [14.0, 1.0, 12.0, 7, yappRectangle, yappCenter]  // microUSB
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -138,7 +139,7 @@ cutoutsFront =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsLeft =   [
-                  [28, -0.5, 4.5, 3, yappRectangle, yappCenter]      // reset button
+                  [31.0, 0.5, 4.5, 3, yappRectangle, yappCenter]    // reset button
                 ];
 
 //-- origin of labels is box [0,0,0]
@@ -149,7 +150,7 @@ cutoutsLeft =   [
 // (4) = font
 // (5) = size
 // (6) = "label text"
-labelsLid =     [
+labelsPlane =   [
                 ];
 
 //--- this is where the magic happens ---

@@ -35,8 +35,8 @@ include <./library/YAPPgenerator_v11.scad>
 */
 
 //-- which half do you want to print?
-printBase         = true;
-printLid          = true;
+printBaseShell    = true;
+printLidShell     = true;
 
 //-- Edit these parameters for your own board dimensions
 wallThickness       = 1.2;
@@ -75,15 +75,15 @@ standoffDiameter  = 4;
 
 
 //-- D E B U G ----------------------------
-showSideBySide    = true;       //-> true
+showSideBySide    = true;     //-> true
 onLidGap          = 5;
 shiftLid          = 1;
-showLid           = true;       //-> true
+hideLidWalls      = false;    //-> false
 colorLid          = "yellow";   
-showBase          = true;       //-> true
+hideBaseWalls     = false;    //-> false
 colorBase         = "white";
-showPCB           = false;      //-> false
-showMarkers       = false;      //-> false
+showPCB           = false;    //-> false
+showMarkers       = false;    //-> false
 inspectX          = 0;  //-> 0=none (>0 from front, <0 from back)
 inspectY          = 0;  //-> 0=none (>0 from front, <0 from back)
 //-- D E B U G ----------------------------
@@ -146,13 +146,13 @@ cutoutsBack = [
 // (4) = font
 // (5) = size
 // (6) = "label text"
-labelsLid = [
-               [5,  28,   0, "lid", "Arial:style=bold", 5, "Arduino UNO" ]
-             , [57, 33,  90, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
-             , [35, 36,   0, "lid", "Liberation Mono:style=bold", 3, "RX" ]
-             , [35, 40.5, 0, "lid", "Liberation Mono:style=bold", 3, "TX" ]
-             , [35, 45.6, 0, "lid", "Liberation Mono:style=bold", 3, "13" ]
-            ];
+labelsPlane = [
+                [5,  28,   0, "lid", "Arial:style=bold", 5, "Arduino UNO" ]
+              , [57, 33,  90, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+              , [35, 36,   0, "lid", "Liberation Mono:style=bold", 3, "RX" ]
+              , [35, 40.5, 0, "lid", "Liberation Mono:style=bold", 3, "TX" ]
+              , [35, 45.6, 0, "lid", "Liberation Mono:style=bold", 3, "13" ]
+              ];
 
 
 YAPPgenerate();

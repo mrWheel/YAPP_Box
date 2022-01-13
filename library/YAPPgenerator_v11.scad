@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.1 (12-01-2022)";
+Version="v1.1 (13-01-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -78,19 +78,19 @@ paddingRight        = 1;
 paddingLeft         = 1;
 
 
-//-- D E B U G ----------------------------
-showSideBySide      = true;       //-> true
+//-- D E B U G -----------------//-> Default ---------
+showSideBySide      = true;     //-> true
 onLidGap            = 3;
 shiftLid            = 1;
-showLid             = true;       //-> true
+hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
-showBase            = true;       //-> true
+hideBaseWalls       = false;    //-> false
 colorBase           = "white";
-showPCB             = false;      //-> false
-showMarkers         = false;      //-> false
-inspectX            = 0;  //-17;  //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;          //-> 0=none (>0 from left, <0 from right)
-//-- D E B U G ----------------------------
+showPCB             = false;    //-> false
+showMarkers         = false;    //-> false
+inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
+inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
+//-- D E B U G ---------------------------------------
 
 /*
 ********* don't change anything below this line ***************
@@ -139,7 +139,6 @@ pcbStands =    [
                 //   , [pcbLength-10,  pcbWidth-3, yappBoth, yappPin]
                ];
 
-
 //-- Lid plane    -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -167,7 +166,7 @@ cutoutsBase =   [
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
-// (0) = posx
+// (0) = posy
 // (1) = posz
 // (2) = width
 // (3) = height
@@ -254,7 +253,7 @@ baseMounts   =  [
 // (4) = font
 // (5) = size
 // (6) = "label text"
-labelsLid =     [
+labelsPlane =   [
                       [5, 5, 0, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
                 ];
 
@@ -269,6 +268,7 @@ function isTrue(w, aw, from) = ((   w==aw[from]
                                  || w==aw[from+5]  
                                  || w==aw[from+6] ) ? 1 : 0);  
 function minOutside(o, d) = ((((d*2)+1)>=o) ? (d*2)+1 : o);  
+//function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
 
 //===========================================================
@@ -822,12 +822,13 @@ module cutoutsInXZ(type)
         }
         else if (cutOut[4]==yappRectangle && cutOut[5]==yappCenter)
         {
-          posx=pcbX+cutOut[0]+(cutOut[2]/2);
+          posx=pcbX+cutOut[0]-(cutOut[2]/2);
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
           //echo("LEFT (c):", posx=posx, posz=posz);
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);
+          //newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);  // 12-01-2022
+          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);    // 13-01-2022
           //if (type=="base") echo("LEFT: newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([posx, -1, posz])
             color("blue")
@@ -870,7 +871,8 @@ module cutoutsInXZ(type)
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);
+          //newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);  // 12-01-2022
+          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);    // 13-01-2022
           //if (type=="base") echo("LEFT: newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([posx, shellWidth-(wallThickness+roundRadius+1), posz])
               color("orange")
@@ -924,12 +926,13 @@ module cutoutsInYZ(type)
         }
         else if (cutOut[4]==yappRectangle && cutOut[5]==yappCenter)
         {
-          posy=pcbY+cutOut[0]+(cutOut[2]/2);                      //[0]posY+([2]width/2)
+          posy=pcbY+cutOut[0]-(cutOut[2]/2);                      //[0]posY+([2]width/2)
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);  //[1]posZ+([3]height/2)
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);
+          //newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);  // 12-01-2022
+          newH=newHeight(type, cutOut[3]/2, z, t)+(cutOut[3]/2);    // 13-01-2022
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-          echo("FRONT newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
+          //echo("FRONT newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([shellLength-wallThickness-roundRadius-1, posy, posz])
             color("purple")
               cube([wallThickness+roundRadius+2, cutOut[2], newH]);
@@ -971,7 +974,7 @@ module cutoutsInYZ(type)
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);
+          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
           //if (type=="base") echo("BACK newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([-1, posy, posz])
               color("orange")
@@ -996,7 +999,7 @@ module cutoutsInYZ(type)
 //===========================================================
 module subtractLabels(plane, side)
 {
-  for ( label = labelsLid )
+  for ( label = labelsPlane )
   {
     // [0]x_pos, [1]y_pos, [2]orientation, [3]plane, [4]font, [5]size, [6]"text" 
         
@@ -1222,9 +1225,6 @@ module baseShell()
       wall = wallThickness/2;
       oRad = rad;
       iRad = getMinRad(oRad, wall);
-    
-      //echo("Ridge:", L=L, W=W, H=H, rad=rad, wallThickness=wallThickness);
-      //echo("Ridge:", L2=L-(rad*2), W2=W-(rad*2), H2=H, oRad=oRad, iRad=iRad);
 
       difference()
       {
@@ -1247,16 +1247,16 @@ module baseShell()
         //-- hollow inside
         translate([0, 0, posZ])
         {
-          //color("green")
           linear_extrude(H+1)
           {
-              minkowski()
-              {
-                square([L-((iRad*2)), W-((iRad*2))], center=true);
+            minkowski()
+            {
+              square([(L)-((iRad*2)), (W)-((iRad*2))], center=true);
                 circle(iRad, center=true);
-              }
-            
+            }
+          
           } // linear_extrude..
+            
         } // translate()
       
         
@@ -1276,17 +1276,30 @@ module baseShell()
     {
        minkowskiBox("base", shellInsideLength, shellInsideWidth, baseWallHeight, 
                      roundRadius, basePlaneThickness, wallThickness);
-      //--- cutoff upper half
-      translate([-1,-1,shellHeight/2])
+      if (hideBaseWalls)
       {
-        cube([shellLength+3, shellWidth+3, shellHeight], center=true);
-      } // translate
-    
-      //-- build ridge
-      subtrbaseRidge(shellInsideLength+wallThickness, 
-                      shellInsideWidth+wallThickness, 
-                      ridgeHeight, 
-                      (ridgeHeight*-1), roundRadius);
+        //--- wall's
+        translate([-1,-1,shellHeight/2])
+        {
+          cube([shellLength+3, shellWidth+3, 
+                shellHeight+((baseWallHeight*2)-(basePlaneThickness+roundRadius))], 
+                center=true);
+        } // translate
+      }
+      else  //-- normal
+      {
+        //--- only cutoff upper half
+        translate([-1,-1,shellHeight/2])
+        {
+          cube([shellLength+3, shellWidth+3, shellHeight], center=true);
+        } // translate
+      
+        //-- build ridge
+        subtrbaseRidge(shellInsideLength+wallThickness, 
+                        shellInsideWidth+wallThickness, 
+                        ridgeHeight, 
+                        (ridgeHeight*-1), roundRadius);
+      }
       
     } // difference(b)
       
@@ -1367,23 +1380,40 @@ module lidShell()
     {
       minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, 
                    roundRadius, lidPlaneThickness, wallThickness);
-      
-      //--- cutoff lower halve
-      translate([((shellLength/2)+2)*-1,(shellWidth/2)*-1,shellHeight*-1])
+      if (hideLidWalls)
       {
-        color("black")
-        cube([(shellLength+3)*1, (shellWidth+3)*1, shellHeight], center=false);
-      
-      } // translate
+        //--- cutoff wall
+        translate([((shellLength/2)+2)*-1,(shellWidth/2)*-1,shellHeight*-1])
+        {
+          color("black")
+          cube([(shellLength+3)*1, (shellWidth+3)*1, 
+                  shellHeight+(lidWallHeight+lidPlaneThickness-roundRadius)], 
+                  center=false);
+          
+        } // translate
+
+      }
+      else  //-- normal
+      {
+        //--- cutoff lower halve
+        translate([((shellLength/2)+2)*-1,(shellWidth/2)*-1,shellHeight*-1])
+        {
+          color("black")
+          cube([(shellLength+3)*1, (shellWidth+3)*1, shellHeight], center=false);
+        } // translate
+
+      } //  if normal
 
     } // difference(d1)
   
-    //-- add ridge
-    addlidRidge(shellInsideLength+wallThickness, 
-                shellInsideWidth+wallThickness, 
-                newRidge(ridgeHeight), 
-                roundRadius);
-  
+    if (!hideLidWalls)
+    {
+      //-- add ridge
+      addlidRidge(shellInsideLength+wallThickness, 
+                  shellInsideWidth+wallThickness, 
+                  newRidge(ridgeHeight), 
+                  roundRadius);
+    }
   } // translate
 
   pcbPushdowns();
@@ -1629,7 +1659,6 @@ module YAPPgenerate()
 //===========================================================
 {
   echo("YAPP==========================================");
-  echo("YAPP:", Version=Version);
   echo("YAPP:", wallThickness=wallThickness);
   echo("YAPP:", roundRadius=roundRadius);
   echo("YAPP:", shellLength=shellLength);
@@ -1648,6 +1677,7 @@ module YAPPgenerate()
   echo("YAPP:", shiftLid=shiftLid);
   echo("YAPP:", onLidGap=onLidGap);
   echo("YAPP==========================================");
+  echo("YAPP:", Version=Version);
   echo("YAPP:   copyright by Willem Aandewiel");
   echo("YAPP==========================================");
   

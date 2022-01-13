@@ -14,9 +14,9 @@ request.
 
 ## TO DO
 
-* I want rounded corners! Do you have an idear howto do that??
+* <strike>I want rounded corners! Do you have an idear howto do that??</strike> (done)
 * modules (Hooks) that can be (re)defined by the user (almost there ;-))
-* screw connector between the top- and bottomPlanes (for bigger boxes)
+* <strike>screw connector between the top- and bottomPlanes (for bigger boxes)</strike> (done)
 * snap-ons in the ridges
 * a lot more ..
 

@@ -3,7 +3,7 @@
 //
 //  This is a box for ESP32-CAM-USB
 //
-//  Version 1.0 (21-01-2022)
+//  Version 1.0 (22-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -35,7 +35,7 @@ include <./library/YAPPgenerator_v11.scad>
 */
 
 printBaseShell      = true;
-printLidShell       = false;
+printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
 wallThickness       = 2.0;
@@ -70,7 +70,7 @@ standoffDiameter    = 3.5;
 standoffHeight      = 2.0;
 
 //-- D E B U G -------------------
-showSideBySide      = false;
+showSideBySide      = true;
 hideLidWalls        = false;
 onLidGap            = 6;
 shiftLid            = 10;
@@ -118,16 +118,15 @@ cutoutsLid =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBase =   [
-                    [14, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [17, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [20, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [23, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [26, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [29, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [32, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [35, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [38, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
-                  , [41, (pcbWidth/2)-7, 15, 1.5, yappRectangle, yappCenter]
+                    [ 8, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [11, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [14, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [17, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [20, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [23, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [26, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [29, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [32, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]

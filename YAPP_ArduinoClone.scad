@@ -113,7 +113,7 @@ cutoutsLid =  [
                , [0, 3.5-1, 12, 13.5, yappRectangle]          // Power Jack
                , [17.2-1, 49.5-1, 5, 47.4+2,  yappRectangle]  // right headers
                , [26.5-1, 1-1, 5, 38+2,  yappRectangle]       // left headers
-               , [64.5, 28.5, 8.0, 6.0,  yappRectangle, yappCenter]    // ICSP1
+               , [66.5, 27.5, 8.0, 6.5,  yappRectangle, yappCenter]    // ICSP1
                , [6, 49, 8, 0, yappCircle]                  // reset button
 //-- if space between pcb and LidPlane > 5.5 we do'n need holes for the elco's --
 //             , [18.0, 8.6, 7.2, 0, yappCircle]            // elco1

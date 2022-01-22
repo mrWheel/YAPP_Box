@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.1 (13-01-2022)";
+Version="v1.1 (21-01-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -716,8 +716,8 @@ module cutoutsInXY(type)
         }
         else if (cutOut[4]==yappRectangle && cutOut[5]==yappCenter)  // center around x/y
         {
-          posx=pcbX+(cutOut[0]-(cutOut[2]/2));
-          posy=pcbY+(cutOut[1]-(cutOut[3]/2));
+          posx=pcbX+(cutOut[0]-(cutOut[3]/2));
+          posy=pcbY+(cutOut[1]-(cutOut[2]/2));
           //if (type=="base")
           //      echo("XY-base:", posx=posx, posy=posy, zPos=zPos);
           //else  echo("XY-lid:", posx=posx, posy=posy, zPos=zPos);
@@ -1645,12 +1645,14 @@ module showOrientation()
 module lidHook()
 {
   //echo("lidHook(original) ..");
+  
 } // lidHook(dummy)
 
 //===========================================================
 module baseHook()
 {
   //echo("baseHook(original) ..");
+  
 } // baseHook(dummy)
 
 
@@ -1751,7 +1753,8 @@ module YAPPgenerate()
         } //  difference(a)
         
         showOrientation();
-        
+        //-- maybe -- shellConnectors("base");
+
       } // if printBaseShell ..
       
       
@@ -1768,6 +1771,8 @@ module YAPPgenerate()
               //posZ00=0;
               translate([0, (5 + shellWidth+(shiftLid/2))*-2, 0])
               {
+                lidHook();
+                
                 difference()  // (t1)
                 {
                   lidShell();
@@ -1840,6 +1845,8 @@ module YAPPgenerate()
           translate([0, 0, (baseWallHeight+basePlaneThickness+
                             lidWallHeight+lidPlaneThickness+onLidGap)])
           {
+            lidHook();
+            
             difference()  // (t2)
             {
               lidShell();

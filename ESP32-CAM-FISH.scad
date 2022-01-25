@@ -203,6 +203,7 @@ baseMounts   = [
 labelsPlane =  [
                ];
                
+//-------------------------------------------------------------
 module baseHook()
 {
   translate([(shellLength/2)-7.5,shellWidth-wallThickness,2])
@@ -229,6 +230,7 @@ module baseHook()
   
 } //  baseHook()
 
+//-------------------------------------------------------------
 module lidHook()
 {
   // lensHole X is @ 9

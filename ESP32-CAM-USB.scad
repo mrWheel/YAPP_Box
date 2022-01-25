@@ -1,9 +1,9 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for ESP32-CAM-USB
+//  This is a box for ESP32-CAM-USB (normal lens)
 //
-//  Version 1.0 (22-01-2022)
+//  Version 1.0 (25-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -42,8 +42,8 @@ wallThickness       = 2.0;
 basePlaneThickness  = 2.0;
 lidPlaneThickness   = 2.0;
 
-baseWallHeight      = 15;
-lidWallHeight       = 3;
+baseWallHeight      = 16;
+lidWallHeight       = 6;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
@@ -59,7 +59,7 @@ paddingLeft         = 1.2;  // due to the I00 switch
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 2;
+ridgeHeight         = 3.0;
 roundRadius         = 2.0;
 
 pinDiameter         = 0.5;  // no pin so hole can be as small as possible
@@ -77,7 +77,7 @@ shiftLid            = 10;
 colorLid            = "yellow";
 hideBaseWalls       = false;
 colorBase           = "white";
-showPCB             = true;
+showPCB             = false;
 showMarkers         = false;
 inspectX            = 0;  // 0=none, >0 from front, <0 from back
 inspectY            = 0;  // 0=none, >0 from left, <0 from right
@@ -103,11 +103,11 @@ pcbStands = [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsLid =  [
-                  [8, ((pcbWidth/2)+0.5), 11, 20, yappCircle]       // lens
+                  [8,  ((pcbWidth/2)+0.5), 9, 20, yappCircle]       // lens
+                , [8,  ((pcbWidth/2)+0.5), 9, 20, yappCircle]       // lens
+                , [9,  ((pcbWidth/2)+0.5), 9, 20, yappCircle]       // lens
+                , [10, ((pcbWidth/2)+0.5), 9, 20, yappCircle]       // lens
                 , [30, pcbWidth-5, 6, 6, yappRectangle, yappCenter] // flash LED
-               // , [50, 50, 10, 2, yappCircle]
-               // , [pcbLength-10, 20, 15, 0, yappCircle] 
-               // , [50, pcbWidth, 5, 7, yappRectangle, yappCenter]
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -118,15 +118,16 @@ cutoutsLid =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBase =   [
-                    [ 8, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [11, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [14, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [17, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [20, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [23, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [26, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [29, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [32, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                    [ 8, (pcbWidth/2),  7, 1.5, yappRectangle, yappCenter]
+                  , [11, (pcbWidth/2), 10, 1.5, yappRectangle, yappCenter]
+                  , [14, (pcbWidth/2), 12, 1.5, yappRectangle, yappCenter]
+                  , [17, (pcbWidth/2), 14, 1.5, yappRectangle, yappCenter]
+                  , [20, (pcbWidth/2), 16, 1.5, yappRectangle, yappCenter]
+                  , [23, (pcbWidth/2), 16, 1.5, yappRectangle, yappCenter]
+                  , [26, (pcbWidth/2), 14, 1.5, yappRectangle, yappCenter]
+                  , [29, (pcbWidth/2), 12, 1.5, yappRectangle, yappCenter]
+                  , [32, (pcbWidth/2), 10, 1.5, yappRectangle, yappCenter]
+                  , [35, (pcbWidth/2),  7, 1.5, yappRectangle, yappCenter]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -137,7 +138,7 @@ cutoutsBase =   [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsFront =  [
-                   [pcbWidth/2, -11, 11, 4, yappRectangle, yappCenter] // USB connector
+                   [pcbWidth/2, -10, 12, 8, yappRectangle, yappCenter] // USB connector
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -148,7 +149,7 @@ cutoutsFront =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBack =   [
-                //   [13, -1, 15, 4, yappRectangle, yappCenter] 
+                   [14, 1, 15, 6, yappRectangle, yappCenter] // SD slot
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -204,6 +205,7 @@ baseMounts   = [
 labelsPlane =  [
                ];
                
+//-------------------------------------------------------------
 module baseHook()
 {
   translate([(shellLength/2)-7.5,shellWidth-wallThickness,5])

@@ -1,9 +1,12 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for ESP32-CAM
+//  This is a box for ESP32-CAM-USB-FISH (Fisheye lens)
 //
-//  Version 1.0 (23-01-2022)
+//  Version 1.1 (23-01-2022)
+//
+//  Due to the different lid- and base position you need
+//  to make separate STL files of both!
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -42,32 +45,32 @@ wallThickness       = 2.0;
 basePlaneThickness  = 2.0;
 lidPlaneThickness   = 2.0;
 
-baseWallHeight      = 12;
+baseWallHeight      = 16;
 lidWallHeight       = 6;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
 pcbLength           = 40;
 pcbWidth            = 27.5;
-pcbThickness        = 1.5;
+pcbThickness        = 14; // both ESP32CAM and USB board
                             
 // padding between pcb and inside wall
 paddingFront        = 0.3;
 paddingBack         = 0.3;
-paddingRight        = 0.3;
-paddingLeft         = 0.3;
+paddingRight        = 1.2;  // due to the RST switch
+paddingLeft         = 1.2;  // due to the I00 switch
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3;
+ridgeHeight         = 3.0;
 roundRadius         = 2.0;
 
-pinDiameter         = 0.5;
+pinDiameter         = 0.5;  // no pin so hole can be as small as possible
 standoffDiameter    = 3.5;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 11.0;
+standoffHeight      = 2.0;
 
 //-- D E B U G -------------------
 showSideBySide      = true;
@@ -77,8 +80,8 @@ shiftLid            = 10;
 colorLid            = "yellow";
 hideBaseWalls       = false;
 colorBase           = "white";
-showPCB             = false;
-showMarkers         = true;
+showPCB             = true;
+showMarkers         = false;
 inspectX            = 0;  // 0=none, >0 from front, <0 from back
 inspectY            = 0;  // 0=none, >0 from left, <0 from right
 
@@ -103,11 +106,9 @@ pcbStands = [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsLid =  [
-                  [8,  ((pcbWidth/2)+0.5), 9, 20, yappCircle]         // lens
-                , [9,  ((pcbWidth/2)+0.5), 9, 20, yappCircle]         // lens
-                , [10, ((pcbWidth/2)+0.5), 9, 20, yappCircle]         // lens
-                , [30, pcbWidth-3, 6, 6, yappRectangle, yappCenter]   // flash LED
-              ];
+                  [9, ((pcbWidth/2)+0.5),12, 20, yappCircle]        // lens
+                , [30, pcbWidth-5, 6, 6, yappRectangle, yappCenter] // flash LED
+                ];
 
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -117,16 +118,15 @@ cutoutsLid =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBase =   [
-                    [7,  (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [10, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [13, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [16, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [19, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [22, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [25, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [28, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [31, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [34, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                    [ 8, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [11, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [14, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [17, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [20, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [23, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [26, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [29, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
+                  , [32, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -137,6 +137,7 @@ cutoutsBase =   [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsFront =  [
+                   [pcbWidth/2, -10, 12, 8, yappRectangle, yappCenter] // USB connector
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -147,7 +148,7 @@ cutoutsFront =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBack =   [
-                   [13, 0, 15, 6, yappRectangle, yappCenter] // SD card
+                   [14, 0, 15, 5, yappRectangle, yappCenter] // SD slot
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -168,7 +169,6 @@ cutoutsLeft =   [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsRight =  [
-                    [shellLength-13, -7, 4, 6.5, yappRectangle] // power cord
                 ];
 
 //-- connectors -- origen = box[0,0,0]
@@ -204,9 +204,10 @@ baseMounts   = [
 labelsPlane =  [
                ];
                
+//-------------------------------------------------------------
 module baseHook()
 {
-  translate([(shellLength/2)-7.5,shellWidth-wallThickness,1])
+  translate([(shellLength/2)-7.5,shellWidth-wallThickness,5])
   {
     difference()
     {
@@ -222,16 +223,37 @@ module baseHook()
         rotate([0,90,0])
           color("red") cylinder(d=4.5, h=17);
       }
-      translate([4.8,0,-0.5])
-        cube([5.4,16,11]);
+      translate([5,0,-0.5])
+        cube([5,16,11]);
     }
   
   } // translate
   
 } //  baseHook()
 
+//-------------------------------------------------------------
 module lidHook()
 {
+  // lensHole X is @ 9
+  // Y is @ (pcbWidth/2)+0.5)
+  // Diameter is 11
+  translate([pcbX+9,pcbY+(pcbWidth/2)+0.5,0])
+  {
+    difference()
+    {
+      cylinder(d=15, h=3);
+      cylinder(d=12, h=5);
+    }
+  }
+  translate([30,(pcbWidth-5),0])
+  {
+    difference()
+    {
+                  // [30, pcbWidth-5, 6, 6, yappRectangle, yappCenter] // flash LED
+      translate([-1.5,-1,0]) cube([8,8,3]);
+      translate([-.5,0,0]) cube([6,6,4]);
+    }
+  }
   
 } //  lidHook()
 

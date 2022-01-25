@@ -1,10 +1,12 @@
 /**
 * stand for ESP32-CAM box
+* Version 1.1 (23-01-2022)
 **/
 
-$fn=50;
+$fn=80;
 
 
+//-----------------------------------------------------------------
 module connector()
 {
   {
@@ -30,6 +32,7 @@ module connector()
 } //  connector()
 
 
+//-----------------------------------------------------------------
 module cableHooks()
 {
   difference()
@@ -38,52 +41,55 @@ module cableHooks()
     {
     translate([9,0,5]) 
       rotate([90,0,90])
-        color("red") cylinder(d=5, h=2); 
-    translate([9,-2.5,3]) 
-      color("red") cube([2,5,2]);
+        color("red") cylinder(d=8, h=3); 
+    translate([9,-4,1]) 
+      color("red") cube([3,8,4]);
     }
-    translate([8.5,0,5.5]) 
+    translate([8.5,0,5]) 
       rotate([90,0,90])
-        color("green") cylinder(d=2.5, h=3);
-    translate([8.5,-1.2,3]) 
-      cube([3,4,2.3]);
+        color("green") cylinder(d=5, h=4);
+    translate([8.5,0,3]) 
+      cube([4,4,3.0]);
   }
   difference()
   {
     union()
     {
-    translate([15,0,5]) 
+    translate([16,0,5]) 
       rotate([90,0,90])
-        color("red") cylinder(d=5, h=2); 
-    translate([15,-2.5,3]) 
-      color("red") cube([2,5,2]);
+        color("red") cylinder(d=8, h=3); 
+    translate([16,-4,3]) 
+      color("red") cube([3,8,3]);
     }
-    translate([14.5,0,5.5]) 
+    translate([15.5,0,5.5]) 
       rotate([90,0,90])
-        color("green") cylinder(d=2.5, h=3);
-    translate([14.5,-3,3]) 
-      cube([3,4,2.3]);
+        color("green") cylinder(d=5, h=4);
+    translate([15.5,-5,3]) 
+      cube([4,4,3]);
   }
   
 } //  cableHooks()
 
 
+//-----------------------------------------------------------------
 module base()
 {
   diameter = 30.0;
-  linear_extrude(3)
-  {
     difference() 
     {
-      circle(d = diameter + 10);
+      //circle(d1 = diameter + 10);
+      cylinder(d2 = diameter + 10, d1 = diameter + 13, h=3);
       rotate(35)
 
+  translate([0,0,-0.5])
+  linear_extrude(4)
+  {
       for(i = [-1 : 2])
       {
         rotate(i*90)
         for(s = [-1 : 10])
         {
-          rotate(s*3)
+          rotate(s*2.5)
           {
             translate([0, diameter / 2])
               circle(d = 5);
@@ -94,7 +100,6 @@ module base()
   } //  extrude
   
 } //  base()
-
 
 
 base();

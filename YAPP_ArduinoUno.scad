@@ -3,7 +3,7 @@
 //
 //  This will generate a projectbox for a "Generic Arduino UNO"
 //
-//  Version 1.0 (12-01-2022)
+//  Version 1.0 (23-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -125,6 +125,22 @@ cutoutsLid =  [
                , [28.2, 42.5, 3, 3.5, yappRectangle, yappCenter]       // led13
                , [58.5, 37, 3, 3.5, yappRectangle, yappCenter]         // ON led
               ];
+
+//-- base plane    -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = width
+// (3) = length
+// (4) = { yappRectangle | yappCircle }
+// (5) = { yappCenter }
+cutoutsBase =   [
+                    [30, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [35, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [40, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [45, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [50, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [55, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                ];
 
 //-- back plane  -- origin is pcb[0,0,0]
 // (0) = posy

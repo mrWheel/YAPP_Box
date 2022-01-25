@@ -3,7 +3,7 @@
 //
 //  This will generate a projectbox for a "Arduino UNO 'clone'"
 //
-//  Version 1.1 (13-01-2022)
+//  Version 1.1 (23-01-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -124,6 +124,7 @@ cutoutsLid =  [
                , [26, 35, 3, 3.5, yappRectangle, yappCenter]     // RX
                , [26, 42, 3, 3.5, yappRectangle, yappCenter]     // PWR
               ];
+              
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -132,12 +133,12 @@ cutoutsLid =  [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBase =   [
-                    [45, 13, 30, 2, yappRectangle, yappCenter]
-                  , [50, 13, 30, 2, yappRectangle, yappCenter]
-                  , [55, 13, 30, 2, yappRectangle, yappCenter]
-                  , [60, 13, 30, 2, yappRectangle, yappCenter]
-                  , [65, 13, 30, 2, yappRectangle, yappCenter]
-                  , [70, 13, 30, 2, yappRectangle, yappCenter]
+                    [30, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [35, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [40, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [45, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [50, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                  , [55, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]

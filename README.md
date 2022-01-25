@@ -3,7 +3,8 @@ Yet Another Parametric Projectbox generator
 
 ## THIS IS WORK IN PROGRESS!!
 
-See: <a href="https://willem.aandewiel.nl/index.php/2022/01/01/nog-een-geparameteriseerde-projectbox-generator/">This Post</a>
+See: <a href="https://willem.aandewiel.nl/index.php/2022/01/02/yet-another-parametric-projectbox-generator/">This Post</a> (English) or
+<a href="https://willem.aandewiel.nl/index.php/2022/01/01/nog-een-geparameteriseerde-projectbox-generator/">This Post</a> (in Dutch) 
 
 ---
 

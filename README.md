@@ -77,12 +77,19 @@ A picture is worth a thousand words ...
 
 ![YAPP_cutoutsLid](https://user-images.githubusercontent.com/5585427/150956374-c0de9d91-03a4-4ee3-8475-fecb251e9bca.png)
 
+![Screenshot 2022-01-25 at 11 25 46](https://user-images.githubusercontent.com/5585427/150959614-b0d07141-27aa-4df3-b45e-09e662bacde9.png)
+
+pcbStands fixate the PCB between the base and the lid.
 ![YAPP_pcbStands](https://user-images.githubusercontent.com/5585427/150956378-ccdcdd88-9f0c-44cd-986f-70db3bf6d8e2.png)
 
 
 ![YAPP_connectors](https://user-images.githubusercontent.com/5585427/150956348-cfb4f550-a261-493a-9b86-6175e169b2bc.png)
 
 ![YAPP_connector_D](https://user-images.githubusercontent.com/5585427/150956341-5c087f45-c228-46db-8eb1-b3add2e9afca.png)
+
+Inserts are great for making a screw connection between the base and the lid.
+![Ruthex-insert-a](https://user-images.githubusercontent.com/5585427/150959697-beaf6a25-b1df-4a1d-901b-dbcdf486b612.png)
+
 
 Thats it!
 Press F5 or F6 to see the results of your work!

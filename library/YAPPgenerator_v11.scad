@@ -1448,11 +1448,12 @@ module pcbStandoff(color, height, type)
         module standHole(color)
         {
           color(color, 1.0)
-            cylinder(
-              r = (pinDiameter / 2)+.2,
-              h = (pcbThickness*2)+height,
-              center = false,
-              $fn = 20);
+            translate([0, 0, -0.01])
+              cylinder(
+                r = (pinDiameter / 2)+.2,
+                h = (pcbThickness*2)+height + 0.02,
+                center = false,
+                $fn = 20);
         } // standhole()
         
         if (type == yappPin)  // pin

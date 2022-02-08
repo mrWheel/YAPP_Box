@@ -1396,10 +1396,10 @@ module lidShell()
       else  //-- normal
       {
         //--- cutoff lower halve
-        translate([((shellLength/2)+2)*-1,(shellWidth/2)*-1,shellHeight*-1])
+        translate([((shellLength/2)+2)*-1,(shellWidth/2+2)*-1,shellHeight*-1])
         {
           color("black")
-          cube([(shellLength+3)*1, (shellWidth+3)*1, shellHeight], center=false);
+          cube([(shellLength+4)*1, (shellWidth+4)*1, shellHeight], center=false);
         } // translate
 
       } //  if normal

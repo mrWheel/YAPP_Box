@@ -497,7 +497,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
                       W+(wall*2)-(rad*2), 
                       (H*2)+(plane*2)-(rad*2)], 
                       center=true);
-                sphere(rad, center=true);
+                sphere(rad);
               }
       }
       //--------------------------------------------------------
@@ -509,7 +509,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
                 W-((iRad*2)), 
                 (H*2)-((iRad*2))], 
                 center=true);
-                sphere(iRad, center=true);
+                sphere(iRad);
               }
       }
       //--------------------------------------------------------

@@ -497,7 +497,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
                       W+(wall*2)-(rad*2), 
                       (H*2)+(plane*2)-(rad*2)], 
                       center=true);
-                sphere(rad, center=true);
+                sphere(rad);
               }
       }
       //--------------------------------------------------------
@@ -1396,10 +1396,10 @@ module lidShell()
       else  //-- normal
       {
         //--- cutoff lower halve
-        translate([((shellLength/2)+2)*-1,(shellWidth/2)*-1,shellHeight*-1])
+        translate([((shellLength/2)+2)*-1,(shellWidth/2+2)*-1,shellHeight*-1])
         {
           color("black")
-          cube([(shellLength+3)*1, (shellWidth+3)*1, shellHeight], center=false);
+          cube([(shellLength+4)*1, (shellWidth+4)*1, shellHeight], center=false);
         } // translate
 
       } //  if normal
@@ -1448,11 +1448,12 @@ module pcbStandoff(color, height, type)
         module standHole(color)
         {
           color(color, 1.0)
-            cylinder(
-              r = (pinDiameter / 2)+.2,
-              h = (pcbThickness*2)+height,
-              center = false,
-              $fn = 20);
+            translate([0, 0, -0.01])
+              cylinder(
+                r = (pinDiameter / 2)+.2,
+                h = (pcbThickness*2)+height + 0.02,
+                center = false,
+                $fn = 20);
         } // standhole()
         
         if (type == yappPin)  // pin

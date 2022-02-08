@@ -341,13 +341,13 @@ module printBaseMounts()
                 translate([scrwX1pos,0, 4]) 
                   color("blue")
                   {
-                    circle(bm[1]/2, center=false);
+                    circle(bm[1]/2);
                   }
                 //===translate([scrwX2pos, (bm[1]*-1.3), -4]) 
                 //==translate([scrwX2pos, sW+scrwYpos*-1, -4]) 
                 translate([scrwX2pos, 0, -4]) 
                   color("blue")
-                    circle(bm[1]/2, center=false);
+                    circle(bm[1]/2);
               } //  extrude
             } // hull
           } //  translate
@@ -745,7 +745,6 @@ module cutoutsInXY(type)
             linear_extrude((basePlaneThickness*2)+1)
               circle(
                 d = conn[2]*2.2,
-                center = true,
                 $fn = 20);
           }
           if (conn[5]==yappAllCorners)
@@ -756,7 +755,6 @@ module cutoutsInXY(type)
               linear_extrude(basePlaneThickness+3)
                 circle(
                   d = conn[2]*2.2,
-                  center = true,
                   $fn = 20);
             }
             translate([shellLength-conn[0], shellWidth-conn[1], (basePlaneThickness-1)*-1])
@@ -764,7 +762,6 @@ module cutoutsInXY(type)
               linear_extrude(basePlaneThickness+3)
                 circle(
                   d = conn[2]*2.2,
-                  center = true,
                   $fn = 20);
             }
             translate([conn[0], shellWidth-conn[1], (basePlaneThickness-1)*-1])
@@ -772,7 +769,6 @@ module cutoutsInXY(type)
               linear_extrude(basePlaneThickness+3)
                 circle(
                   d = conn[2]*2.2,
-                  center = true,
                   $fn = 20);
             }
           }
@@ -1238,7 +1234,7 @@ module baseShell()
               {
                 square([(L+wallThickness+1)-(oRad*2), (W+wallThickness+1)-(oRad*2)]
                         , center=true);
-                circle(rad, center=true);
+                circle(rad);
               }
             
           } // extrude
@@ -1252,7 +1248,7 @@ module baseShell()
             minkowski()
             {
               square([(L)-((iRad*2)), (W)-((iRad*2))], center=true);
-                circle(iRad, center=true);
+                circle(iRad);
             }
           
           } // linear_extrude..
@@ -1344,7 +1340,7 @@ module lidShell()
                 {
                   square([(L+wallThickness)-(oRad*2), (W+wallThickness)-(oRad*2)]
                           , center=true);
-                  circle(rad, center=true);
+                  circle(rad);
                 }
               
             } // extrude
@@ -1358,7 +1354,7 @@ module lidShell()
                 minkowski()
                 {
                   square([L-((iRad*2)), W-((iRad*2))], center=true);
-                  circle(iRad, center=true);
+                  circle(iRad);
                 }
               
             } // linear_extrude..
@@ -1492,7 +1488,6 @@ module connector(plane, x, y, d1, d2, d3)
           linear_extrude(hb)
             circle(
                 d = d3,
-                center = true,
                 $fn = 20);
         }  
         
@@ -1500,14 +1495,12 @@ module connector(plane, x, y, d1, d2, d3)
         linear_extrude(hb-(d1*1))
           circle(
                 d = d1*2.2,
-                center = true,
                 $fn = 20);
               
         //-- screwHole --
         linear_extrude(hb+d1)
           circle(
                 d = d1*1.2,
-                center = true,
                 $fn = 20);
       } //  difference
     } //  translate
@@ -1526,14 +1519,12 @@ module connector(plane, x, y, d1, d2, d3)
           linear_extrude(ht)
               circle(
                 d = d3,
-                center = true,
                 $fn = 20);
         }  
         //-- insert --
         linear_extrude(ht)
           circle(
                 d = d2,
-                center = true,
                 $fn = 20);
 
       } //  difference

@@ -203,15 +203,15 @@ baseMounts   = [
 // (0) = posx | posy
 // (1) = width
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappSymetric }
+// (n) = { yappSymmetric }
 snapJoins   =     [
-                    [10,  5, yappFront, yappSymetric]
+                    [10,  5, yappFront, yappSymmetric]
                   , [10,  5, yappLeft]
                   , [10,  5, yappRight]
               //    [5,  10, yappLeft]
               //  , [shellLength-2,  10, yappLeft]
               //  , [20, 10, yappFront, yappBack]
-              //  , [2.5, 5, yappBack, yappFront, yappSymetric]
+              //  , [2.5, 5, yappBack, yappFront, yappSymmetric]
                 ];
                
 //-- origin of labels is box [0,0,0]

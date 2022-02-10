@@ -109,7 +109,7 @@ yappRight       =  8;
 yappFront       =  9;
 yappBack        = 10;
 yappCenter      = 11;
-yappSymetric    = 12;
+yappSymmetric   = 12;
 yappAllCorners  = 13;
 
 //-------------------------------------------------------------------
@@ -250,13 +250,13 @@ baseMounts   =  [
 // (0) = posx | posy
 // (1) = width
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappSymetric }
+// (n) = { yappSymmetric }
 snapJoins   =     [
-                    [2,  2,  5, yappLeft, yappRight, yappSymetric]
+                    [2,  2,  5, yappLeft, yappRight, yappSymmetric]
               //    [5,  2,  10, yappLeft]
               //  , [shellLength-2,  2,  10, yappLeft]
               //  , [20,  2,  10, yappFront, yappBack]
-              //  , [2.5, 3, 5, yappBack, yappFront, yappSymetric]
+              //  , [2.5, 3, 5, yappBack, yappFront, yappSymmetric]
                 ];
              
 //-- origin of labels is box [0,0,0]
@@ -534,7 +534,7 @@ module printBaseSnapJoins()
         rotate([0,90,0])
           color("blue") cylinder(d=wallThickness, h=snapWidth);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         //translate([shellLength-roundRadius-snj[0]-snj[2],
         translate([shellLength-(snapXpos+(snapWidth/2)),
@@ -558,7 +558,7 @@ module printBaseSnapJoins()
         rotate([0,90,0])
           color("blue") cylinder(d=wallThickness, h=snapWidth);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(snapXpos+(snapWidth/2)),
                     shellWidth-(wallThickness/2),
@@ -580,7 +580,7 @@ module printBaseSnapJoins()
         rotate([270,0,0])
           color("blue") cylinder(d=wallThickness, h=snapWidth);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([(wallThickness/2),
                       shellWidth-(snapYpos+(snapWidth/2)),
@@ -602,7 +602,7 @@ module printBaseSnapJoins()
         rotate([270,0,0])
           color("blue") cylinder(d=wallThickness, h=snapWidth);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(wallThickness/2),
                       shellWidth-(snapYpos+(snapWidth/2)),
@@ -657,7 +657,7 @@ module printLidSnapJoins()
       {
           color("red") cube([snapWidth, 5, wallThickness]);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(snapXpos+(snapWidth/2))+0.5,
                     -1,
@@ -666,7 +666,7 @@ module printLidSnapJoins()
             color("red") cube([snapWidth, 5, wallThickness]);
         }
         
-      } // yappSymetric
+      } // yappSymmetric
     } // yappLeft
     
     if (isTrue(yappRight, snj, 2))
@@ -677,7 +677,7 @@ module printLidSnapJoins()
       {
         color("red") cube([snapWidth, 5, wallThickness]);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(snapXpos+(snapWidth/2)-0.5),
                     shellWidth-2,
@@ -686,7 +686,7 @@ module printLidSnapJoins()
           color("red") cube([snapWidth, 5, wallThickness]);
         }
         
-      } // yappSymetric
+      } // yappSymmetric
     } // yappRight
     
     if (isTrue(yappBack, snj, 2))
@@ -697,7 +697,7 @@ module printLidSnapJoins()
       {
         color("red") cube([5, snapWidth, wallThickness]);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([(wallThickness/2)-1,
                       shellWidth-(snapYpos+(snapWidth/2))+0.5,
@@ -706,7 +706,7 @@ module printLidSnapJoins()
           color("red") cube([5, snapWidth, wallThickness]);
         }
         
-      } // yappCenter
+      } // yappSymmetric
     } // yappBack
     
     if (isTrue(yappFront, snj, 2))
@@ -717,7 +717,7 @@ module printLidSnapJoins()
       {
         color("red") cube([5, snapWidth, wallThickness]);
       }
-      if (isTrue(yappSymetric, snj, 3))
+      if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(wallThickness/2)-1,
                       shellWidth-(snapYpos+(snapWidth/2))+0.5,
@@ -726,7 +726,7 @@ module printLidSnapJoins()
           color("red") cube([5, snapWidth, wallThickness]);
         }
         
-      } // yappCenter
+      } // yappSymmetric
     } // yappFront
 
    

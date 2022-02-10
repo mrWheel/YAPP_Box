@@ -46,7 +46,7 @@ lidWallHeight       = 4;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;
+ridgeHeight         = 3.5;
 roundRadius         = 3.0;
 
 //-- pcb dimensions
@@ -68,7 +68,7 @@ paddingLeft         = 1;
 
 
 //-- D E B U G ----------------------------
-showSideBySide      = false;       //-> true
+showSideBySide      = true;       //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;       //-> false
@@ -183,21 +183,18 @@ baseMounts   = [
                 //   , [25, 3, 3, 3, yappBack]
                 //   , [5, 3.2, shellWidth-10, 3, yappFront]
                ];
+
                
-//-- snapOns -- origen = box[x0,y0]
+//-- snapJons -- origen = shell[x0,y0]
 // (0) = posx | posy
-// (1) = cylinderDiameter
-// (2) = width
-// (3..6) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (5) = { yappSymetric }
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
 snapJoins   =   [
-              //      [(shellLength/2)-2.5,  5, yappLeft, yappRight]
-              //    , [(shellWidth/2)-2.5,  5, yappFront, yappBack]
-                    [5,  5, yappFront, yappBack]
-              //  , [20, 10, yappFront, yappBack]
-              //  , [2.5, 5, yappBack, yappFront, yappSymetric]
+                    [10,  5, yappLeft, yappRight, yappSymetric]
+                  , [(shellWidth/2)-2.5,  5, yappFront, yappBack]
                 ];
-                
+
  
 //-- origin of labels is box [0,0,0]
 // (0) = posx

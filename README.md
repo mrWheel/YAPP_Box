@@ -16,8 +16,8 @@ request.
 * <strike>I want rounded corners! Do you have an idear howto do that??</strike> (done)
 * <strike>modules (Hooks) that can be (re)defined by the user (almost there ;-))</strike> (done)
 * <strike>screw connector between the top- and bottomPlanes (for bigger boxes)</strike> (done)
-* snap-ons in the ridges
-* a lot more ..
+* <strike>snap-ons in the ridges</strike> (done)
+* anything else? Anyone?
 
 ## How to program your Project Box
 It all starts with some dimensions of the pcb you want your Project Box for and some other dimensions:
@@ -119,4 +119,5 @@ Thera are two type of "hooks"; at the inside of the box or at the outside of the
 
 ![lidHooksInside3Db](https://user-images.githubusercontent.com/5585427/153425147-831b7f9c-1c74-4c58-8a3d-11b96aaf3107.png)
 
+![lidHooksInside3Da](https://user-images.githubusercontent.com/5585427/153426442-6a05f787-8897-4610-8411-bb7279269980.png)
 

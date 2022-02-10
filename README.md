@@ -94,3 +94,29 @@ Inserts are great for making a screw connection between the base and the lid.
 
 Thats it!
 Press F5 or F6 to see the results of your work!
+
+## Snap Joins
+![snapJoins1](https://user-images.githubusercontent.com/5585427/153425134-ec2348cd-45a7-4e2d-8cb6-2f69e6f7f80b.png)
+
+![snapJoins2](https://user-images.githubusercontent.com/5585427/153425125-04daa8ca-1126-4467-94a8-245c584d2333.png)
+
+### Snap Joins Symmetrical
+![snapJoinsSymetric](https://user-images.githubusercontent.com/5585427/153425131-df24321f-9cc6-4dd6-aff6-41627915afa7.png)
+
+## Base Mounts
+![yappBaseStand](https://user-images.githubusercontent.com/5585427/153425136-9bc916a2-1245-4b3e-9072-8dd7ed8c3df6.png)
+
+![yappBaseStand3D](https://user-images.githubusercontent.com/5585427/153425139-0b27f2f0-f12c-4d89-b394-70ebcf3e1c4f.png)
+
+## Hooks
+Thera are two type of "hooks"; at the inside of the box or at the outside of the box
+### baseHookOutside()
+![baseHookOutside](https://user-images.githubusercontent.com/5585427/153425144-9401e969-8988-47e6-9c12-a3eaf052bfca.png)
+
+![baseHookOutside3D](https://user-images.githubusercontent.com/5585427/153425145-ecd9bebd-82ba-4ab0-9685-9bf1c9b9273f.png)
+### lidHookInside
+![lidHooksInside1](https://user-images.githubusercontent.com/5585427/153425146-485d8cde-c530-4ab6-879d-3958ca5384ba.png)
+
+![lidHooksInside3Db](https://user-images.githubusercontent.com/5585427/153425147-831b7f9c-1c74-4c58-8a3d-11b96aaf3107.png)
+
+

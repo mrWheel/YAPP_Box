@@ -3,11 +3,11 @@
 //
 //  This is a box for DSMRlogger 4.0 (no PWR-jack)
 //
-//  Version 1.1 (08-02-2022)
+//  Version 1.1 (09-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v12.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -34,8 +34,10 @@ include <./library/YAPPgenerator_v12.scad>
                           LEFT
 */
 
-printBaseShell      = true;
-printLidShell       = true;
+printBaseShell        = true;
+printLidShell         = true;
+printOledStand        = true;
+printSwitchExtenders  = true;
 
 // Edit these parameters for your own board dimensions
 wallThickness       = 1.5;
@@ -104,12 +106,13 @@ pcbStands = [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsLid =  [
-                    [ 1, 15, 16, 19, yappRectangle, yappCenter]   // RJ12
-                  , [15, 41, 26, 18, yappRectangle, yappCenter]   // OLED
-                  , [45, 13, 4, 0, yappCircle]                    // reset
-                  , [45, 51, 4, 0, yappCircle]                    // flash
-                  , [33, 3,  5, 5, yappRectangle, yappCenter]     // red LED
-                  , [34, 26, 5, 5, yappRectangle, yappCenter]     // blue LED
+                    [ 1, 15,  16, 21, yappRectangle, yappCenter]   // RJ12
+                  , [15, 41,  26, 18, yappRectangle, yappCenter]   // OLED
+                  , [45, 13,   4, 0, yappCircle]                   // reset
+              //  , [45, 51,   4, 0, yappCircle]                   // flash
+                  , [45, 50.5, 4, 0, yappCircle]                   // flash
+                  , [33, 3,    5, 5, yappRectangle, yappCenter]    // red LED
+                  , [34, 26,   5, 5, yappRectangle, yappCenter]    // blue LED
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -194,6 +197,22 @@ baseMounts   = [
                    [10, 3.5, 20, 3, yappLeft, yappRight, yappCenter]
                //, [shellWidth-10, 3.5, 15, 3, yappBack, yappFront]
                ];
+
+//-- snapJoins -- origen = box[x0,y0]
+//** ridgeHeight must be >= 3 !!!! **
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymetric }
+snapJoins   =     [
+                    [10,  5, yappFront, yappSymetric]
+                  , [10,  5, yappLeft]
+                  , [10,  5, yappRight]
+              //    [5,  10, yappLeft]
+              //  , [shellLength-2,  10, yappLeft]
+              //  , [20, 10, yappFront, yappBack]
+              //  , [2.5, 5, yappBack, yappFront, yappSymetric]
+                ];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx
@@ -215,40 +234,83 @@ labelsPlane =  [
 module lidHookInside()
 {
   //-- reset button
-  translate([pcbX+45, pcbY+13, -10])
+  translate([pcbX+45, pcbY+13, -8])
   {
     difference()
     {
-      color("red") cylinder(d=8, h=10);
-      translate([0,0,-1]) color("blue") cylinder(d=4, h=13);
+      color("red") cylinder(d=8, h=8);
+      translate([0,0,-1]) color("blue") cylinder(d=4.1, h=13);
     }
   }
   //-- flash button
-  translate([pcbX+45, pcbY+51, -10])
+  translate([pcbX+45, pcbY+50.5, -8])
   {
     difference()
     {
-      color("red") cylinder(d=8, h=10);
-      translate([0,0,-1]) color("blue") cylinder(d=4, h=13);
+      color("red") cylinder(d=8, h=8);
+      translate([0,0,-1]) color("blue") cylinder(d=4.1, h=10);
     }
   }
   
 } //  lidHookInside()
 
-//-- switch extender
-translate([-10,38,0])
+//-- switch extender -----------
+if (printSwitchExtenders)
 {
-  cylinder(d=3.5, h=18);
-  cylinder(d=7.5, h=2);
-}
+    zeroExtend=shellHeight - (standoffHeight + basePlaneThickness + pcbThickness + 4);
+    
+    translate([-10,10,0])
+    {
+      cylinder(d=3.5, h=zeroExtend+1);  // 1mm above shell
+      cylinder(d=7.5, h=2);
+    }
+    
+    //-- switch extender
+    translate([-10,25,0])
+    {
+      cylinder(d=3.5, h=zeroExtend+2);  // 2mm above shell
+      cylinder(d=7.5, h=2);
+    }
+} // .. printSwitchExtenders?
 
-//-- switch extender
-translate([-10,52,0])
+
+//-- OLED stand --------------
+module oledStand()
 {
-  cylinder(d=3.5, h=18);
-  cylinder(d=7.5, h=2);
-}
+    pcbThickness = 1.3;
+    pcbWidth = 25;
+    oledHeight = 12;
+    wallThickness = 2;
+    
+    translate([-20,40,0])
+    {
+      rotate([90,0,90])
+      {
+        difference()
+        //union()
+        {
+        //-- base block
+        cube([pcbWidth+4, 5, oledHeight+0.5]);
+        //-- cutout bottom
+        translate([wallThickness+0.5,-0.5, 0])
+          color("red") cube([pcbWidth-1,6,6]);
+        //-- cutout 3mm for ESP8266
+        translate([wallThickness-4,-0.5, 0])
+          color("green") cube([10,6,3]);
+        //-- cutout top
+        translate([wallThickness+1,-0.4, oledHeight-4])
+          color("blue") cube([pcbWidth-2,6,8]);
+        //-- cutout pcb slider
+        translate([wallThickness+0.1,-0.5, oledHeight-1.5])
+          color("gray") cube([pcbWidth-0.2,6,pcbThickness]);
+      } // difference
+    } // rotate
+  } // translate
+  
+} //  oledStand()
 
+
+if (printOledStand)  oledStand();
 
 //---- This is where the magic happens ----
 YAPPgenerate();

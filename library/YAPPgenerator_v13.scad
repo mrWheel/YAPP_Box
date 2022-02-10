@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.1 (25-01-2022)";
+Version="v1.3 (10-02-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -109,7 +109,8 @@ yappRight       =  8;
 yappFront       =  9;
 yappBack        = 10;
 yappCenter      = 11;
-yappAllCorners  = 12;
+yappSymetric    = 12;
+yappAllCorners  = 13;
 
 //-------------------------------------------------------------------
 
@@ -244,6 +245,19 @@ baseMounts   =  [
               //    , [4, 3, 34, 3, yappFront]
               //    , [25, 3, 3, 3, yappBack]
                 ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymetric }
+snapJoins   =     [
+                    [2,  2,  5, yappLeft, yappRight, yappSymetric]
+              //    [5,  2,  10, yappLeft]
+              //  , [shellLength-2,  2,  10, yappLeft]
+              //  , [20,  2,  10, yappFront, yappBack]
+              //  , [2.5, 3, 5, yappBack, yappFront, yappSymetric]
+                ];
              
 //-- origin of labels is box [0,0,0]
 // (0) = posx
@@ -268,9 +282,11 @@ function isTrue(w, aw, from) = ((   w==aw[from]
                                  || w==aw[from+5]  
                                  || w==aw[from+6] ) ? 1 : 0);  
 function minOutside(o, d) = ((((d*2)+1)>=o) ? (d*2)+1 : o);  
-//function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
-
+function lowestVal(v1, minV)  = ((v1<minV) ? minV : v1);
+function highestVal(v1, maxV) = ((v1>maxV) ? maxV : v1);
+//function betweenVal(minV, maxV, v1) = (v1 >= minV && v1 <= maxV) ? true : false);
+//function maxVal(maxV, v1, btwn) = (!btwn && v1 < minV) ? minV : v1);
 //===========================================================
 module printBaseMounts()
 {
@@ -341,13 +357,13 @@ module printBaseMounts()
                 translate([scrwX1pos,0, 4]) 
                   color("blue")
                   {
-                    circle(bm[1]/2, center=false);
+                    circle(bm[1]/2);
                   }
                 //===translate([scrwX2pos, (bm[1]*-1.3), -4]) 
                 //==translate([scrwX2pos, sW+scrwYpos*-1, -4]) 
                 translate([scrwX2pos, 0, -4]) 
                   color("blue")
-                    circle(bm[1]/2, center=false);
+                    circle(bm[1]/2);
               } //  extrude
             } // hull
           } //  translate
@@ -484,6 +500,242 @@ module printBaseMounts()
 
 
 //===========================================================
+//-- snapJoins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = cylinderDiameter
+// (2) = width
+// (3..6) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappCenter }
+module printBaseSnapJoins()
+{
+  snapHeight = 2;
+  
+  for (snj = snapJoins)
+  {
+    snapWidth  = snj[1];
+    snapZposLR = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
+    snapZposBF = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
+    tmpYmin    = (roundRadius*2)+(snapWidth/2);
+    tmpYmax    = shellWidth - tmpYmin;
+    tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
+    snapYpos   = highestVal(tmpY, tmpYmax);
+
+    tmpXmin    = (roundRadius*2)+(snapWidth/2);
+    tmpXmax    = shellLength - tmpXmin;
+    tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
+    snapXpos   = highestVal(tmpX, tmpXmax);
+
+    if (isTrue(yappLeft, snj, 2))
+    {
+      translate([snapXpos-(snapWidth/2),
+                    wallThickness/2,
+                    snapZposLR])
+      {
+        rotate([0,90,0])
+          color("blue") cylinder(d=wallThickness, h=snapWidth);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        //translate([shellLength-roundRadius-snj[0]-snj[2],
+        translate([shellLength-(snapXpos+(snapWidth/2)),
+                    wallThickness/2,
+                    snapZposLR])
+                    //(baseWallHeight+ridgeHeight)-(wallThickness*2)])
+        {
+          rotate([0,90,0])
+            color("blue") cylinder(d=wallThickness, h=snapWidth);
+        }
+        
+      } // yappCenter
+    } // yappLeft
+    
+    if (isTrue(yappRight, snj, 2))
+    {
+      translate([snapXpos-(snapWidth/2),
+                    shellWidth-(wallThickness/2),
+                    snapZposLR])
+      {
+        rotate([0,90,0])
+          color("blue") cylinder(d=wallThickness, h=snapWidth);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([shellLength-(snapXpos+(snapWidth/2)),
+                    shellWidth-(wallThickness/2),
+                    snapZposLR])
+        {
+          rotate([0,90,0])
+            color("blue") cylinder(d=wallThickness, h=snapWidth);
+        }
+        
+      } // yappCenter
+    } // yappRight
+    
+    if (isTrue(yappBack, snj, 2))
+    {
+      translate([(wallThickness/2),
+                    snapYpos-(snapWidth/2),
+                    snapZposBF])
+      {
+        rotate([270,0,0])
+          color("blue") cylinder(d=wallThickness, h=snapWidth);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([(wallThickness/2),
+                      shellWidth-(snapYpos+(snapWidth/2)),
+                      snapZposBF])
+        {
+          rotate([270,0,0])
+            color("blue") cylinder(d=wallThickness, h=snapWidth);
+        }
+        
+      } // yappCenter
+    } // yappBack
+    
+    if (isTrue(yappFront, snj, 2))
+    {
+      translate([shellLength-(wallThickness/2),
+                    snapYpos-(snapWidth/2),
+                    snapZposBF])
+      {
+        rotate([270,0,0])
+          color("blue") cylinder(d=wallThickness, h=snapWidth);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([shellLength-(wallThickness/2),
+                      shellWidth-(snapYpos+(snapWidth/2)),
+                      snapZposBF])
+        {
+          rotate([270,0,0])
+            color("blue") cylinder(d=wallThickness, h=snapWidth);
+        }
+        
+      } // yappCenter
+    } // yappFront
+
+   
+  } // for snj .. 
+  
+} //  printBaseSnapJoins()
+
+
+//===========================================================
+//-- snapJoins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = cylinderDiameter
+// (2) = width
+// (3..6) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappCenter }
+module printLidSnapJoins()
+{
+  for (snj = snapJoins)
+  {
+    snapWidth  = snj[1]+1;
+    snapHeight = 2;
+    snapDiam   = 2;  // fixed
+    
+    tmpYmin    = (roundRadius*2)+(snapWidth/2);
+    tmpYmax    = shellWidth - tmpYmin;
+    tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
+    snapYpos   = highestVal(tmpY, tmpYmax);
+
+    tmpXmin    = (roundRadius*2)+(snapWidth/2);
+    tmpXmax    = shellLength - tmpXmin;
+    tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
+    snapXpos   = highestVal(tmpX, tmpXmax);
+
+    snapZposLR = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
+    snapZposBF = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
+
+    if (isTrue(yappLeft, snj, 2))
+    {
+      translate([snapXpos-(snapWidth/2)-0.5,
+                    -1,
+                    snapZposLR])
+      {
+          color("red") cube([snapWidth, 5, wallThickness]);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([shellLength-(snapXpos+(snapWidth/2))+0.5,
+                    -1,
+                    snapZposLR])
+        {
+            color("red") cube([snapWidth, 5, wallThickness]);
+        }
+        
+      } // yappSymetric
+    } // yappLeft
+    
+    if (isTrue(yappRight, snj, 2))
+    {
+      translate([snapXpos-(snapWidth/2)-0.5,
+                    shellWidth-2,
+                    snapZposLR])
+      {
+        color("red") cube([snapWidth, 5, wallThickness]);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([shellLength-(snapXpos+(snapWidth/2)-0.5),
+                    shellWidth-2,
+                    snapZposLR])
+        {
+          color("red") cube([snapWidth, 5, wallThickness]);
+        }
+        
+      } // yappSymetric
+    } // yappRight
+    
+    if (isTrue(yappBack, snj, 2))
+    {
+      translate([(wallThickness/2)-1,
+                    snapYpos-(snapWidth/2)-0.5,
+                    snapZposBF])
+      {
+        color("red") cube([5, snapWidth, wallThickness]);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([(wallThickness/2)-1,
+                      shellWidth-(snapYpos+(snapWidth/2))+0.5,
+                      snapZposBF])
+        {
+          color("red") cube([5, snapWidth, wallThickness]);
+        }
+        
+      } // yappCenter
+    } // yappBack
+    
+    if (isTrue(yappFront, snj, 2))
+    {
+      translate([shellLength-(wallThickness/2)-1,
+                    snapYpos-(snapWidth/2)-0.5,
+                    snapZposBF])
+      {
+        color("red") cube([5, snapWidth, wallThickness]);
+      }
+      if (isTrue(yappSymetric, snj, 3))
+      {
+        translate([shellLength-(wallThickness/2)-1,
+                      shellWidth-(snapYpos+(snapWidth/2))+0.5,
+                      snapZposBF])
+        {
+          color("red") cube([5, snapWidth, wallThickness]);
+        }
+        
+      } // yappCenter
+    } // yappFront
+
+   
+  } // for snj .. 
+  
+} //  printLidSnapJoins()
+
+
+//===========================================================
 module minkowskiBox(shell, L, W, H, rad, plane, wall)
 {
   iRad = getMinRad(rad, wallThickness);
@@ -509,7 +761,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
                 W-((iRad*2)), 
                 (H*2)-((iRad*2))], 
                 center=true);
-                sphere(iRad, center=true);
+                sphere(iRad);
               }
       }
       //--------------------------------------------------------
@@ -534,7 +786,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
           }
         }
       }
-      
+          
 } //  minkowskiBox()
 
 
@@ -745,7 +997,6 @@ module cutoutsInXY(type)
             linear_extrude((basePlaneThickness*2)+1)
               circle(
                 d = conn[2]*2.2,
-                center = true,
                 $fn = 20);
           }
           if (conn[5]==yappAllCorners)
@@ -756,7 +1007,6 @@ module cutoutsInXY(type)
               linear_extrude(basePlaneThickness+3)
                 circle(
                   d = conn[2]*2.2,
-                  center = true,
                   $fn = 20);
             }
             translate([shellLength-conn[0], shellWidth-conn[1], (basePlaneThickness-1)*-1])
@@ -764,7 +1014,6 @@ module cutoutsInXY(type)
               linear_extrude(basePlaneThickness+3)
                 circle(
                   d = conn[2]*2.2,
-                  center = true,
                   $fn = 20);
             }
             translate([conn[0], shellWidth-conn[1], (basePlaneThickness-1)*-1])
@@ -772,7 +1021,6 @@ module cutoutsInXY(type)
               linear_extrude(basePlaneThickness+3)
                 circle(
                   d = conn[2]*2.2,
-                  center = true,
                   $fn = 20);
             }
           }
@@ -1238,7 +1486,7 @@ module baseShell()
               {
                 square([(L+wallThickness+1)-(oRad*2), (W+wallThickness+1)-(oRad*2)]
                         , center=true);
-                circle(rad, center=true);
+                circle(rad);
               }
             
           } // extrude
@@ -1252,7 +1500,7 @@ module baseShell()
             minkowski()
             {
               square([(L)-((iRad*2)), (W)-((iRad*2))], center=true);
-                circle(iRad, center=true);
+                circle(iRad);
             }
           
           } // linear_extrude..
@@ -1306,6 +1554,10 @@ module baseShell()
   } // translate
   
   pcbHolders();
+
+  if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible");
+  else printBaseSnapJoins();
+
   shellConnectors("base");
 
 } //  baseShell()
@@ -1344,7 +1596,7 @@ module lidShell()
                 {
                   square([(L+wallThickness)-(oRad*2), (W+wallThickness)-(oRad*2)]
                           , center=true);
-                  circle(rad, center=true);
+                  circle(rad);
                 }
               
             } // extrude
@@ -1358,7 +1610,7 @@ module lidShell()
                 minkowski()
                 {
                   square([L-((iRad*2)), W-((iRad*2))], center=true);
-                  circle(iRad, center=true);
+                  circle(iRad);
                 }
               
             } // linear_extrude..
@@ -1386,7 +1638,7 @@ module lidShell()
         translate([((shellLength/2)+2)*-1,(shellWidth/2)*-1,shellHeight*-1])
         {
           color("black")
-          cube([(shellLength+3)*1, (shellWidth+3)*1, 
+          cube([(shellLength+4)*1, (shellWidth+4)*1, 
                   shellHeight+(lidWallHeight+lidPlaneThickness-roundRadius)], 
                   center=false);
           
@@ -1399,7 +1651,7 @@ module lidShell()
         translate([((shellLength/2)+2)*-1,((shellWidth/2)+2)*-1,shellHeight*-1])
         {
           color("black")
-          cube([(shellLength+4)*1, (shellWidth+4)*1, shellHeight], center=false);
+          cube([(shellLength+3)*1, (shellWidth+3)*1, shellHeight], center=false);
         } // translate
 
       } //  if normal
@@ -1448,12 +1700,11 @@ module pcbStandoff(color, height, type)
         module standHole(color)
         {
           color(color, 1.0)
-            translate([0, 0, -0.01])
-              cylinder(
-                r = (pinDiameter / 2)+.2,
-                h = (pcbThickness*2)+height + 0.02,
-                center = false,
-                $fn = 20);
+            cylinder(
+              r = (pinDiameter / 2)+.2,
+              h = (pcbThickness*2)+height+0.02,
+              center = false,
+              $fn = 20);
         } // standhole()
         
         if (type == yappPin)  // pin
@@ -1492,7 +1743,6 @@ module connector(plane, x, y, d1, d2, d3)
           linear_extrude(hb)
             circle(
                 d = d3,
-                center = true,
                 $fn = 20);
         }  
         
@@ -1500,14 +1750,12 @@ module connector(plane, x, y, d1, d2, d3)
         linear_extrude(hb-(d1*1))
           circle(
                 d = d1*2.2,
-                center = true,
                 $fn = 20);
               
         //-- screwHole --
         linear_extrude(hb+d1)
           circle(
                 d = d1*1.2,
-                center = true,
                 $fn = 20);
       } //  difference
     } //  translate
@@ -1526,14 +1774,12 @@ module connector(plane, x, y, d1, d2, d3)
           linear_extrude(ht)
               circle(
                 d = d3,
-                center = true,
                 $fn = 20);
         }  
         //-- insert --
         linear_extrude(ht)
           circle(
                 d = d2,
-                center = true,
                 $fn = 20);
 
       } //  difference
@@ -1643,18 +1889,32 @@ module showOrientation()
 //========= MAIN CALL's ===========================================================
   
 //===========================================================
-module lidHook()
+module lidHookInside()
 {
-  //echo("lidHook(original) ..");
+  //echo("lidHookInside(original) ..");
   
-} // lidHook(dummy)
+} // lidHookInside(dummy)
+  
+//===========================================================
+module lidHookOutside()
+{
+  //echo("lidHookOutside(original) ..");
+  
+} // lidHookOutside(dummy)
 
 //===========================================================
-module baseHook()
+module baseHookInside()
 {
-  //echo("baseHook(original) ..");
+  //echo("baseHookInside(original) ..");
   
-} // baseHook(dummy)
+} // baseHookInside(dummy)
+
+//===========================================================
+module baseHookOutside()
+{
+  //echo("baseHookOutside(original) ..");
+  
+} // baseHookOutside(dummy)
 
 
 //===========================================================
@@ -1704,9 +1964,8 @@ module YAPPgenerate()
       if (printBaseShell) 
       {
         if (showPCB) %printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
-          
-        
-        baseHook();
+                  
+        baseHookOutside();
         
         difference()  // (a)
         {
@@ -1753,8 +2012,9 @@ module YAPPgenerate()
           }
         } //  difference(a)
         
+        baseHookInside();
+        
         showOrientation();
-        //-- maybe -- shellConnectors("base");
 
       } // if printBaseShell ..
       
@@ -1772,15 +2032,17 @@ module YAPPgenerate()
               //posZ00=0;
               translate([0, (5 + shellWidth+(shiftLid/2))*-2, 0])
               {
-                lidHook();
+                lidHookInside();
                 
-                difference()  // (t1)
+                difference()  // (t1) 
                 {
                   lidShell();
                   
                   cutoutsInXY("lid");
                   cutoutsInXZ("lid");
                   cutoutsInYZ("lid");
+                  if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible"); 
+                  else printLidSnapJoins();
                   color("red") subtractLabels("lid", "lid");
                   color("red") subtractLabels("lid", "front");
                   color("red") subtractLabels("lid", "back");
@@ -1827,17 +2089,20 @@ module YAPPgenerate()
                   }
                 } //  difference(t1)
             
-            translate([shellLength-15, -15, 0])
-              linear_extrude(1) 
-                mirror(1,0,0)
-                %text("LEFT"
-                  , font="Liberation Mono:style=bold"
-                  , size=8
-                  , direction="ltr"
-                  , halign="left"
-                  , valign="bottom");
+                lidHookOutside();
+                
+                translate([shellLength-15, -15, 0])
+                  linear_extrude(1) 
+                    mirror(1,0,0)
+                      %text("LEFT"
+                            , font="Liberation Mono:style=bold"
+                            , size=8
+                            , direction="ltr"
+                            , halign="left"
+                            , valign="bottom");
 
               } // translate
+ 
             } //  mirror  
           } //  mirror  
         }
@@ -1846,7 +2111,7 @@ module YAPPgenerate()
           translate([0, 0, (baseWallHeight+basePlaneThickness+
                             lidWallHeight+lidPlaneThickness+onLidGap)])
           {
-            lidHook();
+            lidHookOutside();
             
             difference()  // (t2)
             {
@@ -1855,6 +2120,8 @@ module YAPPgenerate()
               cutoutsInXY("lid");
               cutoutsInXZ("lid");
               cutoutsInYZ("lid");
+              if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible");
+              else printLidSnapJoins();
               color("red") subtractLabels("lid", "lid");
               color("red") subtractLabels("lid", "front");
               color("red") subtractLabels("lid", "back");
@@ -1900,9 +2167,12 @@ module YAPPgenerate()
               }
           
             } //  difference(t2)
+            
+            lidHookInside();
 
-          }
-        }
+          } //  translate ..
+
+        } // lid on top off Base
         
       } // printLidShell()
 

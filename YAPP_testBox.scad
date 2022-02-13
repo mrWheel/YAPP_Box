@@ -33,7 +33,7 @@ printLidShell       = true;
 printBaseShell      = true;
 
 //-- Edit these parameters for your own board dimensions
-wallThickness       = 1.4;
+wallThickness       = 1.2;
 basePlaneThickness  = 1.2;
 lidPlaneThickness   = 1.2;
 
@@ -47,6 +47,7 @@ lidWallHeight       = 4;
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
 ridgeHeight         = 3.5;
+ridgeSlack          = 0.2;
 roundRadius         = 3.0;
 
 //-- pcb dimensions
@@ -58,7 +59,8 @@ pcbThickness        = 1.5;
 //-- to leave room for solderings and whatnot
 standoffHeight      = 5.0;
 pinDiameter         = 1.0;
-standoffDiameter    = 3;
+pinHoleSlack        = 0.5;
+standoffDiameter    = 4;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 1;
@@ -68,7 +70,7 @@ paddingLeft         = 1;
 
 
 //-- D E B U G ----------------------------
-showSideBySide      = true;       //-> true
+showSideBySide      = false;       //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;       //-> false
@@ -77,7 +79,7 @@ hideBaseWalls       = false;       //-> false
 colorBase           = "white";
 showPCB             = false;      //-> false
 showMarkers         = false;      //-> false
-inspectX            = 0;  //-> 0=none (>0 from front, <0 from back)
+inspectX            = 9;  //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;
 //-- D E B U G ----------------------------
 
@@ -88,6 +90,7 @@ inspectY            = 0;
 // (2) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (3) = { yappHole, YappPin }
 pcbStands = [
+                [pcbLength-7,5,yappBoth,yappPin]
              ];
 
 //-- Lid plane    -- origin is pcb[0,0,0]
@@ -191,8 +194,8 @@ baseMounts   = [
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
 snapJoins   =   [
-                    [10,  5, yappLeft, yappRight, yappSymetric]
-                  , [(shellWidth/2)-2.5,  5, yappFront, yappBack]
+                    [10,  5, yappLeft, yappRight, yappSymmetric]
+                  , [5,  5, yappFront, yappBack, yappSymmetric]
                 ];
 
  

@@ -3,11 +3,11 @@
 //
 //  This is a box for ADW1020-AVR-DB48 (G400)
 //
-//  Version 1.1 (03-02-2022)
+//  Version 1.1 (13-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -60,18 +60,19 @@ paddingLeft         = 5;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 2;
+ridgeHeight         = 3.5;
+ridgeSlack          = 0.1;
 roundRadius         = 2.0;
-
-pinDiameter         = 3.8;
-standoffDiameter    = 7;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
 standoffHeight      = 6.0;
+pinDiameter         = 3.8;
+pinHoleSlack        = 0.2;
+standoffDiameter    = 7;
 
 //-- D E B U G -------------------
-showSideBySide      = false;
+showSideBySide      = true;
 hideLidWalls        = false;
 onLidGap            = 0;
 shiftLid            = 10;
@@ -218,6 +219,19 @@ baseMounts   = [
                     [15, 3.5, 20, 3, yappRight, yappLeft]
                   , [shellLength-35, 3.5, 20, 3, yappRight, yappLeft]
                ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =     [
+                    [20,             10, yappLeft, yappRight, yappSymmetric]
+              //    [5,              10, yappLeft]
+              //  , [shellLength-2,  10, yappLeft]
+              //  , [20,             10, yappFront, yappBack]
+              //  , [2.5,             5, yappBack,  yappFront, yappSymmetric]
+                ];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx

@@ -3,11 +3,11 @@
 //
 //  This is a box for ESP32-CAM-FISH
 //
-//  Version 1.0 (22-01-2022)
+//  Version 1.0 (13-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -59,15 +59,16 @@ paddingLeft         = 0.3;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 2;
+ridgeHeight         = 3.5;
+ridgeSlack          = 0.1;
 roundRadius         = 2.0;
-
-pinDiameter         = 0.5;
-standoffDiameter    = 3.5;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
 standoffHeight      = 11.0;
+pinDiameter         = 0.5;
+pinHoleSlack        = 0.2;
+standoffDiameter    = 3.5;
 
 //-- D E B U G -------------------
 showSideBySide      = true;
@@ -191,6 +192,16 @@ connectors   =  [
 // (5) = { yappCenter }
 baseMounts   = [
                ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =     [
+                    [7,  5, yappLeft, yappRight]
+                  , [(shellWidth/2)-2.5, 5, yappFront]
+                ];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx

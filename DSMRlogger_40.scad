@@ -3,7 +3,7 @@
 //
 //  This is a box for DSMRlogger 4.0 (no PWR-jack)
 //
-//  Version 1.1 (09-02-2022)
+//  Version 1.1 (10-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -204,7 +204,7 @@ baseMounts   = [
 // (1) = width
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
-snapJoins   =     [
+snapJoins   =   [
                     [10,  5, yappFront, yappSymmetric]
                   , [10,  5, yappLeft]
                   , [10,  5, yappRight]

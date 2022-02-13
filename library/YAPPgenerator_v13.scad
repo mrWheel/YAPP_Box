@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.3 (10-02-2022)";
+Version="v1.3 (13-02-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -58,6 +58,7 @@ lidWallHeight       = 5;
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
 ridgeHeight         = 3.0;
+ridgeSlack          = 0.2;
 roundRadius         = 5.0;
 
 //-- pcb dimensions
@@ -69,6 +70,7 @@ pcbThickness        = 1.5;
 //-- to leave room for solderings and whatnot
 standoffHeight      = 3.0;
 pinDiameter         = 2.0;
+pinHoleSlack        = 0.2;
 standoffDiameter    = 4;
                             
 //-- padding between pcb and inside wall
@@ -252,11 +254,11 @@ baseMounts   =  [
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
 snapJoins   =     [
-                    [2,  2,  5, yappLeft, yappRight, yappSymmetric]
-              //    [5,  2,  10, yappLeft]
-              //  , [shellLength-2,  2,  10, yappLeft]
-              //  , [20,  2,  10, yappFront, yappBack]
-              //  , [2.5, 3, 5, yappBack, yappFront, yappSymmetric]
+              //    [2,               5, yappLeft, yappRight, yappSymmetric]
+              //    [5,              10, yappLeft]
+              //  , [shellLength-2,  10, yappLeft]
+              //  , [20,             10, yappFront, yappBack]
+              //  , [2.5,             5, yappBack,  yappFront, yappSymmetric]
                 ];
              
 //-- origin of labels is box [0,0,0]
@@ -335,9 +337,6 @@ module printBaseMounts()
         bmX2pos   = scrwX2pos-outRadius;
         bmYpos    = (bm[1]*-2);
         bmLen     = (bm[1]*4)+bmYpos;
-        
-        //echo("1Mount:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos, scrwR=(bm[1]/2));
-        //echo("1Mount:", bmX1pos=bmX1pos, bmX2pos=bmX2pos, bmYpos=bmYpos, bmLen=bmLen, outR=outRadius);
 
         difference()
         {
@@ -397,28 +396,30 @@ module printBaseMounts()
       for (bm = baseMounts)
       {
         c = isTrue(yappCenter, bm, 5);
-        //echo("printBM:", center=c);
         
-        //-- [0]x/y-pos, [1]screwDiameter, [2]width, [3]height
-        //--            [4-7]yappLeft/yappRight/yappFront/yappBack
-        //echo("printBaseMount:", bm);
+        // (0) = posx | posy
+        // (1) = screwDiameter
+        // (2) = width
+        // (3) = Height
+        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappLeft, bm, 4))
         {
-            //echo("printBaseMount: LEFT!!");
             newWidth  = maxWidth(bm[2], bm[1], shellLength);
             tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
             tmpMinPos = minPos(tmpPos, bm[1]);
             scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
             scrwX2pos = scrwX1pos + newWidth;
-            //echo("LEFT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
-          //--oneMount(bm, scrwX1pos, scrwX2pos)--
             oneMount(bm, scrwX1pos, scrwX2pos);
             
         } //  if yappLeft
         
+        // (0) = posx | posy
+        // (1) = screwDiameter
+        // (2) = width
+        // (3) = Height
+        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappRight, bm, 4))
         {
-          //echo("printBaseMount: RIGHT!!");
           rotate([0,0,180])
           {
             mirror([1,0,0])
@@ -430,9 +431,6 @@ module printBaseMounts()
                 tmpMinPos = minPos(tmpPos, bm[1]);
                 scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
                 scrwX2pos = scrwX1pos + newWidth;
-                //echo("RIGHT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
-
-            //--oneMount(bm, scrwX1pos, scrwX2pos)--
                 oneMount(bm, scrwX1pos, scrwX2pos);
               }
             } // mirror()
@@ -440,9 +438,13 @@ module printBaseMounts()
           
         } //  if yappRight
         
+        // (0) = posx | posy
+        // (1) = screwDiameter
+        // (2) = width
+        // (3) = Height
+        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappFront, bm, 4))
         {
-          //echo("printBaseMount: FRONT!!");
           rotate([0,180,0])
           {
             rotate([0,0,90])
@@ -458,8 +460,6 @@ module printBaseMounts()
                     tmpMinPos = minPos(tmpPos, bm[1]);
                     scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
                     scrwX2pos = scrwX1pos + newWidth;
-                    //echo("FRONT:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
-                //--oneMount(bm, scrwX1pos, scrwX2pos)--
                     oneMount(bm, scrwX1pos, scrwX2pos);
                   }
                 } // rotate Y-ax
@@ -469,6 +469,11 @@ module printBaseMounts()
           
         } //  if yappFront
         
+        // (0) = posx | posy
+        // (1) = screwDiameter
+        // (2) = width
+        // (3) = Height
+        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappBack, bm, 4))
         {
           //echo("printBaseMount: BACK!!");
@@ -483,8 +488,6 @@ module printBaseMounts()
                 tmpMinPos = minPos(tmpPos, bm[1]);
                 scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
                 scrwX2pos = scrwX1pos + newWidth;
-                //echo("BACK:", scrwX1pos=scrwX1pos, scrwX2pos=scrwX2pos);
-            //--oneMount(bm, scrwX1pos, scrwX2pos)--
                 oneMount(bm, scrwX1pos, scrwX2pos);
               }
             } // rotate Y-ax
@@ -502,13 +505,13 @@ module printBaseMounts()
 //===========================================================
 //-- snapJoins -- origen = box[x0,y0]
 // (0) = posx | posy
-// (1) = cylinderDiameter
-// (2) = width
-// (3..6) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappCenter }
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
 module printBaseSnapJoins()
 {
   snapHeight = 2;
+  snapDiam   = 1.2;
   
   for (snj = snapJoins)
   {
@@ -532,18 +535,17 @@ module printBaseSnapJoins()
                     snapZposLR])
       {
         rotate([0,90,0])
-          color("blue") cylinder(d=wallThickness, h=snapWidth);
+          //color("blue") cylinder(d=wallThickness, h=snapWidth);
+          color("blue") cylinder(d=snapDiam, h=snapWidth); // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
-        //translate([shellLength-roundRadius-snj[0]-snj[2],
         translate([shellLength-(snapXpos+(snapWidth/2)),
                     wallThickness/2,
                     snapZposLR])
-                    //(baseWallHeight+ridgeHeight)-(wallThickness*2)])
         {
           rotate([0,90,0])
-            color("blue") cylinder(d=wallThickness, h=snapWidth);
+            color("blue") cylinder(d=snapDiam, h=snapWidth);
         }
         
       } // yappCenter
@@ -556,7 +558,8 @@ module printBaseSnapJoins()
                     snapZposLR])
       {
         rotate([0,90,0])
-          color("blue") cylinder(d=wallThickness, h=snapWidth);
+          //color("blue") cylinder(d=wallThickness, h=snapWidth);
+          color("blue") cylinder(d=snapDiam, h=snapWidth);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
@@ -565,7 +568,8 @@ module printBaseSnapJoins()
                     snapZposLR])
         {
           rotate([0,90,0])
-            color("blue") cylinder(d=wallThickness, h=snapWidth);
+            //color("blue") cylinder(d=wallThickness, h=snapWidth);
+            color("blue") cylinder(d=snapDiam, h=snapWidth);  // 13-02-2022
         }
         
       } // yappCenter
@@ -578,7 +582,8 @@ module printBaseSnapJoins()
                     snapZposBF])
       {
         rotate([270,0,0])
-          color("blue") cylinder(d=wallThickness, h=snapWidth);
+          //color("blue") cylinder(d=wallThickness, h=snapWidth);
+          color("blue") cylinder(d=snapDiam, h=snapWidth);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
@@ -587,7 +592,8 @@ module printBaseSnapJoins()
                       snapZposBF])
         {
           rotate([270,0,0])
-            color("blue") cylinder(d=wallThickness, h=snapWidth);
+            //color("blue") cylinder(d=wallThickness, h=snapWidth);
+            color("blue") cylinder(d=snapDiam, h=snapWidth);  // 13-02-2022
         }
         
       } // yappCenter
@@ -600,7 +606,8 @@ module printBaseSnapJoins()
                     snapZposBF])
       {
         rotate([270,0,0])
-          color("blue") cylinder(d=wallThickness, h=snapWidth);
+          //color("blue") cylinder(d=wallThickness, h=snapWidth);
+          color("blue") cylinder(d=snapDiam, h=snapWidth);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
@@ -609,7 +616,8 @@ module printBaseSnapJoins()
                       snapZposBF])
         {
           rotate([270,0,0])
-            color("blue") cylinder(d=wallThickness, h=snapWidth);
+            //color("blue") cylinder(d=wallThickness, h=snapWidth);
+            color("blue") cylinder(d=snapDiam, h=snapWidth);  // 13-02-2022
         }
         
       } // yappCenter
@@ -624,17 +632,16 @@ module printBaseSnapJoins()
 //===========================================================
 //-- snapJoins -- origen = box[x0,y0]
 // (0) = posx | posy
-// (1) = cylinderDiameter
-// (2) = width
-// (3..6) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappCenter }
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
 module printLidSnapJoins()
 {
   for (snj = snapJoins)
   {
     snapWidth  = snj[1]+1;
     snapHeight = 2;
-    snapDiam   = 2;  // fixed
+    snapDiam   = 1.4;  // fixed
     
     tmpYmin    = (roundRadius*2)+(snapWidth/2);
     tmpYmax    = shellWidth - tmpYmin;
@@ -652,18 +659,20 @@ module printLidSnapJoins()
     if (isTrue(yappLeft, snj, 2))
     {
       translate([snapXpos-(snapWidth/2)-0.5,
-                    -1,
+                    -0.5,
                     snapZposLR])
       {
-          color("red") cube([snapWidth, 5, wallThickness]);
+        //color("red") cube([snapWidth, 5, wallThickness]);
+        color("red") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(snapXpos+(snapWidth/2))+0.5,
-                    -1,
+                    -0.5,
                     snapZposLR])
         {
-            color("red") cube([snapWidth, 5, wallThickness]);
+          //color("red") cube([snapWidth, 5, wallThickness]);
+          color("red") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
         }
         
       } // yappSymmetric
@@ -672,18 +681,20 @@ module printLidSnapJoins()
     if (isTrue(yappRight, snj, 2))
     {
       translate([snapXpos-(snapWidth/2)-0.5,
-                    shellWidth-2,
+                    shellWidth-(wallThickness-0.5),
                     snapZposLR])
       {
-        color("red") cube([snapWidth, 5, wallThickness]);
+        //color("red") cube([snapWidth, 5, wallThickness]);
+        color("red") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
         translate([shellLength-(snapXpos+(snapWidth/2)-0.5),
-                    shellWidth-2,
+                    shellWidth-(wallThickness-0.5),
                     snapZposLR])
         {
-          color("red") cube([snapWidth, 5, wallThickness]);
+          //color("red") cube([snapWidth, 5, wallThickness]);
+          color("green") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
         }
         
       } // yappSymmetric
@@ -691,19 +702,22 @@ module printLidSnapJoins()
     
     if (isTrue(yappBack, snj, 2))
     {
-      translate([(wallThickness/2)-1,
+      //translate([(wallThickness/2)+2,
+      translate([-0.5,
                     snapYpos-(snapWidth/2)-0.5,
                     snapZposBF])
       {
-        color("red") cube([5, snapWidth, wallThickness]);
+        //color("red") cube([5, snapWidth, wallThickness]);
+        color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
-        translate([(wallThickness/2)-1,
+        translate([-0.5,
                       shellWidth-(snapYpos+(snapWidth/2))+0.5,
                       snapZposBF])
         {
-          color("red") cube([5, snapWidth, wallThickness]);
+          //color("red") cube([5, snapWidth, wallThickness]);
+          color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
         }
         
       } // yappSymmetric
@@ -711,19 +725,22 @@ module printLidSnapJoins()
     
     if (isTrue(yappFront, snj, 2))
     {
-      translate([shellLength-(wallThickness/2)-1,
+      //translate([shellLength-(wallThickness/2)-1,
+      translate([shellLength-wallThickness+0.5,
                     snapYpos-(snapWidth/2)-0.5,
                     snapZposBF])
       {
-        color("red") cube([5, snapWidth, wallThickness]);
+        //color("red") cube([5, snapWidth, wallThickness]);
+        color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj, 3))
       {
-        translate([shellLength-(wallThickness/2)-1,
+        translate([shellLength-(wallThickness-0.5),
                       shellWidth-(snapYpos+(snapWidth/2))+0.5,
                       snapZposBF])
         {
-          color("red") cube([5, snapWidth, wallThickness]);
+          //color("red") cube([5, snapWidth, wallThickness]);
+          color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
         }
         
       } // yappSymmetric
@@ -1059,11 +1076,9 @@ module cutoutsInXZ(type)
         {
           posx=pcbX+cutOut[0];
           posz=actZpos(type)+cutOut[1];
-          //echo("LEFT (o):", posx=posx, posz=posz);
           z=standoffHeight+pcbThickness+cutOut[1];
           t=(baseWallHeight-ridgeHeight);
           newH=newHeight(type, cutOut[3], z, t);
-          //if (type=="base") echo("LEFT: newHeight(o):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([posx, -1, posz])
             color("blue")
               cube([cutOut[2], wallThickness+roundRadius+2, newH]);
@@ -1072,12 +1087,9 @@ module cutoutsInXZ(type)
         {
           posx=pcbX+cutOut[0]-(cutOut[2]/2);
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-          //echo("LEFT (c):", posx=posx, posz=posz);
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          //newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);  // 12-01-2022
           newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);    // 13-01-2022
-          //if (type=="base") echo("LEFT: newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([posx, -1, posz])
             color("blue")
               cube([cutOut[2], wallThickness+roundRadius+2, newH]);
@@ -1108,7 +1120,6 @@ module cutoutsInXZ(type)
           z=standoffHeight+pcbThickness+cutOut[1];
           t=(baseWallHeight-ridgeHeight);
           newH=newHeight(type, cutOut[3], z, t);
-          //if (type=="base") echo("RIGHT: newHeight(o):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([posx, shellWidth-(wallThickness+roundRadius+1), posz])
             color("orange")
               cube([cutOut[2], wallThickness+roundRadius+2, newH]);
@@ -1119,9 +1130,7 @@ module cutoutsInXZ(type)
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          //newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);  // 12-01-2022
           newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);    // 13-01-2022
-          //if (type=="base") echo("LEFT: newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([posx, shellWidth-(wallThickness+roundRadius+1), posz])
               color("orange")
                 cube([cutOut[2], wallThickness+roundRadius+2, newH]);
@@ -1145,7 +1154,7 @@ module cutoutsInXZ(type)
 //===========================================================
 module cutoutsInYZ(type)
 {      
-    function actZpos(T) = (T=="base") ? pcbZ : pcbZlid*-1;
+    function actZpos(T) = (T=="base") ? pcbZ : (pcbZlid)*-1;
 
       for ( cutOut = cutoutsFront )
       {
@@ -1165,22 +1174,18 @@ module cutoutsInYZ(type)
           z=standoffHeight+pcbThickness+cutOut[1];
           t=baseWallHeight-ridgeHeight;
           newH=newHeight(type, cutOut[3], z, t);
-          //if (type=="base") echo("FRONT newHeight(o):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([shellLength-wallThickness-roundRadius-1, posy, posz])
             color("purple")
-              //cube([wallThickness+roundRadius+2, cutOut[2], cutOut[3]]);
               cube([wallThickness+roundRadius+2, cutOut[2], newH]);
 
         }
         else if (cutOut[4]==yappRectangle && cutOut[5]==yappCenter)
         {
-          posy=pcbY+cutOut[0]-(cutOut[2]/2);                      //[0]posY+([2]width/2)
-          z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);  //[1]posZ+([3]height/2)
+          posy=pcbY+cutOut[0]-(cutOut[2]/2); 
+          z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          //newH=newHeight(type, cutOut[3], z, t)+(cutOut[3]/2);  // 12-01-2022
           newH=newHeight(type, cutOut[3]/2, z, t)+(cutOut[3]/2);    // 13-01-2022
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-          //echo("FRONT newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([shellLength-wallThickness-roundRadius-1, posy, posz])
             color("purple")
               cube([wallThickness+roundRadius+2, cutOut[2], newH]);
@@ -1189,7 +1194,6 @@ module cutoutsInYZ(type)
         {
           posy=pcbY+cutOut[0];
           posz=actZpos(type)+cutOut[1];
-          //echo("circle Front:", posy=posy, posz=posz);
           translate([shellLength-(roundRadius+wallThickness+1), posy, posz])
             rotate([0, 90, 0])
               color("purple")
@@ -1211,7 +1215,6 @@ module cutoutsInYZ(type)
           z=standoffHeight+pcbThickness+cutOut[1];
           t=baseWallHeight-ridgeHeight;
           newH=newHeight(type, cutOut[3], z, t);
-          //if (type=="base") echo("BACK newHeight(o):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([-1 , posy, posz])
             color("blue")
               cube([wallThickness+roundRadius+2, cutOut[2], newH]);
@@ -1223,7 +1226,6 @@ module cutoutsInYZ(type)
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
           newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-          //if (type=="base") echo("BACK newHeight(c):", posz=posz, h=cutOut[3], z=z, t=t, newH=newH);
           translate([-1, posy, posz])
               color("orange")
                 cube([wallThickness+roundRadius+2, cutOut[2], newH]);
@@ -1470,7 +1472,7 @@ module baseShell()
     //-------------------------------------------------------------------
     module subtrbaseRidge(L, W, H, posZ, rad)
     {
-      wall = wallThickness/2;
+      wall = (wallThickness/2)+ridgeSlack;
       oRad = rad;
       iRad = getMinRad(oRad, wall);
 
@@ -1499,7 +1501,8 @@ module baseShell()
           {
             minkowski()
             {
-              square([(L)-((iRad*2)), (W)-((iRad*2))], center=true);
+              //square([(L)-((iRad*2)), (W)-((iRad*2))], center=true);
+              square([(L)-((iRad*2)), (W-ridgeSlack)-((iRad*2))], center=true);  // 13-02-2022
                 circle(iRad);
             }
           
@@ -1681,7 +1684,8 @@ module pcbStandoff(color, height, type)
         {
           color(color,1.0)
             cylinder(
-              r = standoffDiameter / 2,
+              //r = standoffDiameter / 2,
+              d = standoffDiameter,
               h = height,
               center = false,
               $fn = 20);
@@ -1691,8 +1695,8 @@ module pcbStandoff(color, height, type)
         {
           color(color, 1.0)
             cylinder(
-              r = pinDiameter / 2,
-              h = (pcbThickness*2)+standoffHeight,
+              d = pinDiameter,
+              h = (pcbThickness*2.5)+standoffHeight,
               center = false,
               $fn = 20);
         } // standPin()
@@ -1701,7 +1705,7 @@ module pcbStandoff(color, height, type)
         {
           color(color, 1.0)
             cylinder(
-              r = (pinDiameter / 2)+.2,
+              d = pinDiameter+.2+pinHoleSlack,
               h = (pcbThickness*2)+height+0.02,
               center = false,
               $fn = 20);
@@ -2072,7 +2076,6 @@ module YAPPgenerate()
                   //--- show inspection Y-as
                   if (inspectY > 0)
                   {
-      //              translate([shellLength/2, inspectY-shellWidth, ridgeHeight/2]) 
                     translate([-1, inspectY-shellWidth, 
                                 (lidWallHeight+lidPlaneThickness+ridgeHeight+2)*-1]) 
                     {

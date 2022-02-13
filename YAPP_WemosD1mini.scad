@@ -3,10 +3,10 @@
 //
 //  Script to creates a box for a Wemos D1 mini
 //
-//  Version 1.1 (13-01-2022)
+//  Version 1.1 (13-02-2022)
 //
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -72,15 +72,16 @@ paddingLeft         = 1.5;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 2.5;
+ridgeHeight         = 3.5;
+ridgeSlack          = 0.1;
 roundRadius         = 1.0;
-
-pinDiameter         = 1.8;
-standoffDiameter    = 4;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
 standoffHeight      = 2.0;
+pinDiameter         = 1.8;
+pinHoleSlack        = 0.1;
+standoffDiameter    = 4;
 
 
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
@@ -140,6 +141,17 @@ cutoutsFront =  [
 // (5) = { yappCenter }
 cutoutsLeft =   [
                   [31.0, 0.5, 4.5, 3, yappRectangle, yappCenter]    // reset button
+                ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =   [
+                    [shellLength-17, 5, yappLeft]
+                  , [shellLength-10, 5, yappRight]
+                  , [(shellWidth/2)-2.5, 5, yappBack]
                 ];
 
 //-- origin of labels is box [0,0,0]

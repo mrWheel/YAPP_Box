@@ -3,14 +3,14 @@
 //
 //  This is a box for ESP32-CAM-USB-FISH (Fisheye lens)
 //
-//  Version 1.1 (23-01-2022)
+//  Version 1.1 (13-02-2022)
 //
 //  Due to the different lid- and base position you need
 //  to make separate STL files of both!
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -63,14 +63,15 @@ paddingLeft         = 1.2;  // due to the I00 switch
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
 ridgeHeight         = 3.0;
+ridgeSlack          = 0.1;
 roundRadius         = 2.0;
-
-pinDiameter         = 0.5;  // no pin so hole can be as small as possible
-standoffDiameter    = 3.5;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
 standoffHeight      = 2.0;
+pinDiameter         = 0.5;  // no pin so hole can be as small as possible
+pinHoleSlack        = 0.1;
+standoffDiameter    = 3.5;
 
 //-- D E B U G -------------------
 showSideBySide      = true;
@@ -192,6 +193,16 @@ connectors   =  [
 // (5) = { yappCenter }
 baseMounts   = [
                ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =     [
+                    [7,  5, yappLeft, yappRight]
+                  , [(shellWidth/2)-2.5, 5, yappFront]
+                ];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx

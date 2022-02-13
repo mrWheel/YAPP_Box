@@ -3,11 +3,11 @@
 //
 //  This will generate a projectbox for a "Generic Arduino UNO"
 //
-//  Version 1.0 (23-01-2022)
+//  Version 1.0 (13-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -64,13 +64,15 @@ paddingLeft       = 2;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight       = 2;
+ridgeHeight       = 3.5;
+ridgeSlack        = 0.1;
 roundRadius       = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
 standoffHeight    = 3.5;
 pinDiameter       = 2.8;
+pinHoleSlack      = 0.1;
 standoffDiameter  = 4;
 
 
@@ -153,6 +155,15 @@ cutoutsBack = [
                  [31.5-1, -1, 12.2+2, 12, yappRectangle]  // USB
                , [3.5-1,  -1, 12,     11, yappRectangle]  // Power Jack
               ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =     [
+                    [10, 5, yappLeft, yappRight, yappSymmetric]
+                ];
 
 //-- origin of labels is box [0,0,0]
 // (0) = posx

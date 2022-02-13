@@ -3,11 +3,11 @@
 //
 //  This will generate a projectbox for a "Arduino UNO 'clone'"
 //
-//  Version 1.1 (23-01-2022)
+//  Version 1.1 (13-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -64,7 +64,7 @@ paddingLeft       = 2;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight       = 2;
+ridgeHeight       = 3.5;
 roundRadius       = 2.0;
 
 //-- How much the PCB needs to be raised from the base

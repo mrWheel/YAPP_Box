@@ -7,7 +7,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v11.scad>
+include <./library/YAPPgenerator_v13.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -45,6 +45,19 @@ lidPlaneThickness   = 2.0;
 baseWallHeight      = 20;
 lidWallHeight       = 12;
 
+// ridge where base and lid off box can overlap
+// Make sure this isn't less than lidWallHeight
+ridgeHeight         = 4;
+ridgeSlack          = 0.2;
+roundRadius         = 5.0;
+
+// How much the PCB needs to be raised from the base
+// to leave room for solderings and whatnot
+standoffHeight      = 4.0;
+pinDiameter         = 2.5;
+pinHoleSlack        = 0.3;
+standoffDiameter    = 5;
+
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
 pcbLength           = 100;
@@ -57,17 +70,6 @@ paddingBack         = 9;
 paddingRight        = 9;
 paddingLeft         = 14;
 
-// ridge where base and lid off box can overlap
-// Make sure this isn't less than lidWallHeight
-ridgeHeight         = 2;
-roundRadius         = 5.0;
-
-pinDiameter         = 2.5;
-standoffDiameter    = 5;
-
-// How much the PCB needs to be raised from the base
-// to leave room for solderings and whatnot
-standoffHeight      = 4.0;
 
 //-- D E B U G -------------------
 showSideBySide      = true;
@@ -204,6 +206,19 @@ baseMounts   = [
                   , [10, 3.5, 15, 3, yappBack, yappFront]
                   , [shellWidth-10, 3.5, 15, 3, yappBack, yappFront]
                ];
+               
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =     [
+                    [2, 10, yappLeft, yappRight, yappSymmetric]
+              //    [5, 10, yappLeft]
+              //  , [shellLength-2, 10, yappLeft]
+                  , [30,  10, yappFront, yappBack]
+              //  , [2.5, 3, 5, yappBack, yappFront, yappSymmetric]
+                ];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx

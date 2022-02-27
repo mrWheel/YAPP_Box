@@ -3,7 +3,7 @@
 //
 //  This is a box for ESP32-CAM-USB-FISH (Fisheye lens)
 //
-//  Version 1.1 (13-02-2022)
+//  Version 1.1 (14-02-2022)
 //
 //  Due to the different lid- and base position you need
 //  to make separate STL files of both!
@@ -41,18 +41,18 @@ printBaseShell      = true;
 printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
-wallThickness       = 2.0;
-basePlaneThickness  = 2.0;
-lidPlaneThickness   = 2.0;
+wallThickness       = 1.5;
+basePlaneThickness  = 1.5;
+lidPlaneThickness   = 1.5;
 
 baseWallHeight      = 16;
-lidWallHeight       = 6;
+lidWallHeight       = 9;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
 pcbLength           = 40;
 pcbWidth            = 27.5;
-pcbThickness        = 14; // both ESP32CAM and USB board
+pcbThickness        = 13.5; // both ESP32CAM and USB board
                             
 // padding between pcb and inside wall
 paddingFront        = 0.3;
@@ -62,7 +62,7 @@ paddingLeft         = 1.2;  // due to the I00 switch
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;
+ridgeHeight         = 3.5;
 ridgeSlack          = 0.1;
 roundRadius         = 2.0;
 
@@ -81,7 +81,7 @@ shiftLid            = 10;
 colorLid            = "yellow";
 hideBaseWalls       = false;
 colorBase           = "white";
-showPCB             = true;
+showPCB             = false;
 showMarkers         = false;
 inspectX            = 0;  // 0=none, >0 from front, <0 from back
 inspectY            = 0;  // 0=none, >0 from left, <0 from right
@@ -138,7 +138,7 @@ cutoutsBase =   [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsFront =  [
-                   [pcbWidth/2, -10, 12, 8, yappRectangle, yappCenter] // USB connector
+                   [pcbWidth/2, -11, 12, 8, yappRectangle, yappCenter] // USB connector
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -216,9 +216,9 @@ labelsPlane =  [
                ];
                
 //-------------------------------------------------------------
-module baseHook()
+module baseHookOutside()
 {
-  translate([(shellLength/2)-7.5,shellWidth-wallThickness,5])
+  translate([(shellLength/2)-7.5,shellWidth-wallThickness,3])
   {
     difference()
     {
@@ -240,15 +240,15 @@ module baseHook()
   
   } // translate
   
-} //  baseHook()
+} //  baseHookOutside()
 
 //-------------------------------------------------------------
-module lidHook()
+module lidHookInside()
 {
   // lensHole X is @ 9
   // Y is @ (pcbWidth/2)+0.5)
   // Diameter is 11
-  translate([pcbX+9,pcbY+(pcbWidth/2)+0.5,0])
+  translate([pcbX+9,pcbY+(pcbWidth/2)+0.5,(lidPlaneThickness+2) *-1])
   {
     difference()
     {
@@ -256,7 +256,7 @@ module lidHook()
       cylinder(d=12, h=5);
     }
   }
-  translate([30,(pcbWidth-5),0])
+  translate([30,(pcbWidth-5),(lidPlaneThickness+2) *-1])
   {
     difference()
     {
@@ -266,7 +266,7 @@ module lidHook()
     }
   }
   
-} //  lidHook()
+} //  lidHookInside()
 
 //---- This is where the magic happens ----
 YAPPgenerate();

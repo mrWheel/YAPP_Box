@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.3 (13-02-2022)";
+Version="v1.3 (26-02-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -1472,7 +1472,7 @@ module baseShell()
     //-------------------------------------------------------------------
     module subtrbaseRidge(L, W, H, posZ, rad)
     {
-      wall = (wallThickness/2)+ridgeSlack;
+      wall = (wallThickness/2)+(ridgeSlack/2);  // 26-02-2022
       oRad = rad;
       iRad = getMinRad(oRad, wall);
 
@@ -1577,7 +1577,7 @@ module lidShell()
     //-------------------------------------------------------------------
     module addlidRidge(L, W, H, rad)
     {
-      wall = wallThickness/2;
+      wall = (wallThickness/2);
       oRad = rad;
       iRad = getMinRad(oRad, wall);
     
@@ -1612,7 +1612,7 @@ module lidShell()
             {
                 minkowski()
                 {
-                  square([L-((iRad*2)), W-((iRad*2))], center=true);
+                  square([L-((iRad*2)), W-((iRad*2))+(ridgeSlack/2)], center=true); // 26-02-2022
                   circle(iRad);
                 }
               
@@ -1696,7 +1696,7 @@ module pcbStandoff(color, height, type)
           color(color, 1.0)
             cylinder(
               d = pinDiameter,
-              h = (pcbThickness*2.5)+standoffHeight,
+              h = pcbThickness+standoffHeight+pinDiameter,
               center = false,
               $fn = 20);
         } // standPin()

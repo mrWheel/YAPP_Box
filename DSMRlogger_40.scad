@@ -3,7 +3,7 @@
 //
 //  This is a box for DSMRlogger 4.0 (no PWR-jack)
 //
-//  Version 1.1 (10-02-2022)
+//  Version 1.1 (13-02-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -52,6 +52,12 @@ lidWallHeight       = 5.0;  //6.5;
 pcbLength           = 50.5;
 pcbWidth            = 67.5;
 pcbThickness        = 1.5;
+
+// OLED screen
+oledWidth           = 27.7;
+oledPcbThickness    = 1.3;
+oledHeight          = 12;
+oledWallThickness   = 2;
                             
 // padding between pcb and inside wall
 paddingFront        = 5;
@@ -62,14 +68,15 @@ paddingLeft         = 3; // room for PWR jack
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
 ridgeHeight         = 3;
+ridgeSlack          = 0.1;
 roundRadius         = 2.0;
-
-pinDiameter         = 2.4;
-standoffDiameter    = 6;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
 standoffHeight      = 4.0;
+pinDiameter         = 2.4;
+pinHoleSlack        = 0.1;
+standoffDiameter    = 6;
 
 //-- D E B U G -------------------
 showSideBySide      = true;
@@ -142,6 +149,7 @@ cutoutsBase =   [
 // (4) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsFront =  [
+                  [32, 2, 14, 4, yappRectangle, yappCenter]
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -277,11 +285,6 @@ if (printSwitchExtenders)
 //-- OLED stand --------------
 module oledStand()
 {
-    pcbThickness = 1.3;
-    pcbWidth = 25;
-    oledHeight = 12;
-    wallThickness = 2;
-    
     translate([-20,40,0])
     {
       rotate([90,0,90])
@@ -290,19 +293,19 @@ module oledStand()
         //union()
         {
         //-- base block
-        cube([pcbWidth+4, 5, oledHeight+0.5]);
+        cube([oledWidth+4, 5, oledHeight+0.5]);
         //-- cutout bottom
-        translate([wallThickness+0.5,-0.5, 0])
-          color("red") cube([pcbWidth-1,6,6]);
+        translate([oledWallThickness+1,-0.5, -1])
+          color("red") cube([oledWidth-2,6.0,7.5]);
         //-- cutout 3mm for ESP8266
-        translate([wallThickness-4,-0.5, 0])
-          color("green") cube([10,6,3]);
+        translate([oledWallThickness-4,-0.5, -1])
+          color("green") cube([10,6,4]);
         //-- cutout top
-        translate([wallThickness+1,-0.4, oledHeight-4])
-          color("blue") cube([pcbWidth-2,6,8]);
+        translate([oledWallThickness+1,-0.4, oledHeight-4])
+          color("blue") cube([oledWidth-2,6,8]);
         //-- cutout pcb slider
-        translate([wallThickness+0.1,-0.5, oledHeight-1.5])
-          color("gray") cube([pcbWidth-0.2,6,pcbThickness]);
+        translate([oledWallThickness-0.5,-0.5, oledHeight-1.5])
+          color("gray") cube([oledWidth+1,6,oledPcbThickness]);
       } // difference
     } // rotate
   } // translate

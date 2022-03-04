@@ -17,6 +17,7 @@ request.
 * <strike>modules (Hooks) that can be (re)defined by the user (almost there ;-))</strike> (done)
 * <strike>screw connector between the top- and bottomPlanes (for bigger boxes)</strike> (done)
 * <strike>snap-ons in the ridges</strike> (done)
+* Rotate rectangular cutOuts (orientation)
 * anything else? Anyone?
 
 ## How to program your Project Box

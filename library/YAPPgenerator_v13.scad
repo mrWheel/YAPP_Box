@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.3 (26-02-2022)";
+Version="v1.3 (04-03-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -2096,7 +2096,7 @@ module YAPPgenerate()
                 
                 translate([shellLength-15, -15, 0])
                   linear_extrude(1) 
-                    mirror(1,0,0)
+                    mirror([1,0,0])
                       %text("LEFT"
                             , font="Liberation Mono:style=bold"
                             , size=8

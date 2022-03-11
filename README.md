@@ -109,10 +109,10 @@ A picture is worth a thousand words ...
 ## cutouts in the *Lid*:
 ![YAPP_cutoutsLid](https://user-images.githubusercontent.com/5585427/150956374-c0de9d91-03a4-4ee3-8475-fecb251e9bca.png)
 
-## Using the (new) *angle* parm:
+## Using the (new) *angle* parm (rotate around the x/y corner):
 ![yappRectangle40dgrs](https://user-images.githubusercontent.com/5585427/157865661-02407bfe-fada-4528-b25c-ea83c94b9467.png)
 
-### With *yappCenter* the rectangle will turn around it's center point:
+### With *yappCenter* the rectangle will rotate around it's center point:
 ![yappRectangleCenter10dgrs](https://user-images.githubusercontent.com/5585427/157865668-2b10bbe0-6223-4e6e-b74b-b81fb919f3da.png)
 
 ## Base mounts:

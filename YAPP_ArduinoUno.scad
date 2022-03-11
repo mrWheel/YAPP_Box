@@ -7,7 +7,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v13.scad>
+include <./library/YAPPgenerator_v14.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -108,24 +108,25 @@ pcbStands = [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLid =  [
-                 [0, 31.5-1, 12.2+2, 11, yappRectangle]       // USB (right)
-               , [0, 3.5-1, 12, 13.5, yappRectangle]          // Power Jack
-               , [29-1, 12.5-1, 8.5+2, 35+2,  yappRectangle]  // ATmega328
-               , [17.2-1, 49.5-1, 5, 47.4+2,  yappRectangle]  // right headers
-               , [26.5-1, 1-1, 5, 38+2,  yappRectangle]       // left headers
-               , [65.5, 28.5, 8.0, 5.5,  yappRectangle, yappCenter]    // ICSP1
-               , [18.0, 45.5, 6.5, 8.0,  yappRectangle, yappCenter]    // ICSP2
-               , [6, 49, 8, 0, yappCircle]                  // reset button
+                 [0, 31.5-1, 12.2+2, 11, 0, yappRectangle]      // USB (right)
+               , [0, 3.5-1, 12, 13.5, 0, yappRectangle]         // Power Jack
+               , [29-1, 12.5-1, 8.5+2, 35+2, 0,  yappRectangle] // ATmega328
+               , [17.2-1, 49.5-1, 5, 47.4+2, 0,  yappRectangle] // right headers
+               , [26.5-1, 1-1, 5, 38+2, 0, yappRectangle]       // left headers
+               , [65.5, 28.5, 8.0, 5.5, 0, yappRectangle, yappCenter]    // ICSP1
+               , [18.0, 45.5, 6.5, 8.0, 0, yappRectangle, yappCenter]    // ICSP2
+               , [6, 49, 8, 0, yappCircle]                      // reset button
 //-- if space between pcb and LidPlane > 5.5 we do'n need holes for the elco's --
-//             , [18.0, 8.6, 7.2, 0, yappCircle]            // elco1
-//             , [26.0, 8.6, 7.2, 0, yappCircle]            // elco2
-//             , [21.5, 8.6, 7.2, 7, yappRectangle, yappCenter]        // connect elco's
-               , [28.2, 35.2, 5, 3.5, yappRectangle, yappCenter]       // TX/RX leds
-               , [28.2, 42.5, 3, 3.5, yappRectangle, yappCenter]       // led13
-               , [58.5, 37, 3, 3.5, yappRectangle, yappCenter]         // ON led
+//             , [18.0, 8.6, 7.2, 0, 0, yappCircle]             // elco1
+//             , [26.0, 8.6, 7.2, 0, 0, yappCircle]             // elco2
+//             , [21.5, 8.6, 7.2, 7, 0, yappRectangle, yappCenter]        // connect elco's
+               , [28.2, 35.2, 5, 3.5, 0, yappRectangle, yappCenter]       // TX/RX leds
+               , [28.2, 42.5, 3, 3.5, 0, yappRectangle, yappCenter]       // led13
+               , [58.5, 37, 3, 3.5, 0, yappRectangle, yappCenter]         // ON led
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -133,15 +134,18 @@ cutoutsLid =  [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBase =   [
-                    [30, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
-                  , [35, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
-                  , [40, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
-                  , [45, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
-                  , [50, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
-                  , [55, pcbWidth/2, 25, 2, yappRectangle, yappCenter]
+                    [25, pcbWidth/2, 10, 2, 30, yappRectangle, yappCenter]
+                  , [30, pcbWidth/2, 25, 2, 30, yappRectangle, yappCenter]
+                  , [35, pcbWidth/2, 25, 2, 30, yappRectangle, yappCenter]
+                  , [40, pcbWidth/2, 25, 2, 30, yappRectangle, yappCenter]
+                  , [45, pcbWidth/2, 25, 2, 30, yappRectangle, yappCenter]
+                  , [50, pcbWidth/2, 25, 2, 30, yappRectangle, yappCenter]
+                  , [55, pcbWidth/2, 25, 2, 30, yappRectangle, yappCenter]
+                  , [60, pcbWidth/2, 10, 2, 30, yappRectangle, yappCenter]
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -149,11 +153,12 @@ cutoutsBase =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBack = [
-                 [31.5-1, -1, 12.2+2, 12, yappRectangle]  // USB
-               , [3.5-1,  -1, 12,     11, yappRectangle]  // Power Jack
+                 [31.5-1, -1, 12.2+2, 12, 0, yappRectangle]  // USB
+               , [3.5-1,  -1, 12,     11, 0, yappRectangle]  // Power Jack
               ];
 
 //-- snap Joins -- origen = box[x0,y0]

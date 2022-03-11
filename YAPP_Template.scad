@@ -7,7 +7,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v13.scad>
+include <./library/YAPPgenerator_v14.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -102,14 +102,15 @@ pcbStands = [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLid =  [
-                    [20, 20, 10, 20, yappRectangle]  
-               //   , [20, 50, 10, 20, yappRectangle, yappCenter]
-                  , [50, 50, 10, 2, yappCircle]
-                  , [pcbLength-10, 20, 15, 0, yappCircle] 
-                  , [50, pcbWidth, 5, 7, yappRectangle, yappCenter]
+                    [20, 20, 10, 20, 10, yappRectangle]  
+               //   , [20, 50, 10, 20, 0, yappRectangle, yappCenter]
+                  , [50, 50, 10, 2, 0, yappCircle]
+                  , [pcbLength-10, 20, 15, 0, 0, yappCircle] 
+                  , [50, pcbWidth, 5, 7, 0, yappRectangle, yappCenter]
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -117,13 +118,14 @@ cutoutsLid =  [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBase =   [
-                    [10, 10, 20, 10, yappRectangle]
-                  , [30, 10, 15, 10, yappRectangle, yappCenter]
-                  , [20, pcbWidth-20, 15, 0, yappCircle]
-                  , [pcbLength-15, 5, 10, 2, yappCircle]
+                    [10, 10, 20, 10, 45, yappRectangle]
+                  , [30, 10, 15, 10, 45, yappRectangle, yappCenter]
+                  , [20, pcbWidth-20, 15, 0, 0, yappCircle]
+                  , [pcbLength-15, 5, 10, 2, 0, yappCircle]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -131,12 +133,13 @@ cutoutsBase =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsFront =  [
-                    [0, 5, 10, 15, yappRectangle]               // org
-                 ,  [25, 3, 10, 10, yappRectangle, yappCenter]  // center
-                 ,  [60, 10, 15, 6, yappCircle]                  // circle
+                    [0, 5, 10, 15, 0, yappRectangle]               // org
+                 ,  [25, 3, 10, 10, 0, yappRectangle, yappCenter]  // center
+                 ,  [60, 10, 15, 6, 0, yappCircle]                  // circle
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -144,12 +147,13 @@ cutoutsFront =  [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBack =   [
-                    [0, 0, 10, 8, yappRectangle]                // org
-                  , [25, 18, 10, 6, yappRectangle, yappCenter]  // center
-                  , [50, 0, 8, 8, yappCircle]                   // circle
+                    [0, 0, 10, 8, 0, yappRectangle]                // org
+                  , [25, 18, 10, 6, 0, yappRectangle, yappCenter]  // center
+                  , [50, 0, 8, 8, 0, yappCircle]                   // circle
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -157,12 +161,13 @@ cutoutsBack =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLeft =   [
-                    [25, 0, 6, 20, yappRectangle]                        // org
-                  , [pcbLength-35, 0, 20, 6, yappRectangle, yappCenter] // center
-                  , [pcbLength/2, 10, 20, 6, yappCircle]                // circle
+                    [25, 0, 6, 20, 0, yappRectangle]                        // org
+                  , [pcbLength-35, 0, 20, 6, 0, yappRectangle, yappCenter] // center
+                  , [pcbLength/2, 10, 20, 6, 0, yappCircle]                // circle
                 ];
 
 //-- right plane   -- origin is pcb[0,0,0]
@@ -170,12 +175,13 @@ cutoutsLeft =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsRight =  [
-                    [10, 0, 9, 5, yappRectangle]                // org
-                  , [40, 0, 9, 5, yappRectangle, yappCenter]    // center
-                  , [60, 0, 9, 5, yappCircle]                   // circle
+                    [10, 0, 9, 5, 0, yappRectangle]                // org
+                  , [40, 0, 9, 5, 0, yappRectangle, yappCenter]    // center
+                  , [60, 0, 9, 5, 0, yappCircle]                   // circle
                 ];
 
 //-- connectors -- origen = box[0,0,0]

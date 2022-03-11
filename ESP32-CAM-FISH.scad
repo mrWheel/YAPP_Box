@@ -7,7 +7,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v13.scad>
+include <./library/YAPPgenerator_v14.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -101,11 +101,12 @@ pcbStands = [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLid =  [
-                  [9, ((pcbWidth/2)+0.5), 11, 20, yappCircle]       // lens
-                , [30, pcbWidth-3, 6, 6, yappRectangle, yappCenter] // flash LED
+                  [9, ((pcbWidth/2)+0.5), 11, 20, 0, yappCircle]                // lens
+                , [30, pcbWidth-3,         6,  6, 0, yappRectangle, yappCenter] // flash LED
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -113,30 +114,28 @@ cutoutsLid =  [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
-cutoutsBase =   [
-                    [7, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [10, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [13, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [16, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [19, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [22, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [25, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [28, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [31, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [34, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                ];
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
+cutoutsBase = [
+                    [13, (pcbWidth/2)-7,  6, 1.5, 35, yappRectangle]
+                  , [17, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [21, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [25, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [29, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [29, (pcbWidth/2)+0,  6, 1.5, 35, yappRectangle]
+              ];
 
 //-- front plane  -- origin is pcb[0,0,0]
 // (0) = posy
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsFront =  [
-           //         [pcbWidth/2, -11, 4, 4, yappRectangle, yappCenter] 
+           //         [pcbWidth/2, -11, 4, 4, 0, yappRectangle, yappCenter] 
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -144,10 +143,11 @@ cutoutsFront =  [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBack =   [
-                   [13, 0, 15, 5, yappRectangle, yappCenter] // SD card
+                   [13, 0, 15, 5, 0, yappRectangle, yappCenter] // SD card
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -155,8 +155,9 @@ cutoutsBack =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLeft =   [
                 ];
 
@@ -165,10 +166,11 @@ cutoutsLeft =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsRight =  [
-                    [shellLength-13, -6, 4, 4, yappRectangle] // power cord
+                    [shellLength-13, -6, 4, 4, 0, yappRectangle] // power cord
                 ];
 
 //-- connectors -- origen = box[0,0,0]

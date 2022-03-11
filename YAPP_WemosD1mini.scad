@@ -6,7 +6,7 @@
 //  Version 1.1 (13-02-2022)
 //
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v13.scad>
+include <./library/YAPPgenerator_v14.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -101,12 +101,13 @@ pcbStands =     [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLid =    [
-                  [6, -1, 5, (pcbLength-12), yappRectangle]        // left-header
-                , [6, pcbWidth-4, 5, pcbLength-12, yappRectangle]  // right-header
-                , [18.7, 8.8, 2, 0, yappCircle]                    // blue led
+                  [6, -1, 5, (pcbLength-12), 0, yappRectangle]        // left-header
+                , [6, pcbWidth-4, 5, pcbLength-12, 0, yappRectangle]  // right-header
+                , [18.7, 8.8, 2, 0, 0, yappCircle]                    // blue led
                 ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -114,11 +115,12 @@ cutoutsLid =    [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBase =   [
-                  [6, -1, 5, (pcbLength-12), yappRectangle]         // left-header
-                , [6, pcbWidth-4, 5, pcbLength-12, yappRectangle]   // right-header
+                  [6, -1, 5, (pcbLength-12), 0, yappRectangle]         // left-header
+                , [6, pcbWidth-4, 5, pcbLength-12, 0, yappRectangle]   // right-header
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -126,10 +128,11 @@ cutoutsBase =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsFront =  [
-                  [14.0, 1.0, 12.0, 7, yappRectangle, yappCenter]  // microUSB
+                  [14.0, 1.0, 12.0, 7, 0, yappRectangle, yappCenter]  // microUSB
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -137,10 +140,11 @@ cutoutsFront =  [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsLeft =   [
-                  [31.0, 0.5, 4.5, 3, yappRectangle, yappCenter]    // reset button
+                  [31.0, 0.5, 4.5, 3, 0, yappRectangle, yappCenter]    // reset button
                 ];
 
 //-- snap Joins -- origen = box[x0,y0]

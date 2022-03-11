@@ -126,7 +126,7 @@ pcbX              = wallThickness+paddingBack;
 pcbY              = wallThickness+paddingLeft;
 pcbYlid           = wallThickness+pcbWidth+paddingRight;
 pcbZ              = basePlaneThickness+standoffHeight+pcbThickness;
-pcbZlid           = (baseWallHeight+lidWallHeight+basePlaneThickness)-(standoffHeight);
+//pcbZlid           = (baseWallHeight+lidWallHeight+basePlaneThickness)-(standoffHeight);
 pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
                         -(standoffHeight+pcbThickness);
 
@@ -275,7 +275,7 @@ labelsPlane =   [
 
 
 //===========================================================
-function getMinRad(p1, wall) = (p1<=wall) ? 1 : p1-wall;
+function getMinRad(p1, wall) = ((p1<=wall) ? 1 : (p1 - wall));
 function isTrue(w, aw, from) = ((   w==aw[from] 
                                  || w==aw[from+1]  
                                  || w==aw[from+2]  
@@ -755,8 +755,9 @@ module printLidSnapJoins()
 //===========================================================
 module minkowskiBox(shell, L, W, H, rad, plane, wall)
 {
-  iRad = getMinRad(rad, wallThickness);
-
+  //--aaw-iRad = getMinRad(rad, wallThickness);
+  iRad = getMinRad(rad, wall);
+  
       //--------------------------------------------------------
       module minkowskiOuterBox(L, W, H, rad, plane, wall)
       {
@@ -1466,8 +1467,6 @@ module subtractLabels(plane, side)
 //===========================================================
 module baseShell()
 {
-  insideRadius=getMinRad(roundRadius);
-  halfRadius=getMinRad(roundRadius-(wallThickness/2));
 
     //-------------------------------------------------------------------
     module subtrbaseRidge(L, W, H, posZ, rad)
@@ -1569,8 +1568,6 @@ module baseShell()
 //===========================================================
 module lidShell()
 {
-  insideRadius=getMinRad(roundRadius);
-  halfRadius=getMinRad(roundRadius-(wallThickness/2));
 
   function newRidge(p1) = (p1>0.5) ? p1-0.5 : p1;
 

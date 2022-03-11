@@ -1,6 +1,25 @@
 # YAPP_Box
 Yet Another Parametric Projectbox generator
 
+Rev. 1.4 is the latest version.
+
+*This release breaks with previous releases in the extra parm "Angle" in all the cutOuts array's!!!*
+
+All plane array's now have this syntax:
+
+<pre>
+//-- plane    -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = width
+// (3) = length
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
+</pre>
+
+For your box to work with this release you have to add this extra parm (as "*0*") to all your cutOut-array-row's
+
 ## THIS IS WORK IN PROGRESS!!
 
 See: <a href="https://willem.aandewiel.nl/index.php/2022/01/02/yet-another-parametric-projectbox-generator/">This Post</a> (English) or
@@ -17,7 +36,7 @@ request.
 * <strike>modules (Hooks) that can be (re)defined by the user (almost there ;-))</strike> (done)
 * <strike>screw connector between the top- and bottomPlanes (for bigger boxes)</strike> (done)
 * <strike>snap-ons in the ridges</strike> (done)
-* Rotate rectangular cutOuts (orientation)
+* <strike>Rotate rectangular cutOuts (orientation)</strike> v1.4
 * anything else? Anyone?
 
 ## How to program your Project Box

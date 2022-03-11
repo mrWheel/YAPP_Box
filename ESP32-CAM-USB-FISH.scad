@@ -10,7 +10,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v13.scad>
+include <./library/YAPPgenerator_v14.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -104,41 +104,41 @@ pcbStands = [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsLid =  [
-                  [9, ((pcbWidth/2)+0.5),12, 20, yappCircle]        // lens
-                , [30, pcbWidth-5, 6, 6, yappRectangle, yappCenter] // flash LED
-                ];
+                  [9, ((pcbWidth/2)+0.5),12, 20, 0, yappCircle]        // lens
+                , [30, pcbWidth-5, 6, 6, 0, yappRectangle, yappCenter] // flash LED
+              ];
 
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBase =   [
-                    [ 8, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [11, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [14, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [17, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [20, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [23, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [26, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [29, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                  , [32, (pcbWidth/2), 15, 1.5, yappRectangle, yappCenter]
-                ];
+                    [13, (pcbWidth/2)-7, 6, 1.5, 35, yappRectangle]
+                  , [17, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [21, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [25, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [29, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
+                  , [29, (pcbWidth/2)+0,  6, 1.5, 35, yappRectangle]
+               ];
 
 //-- front plane  -- origin is pcb[0,0,0]
 // (0) = posy
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsFront =  [
-                   [pcbWidth/2, -11, 12, 8, yappRectangle, yappCenter] // USB connector
+                   [pcbWidth/2, -11, 12, 8, 0, yappRectangle, yappCenter] // USB connector
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -146,10 +146,11 @@ cutoutsFront =  [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsBack =   [
-                   [14, 0, 15, 5, yappRectangle, yappCenter] // SD slot
+                   [14, 0, 15, 5, 0, yappRectangle, yappCenter] // SD slot
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -157,7 +158,8 @@ cutoutsBack =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsLeft =   [
                 ];
@@ -167,7 +169,8 @@ cutoutsLeft =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = { yappRectangle | yappCircle }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
 // (5) = { yappCenter }
 cutoutsRight =  [
                 ];

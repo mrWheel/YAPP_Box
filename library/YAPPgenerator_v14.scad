@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.4 (10-03-2022)";
+Version="v1.4 (14-03-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -161,8 +161,9 @@ cutoutsLid  =   [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = { yappRectangle | yappCircle }
-// (5) = { yappCenter }
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
 cutoutsBase =   [
              //       [30, 0, 10, 24, yappRectangle]
              //     , [pcbLength/2, pcbWidth/2, 12, 4, yappCircle]
@@ -290,10 +291,8 @@ function isTrue(w, aw, from) = ((   w==aw[from]
                                  || w==aw[from+6] ) ? 1 : 0);  
 function minOutside(o, d) = ((((d*2)+1)>=o) ? (d*2)+1 : o);  
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
-function lowestVal(v1, minV)  = ((v1<minV) ? minV : v1);
-function highestVal(v1, maxV) = ((v1>maxV) ? maxV : v1);
-//function betweenVal(minV, maxV, v1) = (v1 >= minV && v1 <= maxV) ? true : false);
-//function maxVal(maxV, v1, btwn) = (!btwn && v1 < minV) ? minV : v1);
+//function lowestVal(v1, minV)  = ((v1<minV) ? minV : v1);
+//function highestVal(v1, maxV) = ((v1>maxV) ? maxV : v1);
 //===========================================================
 module printBaseMounts()
 {
@@ -525,13 +524,17 @@ module printBaseSnapJoins()
     snapZposBF = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
     tmpYmin    = (roundRadius*2)+(snapWidth/2);
     tmpYmax    = shellWidth - tmpYmin;
-    tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
-    snapYpos   = highestVal(tmpY, tmpYmax);
+    //-aaw- tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
+    tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
+    //-aaw- snapYpos   = highestVal(tmpY, tmpYmax);
+    snapYpos   = min(tmpY, tmpYmax);
 
     tmpXmin    = (roundRadius*2)+(snapWidth/2);
     tmpXmax    = shellLength - tmpXmin;
-    tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
-    snapXpos   = highestVal(tmpX, tmpXmax);
+    //-aaw- tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
+    tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
+    //-aaw- snapXpos   = highestVal(tmpX, tmpXmax);
+    snapXpos   = min(tmpX, tmpXmax);
 
     if (isTrue(yappLeft, snj, 2))
     {
@@ -650,13 +653,17 @@ module printLidSnapJoins()
     
     tmpYmin    = (roundRadius*2)+(snapWidth/2);
     tmpYmax    = shellWidth - tmpYmin;
-    tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
-    snapYpos   = highestVal(tmpY, tmpYmax);
+    //-aaw- tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
+    tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
+    //-aaw- snapYpos   = highestVal(tmpY, tmpYmax);
+    snapYpos   = min(tmpY, tmpYmax);
 
     tmpXmin    = (roundRadius*2)+(snapWidth/2);
     tmpXmax    = shellLength - tmpXmin;
-    tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
-    snapXpos   = highestVal(tmpX, tmpXmax);
+    //-aaw- tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
+    tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
+    //-aaw- snapXpos   = highestVal(tmpX, tmpXmax);
+    snapXpos   = min(tmpX, tmpXmax);
 
     snapZposLR = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
     snapZposBF = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
@@ -760,7 +767,6 @@ module printLidSnapJoins()
 //===========================================================
 module minkowskiBox(shell, L, W, H, rad, plane, wall)
 {
-  //--aaw-iRad = getMinRad(rad, wallThickness);
   iRad = getMinRad(rad, wall);
   
       //--------------------------------------------------------
@@ -1116,11 +1122,11 @@ module cutoutsInXZ(type)
         }
         else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
         {
-          posx=pcbX+cutOut[0];//-aaw- -(cutOut[2]/2);
-          posz=actZpos(type)+cutOut[1];  //aaw- -(cutOut[3]/2);
+          posx=pcbX+cutOut[0];
+          posz=actZpos(type)+cutOut[1];
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);    // 13-01-2022
+          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
           translate([posx, (wallThickness-1), posz])
             color("blue")
               rotate([0,cutOut[4],0])
@@ -1139,7 +1145,7 @@ module cutoutsInXZ(type)
         
       } //   for cutOut's ..
 
-      //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, 
+      //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, [4]angle
       //--                {yappRectangle | yappCircle}, yappCenter           
       for ( cutOut = cutoutsRight )
       {
@@ -1159,12 +1165,11 @@ module cutoutsInXZ(type)
         }
         else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
         {
-          posx=pcbX+cutOut[0];  //-aaw- -(cutOut[2]/2);
-          posz=actZpos(type)+cutOut[1]; //-aaw- -(cutOut[3]/2);
+          posx=pcbX+cutOut[0];
+          posz=actZpos(type)+cutOut[1];
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);    // 13-01-2022
-          //translate([posx, shellWidth-(wallThickness+roundRadius+1), posz])
+          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
           translate([posx, (shellWidth-2), posz])
             color("blue")
               rotate([0,cutOut[4],0])
@@ -1218,10 +1223,10 @@ module cutoutsInYZ(type)
         }
         else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
         {
-          posy=pcbY+cutOut[0];  //-aaw- -(cutOut[2]/2); 
-          z=standoffHeight+pcbThickness+cutOut[1];  //-aaw- -(cutOut[3]/2);
+          posy=pcbY+cutOut[0];
+          z=standoffHeight+pcbThickness+cutOut[1];
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, cutOut[3]/2, z, t)+(cutOut[3]/2);    // 13-01-2022
+          newH=newHeight(type, cutOut[3]/2, z, t)+(cutOut[3]/2);
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
           translate([shellLength-(wallThickness+1), posy, posz])
             color("red")
@@ -1239,7 +1244,7 @@ module cutoutsInYZ(type)
         
       } //   for cutOut's ..
 
-      //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, 
+      //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, [4]angle
       //--                {yappRectangle | yappCircle}, yappCenter           
       for ( cutOut = cutoutsBack )
       {

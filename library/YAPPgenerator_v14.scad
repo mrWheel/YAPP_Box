@@ -1830,7 +1830,7 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
   {
     translate([x, y, 0])
     {
-      hb = isPcb ? (baseWallHeight+basePlaneThickness-pcbThickness) : (baseWallHeight+basePlaneThickness);
+      hb = isPcb ? (standoffHeight+basePlaneThickness) : (baseWallHeight+basePlaneThickness);
       //echo("YAPP:", isPcb=isPcb);
       //echo("YAPP:", hb=hb);
    
@@ -1861,9 +1861,16 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
   
   if (plane=="lid")
   {
-    translate([x, y, (lidWallHeight+lidPlaneThickness)*-1])
+    // calculate the Z-position for the lid connector.
+    // for a PCB connector, start the connector on top of the PCB to push it down.
+    // calculation identical to the one used in pcbPushdowns()
+
+    zTemp      = isPcb ? ((pcbZlid)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
+    heightTemp = isPcb ? ((baseWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)) : lidWallHeight;
+
+    translate([x, y, zTemp])
     {
-      ht=(lidWallHeight);
+      ht=(heightTemp);
 
       difference()
       {

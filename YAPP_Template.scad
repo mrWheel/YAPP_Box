@@ -195,6 +195,19 @@ connectors   =  [
                     [8, 8, 2.5, 3.8, 5, yappAllCorners]
                   , [30, 8, 5, 5, 5]
                 ];
+                
+//-- connectorsPCB -- origin = pcb[0,0,0]
+//-- a connector that allows to screw base and lid together through holes in the PCB
+// (0) = posx
+// (1) = posy
+// (2) = screwDiameter
+// (3) = insertDiameter
+// (4) = outsideDiameter
+// (5) = { yappAllCorners }
+connectorsPCB   =  [
+                    [pcbLength/2, 10, 2.5, 3.8, 5]
+                   ,[pcbLength/2, pcbWidth-10, 2.5, 3.8, 5]
+                ];
 
 //-- base mounts -- origen = box[x0,y0]
 // (0) = posx | posy

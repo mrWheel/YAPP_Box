@@ -1,6 +1,7 @@
 # YAPP_Box
 Yet Another Parametric Projectbox generator
 
+<hr>
 Rev. 1.5 this is a Release Candidate
 
 *This release breaks with previous releases in the extra parm "**depth**" in the labels array!!*
@@ -56,7 +57,7 @@ It takes in account the "**pcbThickness**" to calculate the hight of the lid-con
 
 Thanks to *Oliver Grafe*
 
-
+<hr>
 Rev. 1.4 .
 
 *This release breaks with previous releases in the extra parm "**angle**" in all the cutouts array's!!!*
@@ -83,8 +84,8 @@ See: <a href="https://willem.aandewiel.nl/index.php/2022/01/02/yet-another-param
 
 ---
 
-I have done my best but it can probably be done simpler. So, if you think you can help please contact me or make a Pull
-request.
+I have done my best but it can probably be done simpler. 
+So, if you think you can help please contact me or make a Merge Request.
 
 ## TO DO
 

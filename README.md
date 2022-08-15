@@ -6,7 +6,6 @@ Rev. 1.5 this is a Release Candidate
 *This release breaks with previous releases in the extra parm "**depth**" in the labels array!!*
 
 The labels now have this syntax:
-
 <pre>
 //-- origin of labels is box [0,0,0]
 // (0) = posx
@@ -31,11 +30,11 @@ labelsPlane = [
               ];
 </pre>
 
-For your box to work with this releasei as before you have to add this extra parm (as "wallThicknesa/2", "basePlaneThicknesa/2" or "lidPlaneThicknesa/2").
+For your box to work with this release as before you have to add this extra parm (as "wallThickness/2", "basePlaneThickness/2" or "lidPlaneThickness/2").
+
 Thanks to *Keith Hadley*
 
 There now is a new array for connectors that holds the PCB. This array is called "**connectorsPCB**".
-
 <pre>
 //-- connectorsPCB -- origin = pcb[0,0,0]
 // (0) = posx
@@ -53,8 +52,8 @@ connectorsPCB = [
                  ,[pcbLength/2, pcbWidth-10, 2.5, 3.8, 5]
                 ];
 </pre>
-
 It takes in account the "**pcbThickness**" to calculate the hight of the lid-connector.
+
 Thanks to *Oliver Grafe*
 
 
@@ -94,6 +93,8 @@ request.
 * <strike>screw connector between the top- and bottomPlanes (for bigger boxes)</strike> (done)
 * <strike>snap-ons in the ridges</strike> (done)
 * <strike>Rotate rectangular cutOuts (orientation)</strike> v1.4
+* <strike>Connectors that holds the PCB in place</strike> v1.5 (*Oliver Grafe*)
+* <strike>Variable depth of labels</strike> v1.5 (*Keithe Hadley*)
 * anything else? Anyone?
 
 ## How to program your Project Box

@@ -3,10 +3,14 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5 (15-06-2022)";
+Version="v1.5 (15-08-2022) release candidate";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
+**
+**  With help from:
+**   - Keith Hadley (parameterized label depth)
+**   - Oliver Grafe (connectorsPCB)
 **
 **  TERMS OF USE: MIT License. See base offile.
 ***************************************************************************      
@@ -283,12 +287,13 @@ snapJoins   =     [
 // (0) = posx
 // (1) = posy/z
 // (2) = orientation
-// (3) = plane {lid | base | left | right | front | back }
-// (4) = font
-// (5) = size
-// (6) = "label text"
+// (3) = depth
+// (4) = plane {lid | base | left | right | front | back }
+// (5) = font
+// (6) = size
+// (7) = "label text"
 labelsPlane =   [
-                      [5, 5, 0, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+                      [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
                 ];
 
 
@@ -1344,21 +1349,21 @@ module subtractLabels(plane, side)
 {
   for ( label = labelsPlane )
   {
-    // [0]x_pos, [1]y_pos, [2]orientation, [3]plane, [4]font, [5]size, [6]"text" 
+    // [0]x_pos, [1]y_pos, [2]orientation, [3]depth, [4]plane, [5]font, [6]size, [7]"text" 
         
-    if (plane=="base" && side=="base" && label[3]=="base")
+    if (plane=="base" && side=="base" && label[4]=="base")
     {
-      translate([shellLength-label[0], label[1], basePlaneThickness*-0.5]) 
+      translate([shellLength-label[0], label[1], 0.015]) 
       {
         rotate([0,0,label[2]])
         {
           mirror([1,0,0])
-          linear_extrude(lidPlaneThickness) 
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
             {
-              text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+              text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1368,17 +1373,17 @@ module subtractLabels(plane, side)
       } // translate
     } //  if base/base
 
-    if (plane=="base" && side=="front" && label[3]=="front")
+    if (plane=="base" && side=="front" && label[4]=="front")
     {
-      translate([shellLength-(wallThickness/2), label[0], label[1]]) 
+      translate([shellLength - label[3] - 0.01, label[0], label[1]]) 
       {
         rotate([90,0,90+label[2]])
         {
-          linear_extrude(wallThickness) 
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+            text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1388,18 +1393,18 @@ module subtractLabels(plane, side)
     
     } //  if base/front
     
-    if (plane=="base" && side=="back" && label[3]=="back")
+    if (plane=="base" && side=="back" && label[4]=="back")
     {
-      translate([(wallThickness/-2), shellWidth-label[0], label[1]]) 
+      translate([ 0.015, shellWidth-label[0], label[1]]) 
       {
         rotate([90,0,90+label[2]])
         mirror([1,0,0])
         {
-          linear_extrude(wallThickness) 
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+            text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1409,17 +1414,17 @@ module subtractLabels(plane, side)
     
     } //  if base/back
     
-    if (plane=="base" && side=="left" && label[3]=="left")
+    if (plane=="base" && side=="left" && label[4]=="left")
     {
-      translate([label[0], wallThickness*0.5, label[1]]) 
+      translate([label[0], label[3]+0.01, label[1]]) 
       {
           rotate([90,label[2],0])
           {
-            linear_extrude(wallThickness) 
+            linear_extrude(max(label[3] + 0.02,0.0)) 
             {
-              text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+              text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1428,18 +1433,18 @@ module subtractLabels(plane, side)
       } // translate
     } //  if..base/left
     
-    if (plane=="base" && side=="right" && label[3]=="right")
+    if (plane=="base" && side=="right" && label[4]=="right")
     {
-      translate([shellLength-label[0], shellWidth+wallThickness*0.5, label[1]]) 
+      translate([shellLength-label[0], shellWidth+0.005, label[1]]) 
       {
           rotate([90,label[2],0])
           {
             mirror([1,0,0])
-            linear_extrude(wallThickness) 
+            linear_extrude(max(label[3] + 0.02,0.0)) 
             {
-              text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+              text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1448,18 +1453,18 @@ module subtractLabels(plane, side)
       } // translate
     } //  if..base/right
     
-    if (plane=="lid" && side=="lid" && label[3]=="lid")
+    if (plane=="lid" && side=="lid" && label[4]=="lid")
     {
-      translate([label[0], label[1], lidPlaneThickness*-0.5]) 
+      translate([label[0], label[1], -label[3]-0.035]) 
       {
         rotate([0,0,label[2]])
         {
-          linear_extrude(lidPlaneThickness) 
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
             {
-              text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+              text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1469,18 +1474,18 @@ module subtractLabels(plane, side)
       } // translate
     } //  if lid/lid
     
-    if (plane=="lid" && side=="front" && label[3]=="front")
+    if (plane=="lid" && side=="front" && label[4]=="front")
     {
       //translate([shellLength+label[0], (shellHeight*-1)-label[1], 10+(lidPlaneThickness*-0.5)]) 
-      translate([shellLength-(wallThickness/2), label[0], (shellHeight*-1)+label[1]]) 
+      translate([shellLength - label[3] - 0.01, label[0], (shellHeight*-1)+label[1]]) 
       {
         rotate([90,0,90+label[2]])
         {
-          linear_extrude(wallThickness) 
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+            text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1490,18 +1495,18 @@ module subtractLabels(plane, side)
     
     } //  if lid/front
     
-    if (plane=="lid" && side=="back" && label[3]=="back")
+    if (plane=="lid" && side=="back" && label[4]=="back")
     {
-      translate([(wallThickness/-2), shellWidth-label[0], (shellHeight*-1)+label[1]]) 
+      translate([ 0.015, shellWidth-label[0], (shellHeight*-1)+label[1]]) 
       {
         rotate([90,0,90+label[2]])
         mirror([1,0,0])
         {
-          linear_extrude(wallThickness) 
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+            text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1511,17 +1516,17 @@ module subtractLabels(plane, side)
     
     } //  if lid/back
 
-    if (plane=="lid" && side=="left" && label[3]=="left")
+    if (plane=="lid" && side=="left" && label[4]=="left")
     {
-      translate([label[0], lidPlaneThickness*0.5, (shellHeight*-1)+label[1]]) 
+      translate([label[0], label[3]+0.01, (shellHeight*-1)+label[1]]) 
       {
           rotate([90,label[2],0])
           {
-            linear_extrude(wallThickness) 
+            linear_extrude(max(label[3] + 0.02,0.0)) 
             {
-              text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+              text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");
@@ -1530,19 +1535,19 @@ module subtractLabels(plane, side)
       } // translate
     } //  if..lid/left
     
-    if (plane=="lid" && side=="right" && label[3]=="right")
+    if (plane=="lid" && side=="right" && label[4]=="right")
     {
-      translate([shellLength-label[0], shellWidth+wallThickness*0.5, (shellHeight*-1)+label[1]]) 
+      translate([shellLength-label[0], shellWidth + 0.01, (shellHeight*-1)+label[1]]) 
       //translate([label[0], wallThickness*0.5, (shellHeight*-1)+label[1]]) 
       {
           rotate([90,label[2],0])
           {
             mirror([1,0,0])
-            linear_extrude(wallThickness) 
+            linear_extrude(max(label[3] + 0.02,0.0)) 
             {
-              text(label[6]
-                    , font=label[4]
-                    , size=label[5]
+              text(label[7]
+                    , font=label[5]
+                    , size=label[6]
                     , direction="ltr"
                     , halign="left"
                     , valign="bottom");

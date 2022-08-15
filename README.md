@@ -1,7 +1,64 @@
 # YAPP_Box
 Yet Another Parametric Projectbox generator
 
-Rev. 1.4 is the latest version.
+Rev. 1.5 this is a Release Candidate
+
+*This release breaks with previous releases in the extra parm "**depth**" in the labels array!!*
+
+The labels now have this syntax:
+
+<pre>
+//-- origin of labels is box [0,0,0]
+// (0) = posx
+// (1) = posy/z
+// (2) = orientation
+// (3) = depth
+// (4) = plane {lid | base | left | right | front | back }
+// (5) = font
+// (6) = size
+// (7) = "label text"
+</pre>
+
+Example:
+<pre>
+labelsPlane = [
+                [10,  10,   0, 0.6, "lid",   "Liberation Mono:style=bold", 15, "YAPP" ]
+               ,[100, 90, 180, 0.8, "base",  "Liberation Mono:style=bold", 11, "Base" ]
+               ,[8,    8,   0, 1.0, "left",  "Liberation Mono:style=bold",  7, "Left" ]
+               ,[10,   5,   0, 1.2, "right", "Liberation Mono:style=bold",  7, "Right" ]
+               ,[40,  23,   0, 1.5, "front", "Liberation Mono:style=bold",  7, "Front" ]
+               ,[5,    5,   0, 2.0, "back",  "Liberation Mono:style=bold",  8, "Back" ]
+              ];
+</pre>
+
+For your box to work with this releasei as before you have to add this extra parm (as "wallThicknesa/2", "basePlaneThicknesa/2" or "lidPlaneThicknesa/2").
+Thanks to *Keith Hadley*
+
+There now is a new array for connectors that holds the PCB. This array is called "**connectorsPCB**".
+
+<pre>
+//-- connectorsPCB -- origin = pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = screwDiameter
+// (3) = insertDiameter
+// (4) = outsideDiameter
+// (5) = { yappAllCorners }
+</pre>
+
+Example:
+<pre>
+connectorsPCB = [
+                  [pcbLength/2, 10, 2.5, 3.8, 5]
+                 ,[pcbLength/2, pcbWidth-10, 2.5, 3.8, 5]
+                ];
+</pre>
+
+It takes in account the "**pcbThickness**" to calculate the hight of the lid-connector.
+Thanks to *Oliver Grafe*
+
+
+Rev. 1.4 .
 
 *This release breaks with previous releases in the extra parm "**angle**" in all the cutouts array's!!!*
 

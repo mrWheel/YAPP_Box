@@ -257,5 +257,38 @@ labelsPlane =  [
                ];
 
 
+//========= MAIN CALL's ===========================================================
+  
+//===========================================================
+module lidHookInside()
+{
+  //echo("lidHookInside(original) ..");
+  
+} // lidHookInside(dummy)
+  
+//===========================================================
+module lidHookOutside()
+{
+  //echo("lidHookOutside(original) ..");
+  
+} // lidHookOutside(dummy)
+
+//===========================================================
+module baseHookInside()
+{
+  //echo("baseHookInside(original) ..");
+  
+} // baseHookInside(dummy)
+
+//===========================================================
+module baseHookOutside()
+{
+  //echo("baseHookOutside(original) ..");
+  
+} // baseHookOutside(dummy)
+
+
+
+
 //---- This is where the magic happens ----
 YAPPgenerate();

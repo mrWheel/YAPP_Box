@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5 (15-08-2022) release candidate";
+Version="v1.5 (04-09-2022) release candidate 2";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -1357,7 +1357,7 @@ module subtractLabels(plane, side)
       {
         rotate([0,0,label[2]])
         {
-          mirror([1,0,0])
+          mirror([1,0,0]) color("red")
           linear_extrude(max(label[3] + 0.02,0.0)) 
           {
             {
@@ -1453,13 +1453,14 @@ module subtractLabels(plane, side)
       } // translate
     } //  if..base/right
     
+    // [0]x_pos, [1]y_pos, [2]orientation, [3]depth, [4]plane, [5]font, [6]size, [7]"text" 
     if (plane=="lid" && side=="lid" && label[4]=="lid")
     {
       translate([label[0], label[1], -label[3]-0.035]) 
       {
         rotate([0,0,label[2]])
-        {
-          linear_extrude(max(label[3] + 0.02,0.0)) 
+        { 
+          linear_extrude(max(label[3] + (lidPlaneThickness+0.02),0.0)) 
           {
             {
               text(label[7]
@@ -1476,7 +1477,6 @@ module subtractLabels(plane, side)
     
     if (plane=="lid" && side=="front" && label[4]=="front")
     {
-      //translate([shellLength+label[0], (shellHeight*-1)-label[1], 10+(lidPlaneThickness*-0.5)]) 
       translate([shellLength - label[3] - 0.01, label[0], (shellHeight*-1)+label[1]]) 
       {
         rotate([90,0,90+label[2]])
@@ -1538,7 +1538,6 @@ module subtractLabels(plane, side)
     if (plane=="lid" && side=="right" && label[4]=="right")
     {
       translate([shellLength-label[0], shellWidth + 0.01, (shellHeight*-1)+label[1]]) 
-      //translate([label[0], wallThickness*0.5, (shellHeight*-1)+label[1]]) 
       {
           rotate([90,label[2],0])
           {

@@ -256,6 +256,36 @@ labelsPlane =  [
                   , [5,    5,   0, "back",  "Liberation Mono:style=bold", 7, "Back" ]
                ];
 
+//========= MAIN CALL's ===========================================================
+  
+//===========================================================
+module lidHookInside()
+{
+  //echo("lidHookInside(original) ..");
+  
+} // lidHookInside(dummy)
+  
+//===========================================================
+module lidHookOutside()
+{
+  //echo("lidHookOutside(original) ..");
+  
+} // lidHookOutside(dummy)
+
+//===========================================================
+module baseHookInside()
+{
+  //echo("baseHookInside(original) ..");
+  
+} // baseHookInside(dummy)
+
+//===========================================================
+module baseHookOutside()
+{
+  //echo("baseHookOutside(original) ..");
+  
+} // baseHookOutside(dummy)
+
 
 //---- This is where the magic happens ----
 YAPPgenerate();

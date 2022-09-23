@@ -306,7 +306,8 @@ function isTrue(w, aw, from) = ((   w==aw[from]
                                  || w==aw[from+4]  
                                  || w==aw[from+5]  
                                  || w==aw[from+6] ) ? 1 : 0);  
-function minOutside(o, d) = ((((d*2)+1)>=o) ? (d*2)+1 : o);  
+//-23/09-function minOutside(o, d) = ((((d*2)+1)>=o) ? (d*2)+1 : o);  
+function minOutside(ins, outs) = ((((ins*2.2)+0.2)>=outs) ? (ins*2.2)+0.2 : outs);  
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
 //function lowestVal(v1, minV)  = ((v1<minV) ? minV : v1);
 //function highestVal(v1, maxV) = ((v1>maxV) ? maxV : v1);
@@ -1916,8 +1917,9 @@ module shellConnectors(plane)
     //-- [3] insertDiameter, 
     //-- [4] outsideDiameter
     
-    outD = minOutside(conn[4], conn[3]);
-    //echo("minOut:", rcvrD=conn[4], outD=outD);
+    //-23/09-outD = minOutside(conn[4], conn[3]);
+    outD = minOutside(conn[3], conn[4]);
+    //echo("[connector]minOutside:", insert=conn[3], outside=conn[4], outD=outD);
     
     if (plane=="base")
     {
@@ -1939,14 +1941,14 @@ module shellConnectors(plane)
     if (plane=="lid")
     {
       //echo("lidConnector:", conn);
-  //--connector(lid    x,       y,       scrwD,   rcvrD,   outD)  
+  //--connector(lid    pcb?,  x,       y,       scrwD,   rcvrD,   outD)  
       connector(plane, false, conn[0], conn[1], conn[2], conn[3], outD);
       if (conn[5]==yappAllCorners)
       {
         //echo("allCorners:");
-        connector(plane, false, shellLength-conn[0], conn[1], conn[2], conn[3], outD);
+        connector(plane, false, shellLength-conn[0], conn[1],            conn[2], conn[3], outD);
         connector(plane, false, shellLength-conn[0], shellWidth-conn[1], conn[2], conn[3], outD);
-        connector(plane, false, conn[0], shellWidth-conn[1], conn[2], conn[3], outD);
+        connector(plane, false, conn[0], shellWidth-conn[1],             conn[2], conn[3], outD);
       }
     }
     
@@ -1960,14 +1962,16 @@ module shellConnectors(plane)
     //-- [3] insertDiameter 
     //-- [4] outsideDiameter
     //-- [5] yappAllCorners
-    outD = minOutside(conn[4], conn[3]);
-    //echo("minOut:", rcvrD=conn[4], outD=outD);
+    //-23/09-outD = minOutside(conn[4], conn[3]);
+    outD = minOutside(conn[3], conn[4]);
+    echo("[connectorPCB]minOutside:", insert=conn[3],outside=conn[4], outD=outD);
     
     if (plane=="base")
     {
       //echo("baseConnector:", conn, outD=outD);
-     //-connector(plane, -b-    x,              y,             scrwD,   rcvrD,   outD) --  
-        connector(plane, true, (pcbX+conn[0]), (pcbY+conn[1]), conn[2], conn[3], outD);
+      //-connector(plane, -b-    x,              y,             scrwD,   rcvrD,   outD) --  
+      //-23-09-connector(plane, true, (pcbX+conn[0]), (pcbY+conn[1]), conn[2], conn[3], outD);
+      connector(plane, true, (pcbX+conn[0]), (pcbY+conn[1]), conn[2], outD, outD);
       if (conn[5]==yappAllCorners)
       {
         //echo("allCorners:");

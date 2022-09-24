@@ -2,7 +2,7 @@
 Yet Another Parametric Projectbox generator
 
 <hr>
-*Rev. 1.5*
+## Rev. 1.5
 
 - Various bug-fixes
 
@@ -66,7 +66,7 @@ Thanks to *Oliver Grafe*
 
 
 <hr>
-*Rev. 1.4*
+## Rev. 1.4
 
 *This release breaks with previous releases in the extra parm "**angle**" in all the cutouts array's!!!*
 

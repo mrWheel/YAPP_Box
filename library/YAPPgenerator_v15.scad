@@ -956,7 +956,7 @@ module pcbHolders()
     if (stand[2] != yappLidOnly)
     {
       translate([posx, posy, basePlaneThickness])
-        pcbStandoff("green", standoffHeight, stand[3]);
+        pcbStandoff("green", standoffHeight, stand[3], "base");
     }
   }
     
@@ -983,7 +983,7 @@ module pcbPushdowns()
       {
 //        translate([posx, posy, lidPlaneThickness])
         translate([posx, posy, pcbZlid*-1])
-          pcbStandoff("yellow", height, yappHole);
+          pcbStandoff("yellow", height, yappHole, "lid");
       }
     }
     
@@ -1780,17 +1780,32 @@ module lidShell()
 
         
 //===========================================================
-module pcbStandoff(color, height, type) 
+module pcbStandoff(color, height, type, plane) 
 {
         module standoff(color)
         {
           color(color,1.0)
             cylinder(
-              //r = standoffDiameter / 2,
               d = standoffDiameter,
               h = height,
               center = false,
               $fn = 20);
+          //-- flange --
+          if (plane == "base")
+          {
+            translate([0,0,-0.3]) 
+            {
+              cylinder(h=2, r1=(standoffDiameter/2)+3, r2=standoffDiameter/2);
+            }
+          }
+          if (plane == "lid")
+          {
+            translate([0,0,lidWallHeight+0.5]) 
+            {
+              cylinder(h=2, r1=standoffDiameter/2, r2=(standoffDiameter/2)+3);
+            }
+          }
+
         } // standoff()
         
         module standPin(color)

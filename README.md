@@ -2,6 +2,7 @@
 Yet Another Parametric Projectbox generator
 
 <hr>
+
 ## Rev. 1.5
 
 - Various bug-fixes
@@ -66,6 +67,7 @@ Thanks to *Oliver Grafe*
 
 
 <hr>
+
 ## Rev. 1.4
 
 *This release breaks with previous releases in the extra parm "**angle**" in all the cutouts array's!!!*
@@ -191,6 +193,9 @@ pcbStands fixate the PCB between the base and the lid.
 
 ## Connectors between *Base* and *Lid*:
 ![YAPP_connectors](https://user-images.githubusercontent.com/5585427/150956348-cfb4f550-a261-493a-9b86-6175e169b2bc.png)
+
+## ConnectorsPCB between *Base* and *Lid* that fixates the PCB:
+![connectorTypes](https://user-images.githubusercontent.com/5585427/192100231-b6df4e7d-50e8-4b75-8e8b-85a4b2d3e3b7.png)
 
 ![YAPP_connector_D](https://user-images.githubusercontent.com/5585427/150956341-5c087f45-c228-46db-8eb1-b3add2e9afca.png)
 

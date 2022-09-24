@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5 (23-09-2022) release candidate 3";
+Version="v1.5 (24-09-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -1065,9 +1065,11 @@ module cutoutsInXY(type)
           translate([conn[0], conn[1], (basePlaneThickness)*-1])
           {
             linear_extrude((basePlaneThickness*2)+1)
+            {
               circle(
                 d = conn[2]*2.2,
                 $fn = 20);
+            }
           }
           if (conn[5]==yappAllCorners)
           {
@@ -1845,12 +1847,15 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
    
       difference()
       {
+        union()
         {
           //-- outerCylinder --
           linear_extrude(hb)
             circle(
                 d = d3,
                 $fn = 20);
+          //-- flange --
+          translate([0,0,(basePlaneThickness-0.5)]) cylinder(h=2, r1=(d3/2)+3, r2=d3/2);
         }  
         
         //-- screw head Hole --
@@ -1884,12 +1889,15 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
 
       difference()
       {
-        //-- outside Diameter --
+        union()
         {
+          //-- outside Diameter --
           linear_extrude(ht)
               circle(
                 d = d3,
                 $fn = 20);
+          //-- flange --
+          translate([0,0,(ht*1)-1.9]) cylinder(h=2, r1=(d3/2), r2=(d3/2)+3);
         }  
         //-- insert --
         linear_extrude(ht)
@@ -2231,16 +2239,16 @@ module YAPPgenerate()
                   //--- show inspection X-as
                   if (inspectX > 0)
                   {
-                    translate([shellLength-inspectX,-2,
-                                (lidWallHeight+lidPlaneThickness+ridgeHeight+2)*-1]) 
+                    translate([shellLength-abs(inspectX), -2,
+                                (lidWallHeight+lidPlaneThickness+ridgeHeight+8)*-1]) 
                     {
                       cube([shellLength, shellWidth+3, 
-                                shellHeight+ridgeHeight+lidPlaneThickness+4]);
+                                (lidWallHeight+ridgeHeight+lidPlaneThickness+10)]);
                     }
                   }
                   else if (inspectX < 0)
                   {
-                    translate([(shellLength*-1)+abs(inspectX),-2,
+                    translate([(shellLength*-1)+abs(inspectX), -2,
                                 (lidWallHeight+lidPlaneThickness+ridgeHeight+2)*-1]) 
                     {
                       cube([shellLength, shellWidth+3, 
@@ -2260,9 +2268,9 @@ module YAPPgenerate()
                   }
                   else if (inspectY < 0)
                   {
-                    translate([-1, (shellWidth-abs(inspectY)), -2]) 
+                    translate([-1, (shellWidth-abs(inspectY)), (lidWallHeight+ridgeHeight+3)*-1]) 
                     {
-                      cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
+                      cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness+ridgeHeight)+5]);
                     }
                   }
                 } //  difference(t1)
@@ -2330,6 +2338,7 @@ module YAPPgenerate()
               if (inspectY > 0)
               {
                 translate([-1, inspectY-shellWidth, 
+                     //-24-9-      (lidWallHeight+ridgeHeight+lidPlaneThickness+2)*-1])
                            (lidWallHeight+ridgeHeight+lidPlaneThickness+2)*-1])
                 {
                   cube([shellLength+2, shellWidth, 
@@ -2338,9 +2347,10 @@ module YAPPgenerate()
               }
               else if (inspectY < 0)
               {
-                translate([-1, (shellWidth-abs(inspectY)), -2]) 
+                //-24-09-translate([-1, (shellWidth-abs(inspectY)), -2]) 
+                translate([-1, (shellWidth-abs(inspectY)), ((lidWallHeight+lidPlaneThickness+4)*-1)]) 
                 {
-                  cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
+                  cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness+ridgeHeight+5)]);
                 }
               }
           

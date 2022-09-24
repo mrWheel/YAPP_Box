@@ -2,7 +2,11 @@
 Yet Another Parametric Projectbox generator
 
 <hr>
-Rev. 1.5 this is a Release Candidate
+*Rev. 1.5*
+
+- Various bug-fixes
+
+- Connectors now have a flange at the basePlane and lidPlane for a better adhesion
 
 *This release breaks with previous releases in the extra parm "**depth**" in the labels array!!*
 
@@ -31,7 +35,8 @@ labelsPlane = [
               ];
 </pre>
 
-For your box to work with this release as before you have to add this extra parm (as "wallThickness/2", "basePlaneThickness/2" or "lidPlaneThickness/2").
+For your box to work with this release as before you have to add this extra 
+parm (as "wallThickness/2", "basePlaneThickness/2" or "lidPlaneThickness/2").
 
 Thanks to *Keith Hadley*
 
@@ -57,8 +62,11 @@ It takes in account the "**pcbThickness**" to calculate the hight of the lid-con
 
 Thanks to *Oliver Grafe*
 
+![connectorTypes](https://user-images.githubusercontent.com/5585427/192100231-b6df4e7d-50e8-4b75-8e8b-85a4b2d3e3b7.png)
+
+
 <hr>
-Rev. 1.4 .
+*Rev. 1.4*
 
 *This release breaks with previous releases in the extra parm "**angle**" in all the cutouts array's!!!*
 

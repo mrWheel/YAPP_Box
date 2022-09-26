@@ -34,7 +34,7 @@ cutoutGrills = [
 
 **Be aware**: this functionality needs a **huge** amount of rendering elements.
 
-You can set this at `Preferences-%gt;Advanced-&gt;Turn of rendering at 100000 elements`
+You can set this at `Preferences->Advanced->Turn of rendering at 100000 elements`
 
 <hr>
 

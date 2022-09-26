@@ -3,10 +3,44 @@ Yet Another Parametric Projectbox generator
 
 <hr>
 
+## Rev. 1.5-dev
+
+- new cutoutGrills array
+<pre>
+//-- cutoutGrills    -- origin is box[x0,y0]
+// (0) = xPos
+// (1) = yPos
+// (2) = grillWidth
+// (3) = grillLength
+// (4) = gWidth
+// (5) = gSpace
+// (6) = gAngle
+// (7) = plane [ "base" | "lid" ]
+// (8) = {polygon points} (optional)
+
+
+cutoutGrills = [
+                 [22, 22, 90, 90, 2, 3, 50, "base", [  [0,15],[20,15],[30,0],[40,15],[60,15]
+                                                      ,[50,30],[60,45], [40,45],[30,60]
+                                                      ,[20,45], [0,45],[10,30] ]
+                 ]
+                ,[15, 10, 50, 10, 2, 3, -20, "base"]
+                ,[15, 15, 10, 50, 2, 3, -45, "lid"]
+                ,[15, 85, 50, 10, 2, 3,  20, "base"]
+                ,[85, 15, 10, 50, 2, 3,  45, "lid"]
+               ];
+</pre>
+![cutoutGrills-v16](https://user-images.githubusercontent.com/5585427/192301088-056f7f9c-f89f-40a2-a7ba-f4496d4e722c.png)
+
+**Be aware**: this functionality needs a **huge** amount of rendering elements.
+
+You can set this at `Preferences-%gt;Advanced-&gt;Turn of rendering at 100000 elements`
+
+<hr>
+
 ## Rev. 1.5
 
 - Various bug-fixes
-
 - Connectors now have a flange at the basePlane and lidPlane for a better adhesion
 
 *This release breaks with previous releases in the extra parm "**depth**" in the labels array!!*

@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5 (24-09-2022)";
+Version="v1.5-dev (26-09-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -14,9 +14,9 @@ Version="v1.5 (24-09-2022)";
 **
 **  TERMS OF USE: MIT License. See base offile.
 **
-**  for many or complex baseGrills you might need to set this in preferences:
+**  for many or complex cutoutGrillss you might need to set this in preferences:
 **
-**      Preferences->Advanced->Turn of rendering at 40000 elements
+**      Preferences->Advanced->Turn of rendering at 100000 elements
 **
 ***************************************************************************      
 */
@@ -235,7 +235,7 @@ cutoutsRight =  [
               //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
                 ];
 
-//-- baseGrill    -- origin is pcb[0,0,0]
+//-- cutoutGrills    -- origin is pcb[0,0,0]
 // (0) = xPos
 // (1) = yPos
 // (2) = grillWidth
@@ -243,12 +243,14 @@ cutoutsRight =  [
 // (4) = gWidth
 // (5) = gSpace
 // (6) = gAngle
+// (7) = plane { "base" | "led" }
 // (7) = {polygon points}}
-//starShape = [  [0,15],[20,15],[30,0],[40,15],[60,15]
-//              ,[50,30],[60,45], [40,45],[30,60]
-//              ,[20,45], [0,45],[10,30]
-//            ];
-baseGrill =   [
+//
+//starShape =>>> [  [0,15],[20,15],[30,0],[40,15],[60,15]
+//                 ,[50,30],[60,45], [40,45],[30,60]
+//                 ,[20,45], [0,45],[10,30]
+//               ]
+cutoutGrills =[
               ];
 
 
@@ -1013,89 +1015,8 @@ module pcbPushdowns()
 
 
 //===========================================================
-module cutBaseGrills(planeTckns)
-{
-  //--------------------------------------------------------------------
-  function angleLim(a) = (a>60 || a<-60) ? 60*sign(a) : a;
-  function calcGrills(xLen, W, S) = round(xLen / (W+S)) +12;
-  function calcNewWidth(a,X) = (a==0) ? X : (X / sin(90-a));
-  
-  module oneGrill(xP, grillL, gW, gS, nrGrills, gAngle)
-  {
-    offSet = grillL / (gW+gS);
-    echo("oneGrill()",xP=xP, grillL=grillL, gW=gW, gS=gS, nrGrills=nrGrills, gAngle=gAngle, offSet=offSet, planeTckns=planeTckns);
-    for(i=[(offSet*-2):(nrGrills+(offSet*2))])
-    {
-      posX=i*(gW+gS);
-      //echo("for: ", i=i, posX=posX,xP=xP, gW=gW, gS=gS, nrGrills=nrGrills, gAngle=gAngle);
-      translate([((gS/2)+posX+10),-10,0]) 
-      {
-        rotate([0,0,gAngle]) color("red") 
-        {
-          cube([gW, grillL*3 , planeTckns+0]);
-        }
-      }
-    }
-
-  } //  oneGrill()
-
-  for(g=baseGrill)
-  {
-    xPos    = g[0];
-    yPos    = g[1];
-    grillW  = g[2];
-    grillL  = g[3];
-    slotW   = g[4];
-    slotS   = g[5];
-    slotA   = g[6];
-    polyg   = g[7];
-    
-    echo(g=g);
-    echo(xPos=xPos, yPos=yPos, grillW=grillW, grillL=grillL, slotW=slotW, slotS=slotS, slotA=slotA, polyg=polyg);
-    newA = angleLim(slotA);
-    //echo("sin(newA)=", sin(newA));
-    newW = abs(calcNewWidth(newA, slotW));
-    newS = abs(calcNewWidth(newA, slotS));
-    nrSpikes = grillW / (newW+newS);
-    echo("parms:", xPos=xPos, yPos=yPos, grillW=grillW, grillL=grillL, newW=newW, newS=newS, newA=newA, planeTckns=planeTckns);
-    translate([xPos, yPos, 0])
-    {
-      difference()
-      {
-        oneGrill(xPos, grillL, slotW, newS, nrSpikes, newA);
-        difference()
-        {
-          translate([((grillW*-10)+(grillW/2)), ((grillL*-10)+(grillL/2)), -.5]) 
-          {    
-            color("gray", 1) cube([grillW*20, grillL*20, planeTckns+1]);
-          }
-          
-          if (polyg) 
-          {
-            echo("use polygon(",polyg,")");
-            linear_extrude(height=planeTckns+1)
-            {  
-              polygon(polyg);
-            }
-          }
-          else
-          {
-            cube([grillW, grillL, planeTckns+1]);
-          }
-        }
-        
-      }
-    }
-    
-  } //  for ..
-  
-} //  cutBaseGrills()
-
-
-//===========================================================
 module cutoutsInXY(type)
 {      
-    //function actZpos(T) = (T=="base") ? ((roundRadius-1)*-1)+2 : ((roundRadius+lidPlaneThickness)*-1)+2;
     function actZpos(T) = (T=="base")        ? -1 : ((roundRadius+lidPlaneThickness)*-1);
     function planeThickness(T) = (T=="base") ? (basePlaneThickness+roundRadius+2)
                                              : (lidPlaneThickness+roundRadius+2);
@@ -1453,6 +1374,91 @@ module cutoutsInYZ(type)
       } // for ..
 
 } // cutoutsInYZ()
+
+
+//===========================================================
+module cutoutGrills(type, planeTckns)
+{
+  //--------------------------------------------------------------------
+  function actZpos(T)             = (T=="base")     ? -1 : ((roundRadius+lidPlaneThickness)*-1);
+  function angleLim(a)            = (a>60 || a<-60) ? 60*sign(a) : a;
+  function calcGrills(xLen, W, S) = round(xLen / (W+S)) +12;
+  function calcNewWidth(a,X)      = (a==0)          ? X : (X / sin(90-a));
+  
+  module oneGrill(xP, grillL, gW, gS, nrGrills, gAngle)
+  {
+    offSet = grillL / (gW+gS);
+  
+    for(i=[(offSet*-2):(nrGrills+(offSet*2))])
+    {
+      posX=i*(gW+gS);
+      translate([((gS/2)+posX+10),-10,0]) 
+      {
+        rotate([0,0,gAngle]) color("red") 
+        {
+          cube([gW, grillL*3 , planeTckns+0]);
+        }
+      }
+    }
+
+  } //  oneGrill()
+
+
+  for(g=cutoutGrills)
+  {
+    xPos    = g[0];
+    yPos    = g[1];
+    grillW  = g[2];
+    grillL  = g[3];
+    slotW   = g[4];
+    slotS   = g[5];
+    slotA   = g[6];
+    plane   = g[7];
+    polyg   = g[8];
+
+    if (type==plane)
+    {
+    zPos = actZpos(plane);    
+    
+    newA = angleLim(slotA);
+    //echo("sin(newA)=", sin(newA));
+    newW = abs(calcNewWidth(newA, slotW));
+    newS = abs(calcNewWidth(newA, slotS));
+    nrSpikes = grillW / (newW+newS);
+
+    translate([xPos, yPos, zPos])
+    {
+      difference()
+      {
+        oneGrill(xPos, grillL, slotW, newS, nrSpikes, newA);
+        difference()
+        {
+          translate([((grillW*-10)+(grillW/2)), ((grillL*-10)+(grillL/2)), -.5]) 
+          {    
+            color("gray", 1) cube([grillW*20, grillL*20, planeTckns+1]);
+          }
+          
+          if (polyg) 
+          {
+            echo("use polygon(",polyg,")");
+            linear_extrude(height=planeTckns+1)
+            {  
+              polygon(polyg);
+            }
+          }
+          else
+          {
+            cube([grillW, grillL, planeTckns+1]);
+          }
+        }
+        
+      }
+    }
+    } // type = plane
+    
+  } //  for ..
+  
+} //  cutoutGrills()
       
 
 //===========================================================
@@ -2278,7 +2284,7 @@ module YAPPgenerate()
           cutoutsInXZ("base");
           cutoutsInYZ("base");
                 
-          cutBaseGrills(basePlaneThickness+roundRadius+2);
+          cutoutGrills("base", basePlaneThickness+roundRadius+2);
 
           color("blue") subtractLabels("base", "base");
           color("blue") subtractLabels("base", "front");
@@ -2348,7 +2354,7 @@ module YAPPgenerate()
                   cutoutsInXZ("lid");
                   cutoutsInYZ("lid");
 
-                  //-26-09-cutBaseGrills(lidPlaneThickness+roundRadius+2);
+                  cutoutGrills("lid", lidPlaneThickness+roundRadius+2);
 
                   if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible"); 
                   else printLidSnapJoins();
@@ -2428,6 +2434,8 @@ module YAPPgenerate()
               cutoutsInXY("lid");
               cutoutsInXZ("lid");
               cutoutsInYZ("lid");
+
+              cutoutGrills("lid", lidPlaneThickness+roundRadius+2);
 
               if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible");
               else printLidSnapJoins();

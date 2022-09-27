@@ -266,3 +266,14 @@ There are two type of "hooks"; at the inside of the box or at the outside of the
 
 ![lidHooksInside3Da](https://user-images.githubusercontent.com/5585427/153426442-6a05f787-8897-4610-8411-bb7279269980.png)
 
+<hr>
+
+## Donation a cup of coffee!
+
+If you like this project or it saved you time, you can give me a cup of coffee :)
+
+<p>
+  <a href="https://www.paypal.me/WillemAandewiel/3">
+      <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="paypal">
+  </a>
+</p>

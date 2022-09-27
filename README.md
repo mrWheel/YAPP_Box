@@ -268,12 +268,12 @@ There are two type of "hooks"; at the inside of the box or at the outside of the
 
 <hr>
 
-## Donation a cup of coffee!
+## Buy me a coffee (please)!
 
 If you like this project or it saved you time, you can give me a cup of coffee :)
 
 <p>
   <a href="https://www.paypal.me/WillemAandewiel/3">
-      <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="paypal">
+      <img width="300" alt="bmc-button-75" src="https://user-images.githubusercontent.com/5585427/192536527-306e1082-7d4e-402c-b024-658d9e334356.png" alt="Coffee">
   </a>
 </p>

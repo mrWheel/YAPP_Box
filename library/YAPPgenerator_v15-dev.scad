@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5-dev (26-09-2022)";
+Version="v1.5-dev (27-09-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -12,12 +12,14 @@ Version="v1.5-dev (26-09-2022)";
 **   - Keith Hadley (parameterized label depth)
 **   - Oliver Grafe (connectorsPCB)
 **
-**  TERMS OF USE: MIT License. See base offile.
 **
-**  for many or complex cutoutGrillss you might need to set this in preferences:
+**  for many or complex cutoutGrills you might need to adjust
+**  the number of elements:
 **
 **      Preferences->Advanced->Turn of rendering at 100000 elements
+**                                                  ^^^^^^
 **
+**  TERMS OF USE: MIT License. See base offile.
 ***************************************************************************      
 */
 //---------------------------------------------------------
@@ -1382,26 +1384,63 @@ module cutoutGrills(type, planeTckns)
   //--------------------------------------------------------------------
   function actZpos(T)             = (T=="base")     ? -1 : ((roundRadius+lidPlaneThickness)*-1);
   function angleLim(a)            = (a>60 || a<-60) ? 60*sign(a) : a;
-  function calcGrills(xLen, W, S) = round(xLen / (W+S)) +12;
   function calcNewWidth(a,X)      = (a==0)          ? X : (X / sin(90-a));
+  function calcNewLength(a,X)     = (a==0)          ? X : (X / sin(a));
+  function calcOverhang(a, X)     = (a==0)          ? (X/2) : (abs(X * sin(90-a)));
+  function modOverhang(a, X)      = (a>0)           ? X/2 : X;
   
-  module oneGrill(xP, grillL, gW, gS, nrGrills, gAngle)
-  {
-    offSet = grillL / (gW+gS);
-  
-    for(i=[(offSet*-2):(nrGrills+(offSet*2))])
+    module oneGrill(xP, grillW, grillL, gW, gS, nrGrills, gAngle)
     {
-      posX=i*(gW+gS);
-      translate([((gS/2)+posX+10),-10,0]) 
+      //echo("oneGrill", gAngle=(90-gAngle), gW=gW, gS=gS);
+      offSet = grillL / (gW+gS);
+      //-- calculate grillLength --
+      nGw     = calcNewWidth(gAngle, grillW)+(gW*4);
+      nGl     = calcNewWidth(gAngle, grillL)+(gW*4);
+      //-- calculate overhang
+      gOverW  = calcOverhang(gAngle, nGw) /(gW+gS);
+      gOverL  = calcOverhang(gAngle, nGl) /(gW+gS);
+      fOver   = modOverhang(gAngle, gOverL);
+    
+      //echo(nGl=nGl, gOverW=gOverW, gOverL=gOverL);
+    
+      translate([grillW/2, grillL/2, 0])
       {
-        rotate([0,0,gAngle]) color("red") 
+        color("blue") cylinder(h=15, d=4, center=true);
+        for(i=[gOverW*-2:gOverW])
         {
-          cube([gW, grillL*3 , planeTckns+0]);
-        }
-      }
-    }
-
-  } //  oneGrill()
+          if (gAngle >= 0)
+          {
+            posX=i*(gW+gS)+(nGl/2);
+            //translate([posX,-(gW*2),0]) 
+            translate([posX,((grillL+(gW+gS))/-2),0]) 
+            {
+              rotate([0,0,gAngle])
+              {
+                fi=floor(i);
+                //echo(i=i, fi=fi, posX=posX);
+                if (fi==0) {color("blue") cube([gS, nGl , planeTckns]);}
+                else       {color("red")  cube([gS, nGl , planeTckns]);}
+              }
+            }
+          }
+          else
+          {
+            posX=i*(gW+gS)+(nGl/-5);
+            translate([posX,((grillL+(gW+gS))/-2),0]) 
+            {
+              rotate([0,0,gAngle])
+              {
+                fi=floor(i);
+                //echo(i=i, fi=fi, posX=posX);
+                if (fi==0) {color("blue") cube([gS, nGl , planeTckns]);}
+                else       {color("red")  cube([gS, nGl , planeTckns]);}
+              }
+            }
+          }
+        } // for...
+    } // transl..
+  
+    } //  oneGrill()
 
 
   for(g=cutoutGrills)
@@ -1418,42 +1457,37 @@ module cutoutGrills(type, planeTckns)
 
     if (type==plane)
     {
-    zPos = actZpos(plane);    
-    
-    newA = angleLim(slotA);
-    //echo("sin(newA)=", sin(newA));
-    newW = abs(calcNewWidth(newA, slotW));
-    newS = abs(calcNewWidth(newA, slotS));
-    nrSpikes = grillW / (newW+newS);
+      zPos = actZpos(plane);    
+      
+      newA = angleLim(slotA);
+      //echo("sin(newA)=", sin(newA));
+      newW = abs(calcNewWidth(newA, slotW));
+      newS = abs(calcNewWidth(newA, slotS));
+      nrSpikes = grillW / (newW+newS);
+      //echo(newW=newW, newS=newS);
 
-    translate([xPos, yPos, zPos])
-    {
-      difference()
+      translate([xPos+pcbX, yPos+pcbY, zPos])
       {
-        oneGrill(xPos, grillL, slotW, newS, nrSpikes, newA);
         difference()
         {
-          translate([((grillW*-10)+(grillW/2)), ((grillL*-10)+(grillL/2)), -.5]) 
-          {    
-            color("gray", 1) cube([grillW*20, grillL*20, planeTckns+1]);
-          }
-          
+          //--- set base of grill
           if (polyg) 
           {
             echo("use polygon(",polyg,")");
-            linear_extrude(height=planeTckns+1)
+            linear_extrude(height=planeTckns-0.5)
             {  
-              polygon(polyg);
+              color("blue") polygon(polyg);
             }
           }
           else
           {
-            cube([grillW, grillL, planeTckns+1]);
+            color("gray") cube([grillW, grillL, planeTckns+1]);
           }
+          //-- subtract actual grill
+          oneGrill(xPos, grillW, grillL, newW, slotS, nrSpikes, newA);
         }
-        
       }
-    }
+          
     } // type = plane
     
   } //  for ..

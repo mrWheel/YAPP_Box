@@ -1,12 +1,27 @@
-//---------------------------------------------------------
+//-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
 //  This is a box for <template>
 //
-//  Version 1.6 (26-09-2022)
+//  Version 1.6 (27-09-2022)
 //
 // This design is parameterized based on the size of a PCB.
-//---------------------------------------------------------
+//
+//  for many or complex cutoutGrills you might need to adjust
+//  the number of elements:
+//
+//      Preferences->Advanced->Turn of rendering at 100000 elements
+//                                                  ^^^^^^
+//
+//-----------------------------------------------------------------------
+
+
+polygonShape = [  [0,15],[20,15],[30,0],[40,15],[60,15]
+                 ,[50,30],[60,45], [40,45],[30,60]
+                 ,[20,45], [0,45]
+               ];
+
+
 include <./library/YAPPgenerator_v15-dev.scad>
 
 // Note: length/lengte refers to X axis, 
@@ -14,24 +29,24 @@ include <./library/YAPPgenerator_v15-dev.scad>
 //       height/hoogte to Z
 
 /*
-      padding-back|<------pcb length --->|<padding-front
-                            RIGHT
-        0    X-as ---> 
-        +----------------------------------------+   ---
-        |                                        |    ^
-        |                                        |   padding-right 
-        |                                        |    v
-        |    -5,y +----------------------+       |   ---              
- B    Y |         | 0,y              x,y |       |     ^              F
- A    - |         |                      |       |     |              R
- C    a |         |                      |       |     | pcb width    O
- K    s |         |                      |       |     |              N
-        |         | 0,0              x,0 |       |     v              T
-      ^ |   -5,0  +----------------------+       |   ---
-      | |                                        |    padding-left
-      0 +----------------------------------------+   ---
-        0    X-as --->
-                          LEFT
+            padding-back>|<---- pcb length ---->|<padding-front
+                                 RIGHT
+                   0    X-ax ---> 
+               +----------------------------------------+   ---
+               |                                        |    ^
+               |                                        |   padding-right 
+             ^ |                                        |    v
+             | |    -5,y +----------------------+       |   ---              
+        B    Y |         | 0,y              x,y |       |     ^              F
+        A    - |         |                      |       |     |              R
+        C    a |         |                      |       |     | pcb width    O
+        K    x |         |                      |       |     |              N
+               |         | 0,0              x,0 |       |     v              T
+               |   -5,0  +----------------------+       |   ---
+               |                                        |    padding-left
+             0 +----------------------------------------+   ---
+               0    X-ax --->
+                                 LEFT
 */
 
 printBaseShell      = true;
@@ -184,7 +199,7 @@ cutoutsRight =  [
                   , [60, 0, 9, 5, 0, yappCircle]                   // circle
                 ];
 
-//-- cutoutGrills    -- origin is box[x0,y0]
+//-- cutoutGrills    -- origin is pcb[x0,y0, zx]
 // (0) = xPos
 // (1) = yPos
 // (2) = grillWidth
@@ -196,12 +211,9 @@ cutoutsRight =  [
 // (8) = {polygon points}}
 
 cutoutGrills = [
-                 [42, 22, 90, 90, 2, 3, 50, "base", [  [0,15],[20,15],[30,0],[40,15],[60,15]
-                                                      ,[50,30],[60,45], [40,45],[30,60]
-                                                      ,[20,45], [0,45],[10,30] ]
-                 ]
-                ,[15, 20, 10, 50, 2, 3, 50, "lid"]
-                ,[45, 15, 50, 10, 2, 3, 45, "lid"]
+                 [35,  8, 90, 90, 2, 3, 50, "base", polygonShape ]
+                ,[ 0, 20, 10, 40, 2, 3, 50, "lid"]
+                ,[45,  0, 50, 10, 2, 3, 45, "lid"]
                 //,[15, 85, 50, 10, 2, 3,  20, "base"]
                 //,[85, 15, 10, 50, 2, 3,  45, "lid"]
                ];

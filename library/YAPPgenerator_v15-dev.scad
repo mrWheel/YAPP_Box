@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5-dev (27-09-2022)";
+Version="v1.5-dev (28-09-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -1384,63 +1384,100 @@ module cutoutGrills(type, planeTckns)
   //--------------------------------------------------------------------
   function actZpos(T)             = (T=="base")     ? -1 : ((roundRadius+lidPlaneThickness)*-1);
   function angleLim(a)            = (a>60 || a<-60) ? 60*sign(a) : a;
-  function calcNewWidth(a,X)      = (a==0)          ? X : (X / sin(90-a));
-  function calcNewLength(a,X)     = (a==0)          ? X : (X / sin(a));
-  function calcOverhang(a, X)     = (a==0)          ? (X/2) : (abs(X * sin(90-a)));
-  function modOverhang(a, X)      = (a>0)           ? X/2 : X;
+  function calcAB(c, BC)          = (BC * tan(c));
+  function calcBC(c, AC)          = (AC / cos(c));
+  function calcAC(c, AB)          = (AB * tan(c));
   
-    module oneGrill(xP, grillW, grillL, gW, gS, nrGrills, gAngle)
+  //                   C |      
+  //                     | \       BC = AB / cos(c)
+  //                     |  \      AB = BC * tan(c)
+  //                     |   \     AC = AB * tan(c)
+  //                     |    \
+  //                   A +-----+ B
+  
+  
+    //-------------------------------------------------------------------
+    module oneGrill2(xC, yC, gW, gL, slotW, slotS, oneStep, newSlotL, xOverhang, newW, gAngle)
     {
-      //echo("oneGrill", gAngle=(90-gAngle), gW=gW, gS=gS);
-      offSet = grillL / (gW+gS);
-      //-- calculate grillLength --
-      nGw     = calcNewWidth(gAngle, grillW)+(gW*4);
-      nGl     = calcNewWidth(gAngle, grillL)+(gW*4);
-      //-- calculate overhang
-      gOverW  = calcOverhang(gAngle, nGw) /(gW+gS);
-      gOverL  = calcOverhang(gAngle, nGl) /(gW+gS);
-      fOver   = modOverhang(gAngle, gOverL);
+      function xStart(a, o1)    = (a<0) ? (o1*2) : 0; 
+      function xEndpos(l1, o1)  = (l1+(o1*2));
+
+      //echo("1Gr", xC=xC, yC=yC, gW=gW, gL=gL, slotW=slotW, slotS=slotS, oneStep=oneStep
+      //          , newSlotL=newSlotL, xOverhang=xOverhang, newW=newW, gAngle=gAngle);
     
-      //echo(nGl=nGl, gOverW=gOverW, gOverL=gOverL);
-    
-      translate([grillW/2, grillL/2, 0])
+      translate([0, yC, 0])
       {
-        color("blue") cylinder(h=15, d=4, center=true);
-        for(i=[gOverW*-2:gOverW])
+        if (gAngle < 0)
         {
-          if (gAngle >= 0)
+          //echo("[a<0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", gL);
+          for(posX=[xStart(gAngle, xOverhang) : oneStep : gL])
           {
-            posX=i*(gW+gS)+(nGl/2);
-            //translate([posX,-(gW*2),0]) 
-            translate([posX,((grillL+(gW+gS))/-2),0]) 
+            translate([(posX-slotS/2),-(yC+(newW/2)),0]) 
             {
               rotate([0,0,gAngle])
               {
-                fi=floor(i);
-                //echo(i=i, fi=fi, posX=posX);
-                if (fi==0) {color("blue") cube([gS, nGl , planeTckns]);}
-                else       {color("red")  cube([gS, nGl , planeTckns]);}
-              }
-            }
+                if ((posX > 0) || (posX <= gL))
+                {
+                  cube([slotS, newSlotL , planeTckns]);
+                }
+              } //  rotate
+            } // transl..
+          } // for posX..
+        } // gAngle < 0
+        
+        else if (gAngle > 0)
+        {
+          //echo("[a>0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", xEndpos(gL, xOverhang));
+          for(posX=[xStart(gAngle, xOverhang) : oneStep : xEndpos(gL, xOverhang)])
+          {
+            translate([(posX-slotS/2),-(yC+(newW/2)),0]) 
+            {
+              rotate([0,0,gAngle])
+              {
+                if ((posX > 0) || (posX <= gL))
+                {
+                  cube([slotS, newSlotL , planeTckns]);
+                }
+              } //  rotate
+            } // transl..
+          } // for posX..
+        }
+        
+        else  // angle == 0
+        {
+          if (gW > gL) 
+          {
+            echo(gW=gW, ">", gL=gL, "add 90 graden ..");
+            echo("[a==0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", gW);
+
+            for(posY=[gW/-2 : oneStep : gW/2])
+            {
+              translate([-(xC)+(gL/2), posY, 0]) 
+              {
+                if ((posY > 0) || (posY <= gW))
+                {
+                  cube([gL ,slotS, planeTckns]);
+                }
+              } // transl..
+            } // for posY..
           }
           else
           {
-            posX=i*(gW+gS)+(nGl/-5);
-            translate([posX,((grillL+(gW+gS))/-2),0]) 
+            //echo("[a==0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", gL);
+            for(posX=[(gL/-2) : oneStep : (gL/2)])
             {
-              rotate([0,0,gAngle])
+              translate([xC+posX,-(yC+(newW/2)),0]) 
               {
-                fi=floor(i);
-                //echo(i=i, fi=fi, posX=posX);
-                if (fi==0) {color("blue") cube([gS, nGl , planeTckns]);}
-                else       {color("red")  cube([gS, nGl , planeTckns]);}
-              }
-            }
+                if ((posX > 0) || (posX <= gL))
+                {
+                  cube([slotS, newSlotL , planeTckns]);
+                }
+              } // transl..
+            } // for posX..
           }
-        } // for...
-    } // transl..
-  
-    } //  oneGrill()
+        }
+      } //  transl..
+    } //  oneGrill2()
 
 
   for(g=cutoutGrills)
@@ -1455,16 +1492,29 @@ module cutoutGrills(type, planeTckns)
     plane   = g[7];
     polyg   = g[8];
 
+    //echo("parm", xPos=xPos, yPos=yPos, grillW=grillW, grillL=grillL, slotA=slotA
+    //           , slotW=slotW, slotS=slotS, plane=plane);
+    
     if (type==plane)
     {
-      zPos = actZpos(plane);    
+      zPos      = actZpos(plane);    
       
-      newA = angleLim(slotA);
-      //echo("sin(newA)=", sin(newA));
-      newW = abs(calcNewWidth(newA, slotW));
-      newS = abs(calcNewWidth(newA, slotS));
-      nrSpikes = grillW / (newW+newS);
-      //echo(newW=newW, newS=newS);
+      newA      = angleLim(slotA);
+      newW      = abs(calcBC(newA, slotW));
+      //echo(slotW=slotW, newW=newW);
+      newS      = abs(calcBC(newA, slotS));
+      //echo(slotS=slotS, newS=newS);
+      newSl     = abs(calcBC(newA, grillW+newW));
+      //echo(grillW=grillW, newSl=newSl);
+     
+      xOverhang = calcAB(newA, grillW/2);
+
+      oneStep   = newW+newS;
+      nrSpikes  = grillW / (oneStep);
+      xCenter   = grillL / 2;
+      yCenter   = grillW / 2;
+      //echo(xCenter=xCenter, yCenter=yCenter, grillL=grillL, grillW=grillW
+      //                    , oneStep=oneStep, newSl=newSl, xOverhang=xOverhang);
 
       translate([xPos+pcbX, yPos+pcbY, zPos])
       {
@@ -1481,10 +1531,11 @@ module cutoutGrills(type, planeTckns)
           }
           else
           {
-            color("gray") cube([grillW, grillL, planeTckns+1]);
+            //translate([0,0,-1.5]) // for testing
+                color("gray") cube([grillL, grillW, planeTckns+0.5]);
           }
           //-- subtract actual grill
-          oneGrill(xPos, grillW, grillL, newW, slotS, nrSpikes, newA);
+          oneGrill2(xCenter, yCenter, grillW, grillL, slotW, slotS, oneStep, newSl, xOverhang, newW, newA);
         }
       }
           
@@ -1493,7 +1544,7 @@ module cutoutGrills(type, planeTckns)
   } //  for ..
   
 } //  cutoutGrills()
-      
+       
 
 //===========================================================
 module subtractLabels(plane, side)
@@ -2315,10 +2366,9 @@ module YAPPgenerate()
           baseShell();
           
           cutoutsInXY("base");
+          cutoutGrills("base", basePlaneThickness+roundRadius+2);
           cutoutsInXZ("base");
           cutoutsInYZ("base");
-                
-          cutoutGrills("base", basePlaneThickness+roundRadius+2);
 
           color("blue") subtractLabels("base", "base");
           color("blue") subtractLabels("base", "front");
@@ -2385,10 +2435,9 @@ module YAPPgenerate()
                   lidShell();
                   
                   cutoutsInXY("lid");
+                  cutoutGrills("lid", lidPlaneThickness+roundRadius+2);
                   cutoutsInXZ("lid");
                   cutoutsInYZ("lid");
-
-                  cutoutGrills("lid", lidPlaneThickness+roundRadius+2);
 
                   if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible"); 
                   else printLidSnapJoins();
@@ -2466,10 +2515,9 @@ module YAPPgenerate()
               lidShell();
 
               cutoutsInXY("lid");
+              cutoutGrills("lid", lidPlaneThickness+roundRadius+2);
               cutoutsInXZ("lid");
               cutoutsInYZ("lid");
-
-              cutoutGrills("lid", lidPlaneThickness+roundRadius+2);
 
               if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible");
               else printLidSnapJoins();

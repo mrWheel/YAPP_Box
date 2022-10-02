@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.5-dev (28-09-2022)";
+Version="v1.6-RC1 (01-10-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -54,7 +54,18 @@ Version="v1.5-dev (28-09-2022)";
 printBaseShell      = true;
 printLidShell       = true;
 
-//-- Edit these parameters for your own board dimensions
+//-- pcb dimensions -- very important!!!
+pcbLength           = 30;
+pcbWidth            = 15;
+pcbThickness        = 1.5;
+                            
+//-- padding between pcb and inside wall
+paddingFront        = 1;
+paddingBack         = 1;
+paddingRight        = 1;
+paddingLeft         = 1;
+
+//-- Edit these parameters for your own box dimensions
 wallThickness       = 1.2;
 basePlaneThickness  = 1.0;
 lidPlaneThickness   = 1.0;
@@ -72,23 +83,12 @@ ridgeHeight         = 3.0;
 ridgeSlack          = 0.2;
 roundRadius         = 5.0;
 
-//-- pcb dimensions
-pcbLength           = 30;
-pcbWidth            = 15;
-pcbThickness        = 1.5;
-
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
 standoffHeight      = 3.0;
 pinDiameter         = 2.0;
 pinHoleSlack        = 0.2;
 standoffDiameter    = 4;
-                            
-//-- padding between pcb and inside wall
-paddingFront        = 1;
-paddingBack         = 1;
-paddingRight        = 1;
-paddingLeft         = 1;
 
 
 //-- D E B U G -----------------//-> Default ---------
@@ -99,8 +99,11 @@ hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;    //-> false
 colorBase           = "white";
-showPCB             = false;    //-> false
-showMarkers         = false;    //-> false
+showOrientation     = true;
+showPCB             = false;
+showPCBmarkers      = false;
+showShellZero       = false;
+showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
@@ -332,11 +335,10 @@ function isTrue(w, aw, from) = ((   w==aw[from]
                                  || w==aw[from+4]  
                                  || w==aw[from+5]  
                                  || w==aw[from+6] ) ? 1 : 0);  
-//-23/09-function minOutside(o, d) = ((((d*2)+1)>=o) ? (d*2)+1 : o);  
+
 function minOutside(ins, outs) = ((((ins*2.2)+0.2)>=outs) ? (ins*2.2)+0.2 : outs);  
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T=="base")) ? t+standoffHeight : h;
-//function lowestVal(v1, minV)  = ((v1<minV) ? minV : v1);
-//function highestVal(v1, maxV) = ((v1>maxV) ? maxV : v1);
+
 //===========================================================
 module printBaseMounts()
 {
@@ -436,7 +438,7 @@ module printBaseMounts()
                 (shellWidth/2)*-1,
                 (baseWallHeight+basePlaneThickness)*-1])
     {
-      if (showMarkers)
+      if (showPCBmarkers)
       {
         color("red") translate([0,0,((shellHeight+onLidGap)/2)]) %cylinder(r=1,h=shellHeight+onLidGap+20, center=true);
       }
@@ -864,20 +866,15 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
 
 
 //===========================================================
-module printPCB(posX, posY, posZ)
+module showPCBmarkers(posX, posY, posZ)
 {
-  difference()  // (d0)
+  translate([posX, posY, posZ]) // (t1)
   {
-    translate([posX, posY, posZ]) // (t1)
-    {
-      color("red")
-        cube([pcbLength, pcbWidth, pcbThickness]);
-    
-      if (showMarkers)
+      if (showPCBmarkers)
       {
-        markerHeight=basePlaneThickness+baseWallHeight+pcbThickness;
-    
-        translate([0, 0, 0])
+        markerHeight=shellHeight+onLidGap+10;
+        echo("Markers:", markerHeight=markerHeight);
+        translate([0, 0, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
@@ -885,7 +882,7 @@ module printPCB(posX, posY, posZ)
               center = true,
               $fn = 20);
 
-        translate([0, pcbWidth, 0])
+        translate([0, pcbWidth, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
@@ -893,7 +890,7 @@ module printPCB(posX, posY, posZ)
               center = true,
               $fn = 20);
 
-        translate([pcbLength, pcbWidth, 0])
+        translate([pcbLength, pcbWidth, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
@@ -901,7 +898,7 @@ module printPCB(posX, posY, posZ)
               center = true,
               $fn = 20);
 
-        translate([pcbLength, 0, 0])
+        translate([pcbLength, 0, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
@@ -909,25 +906,43 @@ module printPCB(posX, posY, posZ)
               center = true,
               $fn = 20);
 
-        translate([((shellLength-(wallThickness*2))/2), 0, pcbThickness])
+        translate([(shellLength/2)-posX, 0, pcbThickness])
           rotate([0,90,0])
-            color("red")
+            color("black")
               %cylinder(
                 r = .5,
-                h = shellLength+(wallThickness*2),
+                h = shellLength+(wallThickness*2)+paddingBack,
                 center = true,
                 $fn = 20);
     
-        translate([((shellLength-(wallThickness*2))/2), pcbWidth, pcbThickness])
+        translate([(shellLength/2)-posX, pcbWidth, pcbThickness])
           rotate([0,90,0])
-            color("red")
+            color("black")
               %cylinder(
                 r = .5,
-                h = shellLength+(wallThickness*2),
+                h = shellLength+(wallThickness*2)+paddingBack,
                 center = true,
                 $fn = 20);
                 
       } // show_markers
+  }
+      
+} //  showPCBmarkers()
+
+
+//===========================================================
+module printPCB(posX, posY, posZ)
+{
+  difference()  // (d0)
+  {
+    {
+      translate([posX, posY, posZ]) // (t1)
+      {
+        color("red")
+          cube([pcbLength, pcbWidth, pcbThickness]);
+      }
+      showPCBmarkers(posX, posY, posZ);
+      
     } // translate(t1)
 
     //--- show inspection X-as
@@ -992,7 +1007,7 @@ module pcbHolders()
 //===========================================================
 module pcbPushdowns() 
 {        
-  //-- place pcb Standoff-pushdown
+  //-- place pcb Standoff-pushdown on the lid
     for ( pushdown = pcbStands )
     {
       //echo("pcb_pushdowns:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
@@ -1211,12 +1226,13 @@ module cutoutsInXZ(type)
         }
         else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
         {
-          posx=pcbX+cutOut[0];
-          posz=actZpos(type)+cutOut[1];
+          posx=pcbX+cutOut[0]-(cutOut[2]/2);
+          //posz=actZpos(type)+cutOut[1];
+          posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
           newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-          translate([posx, (wallThickness-1), posz])
+          translate([posx+(cutOut[2]/2), wallThickness, posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
             color("blue")
               rotate([0,cutOut[4],0])
                 cube([cutOut[2], wallThickness+roundRadius+2, newH], center=true);
@@ -1259,10 +1275,10 @@ module cutoutsInXZ(type)
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
           newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-          translate([posx, (shellWidth-2), posz])
+          translate([posx, (shellWidth-2), posz+(pcbThickness*cos(cutOut[4]))])
             color("blue")
               rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+roundRadius+2, newH], center=true);
+                cube([cutOut[2], (wallThickness+roundRadius)*2+2, newH], center=true);
         }
         else if (cutOut[5]==yappCircle)
         {
@@ -1295,7 +1311,7 @@ module cutoutsInYZ(type)
         // (5) = { yappRectangle | yappCircle }
         // (6) = { yappCenter }
 
-        //echo("YZ (Front):", plane=type, cutOut);
+        echo("YZ (Front):", plane=type, cutOut);
 
         if (cutOut[5]==yappRectangle && cutOut[6]!=yappCenter)
         {
@@ -1312,14 +1328,16 @@ module cutoutsInYZ(type)
         }
         else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
         {
-          posy=pcbY+cutOut[0];
-          z=standoffHeight+pcbThickness+cutOut[1];
-          t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-          newH=newHeight(type, cutOut[3]/2, z, t)+(cutOut[3]/2);
+          posy=pcbY+cutOut[0]-(cutOut[2]/2);
           posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-          translate([shellLength-(wallThickness+1), posy, posz])
-            color("red")
-              cube([wallThickness+roundRadius+wallThickness+2, cutOut[2], newH], center=true);
+          z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
+          t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
+          newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
+          translate([shellLength-(wallThickness+1), posy+(cutOut[2]/2), posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
+            color("blue")
+              rotate([cutOut[4],0,0])
+                cube([wallThickness+roundRadius+wallThickness+2, cutOut[2], newH], center=true);
+
         }
         else if (cutOut[5]==yappCircle)
         {
@@ -1358,9 +1376,11 @@ module cutoutsInYZ(type)
           z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
           t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
           newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-          translate([-1, posy, posz])
+          translate([(wallThickness+1), posy+(cutOut[2]/2), posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
+          //translate([-1, posy, posz])
+            rotate([cutOut[4],0,0])
               color("orange")
-                cube([wallThickness+roundRadius+2, cutOut[2], newH]);
+                cube([wallThickness+roundRadius+2, cutOut[2], newH], center=true);
         }
         else if (cutOut[5]==yappCircle)
         {
@@ -1993,8 +2013,11 @@ module pcbStandoff(color, height, type, plane)
           }
           if (plane == "lid")
           {
-            translate([0,0,lidWallHeight+0.5]) 
+            //translate([0,0,lidWallHeight]) 
+            zP = height-1.8;//+standoffHeight-lidPlaneThickness;
+            translate([0,0,height-1.8]) 
             {
+              //echo("Lid ..", height=height, zP=zP);
               cylinder(h=2, r1=standoffDiameter/2, r2=(standoffDiameter/2)+3);
             }
           }
@@ -2342,22 +2365,28 @@ module YAPPgenerate()
   $fn=25;
       
             
-      if (showMarkers)
+      if (showShellZero)
       {
+        markerHeight = shellHeight+onLidGap+10;
         //-- box[0,0] marker --
-        translate([0, 0, 8])
-          color("blue")
+        translate([0, 0, (markerHeight/2)-5])
+          color("red")
             %cylinder(
                     r = .5,
-                    h = 20,
+                    h = markerHeight,
                     center = true,
                     $fn = 20);
-      } //  showMarkers
+      } //  showShellZero
       
       
       if (printBaseShell) 
       {
-        if (showPCB) %printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
+        if (showPCB)
+        {
+          %printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
+          %showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
+        }
+        else if (showPCBmarkers) %showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
                   
         baseHookOutside();
         
@@ -2410,7 +2439,7 @@ module YAPPgenerate()
         
         baseHookInside();
         
-        showOrientation();
+        if (showOrientation) showOrientation();
 
       } // if printBaseShell ..
       
@@ -2582,7 +2611,7 @@ module YAPPgenerate()
 //-- only for testing the library --- YAPPgenerate();
 //YAPPgenerate();
 
-if (showMarkers)
+if (showCenterMarkers)
 {
     translate([shellLength/2, shellWidth/2,-1]) 
     color("blue") %cube([1,shellWidth+20,1], true);

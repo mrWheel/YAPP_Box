@@ -16,8 +16,8 @@
 //-----------------------------------------------------------------------
 
 
-polygonShape = [  [0,15],[20,15],[30,0],[40,15],[60,15]
-                 ,[50,30],[60,45], [40,45],[30,60]
+polygonShape = [  [0,0],[20,15],[30,0],[40,15],[70,15]
+                 ,[50,30],[60,45], [40,45],[30,70]
                  ,[20,45], [0,45]
                ];
 
@@ -121,11 +121,11 @@ pcbStands = [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsLid =  [
-                    [20, 20, 10, 20, 10, yappRectangle]  
+               //     [20, 20, 10, 20, 10, yappRectangle]  
                //   , [20, 50, 10, 20, 0, yappRectangle, yappCenter]
-                  , [50, 50, 10, 2, 0, yappCircle]
-                  , [pcbLength-10, 20, 15, 0, 0, yappCircle] 
-                  , [50, pcbWidth, 5, 7, 0, yappRectangle, yappCenter]
+               //   , [50, 50, 10, 2, 0, yappCircle]
+               //   , [pcbLength-10, 20, 15, 0, 0, yappCircle] 
+               //   , [50, pcbWidth, 5, 7, 0, yappRectangle, yappCenter]
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -137,10 +137,10 @@ cutoutsLid =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBase =   [
-                    [10, 10, 20, 10, 45, yappRectangle]
-                  , [30, 10, 15, 10, 45, yappRectangle, yappCenter]
-                  , [20, pcbWidth-20, 15, 0, 0, yappCircle]
-                  , [pcbLength-15, 5, 10, 2, 0, yappCircle]
+                 //   [10, 10, 20, 10, 45, yappRectangle]
+                 // , [30, 10, 15, 10, 45, yappRectangle, yappCenter]
+                 // , [20, pcbWidth-20, 15, 0, 0, yappCircle]
+                 // , [pcbLength-15, 5, 10, 2, 0, yappCircle]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -154,7 +154,7 @@ cutoutsBase =   [
 cutoutsFront =  [
                     [0, 5, 10, 15, 0, yappRectangle]               // org
                  ,  [25, 3, 10, 10, 0, yappRectangle, yappCenter]  // center
-                 ,  [60, 10, 15, 6, 0, yappCircle]                  // circle
+                 ,  [60, 10, 15, 6, 0, yappCircle]                 // circle
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -210,8 +210,8 @@ cutoutsRight =  [
 // (7) = plane {"base" | "lid" }
 // (8) = {polygon points}}
 
-cutoutGrills = [
-                 [35,  8, 90, 90, 2, 3, 50, "base", polygonShape ]
+cutoutsGrill = [
+                 [35,  8, 70, 70, 2, 3, 50, "base", polygonShape ]
                 ,[ 0, 20, 10, 40, 2, 3, 50, "lid"]
                 ,[45,  0, 50, 10, 2, 3, 45, "lid"]
                 //,[15, 85, 50, 10, 2, 3,  20, "base"]

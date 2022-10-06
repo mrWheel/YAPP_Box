@@ -1,9 +1,12 @@
 # YAPP_Box
 Yet Another Parametric Projectbox generator
 
+You can find the complete and official documentation 
+<a href="https://mrwheel-docs.gitbook.io/yappgenerator_en/">here</a>
+
 <hr>
 
-## Rev. 1.5-dev
+## Rev. 1.6
 
 - new cutoutGrills array
 <pre>

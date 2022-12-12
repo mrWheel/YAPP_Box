@@ -86,19 +86,22 @@ paddingRight        = 9;
 paddingLeft         = 14;
 
 
-//-- D E B U G -------------------
-showSideBySide      = true;
-hideLidWalls        = false;
-onLidGap            = 4;
-shiftLid            = 10;
-colorLid            = "yellow";
-hideBaseWalls       = false;
+//-- D E B U G -----------------//-> Default ---------
+showSideBySide      = true;     //-> true
+onLidGap            = 3;
+shiftLid            = 1;
+hideLidWalls        = false;    //-> false
+colorLid            = "yellow";   
+hideBaseWalls       = false;    //-> false
 colorBase           = "white";
+showOrientation     = true;
 showPCB             = false;
-showMarkers         = false;
-inspectX            = 0;  // 0=none, >0 from front, <0 from back
-inspectY            = 0;  // 0=none, >0 from left, <0 from right
-
+showPCBmarkers      = false;
+showShellZero       = false;
+showCenterMarkers   = false;
+inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
+inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
+//-- D E B U G ---------------------------------------
 
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
@@ -282,12 +285,12 @@ snapJoins   =     [
 // (5) = size
 // (6) = "label text"
 labelsPlane =  [
-                    [10,  10,   0, "lid",   "Liberation Mono:style=bold", 7, "YAPP" ]
-                  , [100, 90, 180, "base",  "Liberation Mono:style=bold", 7, "Base" ]
-                  , [8,    8,   0, "left",  "Liberation Mono:style=bold", 7, "Left" ]
-                  , [10,   5,   0, "right", "Liberation Mono:style=bold", 7, "Right" ]
-                  , [40,  23,   0, "front", "Liberation Mono:style=bold", 7, "Front" ]
-                  , [5,    5,   0, "back",  "Liberation Mono:style=bold", 7, "Back" ]
+                    [10,  10,   0, 1, "lid",   "Liberation Mono:style=bold", 7, "YAPP" ]
+                  , [100, 90, 180, 1, "base",  "Liberation Mono:style=bold", 7, "Base" ]
+                  , [8,    8,   0, 1, "left",  "Liberation Mono:style=bold", 7, "Left" ]
+                  , [10,   5,   0, 1, "right", "Liberation Mono:style=bold", 7, "Right" ]
+                  , [40,  23,   0, 1, "front", "Liberation Mono:style=bold", 7, "Front" ]
+                  , [5,    5,   0, 1, "back",  "Liberation Mono:style=bold", 7, "Back" ]
                ];
 
 

@@ -89,6 +89,8 @@ standoffHeight      = 3.0;
 pinDiameter         = 2.0;
 pinHoleSlack        = 0.2;
 standoffDiameter    = 4;
+maxStandoffSupportHeight = 3.0;
+standoffSupportDiameter = 3.0;
 
 
 //-- D E B U G -----------------//-> Default ---------
@@ -1137,7 +1139,7 @@ module cutoutsInXY(type)
           }
         } //  for ..
 
-	      for(conn = connectorsPCB)
+        for(conn = connectorsPCB)
         {
           //-- [0] x-pos
           //-- [1] y-pos
@@ -2010,18 +2012,46 @@ module pcbStandoff(color, height, type, plane)
           {
             translate([0,0,-0.3]) 
             {
-              cylinder(h=2, r1=(standoffDiameter/2)+3, r2=standoffDiameter/2);
+                if (standoffHeight > maxStandoffSupportHeight)
+                {
+                    cylinder(h=maxStandoffSupportHeight, r1=(standoffDiameter/2)+standoffSupportDiameter, r2=standoffDiameter/2);
+                }
+                else
+                {
+                    cylinder(h=standoffHeight, r1=(standoffDiameter/2)+standoffSupportDiameter, r2=standoffDiameter/2);
+                }
             }
           }
           if (plane == "lid")
           {
-            //translate([0,0,lidWallHeight]) 
-            zP = height-1.8;//+standoffHeight-lidPlaneThickness;
-            translate([0,0,height-1.8]) 
-            {
-              //echo("Lid ..", height=height, zP=zP);
-              cylinder(h=2, r1=standoffDiameter/2, r2=(standoffDiameter/2)+3);
-            }
+              if (standoffHeight < maxStandoffSupportHeight)
+              {
+                  translate([0,0,height-1.8])
+                  {
+                        if (standoffHeight > maxStandoffSupportHeight)
+                        {
+                            cylinder(h=maxStandoffSupportHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
+                        }
+                        else
+                        {
+                            cylinder(h=standoffHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
+                        }
+                   }
+              }
+              else
+              {
+                  translate([0,0,height-maxStandoffSupportHeight])
+                  {
+                        if (standoffHeight > maxStandoffSupportHeight)
+                        {
+                            cylinder(h=maxStandoffSupportHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
+                        }
+                        else
+                        {
+                            cylinder(h=standoffHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
+                        }
+                  }
+              }
           }
 
         } // standoff()

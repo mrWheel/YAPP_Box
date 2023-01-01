@@ -3,14 +3,15 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.6 (06-10-2022)";
+Version="v1.6 (19-12-2022)";
 /*
 **
-**  Copyright (c) 2021, 2022 Willem Aandewiel
+**  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
 **
 **  With help from:
 **   - Keith Hadley (parameterized label depth)
 **   - Oliver Grafe (connectorsPCB)
+**   - Juan Jose Chong (dynamic standoff support)
 **
 **
 **  for many or complex cutoutsGrill you might need to adjust
@@ -89,7 +90,7 @@ standoffHeight      = 3.0;
 pinDiameter         = 2.0;
 pinHoleSlack        = 0.2;
 standoffDiameter    = 4;
-maxStandoffSupportHeight = 3.0;
+standoffSupportHeight   = 3.0;
 standoffSupportDiameter = 3.0;
 
 
@@ -2012,9 +2013,9 @@ module pcbStandoff(color, height, type, plane)
           {
             translate([0,0,-0.3]) 
             {
-                if (standoffHeight > maxStandoffSupportHeight)
+                if (standoffHeight > standoffSupportHeight)
                 {
-                    cylinder(h=maxStandoffSupportHeight, r1=(standoffDiameter/2)+standoffSupportDiameter, r2=standoffDiameter/2);
+                    cylinder(h=standoffSupportHeight, r1=(standoffDiameter/2)+standoffSupportDiameter, r2=standoffDiameter/2);
                 }
                 else
                 {
@@ -2024,13 +2025,13 @@ module pcbStandoff(color, height, type, plane)
           }
           if (plane == "lid")
           {
-              if (standoffHeight < maxStandoffSupportHeight)
+              if (standoffHeight < standoffSupportHeight)
               {
                   translate([0,0,height-1.8])
                   {
-                        if (standoffHeight > maxStandoffSupportHeight)
+                        if (standoffHeight > standoffSupportHeight)
                         {
-                            cylinder(h=maxStandoffSupportHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
+                            cylinder(h=standoffSupportHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
                         }
                         else
                         {
@@ -2040,11 +2041,11 @@ module pcbStandoff(color, height, type, plane)
               }
               else
               {
-                  translate([0,0,height-maxStandoffSupportHeight])
+                  translate([0,0,height-standoffSupportHeight])
                   {
-                        if (standoffHeight > maxStandoffSupportHeight)
+                        if (standoffHeight > standoffSupportHeight)
                         {
-                            cylinder(h=maxStandoffSupportHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
+                            cylinder(h=standoffSupportHeight, r1=standoffDiameter/2, r2=(standoffDiameter/2)+standoffSupportDiameter);
                         }
                         else
                         {

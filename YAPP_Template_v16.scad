@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 1.6 (06-10-2022)
+//  Version 1.6 (19-12-2022)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -72,6 +72,8 @@ standoffHeight      = 4.0;
 pinDiameter         = 2.5;
 pinHoleSlack        = 0.3;
 standoffDiameter    = 5;
+standoffSupportHeight   = 3.5;
+standoffSupportDiameter = 3.5;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight

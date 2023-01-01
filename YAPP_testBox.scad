@@ -61,6 +61,8 @@ standoffHeight      = 5.0;
 pinDiameter         = 1.0;
 pinHoleSlack        = 0.5;
 standoffDiameter    = 4;
+standoffSupportHeight   = 3.0;
+standoffSupportDiameter = 3.0;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 0;

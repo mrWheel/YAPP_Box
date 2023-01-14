@@ -4,7 +4,7 @@
 **
 **      YAPPconnectorTest.scad
 */
-Version="v1.1 (12-01-2022)";
+//Version="v1.1 (12-01-2022)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -12,7 +12,7 @@ Version="v1.1 (12-01-2022)";
 **  TERMS OF USE: MIT License. See base offile.
 ***************************************************************************      
 */
-include <library/YAPPgenerator_v14.scad>
+include <../YAPP_box/library/YAPPgenerator_v16.scad>
 
 
 //-- which half do you want to print?
@@ -29,7 +29,7 @@ lidPlaneThickness   = 1.2;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 6;
-lidWallHeight       = 4;
+lidWallHeight       = 14;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -37,15 +37,17 @@ ridgeHeight         = 2.0;
 roundRadius         = 4.0;
 
 //-- pcb dimensions
-pcbLength           = 25;
-pcbWidth            = 15;
+pcbLength           = 60;
+pcbWidth            = 25;
 pcbThickness        = 1.5;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 3.0;
+standoffHeight      = 6.0;
 pinDiameter         = 2.0;
-standoffDiameter    = 4;
+standoffDiameter    = 3;
+standoffSupportHeight   = 3.0;
+standoffSupportDiameter = 3.0;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 1;
@@ -55,7 +57,7 @@ paddingLeft         = 1;
 
 
 //-- D E B U G ----------------------------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
@@ -65,8 +67,18 @@ colorBase           = "white";
 showPCB             = false;    //-> false
 showMarkers         = false;    //-> false
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;
+inspectY            = 10;
 //-- D E B U G ----------------------------
+
+
+//-- pcb_standoffs  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (3) = { yappHole, YappPin }
+pcbStands = [
+                [10,15,yappBoth,yappPin]
+             ];
 
 
 //-- connectors -- origen = box[0,0,0]
@@ -79,9 +91,22 @@ inspectY            = 0;
 connectors   = [//-- [0]x-pos, [1]y-pos, [2]screwDiameter, [3]insertDiameter, 
                 //--      [4]outsideDiameter
                 //--      [5]yappAllCorners
-                     [10, 10, 2, 3.3, 2]
+                     [35, 15, 2, 3.3, 2]
                ];
 
+//-- connectorsPCB -- origin = pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = screwDiameter
+// (3) = insertDiameter
+// (4) = outsideDiameter
+// (5) = { yappAllCorners }
+connectorsPCB   =  [
+                    [50, 15, 2, 3, 2]
+              //    , [30, 20, 4, 6, 9]
+              //    , [4, 3, 34, 3, yappAllCorners]
+                ];
+                
 //-- origin of labels is box [0,0,0]
 // (0) = posx
 // (1) = posy/z

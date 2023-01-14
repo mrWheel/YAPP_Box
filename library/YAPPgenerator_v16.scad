@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.6 (19-12-2022)";
+Version="v1.6 (14-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -1823,8 +1823,8 @@ module baseShell()
           {
             minkowski()
             {
-              //square([(L)-((iRad*2)), (W)-((iRad*2))], center=true);
-              square([(L)-((iRad*2)), (W-ridgeSlack)-((iRad*2))], center=true);  // 13-02-2022
+            //square([(L)-((iRad*2)), (W-ridgeSlack)-((iRad*2))], center=true);  // 13-02-2022
+            square([(L-ridgeSlack)-((iRad*2)), (W-ridgeSlack)-((iRad*2))], center=true);  // 14-01-2023
                 circle(iRad);
             }
           
@@ -1932,7 +1932,7 @@ module lidShell()
             {
                 minkowski()
                 {
-                  square([L-((iRad*2)), W-((iRad*2))+(ridgeSlack/2)], center=true); // 26-02-2022
+                  square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
                   circle(iRad);
                 }
               

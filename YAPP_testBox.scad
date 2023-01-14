@@ -1,7 +1,7 @@
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v16.scad>
+include <../YAPP_BOX/library/YAPPgenerator_v16.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -61,8 +61,8 @@ standoffHeight      = 5.0;
 pinDiameter         = 1.0;
 pinHoleSlack        = 0.5;
 standoffDiameter    = 4;
-standoffSupportHeight   = 3.0;
-standoffSupportDiameter = 3.0;
+standoffSupportHeight   = 2.0;
+standoffSupportDiameter = 5.0;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 0;

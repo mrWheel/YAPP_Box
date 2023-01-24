@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------
 
 
-include <./library/YAPPgenerator_v16.scad>
+include <./library/YAPPgenerator_v16b.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -95,7 +95,7 @@ showPCB             = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
+inspectX            = -15;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
 
@@ -105,9 +105,9 @@ inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 // (2) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (3) = { yappHole, YappPin }
 pcbStands = [
-                [10, pcbWidth/2, yappBoth, yappPin] 
-               ,[35, pcbWidth/2, yappBoth, yappHole]
-             ];     
+             //   [10, pcbWidth/2, yappBoth, yappPin] 
+             //  ,[35, pcbWidth/2, yappBoth, yappHole]
+            ];     
 
 //-- Lid plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -201,24 +201,26 @@ cutoutsGrill = [
 //-- connectors -- origen = box[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
+// (2) = screwDiameter [d1] //--> screwHead ~ d1*2.2
+// (3) = insertDiameter [d2]
+// (4) = outsideDiameter [d3] --> d1 * 4??
 // (5) = { yappAllCorners }
 connectors   =  [
-                    [15, 15, 2.5, 3.8, 5, yappAllCorners]
+                  //  [15, 15, 2.5, 3.8, 5, yappAllCorners]
+                    [15, 15, 2.5, 2.8, 10]
                 ];
                 
 //-- connectorsPCB -- origin = pcb[0,0,0]
 //-- a connector that allows to screw base and lid together through holes in the PCB
 // (0) = posx
 // (1) = posy
-// (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
+// (2) = screwDiameter [d1]
+// (3) = insertDiameter [d2]
+// (4) = outsideDiameter [d3]
 // (5) = { yappAllCorners }
 connectorsPCB   =  [
-                    [70, 10, 2.5, 3.8, 5, yappAllCorners]
+                //    [70, 10, 2.5, 3.8, 5]
+//                  [70, 10, 2.5, 3.8, 5, yappAllCorners]
 //                 ,[70, pcbWidth-10, 2.5, 3.8, 5]
                 ];
 

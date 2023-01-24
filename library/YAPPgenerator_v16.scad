@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.6 (14-01-2023)";
+Version="v1.6 (24-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -2098,6 +2098,8 @@ module pcbStandoff(color, height, type, plane)
 //-- d3 = outside diameter
 module connector(plane, isPcb, x, y, d1, d2, d3) 
 {
+  //echo("TEST:", plane=plane, isPcb=isPcb, d1=d1, d2=d2, d3=d3);
+  
   if (plane=="base")
   {
     translate([x, y, 0])
@@ -2152,7 +2154,8 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
 
     zTemp      = isPcb ? ((pcbZlid)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
     heightTemp = isPcb ? ((baseWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)) : lidWallHeight;
-
+    
+    //echo("TEST:", plane=plane, zTemp=zTemp);
     translate([x, y, zTemp])
     {
       ht=(heightTemp);
@@ -2167,13 +2170,12 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
                 d = d3,
                 $fn = 20);
           //-- flange --
-          //translate([0,0,(ht*1)-1.9]) cylinder(h=2, r1=(d3/2), r2=(d3/2)+3);
           if (ht < standoffSupportHeight)
-                translate([0,0,(ht*1)-1.9]) 
+                translate([0,0,ht-(lidPlaneThickness/2)]) 
                 {
-                  cylinder(h=2, r1=(d3/2), r2=(d3/2)+standoffSupportDiameter);
+                  cylinder(h=lidPlaneThickness, r1=(d3/2), r2=(d3/2)+standoffSupportDiameter);
                 }
-          else  translate([0,0,(ht-standoffSupportHeight)-1.9]) 
+          else  translate([0,0,(ht-standoffSupportHeight)+(lidPlaneThickness/2)]) 
                 {
                   cylinder(h=standoffSupportHeight, r1=(d3/2), r2=(d3/2)+standoffSupportDiameter);
                 }
@@ -2182,7 +2184,7 @@ module connector(plane, isPcb, x, y, d1, d2, d3)
         //-- insert --
         linear_extrude(ht)
           circle(
-                d = d2,
+                d = d2, 
                 $fn = 20);
 
       } //  difference
@@ -2205,6 +2207,7 @@ module shellConnectors(plane)
     //-- [3] insertDiameter, 
     //-- [4] outsideDiameter
     
+    //echo("TEST:", d1=conn[2], d2=conn[3], d3=conn[4]);
     //-23/09-outD = minOutside(conn[4], conn[3]);
     outD = minOutside(conn[3], conn[4]);
     //echo("[connector]minOutside:", insert=conn[3], outside=conn[4], outD=outD);
@@ -2212,7 +2215,7 @@ module shellConnectors(plane)
     if (plane=="base")
     {
       //echo("baseConnector:", conn, outD=outD);
-  //--connector(plane, x,       y,       scrwD,   rcvrD,   outD) --  
+  //--connector(plane, Pcb?,  x,       y,       scrwD,   rcvrD,   outD) --  
       connector(plane, false, conn[0], conn[1], conn[2], conn[3], outD);
       if (conn[5]==yappAllCorners)
       {
@@ -2252,7 +2255,7 @@ module shellConnectors(plane)
     //-- [5] yappAllCorners
     //-23/09-outD = minOutside(conn[4], conn[3]);
     outD = minOutside(conn[3], conn[4]);
-    echo("[connectorPCB]minOutside:", insert=conn[3],outside=conn[4], outD=outD);
+    //echo("[connectorPCB]minOutside:", insert=conn[3],outside=conn[4], outD=outD);
     
     if (plane=="base")
     {

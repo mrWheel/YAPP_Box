@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a YAPP_StandTest
+//  This is a YAPP_StandSmall_v17 test box
 //
-//  Version 1.6 (14-01-2023)
+//  Version 1.7 (27-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -15,8 +15,16 @@
 //
 //-----------------------------------------------------------------------
 
+insertDiam  = 3.8;
+screwDiam   = 2.5;
+insertDiam2 = insertDiam + 0.2;
+screwDiam2  = screwDiam + 0.2;
+insertDiam3 = insertDiam + 0.3;
+screwDiam3  = screwDiam + 0.3;
 
-include <./library/YAPPgenerator_v16b.scad>
+
+
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -48,38 +56,36 @@ printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 2.0;
-lidPlaneThickness   = 2.0;
+basePlaneThickness  = 1.5;
+lidPlaneThickness   = 1.5;
 
-baseWallHeight      = 20;
-lidWallHeight       = 12;
+baseWallHeight      = 4;
+lidWallHeight       = 6;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 4;
+ridgeHeight         = 2;
 ridgeSlack          = 0.2;
-roundRadius         = 5.0;
+roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 10.0;
+standoffHeight      = 5.0;
 pinDiameter         = 2.5;
 pinHoleSlack        = 0.3;
 standoffDiameter    = 9;
-standoffSupportHeight   = 3.5;
-standoffSupportDiameter = 3.5;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-pcbLength           = 100;
-pcbWidth            = 75;
+pcbLength           = 35;
+pcbWidth            = 15;
 pcbThickness        = 1.5;
                             
 // padding between pcb and inside wall
-paddingFront        = 7;
-paddingBack         = 9;
-paddingRight        = 9;
-paddingLeft         = 14;
+paddingFront        = 1;
+paddingBack         = 1;
+paddingRight        = 1;
+paddingLeft         = 1;
 
 
 //-- D E B U G -----------------//-> Default ---------
@@ -95,7 +101,7 @@ showPCB             = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = -15;        //-> 0=none (>0 from front, <0 from back)
+inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
 
@@ -198,31 +204,27 @@ cutoutsRight =  [
 cutoutsGrill = [
                ];
 
-//-- connectors -- origen = box[0,0,0]
+//-- connectors 
+//-- yappConnShells : origen = box[0,0,0]
+//-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = screwDiameter [d1] //--> screwHead ~ d1*2.2
-// (3) = insertDiameter [d2]
-// (4) = outsideDiameter [d3] --> d1 * 4??
-// (5) = { yappAllCorners }
+// (2) = screwDiameter
+// (3) = screwHeadDiameter
+// (4) = insertDiameter
+// (5) = outsideDiameter
+// (6) = flangeHeight
+// (7) = flangeDiam
+// (8) = { yappConnShells | yappConnWithPCB }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                  //  [15, 15, 2.5, 3.8, 5, yappAllCorners]
-                    [15, 15, 2.5, 2.8, 10]
+                    [10, 9.5, screwDiam3, screwDiam3*2, insertDiam3, 7, 4, 10
+                                          , yappConnShells]
+                  , [26, 7, screwDiam2, screwDiam2*2, insertDiam2, insertDiam2+2, 4, 10
+                                          , yappConnWithPCB]
+
                 ];
-                
-//-- connectorsPCB -- origin = pcb[0,0,0]
-//-- a connector that allows to screw base and lid together through holes in the PCB
-// (0) = posx
-// (1) = posy
-// (2) = screwDiameter [d1]
-// (3) = insertDiameter [d2]
-// (4) = outsideDiameter [d3]
-// (5) = { yappAllCorners }
-connectorsPCB   =  [
-                //    [70, 10, 2.5, 3.8, 5]
-//                  [70, 10, 2.5, 3.8, 5, yappAllCorners]
-//                 ,[70, pcbWidth-10, 2.5, 3.8, 5]
-                ];
+
 
 //-- base mounts -- origen = box[x0,y0]
 // (0) = posx | posy
@@ -240,10 +242,10 @@ baseMounts   = [
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
 snapJoins   =     [
-                    [2, 10, yappLeft, yappRight, yappSymmetric]
+              //    [2, 10, yappLeft, yappRight, yappSymmetric]
               //    [5, 10, yappLeft]
               //  , [shellLength-2, 10, yappLeft]
-                  , [30,  10, yappFront, yappBack]
+              //  , [30,  10, yappFront, yappBack]
               //  , [2.5, 3, 5, yappBack, yappFront, yappSymmetric]
                 ];
                
@@ -256,12 +258,12 @@ snapJoins   =     [
 // (5) = size
 // (6) = "label text"
 labelsPlane =  [
-                    [10,  10,   0, 1, "lid",   "Liberation Mono:style=bold", 7, "YAPP" ]
-                  , [100, 90, 180, 1, "base",  "Liberation Mono:style=bold", 7, "Base" ]
-                  , [8,    8,   0, 1, "left",  "Liberation Mono:style=bold", 7, "Left" ]
-                  , [10,   5,   0, 1, "right", "Liberation Mono:style=bold", 7, "Right" ]
-                  , [40,  23,   0, 1, "front", "Liberation Mono:style=bold", 7, "Front" ]
-                  , [5,    5,   0, 1, "back",  "Liberation Mono:style=bold", 7, "Back" ]
+               //     [10,  10,   0, 1, "lid",   "Liberation Mono:style=bold", 7, "YAPP" ]
+               //   , [100, 90, 180, 1, "base",  "Liberation Mono:style=bold", 7, "Base" ]
+               //   , [8,    8,   0, 1, "left",  "Liberation Mono:style=bold", 7, "Left" ]
+               //   , [10,   5,   0, 1, "right", "Liberation Mono:style=bold", 7, "Right" ]
+               //   , [40,  23,   0, 1, "front", "Liberation Mono:style=bold", 7, "Front" ]
+               //   , [5,    5,   0, 1, "back",  "Liberation Mono:style=bold", 7, "Back" ]
                ];
 
 

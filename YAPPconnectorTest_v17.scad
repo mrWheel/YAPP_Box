@@ -2,9 +2,9 @@
 ***************************************************************************  
 **  Yet Another Parameterised Projectbox generator
 **
-**      YAPPconnectorTest.scad
+**      YAPPconnectorTest_v17.scad
 */
-//Version="v1.1 (12-01-2022)";
+//Version="v1.7 (27-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -12,7 +12,7 @@
 **  TERMS OF USE: MIT License. See base offile.
 ***************************************************************************      
 */
-include <../YAPP_box/library/YAPPgenerator_v16.scad>
+include <../YAPP_box/library/YAPPgenerator_v17.scad>
 
 
 //-- which half do you want to print?
@@ -29,7 +29,7 @@ lidPlaneThickness   = 1.2;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 6;
-lidWallHeight       = 14;
+lidWallHeight       = 10;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -38,16 +38,14 @@ roundRadius         = 4.0;
 
 //-- pcb dimensions
 pcbLength           = 60;
-pcbWidth            = 25;
+pcbWidth            = 50;
 pcbThickness        = 1.5;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
 standoffHeight      = 6.0;
 pinDiameter         = 2.0;
-standoffDiameter    = 3;
-standoffSupportHeight   = 3.0;
-standoffSupportDiameter = 3.0;
+standoffDiameter    = 4;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 1;
@@ -57,9 +55,9 @@ paddingLeft         = 1;
 
 
 //-- D E B U G ----------------------------
-showSideBySide      = false;     //-> true
-onLidGap            = 0;
-shiftLid            = 1;
+showSideBySide      = true;     //-> true
+onLidGap            = 1;
+shiftLid            = 3;
 hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;    //-> false
@@ -67,31 +65,39 @@ colorBase           = "white";
 showPCB             = false;    //-> false
 showMarkers         = false;    //-> false
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 10;
+inspectY            = 0;
 //-- D E B U G ----------------------------
 
 
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (3) = { yappHole, YappPin }
+// (2) = flangeHeight
+// (3) = flangeDiam
+// (4) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (5) = { yappHole, YappPin }
 pcbStands = [
-                [10,15,yappBoth,yappPin]
+                [30,23, 3, 9, yappBoth,yappPin]
              ];
 
 
-//-- connectors -- origen = box[0,0,0]
+//-- connectors 
+//-- yappConnShells : origen = box[0,0,0]
+//-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
 // (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
-// (5) = { yappAllCorners }
-connectors   = [//-- [0]x-pos, [1]y-pos, [2]screwDiameter, [3]insertDiameter, 
-                //--      [4]outsideDiameter
-                //--      [5]yappAllCorners
-                     [35, 15, 2, 3.3, 2]
+// (3) = screwHeadDiameter
+// (4) = insertDiameter
+// (5) = outsideDiameter
+// (6) = flangeHeight
+// (7) = flangeDiam
+// (8) = { yappConnShells | yappConnWithPCB }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+connectors   = [ 
+                  [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight]
+                , [18, 10, 2.5, 5, 4.0, 5, yappConnWithPCB, yappFrontLeft]
+                , [10, 10, 2.5, 5, 4.0, 7, 5, 10, yappConnShells, yappAllCorners]
                ];
 
 //-- connectorsPCB -- origin = pcb[0,0,0]
@@ -101,11 +107,11 @@ connectors   = [//-- [0]x-pos, [1]y-pos, [2]screwDiameter, [3]insertDiameter,
 // (3) = insertDiameter
 // (4) = outsideDiameter
 // (5) = { yappAllCorners }
-connectorsPCB   =  [
-                    [50, 15, 2, 3, 2]
-              //    , [30, 20, 4, 6, 9]
-              //    , [4, 3, 34, 3, yappAllCorners]
-                ];
+//connectorsPCB   =  [
+//              //      [50, 25, 2, 3, 2]
+//              //    , [30, 20, 4, 6, 9]
+//              //     [4, 3, 2.5, 3, yappAllCorners]
+//                ];
                 
 //-- origin of labels is box [0,0,0]
 // (0) = posx
@@ -116,12 +122,6 @@ connectorsPCB   =  [
 // (5) = size
 // (6) = "label text"
 labelsPlane =    [// [0]x_pos, [1]y/z_pos, [2]orientation, [4]plane, [3]font, [4]size, [5]"text"]
-                       [5, 5, 0, "lid",   "Liberation Mono:style=bold", 5, "top" ]
-                     , [6, 3, 0, "left",  "Liberation Mono:style=bold", 5, "left" ]
-                     , [4, 3, 0, "right", "Liberation Mono:style=bold", 5, "right" ]
-                     , [1, 4, 0, "front", "Liberation Mono:style=bold", 4, "front" ]
-                     , [3, 4, 0, "back",  "Liberation Mono:style=bold", 4, "back" ]
-                     , [4, 5, 0, "base",  "Liberation Mono:style=bold", 5, "base" ]
                ];
 
 

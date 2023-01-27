@@ -6,6 +6,52 @@ You can find the complete and official documentation
 
 <hr>
 
+## Rev. 1.7
+
+**This version breaks with the API for the following array's:**
+
+* pcbStand[..] (extra parameter for flange)
+* connectors[..] (huge change lots of extra parameters)
+* connectosPCB[..] (removed)
+
+<pre>
+//-- pcb_standoffs  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = flangeHeight
+// (3) = flangeDiameter
+// (4) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (5) = { yappHole, YappPin }
+pcbStands = [
+                [5,            5,           3, 11, yappBoth, yappPin]
+               ,[5,            pcbWidth-5,  4, 10, yappBoth, yappPin]
+               ,[pcbLength-5,  5,           4, 11, yappBoth, yappPin]
+               ,[pcbLength-15, pcbWidth-15, 4, 12, yappBoth, yappPin]
+             ];
+</pre>
+<pre>
+//-- connectors
+//-- yappConnShells : origen = box[0,0,0]
+//-- yappConnWithPCB: origen = pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = screwDiameter
+// (3) = screwHeadDiameter
+// (4) = insertDiameter
+// (5) = outsideDiameter
+// (6) = flangeHeight
+// (7) = flangeDiam
+// (8) = { yappConnShells | yappConnWithPCB }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+connectors   =  [
+                    [8, 8, 2.5, 2.8, 3.8, 6, 6, 15, yappConnShells, yappAllCorners]
+                  , [28, 58, 2.5, 2.8, 3.8, 6, 6, 25, yappConnShells]
+                ];
+
+</pre>
+
+<hr>
+
 ## Rev. 1.6
 
 - new cutoutGrills array
@@ -38,7 +84,6 @@ cutoutGrills = [
 **Be aware**: this functionality needs a **huge** amount of rendering elements.
 
 You can set this at `Preferences->Advanced->Turn of rendering at 100000 elements`
-
 <hr>
 
 ## Rev. 1.5

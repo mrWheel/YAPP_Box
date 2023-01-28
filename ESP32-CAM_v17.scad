@@ -1,14 +1,13 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for AVR-Dx64 by Spence Konde
-//  see: https://www.tindie.com/products/drazzy/avr128da-development-board-arduino-compatible/
+//  This is a box for ESP32-CAM
 //
-//  Version 1.0 (25-01-2022)
+//  Version 1.0 (28-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v14.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -36,50 +35,53 @@ include <./library/YAPPgenerator_v14.scad>
 */
 
 printBaseShell      = true;
-printLidShell       = false;
+printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
-wallThickness       = 1.0;
-basePlaneThickness  = 1.0;
-lidPlaneThickness   = 1.0;
+wallThickness       = 2.0;
+basePlaneThickness  = 2.0;
+lidPlaneThickness   = 2.0;
 
-baseWallHeight      = 7;
-lidWallHeight       = 0;
+baseWallHeight      = 12;
+lidWallHeight       = 6;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-pcbLength           = 88;
-pcbWidth            = 49;
+pcbLength           = 40;
+pcbWidth            = 27.5;
 pcbThickness        = 1.5;
                             
 // padding between pcb and inside wall
-paddingFront        = 1;
-paddingBack         = 1;
-paddingRight        = 1;
-paddingLeft         = 1;
+paddingFront        = 0.3;
+paddingBack         = 0.3;
+paddingRight        = 0.3;
+paddingLeft         = 0.3;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 0;
-ridgeSlack          = 0.1;
+ridgeHeight         = 3;
+ridgeSlack          = 0.2;
+
 roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 2.0;
-pinDiameter         = 2.5;
-standoffDiameter    = 5;
+standoffHeight      = 11.0;
+pinDiameter         = 0.5;
+pinHoleSlack        = 0.1;
+standoffDiameter    = 3.5;
+
 
 //-- D E B U G -------------------
 showSideBySide      = true;
-onLidGap            = 4;
 hideLidWalls        = false;
+onLidGap            = 6;
 shiftLid            = 10;
 colorLid            = "yellow";
 hideBaseWalls       = false;
 colorBase           = "white";
 showPCB             = false;
-showMarkers         = false;
+showMarkers         = true;
 inspectX            = 0;  // 0=none, >0 from front, <0 from back
 inspectY            = 0;  // 0=none, >0 from left, <0 from right
 
@@ -90,10 +92,10 @@ inspectY            = 0;  // 0=none, >0 from left, <0 from right
 // (2) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (3) = { yappHole, YappPin }
 pcbStands = [
-                [2.5,  3, yappBoth, yappPin] 
-               ,[2.5,  pcbWidth-3, yappBoth, yappPin]
-               ,[pcbLength-2.5,  3, yappBoth, yappPin]
-               ,[pcbLength-2.5, pcbWidth-3, yappBoth, yappPin]
+                [1,           1,          yappBoth, yappHole] 
+               ,[1,  pcbWidth-1,          yappBoth, yappHole]
+               ,[pcbLength-1, 1,          yappBoth, yappHole]
+               ,[pcbLength-1, pcbWidth-1, yappBoth, yappHole]
              ];     
 
 //-- Lid plane    -- origin is pcb[0,0,0]
@@ -105,6 +107,10 @@ pcbStands = [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsLid =  [
+                  [8,  ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]         // lens
+                , [9,  ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]         // lens
+                , [10, ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]         // lens
+                , [30, pcbWidth-3, 6, 6, 0, yappRectangle, yappCenter]   // flash LED
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -116,14 +122,12 @@ cutoutsLid =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBase =   [
-                    [15, pcbWidth/3, 10, 1.5, 40, yappRectangle]
-                  , [20, pcbWidth/3, 20, 1.5, 40, yappRectangle]
-                  , [25, pcbWidth/3, 20, 1.5, 40, yappRectangle]
-                  , [30, pcbWidth/3, 20, 1.5, 40, yappRectangle]
-                  , [35, pcbWidth/3, 20, 1.5, 40, yappRectangle]
-                  , [40, pcbWidth/3, 20, 1.5, 40, yappRectangle]
-                  , [45, pcbWidth/3, 20, 1.5, 40, yappRectangle]
-                  , [45, (pcbWidth/3)+6, 10, 1.5, 40, yappRectangle]
+                    [13, (pcbWidth/2)-7,  6, 1.5, 25, yappRectangle]
+                  , [17, (pcbWidth/2)-7, 15, 1.5, 25, yappRectangle]
+                  , [21, (pcbWidth/2)-7, 15, 1.5, 25, yappRectangle]
+                  , [25, (pcbWidth/2)-7, 15, 1.5, 25, yappRectangle]
+                  , [29, (pcbWidth/2)-7, 15, 1.5, 25, yappRectangle]
+                  , [29, (pcbWidth/2)+0,  6, 1.5, 25, yappRectangle]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -135,7 +139,6 @@ cutoutsBase =   [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsFront =  [
-                    [pcbWidth/2, 5, pcbWidth-8, 15, 0, yappRectangle, yappCenter] 
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -147,6 +150,7 @@ cutoutsFront =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBack =   [
+                   [13, 0, 15, 6, 0, yappRectangle, yappCenter] // SD card
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -169,16 +173,27 @@ cutoutsLeft =   [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsRight =  [
+                    [shellLength-13, -7, 4, 6.5, 0, yappRectangle] // power cord
                 ];
 
-//-- connectors -- origen = box[0,0,0]
+///-- connectors 
+//-- normal         : origen = box[0,0,0]
+//-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
 // (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
-// (5) = { yappAllCorners }
+// (3) = screwHeadDiameter
+// (4) = insertDiameter
+// (5) = outsideDiameter
+// (6) = flangeHeight
+// (7) = flangeDiam
+// (8) = { yappConnWithPCB }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
+             //   [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB
+             //                 , yappFrontRight, yappBackLeft, yappBackRight]
+             // , [18, 10, 2.5, 5, 4.0, 6,       yappConnWithPCB, yappFrontLeft]
+             // , [10, 10, 2.5, 5, 5.0, 6, 4, 8, yappAllCorners]
                 ];
 
 //-- base mounts -- origen = box[x0,y0]
@@ -190,6 +205,16 @@ connectors   =  [
 // (5) = { yappCenter }
 baseMounts   = [
                ];
+
+//-- snap Joins -- origen = box[x0,y0]
+// (0) = posx | posy
+// (1) = width
+// (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
+// (n) = { yappSymmetric }
+snapJoins   =     [
+                    [2,               5, yappLeft, yappRight]
+                  , [(shellWidth/2)-2.5, 5, yappFront]
+                ];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx
@@ -201,7 +226,37 @@ baseMounts   = [
 // (6) = "label text"
 labelsPlane =  [
                ];
+               
+module baseHookOutside()
+{
+  translate([(shellLength/2)-7.5,shellWidth-wallThickness,1])
+  {
+    difference()
+    {
+      union()
+      {
+        cube([15,10,10]);
+        translate([0,10,5])
+          rotate([0,90,0])
+            cylinder(d=10, h=15);
+      }
+      translate([-1,10,5])
+      {
+        rotate([0,90,0])
+          color("red") cylinder(d=4.5, h=17);
+      }
+      translate([4.8,0,-0.5])
+        cube([5.4,16,11]);
+    }
+  
+  } // translate
+  
+} //  baseHook()
 
+module lidHook()
+{
+  
+} //  lidHook()
 
 //---- This is where the magic happens ----
 YAPPgenerate();

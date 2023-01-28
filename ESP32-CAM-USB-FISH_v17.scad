@@ -1,13 +1,16 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for ESP32-CAM-USB (normal lens)
+//  This is a box for ESP32-CAM-USB-FISH (Fisheye lens)
 //
-//  Version 1.0 (13-02-2022)
+//  Version 1.1 (28-01-2023)
+//
+//  Due to the different lid- and base position you need
+//  to make separate STL files of both!
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v14.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -38,12 +41,12 @@ printBaseShell      = true;
 printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
-wallThickness       = 1.6;
-basePlaneThickness  = 2.0;
-lidPlaneThickness   = 2.0;
+wallThickness       = 1.5;
+basePlaneThickness  = 1.5;
+lidPlaneThickness   = 1.5;
 
 baseWallHeight      = 16;
-lidWallHeight       = 6;
+lidWallHeight       = 9;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
@@ -59,7 +62,7 @@ paddingLeft         = 1.2;  // due to the I00 switch
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;
+ridgeHeight         = 3.5;
 ridgeSlack          = 0.1;
 roundRadius         = 2.0;
 
@@ -69,7 +72,6 @@ standoffHeight      = 2.0;
 pinDiameter         = 0.5;  // no pin so hole can be as small as possible
 pinHoleSlack        = 0.1;
 standoffDiameter    = 3.5;
-
 
 //-- D E B U G -------------------
 showSideBySide      = true;
@@ -102,14 +104,11 @@ pcbStands = [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = agnle
+// (4) = angle
 // (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
+// (5) = { yappCenter }
 cutoutsLid =  [
-                  [8,  ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]       // lens
-                , [8,  ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]       // lens
-                , [9,  ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]       // lens
-                , [10, ((pcbWidth/2)+0.5), 9, 20, 0, yappCircle]       // lens
+                  [9, ((pcbWidth/2)+0.5),12, 20, 0, yappCircle]        // lens
                 , [30, pcbWidth-5, 6, 6, 0, yappRectangle, yappCenter] // flash LED
               ];
 
@@ -118,28 +117,28 @@ cutoutsLid =  [
 // (1) = posy
 // (2) = width
 // (3) = length
-// (4) = agnle
+// (4) = angle
 // (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
+// (5) = { yappCenter }
 cutoutsBase =   [
-                    [13, (pcbWidth/2)-7,  6, 1.5, 35, yappRectangle]
+                    [13, (pcbWidth/2)-7, 6, 1.5, 35, yappRectangle]
                   , [17, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
                   , [21, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
                   , [25, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
                   , [29, (pcbWidth/2)-7, 15, 1.5, 35, yappRectangle]
                   , [29, (pcbWidth/2)+0,  6, 1.5, 35, yappRectangle]
-                ];
+               ];
 
 //-- front plane  -- origin is pcb[0,0,0]
 // (0) = posy
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = agnle
+// (4) = angle
 // (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
+// (5) = { yappCenter }
 cutoutsFront =  [
-                   [pcbWidth/2, -10, 12, 8, 0, yappRectangle, yappCenter] // USB connector
+                   [pcbWidth/2, -11, 12, 8, 0, yappRectangle, yappCenter] // USB connector
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -147,11 +146,11 @@ cutoutsFront =  [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = agnle
+// (4) = angle
 // (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
+// (5) = { yappCenter }
 cutoutsBack =   [
-                   [14, 1, 15, 6, 0, yappRectangle, yappCenter] // SD slot
+                   [14, 0, 15, 5, 0, yappRectangle, yappCenter] // SD slot
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -159,9 +158,9 @@ cutoutsBack =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = agnle
+// (4) = angle
 // (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
+// (5) = { yappCenter }
 cutoutsLeft =   [
                 ];
 
@@ -170,9 +169,9 @@ cutoutsLeft =   [
 // (1) = posz
 // (2) = width
 // (3) = height
-// (4) = agnle
+// (4) = angle
 // (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
+// (5) = { yappCenter }
 cutoutsRight =  [
                 ];
 
@@ -220,9 +219,9 @@ labelsPlane =  [
                ];
                
 //-------------------------------------------------------------
-module baseHook()
+module baseHookOutside()
 {
-  translate([(shellLength/2)-7.5,shellWidth-wallThickness,5])
+  translate([(shellLength/2)-7.5,shellWidth-wallThickness,3])
   {
     difference()
     {
@@ -244,7 +243,33 @@ module baseHook()
   
   } // translate
   
-} //  baseHook()
+} //  baseHookOutside()
+
+//-------------------------------------------------------------
+module lidHookInside()
+{
+  // lensHole X is @ 9
+  // Y is @ (pcbWidth/2)+0.5)
+  // Diameter is 11
+  translate([pcbX+9,pcbY+(pcbWidth/2)+0.5,(lidPlaneThickness+2) *-1])
+  {
+    difference()
+    {
+      cylinder(d=15, h=3);
+      cylinder(d=12, h=5);
+    }
+  }
+  translate([30,(pcbWidth-5),(lidPlaneThickness+2) *-1])
+  {
+    difference()
+    {
+                  // [30, pcbWidth-5, 6, 6, yappRectangle, yappCenter] // flash LED
+      translate([-1.5,-1,0]) cube([8,8,3]);
+      translate([-.5,0,0]) cube([6,6,4]);
+    }
+  }
+  
+} //  lidHookInside()
 
 //---- This is where the magic happens ----
 YAPPgenerate();

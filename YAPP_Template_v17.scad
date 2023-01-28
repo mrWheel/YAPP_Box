@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 1.7 (27-01-2023)
+//  Version 1.7 (28-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -22,7 +22,7 @@ polygonShape = [  [0,0],[20,15],[30,0],[40,15],[70,15]
                ];
 
 
-include <./library/YAPPgenerator_v17.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -68,22 +68,22 @@ roundRadius         = 5.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 5.0;
+standoffHeight      = 7.0;
 pinDiameter         = 2.5;
 pinHoleSlack        = 0.3;
 standoffDiameter    = 5;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-pcbLength           = 100;
-pcbWidth            = 75;
+pcbLength           = 90;
+pcbWidth            = 65;
 pcbThickness        = 1.5;
                             
 // padding between pcb and inside wall
-paddingFront        = 7;
-paddingBack         = 9;
-paddingRight        = 9;
-paddingLeft         = 14;
+paddingFront        = 10;
+paddingBack         = 10;
+paddingRight        = 10;
+paddingLeft         = 10;
 
 
 //-- D E B U G -----------------//-> Default ---------
@@ -112,9 +112,9 @@ inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 // (5) = { yappHole, YappPin }
 pcbStands = [
                 [5,            5,           3, 11, yappBoth, yappPin] 
-               ,[5,            pcbWidth-5,  4, 10, yappBoth, yappPin]
-               ,[pcbLength-5,  5,           4, 11, yappBoth, yappPin]
-               ,[pcbLength-15, pcbWidth-15, 4, 12, yappBoth, yappPin]
+            //   ,[5,            pcbWidth-5,  4, 10, yappBoth, yappPin]
+            //   ,[pcbLength-5,  5,           4, 11, yappBoth, yappPin]
+            //   ,[pcbLength-15, pcbWidth-15, 4, 12, yappBoth, yappPin]
              ];     
 
 //-- Lid plane    -- origin is pcb[0,0,0]
@@ -214,7 +214,6 @@ cutoutsRight =  [
 // (6) = gAngle
 // (7) = plane {"base" | "lid" }
 // (8) = {polygon points}}
-
 cutoutsGrill = [
                  [35,  8, 70, 70, 2, 3, 50, "base", polygonShape ]
                 ,[ 0, 20, 10, 40, 2, 3, 50, "lid"]
@@ -224,7 +223,7 @@ cutoutsGrill = [
                ];
 
 //-- connectors 
-//-- yappConnShells : origen = box[0,0,0]
+//-- normal         : origen = box[0,0,0]
 //-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -234,11 +233,13 @@ cutoutsGrill = [
 // (5) = outsideDiameter
 // (6) = flangeHeight
 // (7) = flangeDiam
-// (8) = { yappConnShells | yappConnWithPCB }
+// (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                    [8, 8, 2.5, 2.8, 3.8, 6, 6, 15, yappConnShells, yappAllCorners]
-                  , [28, 58, 2.5, 2.8, 3.8, 6, 6, 25, yappConnShells]
+                    [8, 8, 2.5, 2.8, 3.8, 6, 6, 15, yappAllCorners]
+                  , [15, 10, 2.5, 2.8, 3.5, 6, 5, 11, yappBackLeft, yappBackRight, yappFrontLeft
+                                                    , yappConnWithPCB]
+                  , [10, 6, 2.5, 2.8, 3.5, 6, 5, 11, yappFrontRight, yappConnWithPCB]
               //    , [30, 8, 5, 5, 5]
                 ];
                 

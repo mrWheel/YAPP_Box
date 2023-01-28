@@ -1,13 +1,13 @@
 //---------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for DSMRlogger 4.5 (with PWR-jack)
+//  This is a box for DSMRlogger 4.0 (no PWR-jack)
 //
-//  Version 1.1 (14-02-2022)
+//  Version 1.1 (28-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v14.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -54,8 +54,7 @@ pcbWidth            = 67.5;
 pcbThickness        = 1.5;
 
 // OLED screen
-oledWidth           = 27.7; // 0.95"
-//oledWidth           = 35.4; // 1.3"
+oledWidth           = 27.7;
 oledPcbThickness    = 1.3;
 oledHeight          = 12;
 oledWallThickness   = 2;
@@ -63,12 +62,12 @@ oledWallThickness   = 2;
 // padding between pcb and inside wall
 paddingFront        = 5;
 paddingBack         = 3;
-paddingRight        = 3;
+paddingRight        = 15;
 paddingLeft         = 3; // room for PWR jack
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.5;
+ridgeHeight         = 3;
 ridgeSlack          = 0.1;
 roundRadius         = 2.0;
 
@@ -115,13 +114,13 @@ pcbStands = [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsLid =  [
-                    [15, 41, 27, 18, 0, yappRectangle, yappCenter]   // OLED 0.95"
-               //   [15, 41, 35.5, 23, 0, yappRectangle, yappCenter] // OLED 1.3"
-               // , [ 1, 14.5, 14, 21, 0, yappRectangle, yappCenter] // RJ12
-                  , [45, 13,   4, 0, 0, yappCircle]                  // reset
-                  , [45, 47,   4, 0, 0, yappCircle]                  // flash
-                  , [33,  3,   5, 5, 0, yappRectangle, yappCenter]   // red LED
-                  , [34, 26,   5, 5, 0, yappRectangle, yappCenter]   // blue LED
+                    [ 1, 15,  16, 21, 0, yappRectangle, yappCenter]   // RJ12
+                  , [15, 41,  26, 18, 0, yappRectangle, yappCenter]   // OLED
+                  , [45, 13,   4,  0, 0, yappCircle]                  // reset
+              //  , [45, 51,   4,  0, 0, yappCircle]                  // flash
+                  , [45, 50.5, 4,  0, 0, yappCircle]                  // flash
+                  , [33, 3,    5,  5, 0, yappRectangle, yappCenter]   // red LED
+                  , [34, 26,   5,  5, 0, yappRectangle, yappCenter]   // blue LED
               ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -133,17 +132,17 @@ cutoutsLid =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBase =   [
-                    [(shellWidth/2)- 2, 10, 1.5,  4, 45, yappRectangle]
-                  , [(shellWidth/2)- 8, 10, 1.5, 12, 45, yappRectangle]
-                  , [(shellWidth/2)-14, 10, 1.5, 21, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 10, 1.5, 30, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 16, 1.5, 30, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 22, 1.5, 30, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 28, 1.5, 30, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 34, 1.5, 30, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 40, 1.5, 21, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 46, 1.5, 12, 45, yappRectangle]
-                  , [(shellWidth/2)-20, 52, 1.5,  4, 45, yappRectangle]
+                    [(shellLength/2) +2, 10, 1.5,  4, 45, yappRectangle]
+                  , [(shellLength/2) -4, 10, 1.5, 12, 45, yappRectangle]
+                  , [(shellLength/2)-10, 10, 1.5, 21, 45, yappRectangle]
+                  , [(shellLength/2)-16, 10, 1.5, 30, 45, yappRectangle]
+                  , [(shellLength/2)-16, 16, 1.5, 30, 45, yappRectangle]
+                  , [(shellLength/2)-16, 22, 1.5, 30, 45, yappRectangle]
+                  , [(shellLength/2)-16, 28, 1.5, 30, 45, yappRectangle]
+                  , [(shellLength/2)-16, 34, 1.5, 30, 45, yappRectangle]
+                  , [(shellLength/2)-16, 40, 1.5, 21, 45, yappRectangle]
+                  , [(shellLength/2)-16, 46, 1.5, 12, 45, yappRectangle]
+                  , [(shellLength/2)-16, 52, 1.5,  4, 45, yappRectangle]
                 ];
 
 //-- front plane  -- origin is pcb[0,0,0]
@@ -155,7 +154,7 @@ cutoutsBase =   [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsFront =  [
-                  [32, 2, 14, 4, 0, yappRectangle, yappCenter] // pgrm header
+                  [32, 2, 14, 4, 0, yappRectangle, yappCenter]
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -167,7 +166,8 @@ cutoutsFront =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBack =   [
-                   [14.5, 7, 15, 15, 0, yappRectangle, yappCenter]  // RJ12
+                   [15, 7, 16, 15, 0, yappRectangle, yappCenter]  // RJ12
+                 , [75, 2,  8,  0, 0, yappCircle]                 // PWR connector
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -190,8 +190,6 @@ cutoutsLeft =   [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsRight =  [
-                  [37.5, 6, 10, 0, 0, yappCircle] // PWR connector
-                , [34.5, 6, 10, 0, 0, yappCircle] // PWR connector
                 ];
 
 //-- connectors -- origen = box[0,0,0]
@@ -252,32 +250,30 @@ labelsPlane =  [
 module lidHookInside()
 {
   //-- reset button
-  translate([pcbX+45, pcbY+13, -5])
+  translate([pcbX+45, pcbY+13, -8])
   {
     difference()
     {
-      color("red") cylinder(d=8, h=5);
-      translate([0,0,-1]) color("blue") cylinder(d=4.1, h=9);
+      color("red") cylinder(d=8, h=8);
+      translate([0,0,-1]) color("blue") cylinder(d=4.1, h=13);
     }
   }
   //-- flash button
-  //  [x=45, y=47]
-  translate([pcbX+45, pcbY+47, -5])
+  translate([pcbX+45, pcbY+50.5, -8])
   {
     difference()
     {
-      color("red") cylinder(d=8, h=5);
-      translate([0,0,-1]) color("blue") cylinder(d=4.1, h=9);
+      color("red") cylinder(d=8, h=8);
+      translate([0,0,-1]) color("blue") cylinder(d=4.1, h=10);
     }
   }
   
 } //  lidHookInside()
 
-
 //-- switch extender -----------
 if (printSwitchExtenders)
 {
-    zeroExtend=shellHeight - (standoffHeight + basePlaneThickness + pcbThickness + 8);
+    zeroExtend=shellHeight - (standoffHeight + basePlaneThickness + pcbThickness + 4);
     
     translate([-10,10,0])
     {
@@ -307,8 +303,8 @@ module oledStand()
         //-- base block
         cube([oledWidth+4, 5, oledHeight+0.5]);
         //-- cutout bottom
-        translate([oledWallThickness+4,-0.5, -1])
-          color("red") cube([oledWidth-8,6.0,7.5]);
+        translate([oledWallThickness+1,-0.5, -1])
+          color("red") cube([oledWidth-2,6.0,7.5]);
         //-- cutout 3mm for ESP8266
         translate([oledWallThickness-4,-0.5, -1])
           color("green") cube([10,6,4]);
@@ -318,13 +314,6 @@ module oledStand()
         //-- cutout pcb slider
         translate([oledWallThickness-0.5,-0.5, oledHeight-1.5])
           color("gray") cube([oledWidth+1,6,oledPcbThickness]);
-        if (oledWidth > 29)
-        {
-          //-- stand is on PWR connector
-          translate([oledWidth-2,-1,-3.5])
-            color("black") cube([8,10,10]);
-        }
-        //-- room voor Elco
       } // difference
     } // rotate
   } // translate

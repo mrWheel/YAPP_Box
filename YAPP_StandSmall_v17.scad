@@ -3,7 +3,7 @@
 //
 //  This is a YAPP_StandSmall_v17 test box
 //
-//  Version 1.7 (27-01-2023)
+//  Version 1.7 (28-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -59,8 +59,8 @@ wallThickness       = 2.0;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
-baseWallHeight      = 4;
-lidWallHeight       = 6;
+baseWallHeight      = 6;
+lidWallHeight       = 5;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
@@ -96,7 +96,7 @@ hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;    //-> false
 colorBase           = "white";
-showOrientation     = true;
+showOrientation     = false;
 showPCB             = false;
 showPCBmarkers      = false;
 showShellZero       = false;
@@ -215,11 +215,10 @@ cutoutsGrill = [
 // (5) = outsideDiameter
 // (6) = flangeHeight
 // (7) = flangeDiam
-// (8) = { yappConnShells | yappConnWithPCB }
+// (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                    [10, 9.5, screwDiam3, screwDiam3*2, insertDiam3, 7, 4, 10
-                                          , yappConnShells]
+                    [10, 9.5, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15]
                   , [26, 7, screwDiam2, screwDiam2*2, insertDiam2, insertDiam2+2, 4, 10
                                           , yappConnWithPCB]
 

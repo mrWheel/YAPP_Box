@@ -3,11 +3,11 @@
 //
 //  This is a box for <template>
 //
-//  Version 1.15 (15-08-2022)
+//  Version 1.15 (28-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v15.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -72,7 +72,7 @@ paddingLeft         = 14;
 
 
 //-- D E B U G -------------------
-showSideBySide      = false;
+showSideBySide      = true;
 hideLidWalls        = false;
 onLidGap            = 4;
 shiftLid            = 10;
@@ -184,31 +184,26 @@ cutoutsRight = [
                 ,[60, 0, 9, 5, 0, yappCircle]                   // circle
                ];
 
-//-- connectors -- origen = box[0,0,0]
+//-- connectors 
+//-- normal         : origen = box[0,0,0]
+//-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
 // (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
-// (5) = { yappAllCorners }
+// (3) = screwHeadDiameter
+// (4) = insertDiameter
+// (5) = outsideDiameter
+// (6) = flangeHeight
+// (7) = flangeDiam
+// (8) = { yappConnWithPCB }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors  =  [
-                 [8, 8, 2.5, 3.8, 5, yappAllCorners]
-                ,[30, 8, 5, 5, 5]
+                  [ 8, 8, 2.5, 3.2, 3.8, 5, 0, 0, yappAllCorners]
+                , [30, 10, 5,   3.5, 5,   6, 7, 15]
+                , [pcbLength/2, 10, 2.5, 3.2, 3.8, 5, 0, 0, yappConnWithPCB]
+                , [pcbLength/2, pcbWidth-10, 2.5, 3.2, 3.8, 5, 0,0, yappConnWithPCB]
                ];
                 
-//-- connectorsPCB -- origin = pcb[0,0,0]
-//-- a connector that allows to screw base and lid together through holes in the PCB
-// (0) = posx
-// (1) = posy
-// (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
-// (5) = { yappAllCorners }
-connectorsPCB = [
-                  [pcbLength/2, 10, 2.5, 3.8, 5]
-                 ,[pcbLength/2, pcbWidth-10, 2.5, 3.8, 5]
-                ];
-
 //-- base mounts -- origen = box[x0,y0]
 // (0) = posx | posy
 // (1) = screwDiameter

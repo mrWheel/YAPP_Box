@@ -4,7 +4,7 @@
 **
 **      YAPPconnectorTest_v17.scad
 */
-//Version="v1.7 (27-01-2023)";
+//Version="v1.7 (28-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -92,12 +92,13 @@ pcbStands = [
 // (5) = outsideDiameter
 // (6) = flangeHeight
 // (7) = flangeDiam
-// (8) = { yappConnShells | yappConnWithPCB }
+// (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   = [ 
-                  [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight]
+                  [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB
+                                , yappFrontRight, yappBackLeft, yappBackRight]
                 , [18, 10, 2.5, 5, 4.0, 5, yappConnWithPCB, yappFrontLeft]
-                , [10, 10, 2.5, 5, 4.0, 7, 5, 10, yappConnShells, yappAllCorners]
+                , [10, 10, 2.5, 5, 4.0, 7, 5, 10, yappAllCorners]
                ];
 
 //-- connectorsPCB -- origin = pcb[0,0,0]

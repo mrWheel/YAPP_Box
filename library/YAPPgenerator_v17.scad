@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.7 (27-01-2023)";
+Version="v1.7 (28-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -134,8 +134,7 @@ yappFrontLeft   = -15;
 yappFrontRight  = -16;
 yappBackLeft    = -17;
 yappBackRight   = -18;
-yappConnShells = -19;
-yappConnWithPCB = -20;
+yappConnWithPCB = -19;
 
 //-------------------------------------------------------------------
 
@@ -267,7 +266,7 @@ cutoutsRight =  [
                 ];
 
 //-- connectors 
-//-- yappConnShells : origen = box[0,0,0]
+//-- normal         : origen = box[0,0,0]
 //-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -277,12 +276,12 @@ cutoutsRight =  [
 // (5) = outsideDiameter
 // (6) = flangeHeight
 // (7) = flangeDiam
-// (8) = { yappConnShells | yappConnWithPCB }
+// (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   = [ 
              //   [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight]
              // , [18, 10, 2.5, 5, 4.0, 6, yappConnWithPCB, yappFrontLeft]
-             // , [10, 10, 2.5, 5, 5.0, 6, 4, 8, yappConnShells, yappAllCorners]
+             // , [10, 10, 2.5, 5, 5.0, 6, 4, 8, yappAllCorners]
                ];
 
 //-- base mounts -- origen = box[x0,y0]
@@ -329,7 +328,8 @@ labelsPlane =   [
 //===========================================================
 function getMinRad(p1, wall) = ((p1<(wall+0.001)) ? 1 : (p1 - wall));
 
-function isTrue(w, aw) = ((   w==aw[3] 
+function isTrue(w, aw) = ((   w==aw[2] 
+                           || w==aw[3]  
                            || w==aw[4]  
                            || w==aw[5]  
                            || w==aw[6]  
@@ -575,16 +575,12 @@ module printBaseSnapJoins()
     snapZposBF = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
     tmpYmin    = (roundRadius*2)+(snapWidth/2);
     tmpYmax    = shellWidth - tmpYmin;
-    //-aaw- tmpY       = lowestVal(snj[0]+(snapWidth/2), tmpYmin);
     tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
-    //-aaw- snapYpos   = highestVal(tmpY, tmpYmax);
     snapYpos   = min(tmpY, tmpYmax);
 
     tmpXmin    = (roundRadius*2)+(snapWidth/2);
     tmpXmax    = shellLength - tmpXmin;
-    //-aaw- tmpX       = lowestVal(snj[0]+(snapWidth/2), tmpXmin);
     tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
-    //-aaw- snapXpos   = highestVal(tmpX, tmpXmax);
     snapXpos   = min(tmpX, tmpXmax);
 
     if (isTrue(yappLeft, snj))
@@ -1001,7 +997,6 @@ module pcbHolders()
     posy=pcbY+stand[1];
     flangeH=stand[2];
     flangeD=stand[3];
-    echo("pcbHolders:", standoffHeight=standoffHeight, standoffDiameter=standoffDiameter, stand);
     if (!isTrue(yappLidOnly, stand) && isTrue(yappHole, stand))
     {
       translate([posx, posy, basePlaneThickness])
@@ -1035,7 +1030,6 @@ module pcbPushdowns()
       flangeD=pushdown[3];
       standHeight=(baseWallHeight+lidWallHeight)
                     -(standoffHeight+pcbThickness);
-      echo("pcbPushdowns:", standoffHeight=standoffHeight, standoffDiameter=standoffDiameter, pushdown);
       if (!isTrue(yappBaseOnly, pushdown))
       {
         translate([posx, posy, pcbZlid*-1])
@@ -1122,11 +1116,11 @@ module cutoutsInXY(type)
         // (5) = outsideDiameter
         // (6) = supportHeight
         // (7) = supportDiam
-        // (8) = { yappConnShells | yappConnWithPCB }
+        // (8) = { yappConnWithPCB }
         // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
         for(conn = connectors)
         {
-          if (isTrue(yappConnShells, conn))
+          if (!isTrue(yappConnWithPCB, conn))
           {
             //-- screwHead Diameter = screwDiameter * 2.2
             if(isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
@@ -1199,7 +1193,7 @@ module cutoutsInXY(type)
             // (5) = outsideDiameter
             // (6) = supportHeight
             // (7) = supportDiam
-            // (8) = { yappConnShells | yappConnWithPCB }
+            // (8) = { yappConnWithPCB }
             // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
             //-- screwHead Diameter = screwDiameter * 2.2
             if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
@@ -2084,7 +2078,6 @@ module pcbStandoff(plane, standHeight, flangeHeight, flangeDiam, type, color)
           center = false,
           $fn = 20);
       //-- flange --
-      echo("pcbStandoff:", plane, standHeight=standHeight, flangeHeight=flangeHeight, flangeDiam=flangeDiam);
       if (plane == "base")
       {
         translate([0,0,-0.3]) 
@@ -2414,13 +2407,13 @@ module shellConnectors(plane)
     // (5) = outsideDiameter
     // (6) = flangeHeight
     // (7) = flangeDiam
-    // (8) = { yappConnShells | yappConnWithPCB }
+    // (8) = { yappConnWithPCB }
     // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 
     
     outD = minOutside(conn[4], conn[5]);
 
-    if (isTrue(yappConnShells, conn))
+    if (!isTrue(yappConnWithPCB, conn))
     {
       if (plane=="base")
       {
@@ -2453,8 +2446,7 @@ module shellConnectors(plane)
       if (plane=="lid")
       {
         //echo("lidConnector:", conn);
-    //--connector(lid    pcb?,  x,       y,       scrwD,   rcvrD,   outD)  
-  //17  connector(plane, false, conn[0], conn[1], conn[2], conn[3], outD);
+      //--connector(lid    pcb?,  x,       y,       scrwD,   rcvrD,   outD)  
         if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
         {
           connectorNew(plane, false, conn[0], conn[1], conn, outD);
@@ -2490,7 +2482,7 @@ module shellConnectors(plane)
       // (5) = outsideDiameter
       // (6) = flangeHeight
       // (7) = flangeDiam
-      // (8) = { yappConnShells | yappConnWithPCB }
+      // (8) = { yappConnWithPCB }
       // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
   
       outD = minOutside(conn[4], conn[5]);
@@ -2527,7 +2519,6 @@ module shellConnectors(plane)
       {
         //echo("lidConnector:", conn);
     //--connector(lid    pcb?,  x,              y,             scrwD,   rcvrD,   outD)  
-  //17  connector(plane, true, (pcbX+conn[0]), (pcbY+conn[1]), conn[2], conn[3], outD);
         if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
         {
           connectorNew(plane, true, (pcbX+conn[0]), (pcbY+conn[1]), conn, outD);

@@ -3,11 +3,11 @@
 //
 //  This will generate a projectbox for a "Generic Arduino UNO"
 //
-//  Version 1.0 (13-02-2022)
+//  Version 1.0 (28-01-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v14.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 

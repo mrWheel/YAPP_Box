@@ -3,10 +3,10 @@
 //
 //  Script to creates a box for a Wemos D1 mini
 //
-//  Version 1.1 (13-02-2022)
+//  Version 1.1 (28-01-2023)
 //
 //---------------------------------------------------------
-include <./library/YAPPgenerator_v14.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 

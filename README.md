@@ -31,7 +31,7 @@ pcbStands = [
 </pre>
 <pre>
 //-- connectors
-//-- yappConnShells : origen = box[0,0,0]
+//-- normal         : origen = box[0,0,0]
 //-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -41,11 +41,11 @@ pcbStands = [
 // (5) = outsideDiameter
 // (6) = flangeHeight
 // (7) = flangeDiam
-// (8) = { yappConnShells | yappConnWithPCB }
+// (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                    [8, 8, 2.5, 2.8, 3.8, 6, 6, 15, yappConnShells, yappAllCorners]
-                  , [28, 58, 2.5, 2.8, 3.8, 6, 6, 25, yappConnShells]
+                    [8, 8, 2.5, 2.8, 3.8, 6, 6, 15, yappAllCorners]
+                  , [28, 58, 2.5, 2.8, 3.8, 6, 6, 25, yappConnWithPCB]
                 ];
 
 </pre>

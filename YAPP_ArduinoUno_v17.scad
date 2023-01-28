@@ -94,13 +94,15 @@ inspectY          = 0;  //-> 0=none (>0 from front, <0 from back)
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (3) = { yappHole, YappPin }
+// (2) = flangeHeight
+// (3) = flangeDiam
+// (4) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (5) = { yappHole, YappPin }
 pcbStands = [
-                 [14, 2.5, yappBoth, yappPin]         // back-left
-               , [15.3, 50.7,yappBaseOnly, yappPin] // back-right
-               , [66.1, 7.6, yappBoth, yappPin]       // front-left
-               , [66.1, 35.5, yappBoth, yappPin]      // front-right
+                 [14, 2.5, 4, 4, yappBoth, yappPin]         // back-left
+               , [15.3, 50.7, 4, 7,yappBaseOnly, yappPin] // back-right
+               , [66.1, 7.6, 4, 7, yappBoth, yappPin]       // front-left
+               , [66.1, 35.5, 4, 7, yappBoth, yappPin]      // front-right
              ];
 
 //-- Lid plane    -- origin is pcb[0,0,0]

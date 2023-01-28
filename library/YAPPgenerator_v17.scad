@@ -155,10 +155,12 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (3) = { yappHole, YappPin }
+// (2) = flangeHeight
+// (3) = flangeDiam
+// (4) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (5) = { yappHole, YappPin }
 pcbStands =    [
-                //   , [20,  20, yappBoth, yappPin] 
+                //   , [20,  20, 6, 9, yappBoth, yappPin] 
                 //   , [3,  3, yappBoth, yappPin] 
                 //   , [pcbLength-10,  pcbWidth-3, yappBoth, yappPin]
                ];

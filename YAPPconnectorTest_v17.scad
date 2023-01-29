@@ -4,7 +4,7 @@
 **
 **      YAPPconnectorTest_v17.scad
 */
-//Version="v1.7 (28-01-2023)";
+//Version="v1.7 (29-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022 Willem Aandewiel
@@ -37,8 +37,8 @@ ridgeHeight         = 2.0;
 roundRadius         = 4.0;
 
 //-- pcb dimensions
-pcbLength           = 60;
-pcbWidth            = 50;
+pcbLength           = 30;
+pcbWidth            = 25;
 pcbThickness        = 1.5;
 
 //-- How much the PCB needs to be raised from the base
@@ -48,10 +48,10 @@ pinDiameter         = 2.0;
 standoffDiameter    = 4;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 1;
-paddingBack         = 1;
-paddingRight        = 1;
-paddingLeft         = 1;
+paddingFront        = 15;
+paddingBack         = 15;
+paddingRight        = 10;
+paddingLeft         = 10;
 
 
 //-- D E B U G ----------------------------
@@ -62,7 +62,7 @@ hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;    //-> false
 colorBase           = "white";
-showPCB             = false;    //-> false
+showPCB             = true;    //-> false
 showMarkers         = false;    //-> false
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;
@@ -76,8 +76,9 @@ inspectY            = 0;
 // (3) = flangeDiam
 // (4) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (5) = { yappHole, YappPin }
+// (6) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands = [
-                [30,23, 3, 9, yappBoth,yappPin]
+                [5, 5, 3, 9, yappBoth, yappPin, yappAllCorners]
              ];
 
 
@@ -95,10 +96,10 @@ pcbStands = [
 // (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   = [ 
-                  [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB
-                                , yappFrontRight, yappBackLeft, yappBackRight]
-                , [18, 10, 2.5, 5, 4.0, 5, yappConnWithPCB, yappFrontLeft]
-                , [10, 10, 2.5, 5, 4.0, 7, 5, 10, yappAllCorners]
+              //    [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB
+              //                  , yappFrontRight, yappBackLeft, yappBackRight]
+              //    [18, 10, 2.5, 5, 4.0, 5, yappConnWithPCB, yappFrontLeft]
+                 [10, 10, 2.5, 5, 4.0, 7, 5, 10, yappAllCorners]
                ];
 
 //-- connectorsPCB -- origin = pcb[0,0,0]

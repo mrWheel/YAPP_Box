@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.7 (28-01-2023)";
+Version="v1.7 (29-01-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -90,8 +90,6 @@ standoffHeight      = 3.0;
 pinDiameter         = 2.0;
 pinHoleSlack        = 0.2;
 standoffDiameter    = 4;
-//standoffFlangeHeight   = 3.0;
-//standoffFlangeDiameter = 3.0;
 
 
 //-- D E B U G -----------------//-> Default ---------
@@ -159,10 +157,11 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
 // (3) = flangeDiam
 // (4) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (5) = { yappHole, YappPin }
+// (6) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands =    [
                 //   , [20,  20, 6, 9, yappBoth, yappPin] 
-                //   , [3,  3, yappBoth, yappPin] 
-                //   , [pcbLength-10,  pcbWidth-3, yappBoth, yappPin]
+                //   , [3,  3, yappBoth, yappPin, yappAllCorners] 
+                //   , [pcbLength-10,  pcbWidth-3, yappBoth, yappPin, yappBackRight]
                ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -995,6 +994,87 @@ module pcbHolders()
       //-- [0]posx, [1]posy, [2]flangeHeight, [3]flangeDiam 
       //--          , [4]{yappBoth|yappLidOnly|yappBaseOnly}
       //--          , [5]{yappHole|YappPin}
+    flangeH=stand[2];
+    flangeD=stand[3];
+    if (!isTrue(yappLidOnly, stand) && isTrue(yappHole, stand))
+    {
+      if (isTrue(yappAllCorners, stand) || isTrue(yappBackLeft, stand))
+      {
+        translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappHole, "green");
+      }
+      if (isTrue(yappAllCorners, stand) || isTrue(yappFrontLeft, stand))
+      {
+        translate([(pcbX+pcbLength)-stand[0], pcbY+stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappHole, "green");
+      }
+      if (isTrue(yappAllCorners, stand) || isTrue(yappFrontRight, stand))
+      {
+        translate([(pcbX+pcbLength)-stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappHole, "green");
+      }
+      if (isTrue(yappAllCorners, stand) || isTrue(yappBackRight, stand))
+      {
+        translate([pcbX+stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappHole, "green");
+      }
+      if (!isTrue(yappAllCorners, stand) 
+            && !isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) 
+            && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand))
+      {
+        translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappHole, "green");
+      }
+
+    }
+    
+    if (!isTrue(yappLidOnly, stand) && isTrue(yappPin, stand))
+    {
+      if (isTrue(yappAllCorners, stand) || isTrue(yappBackLeft, stand))
+      {
+        translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappPin, "green");
+      }
+      if (isTrue(yappAllCorners, stand) || isTrue(yappFrontLeft, stand))
+      {
+        translate([(pcbX+pcbLength)-stand[0], pcbY+stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappPin, "green");
+      }
+      if (isTrue(yappAllCorners, stand) || isTrue(yappFrontRight, stand))
+      {
+        translate([(pcbX+pcbLength)-stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappPin, "green");
+      }
+      if (isTrue(yappAllCorners, stand) || isTrue(yappBackRight, stand))
+      {
+        translate([pcbX+stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappPin, "green");
+      }
+      if (!isTrue(yappAllCorners, stand) 
+            && !isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) 
+            && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand))
+      {
+        translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
+          pcbStandoff("base", standoffHeight, flangeH, flangeD, yappPin, "green");
+      }
+    }
+    
+  }
+    
+} // pcbHolders()
+
+/**
+//===========================================================
+// Place the standoffs and through-PCB pins in the base Box
+module pcbHolders() 
+{        
+  //-- place pcb Standoff's
+  for ( stand = pcbStands )
+  {
+    //echo("pcbHolders:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
+      //-- [0]posx, [1]posy, [2]flangeHeight, [3]flangeDiam 
+      //--          , [4]{yappBoth|yappLidOnly|yappBaseOnly}
+      //--          , [5]{yappHole|YappPin}
     posx=pcbX+stand[0];
     posy=pcbY+stand[1];
     flangeH=stand[2];
@@ -1012,8 +1092,68 @@ module pcbHolders()
   }
     
 } // pcbHolders()
+**/
 
+//===========================================================
+module pcbPushdowns() 
+{        
+  //-- place pcb Standoff-pushdown on the lid
+  for ( pushdown = pcbStands )
+  {
+    //echo("pcb_pushdowns:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
+    //-- [0]posx, [1]posy, [2]flangeHeight, [3]flangeDiam 
+    //--          , [4]{yappBoth|yappLidOnly|yappBaseOnly}
+    //--          , [5]{yappHole|YappPin}
+    //
+    //-- stands in lid are alway's holes!
+    posx=pcbX+pushdown[0];
+    posy=(pcbY+pushdown[1]);
+    flangeH=pushdown[2];
+    flangeD=pushdown[3];
+    standHeight=(baseWallHeight+lidWallHeight)
+                  -(standoffHeight+pcbThickness);
+//      if (!isTrue(yappBaseOnly, pushdown))
+//      {
+//        translate([posx, posy, pcbZlid*-1])
+//          pcbStandoff("lid", standHeight, flangeH, flangeD, yappHole, "yellow");
+//      }
+    if (!isTrue(yappBaseOnly, pushdown))
+    {
+      if (isTrue(yappAllCorners, pushdown) || isTrue(yappBackLeft, pushdown))
+      {
+        translate([pcbX+pushdown[0], pcbY+pushdown[1], pcbZlid*-1])
+          pcbStandoff("lid", standHeight, flangeH, flangeD, yappHole, "yellow");
+      }
+      if (isTrue(yappAllCorners, pushdown) || isTrue(yappFrontLeft, pushdown))
+      {
+        translate([(pcbX+pcbLength)-pushdown[0], pcbY+pushdown[1], pcbZlid*-1])
+          pcbStandoff("lid", standHeight, flangeH, flangeD, yappHole, "yellow");
+      }
+      if (isTrue(yappAllCorners, pushdown) || isTrue(yappFrontRight, pushdown))
+      {
+        translate([(pcbX+pcbLength)-pushdown[0], (pcbY+pcbWidth)-pushdown[1], pcbZlid*-1])
+          pcbStandoff("lid", standHeight, flangeH, flangeD, yappHole, "yellow");
+      }
+      if (isTrue(yappAllCorners, pushdown) || isTrue(yappBackRight, pushdown))
+      {
+        translate([pcbX+pushdown[0], (pcbY+pcbWidth)-pushdown[1], pcbZlid*-1])
+          pcbStandoff("lid", standHeight, flangeH, flangeD, yappHole, "yellow");
+      }
+      if (!isTrue(yappAllCorners, pushdown) 
+            && !isTrue(yappBackLeft, pushdown) && !isTrue(yappFrontLeft, pushdown) 
+            && !isTrue(yappFrontRight, pushdown) && !isTrue(yappBackRight, pushdown))
+      {
+        translate([pcbX+pushdown[0], pcbY+pushdown[1], pcbZlid*-1])
+          pcbStandoff("lid", standHeight, flangeH, flangeD, yappHole, "yellow");
+      }
 
+    }
+
+  }
+    
+} // pcbPushdowns()
+
+/**
 //===========================================================
 module pcbPushdowns() 
 {        
@@ -1040,7 +1180,7 @@ module pcbPushdowns()
     }
     
 } // pcbPushdowns()
-
+**/
 
 //===========================================================
 module cutoutsInXY(type)

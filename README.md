@@ -22,10 +22,11 @@ You can find the complete and official documentation
 // (3) = flangeDiameter
 // (4) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (5) = { yappHole, YappPin }
+// (6) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands = [
-                [5,            5,           3, 11, yappBoth, yappPin]
-               ,[5,            pcbWidth-5,  4, 10, yappBoth, yappPin]
-               ,[pcbLength-5,  5,           4, 11, yappBoth, yappPin]
+                [3,  3, 3, 11, yappBoth, yappPin, yappAllCorners]
+               ,[5,  5, 4, 10, yappBoth, yappPin, yappBackLeft, yappFrontRight]
+               ,[8,  8, 4, 11, yappBoth, yappPin]
                ,[pcbLength-15, pcbWidth-15, 4, 12, yappBoth, yappPin]
              ];
 </pre>

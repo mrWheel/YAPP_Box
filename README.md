@@ -4,6 +4,10 @@ Yet Another Parametric Projectbox generator
 You can find the complete and official documentation 
 <a href="https://mrwheel-docs.gitbook.io/yappgenerator_en/">here</a>
 
+If you have questions please place them in a comment at the "
+<a href="https://willem.aandewiel.nl/index.php/2022/01/02/yet-another-parametric-projectbox-generator/">Yet Another Parametric Projectbox generator</a>" (English) or at the "
+<a href="https://willem.aandewiel.nl/index.php/2022/01/01/nog-een-geparameteriseerde-projectbox-generator/">Nog een geparametriseerde projectbox generatori</a>" (Dutch).
+
 <hr>
 
 ## Rev. 1.7

@@ -56,9 +56,10 @@ printBaseShell      = true;
 printLidShell       = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 30;
-pcbWidth            = 15;
-pcbThickness        = 1.5;
+function sum(v) = [for(p=v) 1]*v;
+pcbLength           = is_undef(all_pcb_dim) ? 30 : max([for (a = all_pcb_dim) a.y]);
+pcbWidth            = is_undef(all_pcb_dim) ? 15 : sum([for (a = all_pcb_dim) a.x]);
+pcbThickness        = is_undef(all_pcb_dim) ? 1.5 : max([for (a = all_pcb_dim) a.z]);
                             
 //-- padding between pcb and inside wall
 paddingFront        = 1;
@@ -158,11 +159,20 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
 // (4) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (5) = { yappHole, YappPin }
 // (6) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
-pcbStands =    [
+function flatten(l) = [for (e=l) each e];
+function fix_offsets(holes, dim, offset = 0, i = 0, r = []) = 
+    len(holes) > i
+    ?
+        // add offset to every hole's y dimension
+        let(new_holes = [for (h=holes[i]) [for(j=[0:len(h)-1]) h[j]+(j==1?offset:0)]])
+        fix_offsets(holes, dim, offset + dim[i].x + paddingLeft + paddingRight, i + 1, concat(r, [new_holes]))
+    :
+        r;
+pcbStands =    is_undef(all_pcb_dim) ? [
                 //   , [20,  20, 6, 9, yappBoth, yappPin] 
                 //   , [3,  3, yappBoth, yappPin, yappAllCorners] 
                 //   , [pcbLength-10,  pcbWidth-3, yappBoth, yappPin, yappBackRight]
-               ];
+               ] : [ for (i = flatten(fix_offsets(all_pcb_holes, all_pcb_dim))) concat(i, yappBoth, yappPin)];;
 
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx

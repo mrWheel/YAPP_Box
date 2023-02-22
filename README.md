@@ -58,6 +58,8 @@ connectors   =  [
 
 The depth of the screw in the connectors is now depending on the standoffHeight so the
 screw size does not change anymore.
+![YAPP_connectorRevised](https://user-images.githubusercontent.com/5585427/220582716-41c8d56b-0782-42ce-937f-401495f3889b.png)
+
 
 <hr>
 

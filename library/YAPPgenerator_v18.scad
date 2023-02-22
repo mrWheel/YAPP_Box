@@ -979,39 +979,49 @@ module printPCB(posX, posY, posZ)
 module pcbHolders() 
 {        
   //-- place pcb Standoff's
+  // (0) = posx
+  // (1) = posy
+  // (2) = standoffHeight
+  // (3) = flangeHeight
+  // (4) = flangeDiam
+  // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
+  // (6) = { yappHole, YappPin }
+  // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+
   for ( stand = pcbStands )
   {
     //echo("pcbHolders:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
-      //-- [0]posx, [1]posy, [2]flangeHeight, [3]flangeDiam 
-      //--          , [4]{yappBoth|yappLidOnly|yappBaseOnly}
-      //--          , [5]{yappHole|YappPin}
-    flangeH=stand[2];
-    flangeD=stand[3];
+      //-- [0]posx, [1]posy, [2]standoffHeight, [3]flangeHeight, [4]flangeDiam 
+      //--          , [5]{yappBoth|yappLidOnly|yappBaseOnly}
+      //--          , [6]{yappHole|YappPin}
+    pcbStandHeight  = stand[2];
+    flangeH         = stand[3];
+    flangeD         = stand[4];
     standType = isTrue(yappHole, stand) ? yappHole : yappPin;
 
     if (!isTrue(yappLidOnly, stand))
     {
       if (isTrue(yappAllCorners, stand) || isTrue(yappBackLeft, stand))
         translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
-          pcbStandoff("base", standoffHeight, flangeH, flangeD, standType, "green");
+          pcbStandoff("base", pcbStandHeight, flangeH, flangeD, standType, "green");
 
       if (isTrue(yappAllCorners, stand) || isTrue(yappFrontLeft, stand))
         translate([(pcbX+pcbLength)-stand[0], pcbY+stand[1], basePlaneThickness])
-          pcbStandoff("base", standoffHeight, flangeH, flangeD, standType, "green");
+          pcbStandoff("base", pcbStandHeight, flangeH, flangeD, standType, "green");
 
       if (isTrue(yappAllCorners, stand) || isTrue(yappFrontRight, stand))
         translate([(pcbX+pcbLength)-stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
-          pcbStandoff("base", standoffHeight, flangeH, flangeD, standType, "green");
+          pcbStandoff("base", pcbStandHeight, flangeH, flangeD, standType, "green");
 
       if (isTrue(yappAllCorners, stand) || isTrue(yappBackRight, stand))
         translate([pcbX+stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
-          pcbStandoff("base", standoffHeight, flangeH, flangeD, standType, "green");
+          pcbStandoff("base", pcbStandHeight, flangeH, flangeD, standType, "green");
 
       if (!isTrue(yappAllCorners, stand) 
             && !isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) 
             && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand))
         translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
-          pcbStandoff("base", standoffHeight, flangeH, flangeD, standType, "green");
+          pcbStandoff("base", pcbStandHeight, flangeH, flangeD, standType, "green");
 
     } //if
     
@@ -1025,20 +1035,33 @@ module pcbHolders()
 module pcbPushdowns() 
 {        
   //-- place pcb Standoff-pushdown on the lid
+  // (0) = posx
+  // (1) = posy
+  // (2) = standoffHeight
+  // (3) = flangeHeight
+  // (4) = flangeDiam
+  // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
+  // (6) = { yappHole, YappPin }
+  // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
   for ( pushdown = pcbStands )
   {
     //echo("pcb_pushdowns:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
-    //-- [0]posx, [1]posy, [2]flangeHeight, [3]flangeDiam 
-    //--          , [4]{yappBoth|yappLidOnly|yappBaseOnly}
-    //--          , [5]{yappHole|YappPin}
+    //-- [0]posx, [1]posy, [2]standoffHeight, [3]flangeHeight, [4]flangeDiam 
+    //--          , [5]{yappBoth|yappLidOnly|yappBaseOnly}
+    //--          , [6]{yappHole|YappPin}
     //
     //-- stands in lid are alway's holes!
-    posx=pcbX+pushdown[0];
-    posy=(pcbY+pushdown[1]);
-    flangeH=pushdown[2];
-    flangeD=pushdown[3];
+    posx    = pcbX+pushdown[0];
+    posy    = (pcbY+pushdown[1]);
+    flangeH = pushdown[3];
+    flangeD = pushdown[4];
+
     pcbStandHeight=(baseWallHeight+lidWallHeight)
-                  -(standoffHeight+pcbThickness);
+                     -(pushdown[2]+pcbThickness);
+
+    pcbZlid = (baseWallHeight+lidWallHeight+lidPlaneThickness)
+                    -(pushdown[2]+pcbThickness);
+
 
     if (!isTrue(yappBaseOnly, pushdown))
     {

@@ -3,11 +3,11 @@
 //
 //  This is a box for ESP32-CAM
 //
-//  Version 1.0 (28-01-2023)
+//  Version 1.0 (22-02-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <../YAPP_Box/library/YAPPgenerator_v17.scad>
+include <../YAPP_Box/library/YAPPgenerator_v18.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -67,8 +67,8 @@ roundRadius         = 2.0;
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
 standoffHeight      = 11.0;
-pinDiameter         = 0.5;
-pinHoleSlack        = 0.1;
+standoffPinDiameter = 0.5;
+standoffHoleSlack   = 0.1;
 standoffDiameter    = 3.5;
 
 
@@ -89,13 +89,17 @@ inspectY            = 0;  // 0=none, >0 from left, <0 from right
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (3) = { yappHole, YappPin }
+// (2) = standoffHeight
+// (3) = flangeHeight
+// (4) = flangeDiam
+// (5) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (6) = { yappHole, YappPin }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands = [
-                [1,           1,          yappBoth, yappHole] 
-               ,[1,  pcbWidth-1,          yappBoth, yappHole]
-               ,[pcbLength-1, 1,          yappBoth, yappHole]
-               ,[pcbLength-1, pcbWidth-1, yappBoth, yappHole]
+                [1,           1,          11, yappBoth, yappHole] 
+               ,[1,  pcbWidth-1,          11, yappBoth, yappHole]
+               ,[pcbLength-1, 1,          11, yappBoth, yappHole]
+               ,[pcbLength-1, pcbWidth-1, 11, yappBoth, yappHole]
              ];     
 
 //-- Lid plane    -- origin is pcb[0,0,0]
@@ -181,19 +185,16 @@ cutoutsRight =  [
 //-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = screwDiameter
-// (3) = screwHeadDiameter
-// (4) = insertDiameter
-// (5) = outsideDiameter
-// (6) = flangeHeight
-// (7) = flangeDiam
-// (8) = { yappConnWithPCB }
-// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (1) = pcbStandHeight
+// (3) = screwDiameter
+// (4) = screwHeadDiameter
+// (5) = insertDiameter
+// (6) = outsideDiameter
+// (7) = flangeHeight
+// (8) = flangeDiam
+// (9) = { yappConnWithPCB }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-             //   [18, 10, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB
-             //                 , yappFrontRight, yappBackLeft, yappBackRight]
-             // , [18, 10, 2.5, 5, 4.0, 6,       yappConnWithPCB, yappFrontLeft]
-             // , [10, 10, 2.5, 5, 5.0, 6, 4, 8, yappAllCorners]
                 ];
 
 //-- base mounts -- origen = box[x0,y0]

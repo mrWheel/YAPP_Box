@@ -7,7 +7,7 @@ You can find the complete and official documentation
 If you have questions please place them in a comment at the 
 "<a href="https://willem.aandewiel.nl/index.php/2022/01/02/yet-another-parametric-projectbox-generator/">Yet Another Parametric Projectbox generator</a>" (English) 
 or at the 
-"<a href="https://willem.aandewiel.nl/index.php/2022/01/01/nog-een-geparameteriseerde-projectbox-generator/">Nog een geparametriseerde projectbox generatori</a>" (Dutch).
+"<a href="https://willem.aandewiel.nl/index.php/2022/01/01/nog-een-geparameteriseerde-projectbox-generator/">Nog een geparametriseerde projectbox generator</a>" (Dutch).
 
 <hr>
 
@@ -55,6 +55,9 @@ connectors   =  [
                 ];
 
 </pre>
+
+The depth of the screw in the connectors is now depending on the standoffHeight so the
+screw size does not change anymore.
 
 <hr>
 

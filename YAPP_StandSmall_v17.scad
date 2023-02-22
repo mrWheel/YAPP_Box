@@ -15,12 +15,15 @@
 //
 //-----------------------------------------------------------------------
 
-insertDiam  = 3.8;
+insertDiam  = 4.0;
 screwDiam   = 2.5;
+headDiam    = 5.0;
 insertDiam2 = insertDiam + 0.2;
 screwDiam2  = screwDiam + 0.2;
+headDiam2   = headDiam + 0.2;
 insertDiam3 = insertDiam + 0.3;
 screwDiam3  = screwDiam + 0.3;
+headDiam3   = headDiam + 0.2;
 
 
 
@@ -52,15 +55,15 @@ include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 */
 
 printBaseShell      = true;
-printLidShell       = true;
+printLidShell       = false;
 
 // Edit these parameters for your own board dimensions
 wallThickness       = 2.0;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
-baseWallHeight      = 6;
-lidWallHeight       = 5;
+baseWallHeight      = 3;
+lidWallHeight       = 6;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
@@ -70,7 +73,7 @@ roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 5.0;
+standoffHeight      = 4.0;
 pinDiameter         = 2.5;
 pinHoleSlack        = 0.3;
 standoffDiameter    = 9;
@@ -101,7 +104,7 @@ showPCB             = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
+inspectX            = 12;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
 
@@ -218,8 +221,8 @@ cutoutsGrill = [
 // (8) = { yappConnWithPCB }
 // (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                    [10, 9.5, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15]
-                  , [26, 7, screwDiam2, screwDiam2*2, insertDiam2, insertDiam2+2, 4, 10
+                 //   [10, 9.5, screwDiam3, headDiam3, insertDiam3, 7, 6, 15]
+                   [26, 7,   screwDiam2, headDiam2, insertDiam2, 4, 14, 15
                                           , yappConnWithPCB]
 
                 ];

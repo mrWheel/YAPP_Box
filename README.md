@@ -11,6 +11,54 @@ or at the
 
 <hr>
 
+## Rev. 1.8  (22-02-2023)
+
+**This version breaks with the API for the following array's:**
+
+* pcbStand[..] (extra parameter for standoffHeight)
+* connectors[..] (extra parameter for baseConnector Height)
+
+<pre>
+//-- pcb_standoffs  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = standoffHeight
+// (3) = flangeHeight
+// (4) = flangeDiameter
+// (5) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (6) = { yappHole, YappPin }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+pcbStands = [
+                [3,  3, 5, 3, 11, yappBoth, yappPin, yappAllCorners]
+               ,[5,  5, 5, 4, 10, yappBoth, yappPin, yappBackLeft, yappFrontRight]
+               ,[8,  8, 5, 4, 11, yappBoth, yappPin]
+               ,[pcbLength-15, pcbWidth-15, 8, 4, 12, yappBoth, yappPin]
+             ];
+</pre>
+<pre>
+//-- connectors
+//-- normal         : origen = box[0,0,0]
+//-- yappConnWithPCB: origen = pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = pcbStandHeight
+// (3) = screwDiameter
+// (4) = screwHeadDiameter
+// (5) = insertDiameter
+// (6) = outsideDiameter
+// (7) = flangeHeight
+// (8) = flangeDiam
+// (9) = { yappConnWithPCB }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+connectors   =  [
+                    [ 8,  8, 5, 2.5, 2.8, 3.8, 6, 6, 15, yappAllCorners]
+                  , [28, 58, 5, 2.5, 2.8, 3.8, 6, 6, 25, yappConnWithPCB]
+                ];
+
+</pre>
+
+<hr>
+
 ## Rev. 1.7
 
 **This version breaks with the API for the following array's:**

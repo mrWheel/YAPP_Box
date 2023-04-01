@@ -27,7 +27,7 @@ headDiam3   = headDiam + 0.2;
 
 
 
-include <../YAPP_Box/library/YAPPgenerator_v18.scad>
+include <../YAPP_Box/library/YAPPgenerator_v19.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -62,8 +62,8 @@ wallThickness       = 2.0;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
-baseWallHeight      = 3;
-lidWallHeight       = 6;
+baseWallHeight      = 10;
+lidWallHeight       = 16;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
@@ -73,7 +73,7 @@ roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 4.0;
+standoffHeight      = 4.5;
 pinDiameter         = 2.5;
 pinHoleSlack        = 0.3;
 standoffDiameter    = 9;
@@ -104,8 +104,8 @@ showPCB             = true;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 12;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
+inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
+inspectY            = 10;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
 
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
@@ -222,8 +222,8 @@ cutoutsGrill = [
 // (9) = { yappConnWithPCB }
 // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                   [10, 9.5, 5, screwDiam3, headDiam3, insertDiam3, 7, 6, 15]
-                 , [26, 7,   5, screwDiam2, headDiam2, insertDiam2, 4, 14, 15
+                   [10, 9.5, 0, screwDiam3, headDiam3, insertDiam3, 7, 6, 15]
+                 , [26, 7, 4.5, screwDiam2, headDiam2, insertDiam2, 4, 14, 15
                                           , yappConnWithPCB]
 
                 ];

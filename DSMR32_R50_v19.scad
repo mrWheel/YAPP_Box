@@ -37,7 +37,7 @@ screwDiamS  = screwDiam + holeSlack;
 
 
 
-include <../YAPP_Box/library/YAPPgenerator_v18.scad>
+include <../YAPP_Box/library/YAPPgenerator_v17.scad>
 
 include <../YAPP_Box/library/roundedCubes.scad>
 
@@ -143,12 +143,10 @@ inspectY            = 0;  // 0=none, >0 from left, <0 from right
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = standoffHeight
-// (3) = flangeHeight
-// (4) = flangeDiam
-// (5) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (2) = flangeHeight
+// (3) = flangeDiam
+// (4) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (5) = { yappHole, YappPin }
 pcbStands = [
             ];     
 
@@ -245,23 +243,22 @@ cutoutsRight =  [
                 ];
 
 //-- connectors 
-//-- normal         : origen = box[0,0,0]
+//-- yappConnShells : origen = box[0,0,0]
 //-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = pcbStandHeight
-// (3) = screwDiameter
-// (4) = screwHeadDiameter
-// (5) = insertDiameter
-// (6) = outsideDiameter
-// (7) = flangeHeight
-// (8) = flangeDiam
-// (9) = { yappConnWithPCB }
-// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (2) = screwDiameter
+// (3) = screwHeadDiameter
+// (4) = insertDiameter
+// (5) = outsideDiameter
+// (6) = flangeHeight
+// (7) = flangeDiam
+// (8) = { yappConnShells | yappConnWithPCB }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   = [
-                 [ 5,  5, 4, screwDiamS, screwDiamS*2, insertDiamS, 6, 4, 12, yappConnWithPCB
+                 [ 5,  5, screwDiamS, screwDiamS*2, insertDiamS, 6, 4, 12, yappConnWithPCB
                                               , yappBackLeft, yappFrontLeft, yappBackRight]
-                ,[ 5,  5, 4, screwDiamS, screwDiamS*2, insertDiamS, 6, 3, 9, yappConnWithPCB
+                ,[ 5,  5, screwDiamS, screwDiamS*2, insertDiamS, 6, 3, 9, yappConnWithPCB
                                                                           , yappFrontRight]
                ];
 

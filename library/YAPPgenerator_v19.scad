@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.8 (22-02-2023)";
+Version="v1.9 (31-03-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -2248,8 +2248,10 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
     // calculate the Z-position for the lid connector.
     // for a PCB connector, start the connector on top of the PCB to push it down.
     // calculation identical to the one used in pcbPushdowns()
-    zTemp      = holdPcb ? ((baseWallHeight+lidWallHeight-sH)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
-    heightTemp = holdPcb ? ((baseWallHeight+lidWallHeight-(sH+pcbThickness))) : lidWallHeight;
+//    zTemp      = holdPcb ? ((baseWallHeight+lidWallHeight-sH)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
+//    heightTemp = holdPcb ? ((baseWallHeight+lidWallHeight-(sH+pcbThickness))) : lidWallHeight;
+    zTemp      = holdPcb ? ((baseWallHeight+lidWallHeight+lidPlaneThickness-pcbThickness-sH)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
+    heightTemp = holdPcb ? ((baseWallHeight+lidWallHeight-sH-pcbThickness)) : lidWallHeight;
 
     //-dbg-echo("connectorNew:", sH=sH, heightTemp=heightTemp, zTemp=zTemp);
     

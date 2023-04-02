@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.9 (31-03-2023)";
+Version="v1.9 (02-04-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -2317,18 +2317,21 @@ module shellConnectors(plane)
     holdPcb = (isTrue(yappConnWithPCB, conn));
     connX   = holdPcb ? pcbX+conn[0] : conn[0];
     connY   = holdPcb ? pcbY+conn[1] : conn[1];
+
+    echo("shellConn():", pcbX=pcbX, connX=connX, paddingFront=paddingFront, pcbY=pcbY, connY=connY);
+    
     //-dbg-echo("lidConnector:", conn, holdPcb=holdPcb);
     if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
       connectorNew(plane, holdPcb, connX, connY, conn, outD);
 
     if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
-      connectorNew(plane, holdPcb, shellLength-connX, connY, conn, outD);
+      connectorNew(plane, holdPcb, shellLength+paddingBack-paddingFront-connX, connY, conn, outD);
 
     if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
-      connectorNew(plane, holdPcb, shellLength-connX, shellWidth-connY, conn, outD);
+      connectorNew(plane, holdPcb, shellLength+paddingBack-paddingFront-connX, shellWidth+paddingLeft-paddingRight-connY, conn, outD);
 
     if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
-      connectorNew(plane, holdPcb, connX, shellWidth-connY, conn, outD);
+      connectorNew(plane, holdPcb, connX, shellWidth+paddingLeft-paddingRight-connY, conn, outD);
 
     if (!isTrue(yappAllCorners, conn) 
           && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)

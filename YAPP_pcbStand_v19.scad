@@ -24,7 +24,7 @@ screwDiam3  = screwDiam + 0.3;
 
 
 
-include <../YAPP_Box/library/YAPPgenerator_v17.scad>
+include <../YAPP_Box/library/YAPPgenerator_v19.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -59,8 +59,8 @@ wallThickness       = 2.0;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
-baseWallHeight      = 16;
-lidWallHeight       = 15;
+baseWallHeight      = 10;
+lidWallHeight       = 10;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
@@ -70,50 +70,54 @@ roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 20.0;
+standoffHeight      = 5.0;
 pinDiameter         = 1.5;
 pinHoleSlack        = 0.3;
 standoffDiameter    = 10;
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-pcbLength           = 35;
-pcbWidth            = 15;
+pcbLength           = 45;
+pcbWidth            = 35;
 pcbThickness        = 1.5;
                             
 // padding between pcb and inside wall
-paddingFront        = 1;
-paddingBack         = 1;
-paddingRight        = 1;
-paddingLeft         = 1;
+paddingFront        = 3;
+paddingBack         = 6;
+paddingRight        = 9;
+paddingLeft         = 12;
 
 
 //-- D E B U G -----------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 onLidGap            = 5;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;    //-> false
 colorBase           = "white";
-showOrientation     = false;
+showOrientation     = true;
 showPCB             = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 12;        //-> 0=none (>0 from front, <0 from back)
+inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
 
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (3) = { yappHole, YappPin }
-pcbStands = [
-               [10, 9.5, yappBoth, yappPin] 
-              ,[26, 7, yappBoth, yappHole]
-            ];     
+// (2) = standoffHeight
+// (3) = flangeHeight
+// (4) = flangeDiam
+// (5) = { yappBoth | yappLidOnly | yappBaseOnly }
+// (6) = { yappHole, YappPin }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+pcbStands =    [
+                  [20,  5, 5, 6, 9, yappBoth, yappPin] 
+                , [20, 30, 5, 6, 9, yappBoth, yappPin] 
+               ];
 
 //-- Lid plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -205,22 +209,25 @@ cutoutsGrill = [
                ];
 
 //-- connectors 
-//-- yappConnShells : origen = box[0,0,0]
+//-- normal         : origen = box[0,0,0]
 //-- yappConnWithPCB: origen = pcb[0,0,0]
 // (0) = posx
 // (1) = posy
-// (2) = screwDiameter
-// (3) = screwHeadDiameter
-// (4) = insertDiameter
-// (5) = outsideDiameter
-// (6) = flangeHeight
-// (7) = flangeDiam
-// (8) = { yappConnWithPCB }
-// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (2) = pcbStandHeight
+// (3) = screwDiameter
+// (4) = screwHeadDiameter
+// (5) = insertDiameter
+// (6) = outsideDiameter
+// (7) = flangeHeight
+// (8) = flangeDiam
+// (9) = { yappConnWithPCB }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-             //       [10, 9.5, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15]
-             //     , [26, 7, screwDiam2, screwDiam2*2, insertDiam2, insertDiam2+2, 4, 10
-             //                             , yappConnWithPCB]
+                //  [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappFrontLeft]
+                //, [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappFrontRight]
+                //, [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappBackLeft]
+                //, [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappBackRight]
+                  [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappAllCorners]
 
                 ];
 

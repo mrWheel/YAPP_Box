@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v1.9 (02-04-2023)";
+Version="v1.9.8 (13-05-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -161,7 +161,7 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
 // (6) = { yappHole, YappPin }
 // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands =    [
-                //   , [          20,         20, 5, 6, 9, yappBoth, yappPin] 
+                //     [          20,         20, 5, 6, 9, yappBoth, yappPin] 
                 //   , [           3,          3, 5, 6, 9, yappBoth, yappPin, yappAllCorners] 
                 //   , [pcbLength-10, pcbWidth-3, 8, 5, 8, yappBoth, yappPin, yappBackRight]
                ];
@@ -2134,12 +2134,14 @@ module pcbStandoff(plane, pcbStandHeight, flangeHeight, flangeDiam, type, color)
       {
         if (pcbStandHeight > flangeHeight)
         {
-          translate([0,0,min((pcbStandHeight-3.0), (pcbStandHeight-(lidPlaneThickness/2)))])
+          //-- changed in v1.9.8
+          translate([0,0,min((pcbStandHeight-flangeHeight), (pcbStandHeight-(lidPlaneThickness/2)))])
             cylinder(h=flangeHeight, d1=standoffDiameter, d2=flangeDiam); 
         }
         else
         {
-          translate([0,0,flangeHeight-1.8])       
+          //-- changed in v1.9.8 (was: translate([0,0,flangeHeight-1.8]))       
+          translate([0,0,0])       
             cylinder(h=pcbStandHeight, d1=standoffDiameter/2, d2=flangeDiam);
         }
       }
@@ -2166,6 +2168,7 @@ module pcbStandoff(plane, pcbStandHeight, flangeHeight, flangeDiam, type, color)
           $fn = 20);
     } // standhole()
     
+    //--------------------------------------------------
     if (type == yappPin)  // pin
     {
      standoff(color);
@@ -2318,7 +2321,7 @@ module shellConnectors(plane)
     connX   = holdPcb ? pcbX+conn[0] : conn[0];
     connY   = holdPcb ? pcbY+conn[1] : conn[1];
 
-    echo("shellConn():", pcbX=pcbX, connX=connX, paddingFront=paddingFront, pcbY=pcbY, connY=connY);
+    //echo("shellConn():", pcbX=pcbX, connX=connX, paddingFront=paddingFront, pcbY=pcbY, connY=connY);
     
     //-dbg-echo("lidConnector:", conn, holdPcb=holdPcb);
     if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))

@@ -18,9 +18,11 @@
 insertDiam  = 3.8;
 screwDiam   = 2.5;
 insertDiam2 = insertDiam + 0.2;
-screwDiam2  = screwDiam + 0.2;
+screwDiam2  = screwDiam  + 0.2;
 insertDiam3 = insertDiam + 0.3;
-screwDiam3  = screwDiam + 0.3;
+screwDiam3  = screwDiam  + 0.3;
+insertDiam4 = insertDiam + 0.3;
+screwDiam4  = screwDiam  + 0.3;
 
 
 
@@ -59,38 +61,39 @@ wallThickness       = 2.0;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
-baseWallHeight      = 10;
-lidWallHeight       = 10;
+baseWallHeight      = 9;
+lidWallHeight       = 8;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 2;
+ridgeHeight         = 3;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 5.0;
-pinDiameter         = 1.5;
-pinHoleSlack        = 0.3;
+standoffHeight      = 8.0;  //-- only used for showPCB
+standoffPinDiameter = 2.5;
+standoffHoleSlack   = 0.3;
 standoffDiameter    = 10;
+
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-pcbLength           = 45;
-pcbWidth            = 35;
+pcbLength           = 55;
+pcbWidth            = 45;
 pcbThickness        = 1.5;
                             
 // padding between pcb and inside wall
 paddingFront        = 3;
-paddingBack         = 6;
-paddingRight        = 9;
-paddingLeft         = 12;
+paddingBack         = 3;
+paddingRight        = 3;
+paddingLeft         = 3;
 
 
 //-- D E B U G -----------------//-> Default ---------
 showSideBySide      = true;     //-> true
-onLidGap            = 5;
+onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
@@ -115,8 +118,8 @@ inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 // (6) = { yappHole, YappPin }
 // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands =    [
-                  [20,  5, 5, 6, 9, yappBoth, yappPin] 
-                , [20, 30, 5, 6, 9, yappBoth, yappPin] 
+                  [25,  8, 8, 10, 12, yappBoth, yappPin] 
+                , [25, 36, 4, 7,17, yappBoth, yappPin] 
                ];
 
 //-- Lid plane    -- origin is pcb[0,0,0]
@@ -223,12 +226,11 @@ cutoutsGrill = [
 // (9) = { yappConnWithPCB }
 // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                //  [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappFrontLeft]
-                //, [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappFrontRight]
-                //, [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappBackLeft]
-                //, [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappBackRight]
-                  [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappAllCorners]
-
+                  [ 5, 5, 4, screwDiam,  screwDiam*2,  insertDiam,  7, 5, 15, yappConnWithPCB, yappFrontLeft]
+                , [ 5, 5, 5, screwDiam2, screwDiam2*2, insertDiam2, 7, 5, 15, yappConnWithPCB, yappFrontRight]
+                , [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappBackLeft]
+                , [ 5, 5, 7, screwDiam4, screwDiam4*2, insertDiam4, 7, 5, 15, yappConnWithPCB, yappBackRight]
+                //  [ 5, 5, 8, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappAllCorners]
                 ];
 
 
@@ -248,7 +250,7 @@ baseMounts   = [
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
 snapJoins   =     [
-              //    [2, 10, yappLeft, yappRight, yappSymmetric]
+              //    [10, 3, yappFront, yappBack, yappSymmetric]
               //    [5, 10, yappLeft]
               //  , [shellLength-2, 10, yappLeft]
               //  , [30,  10, yappFront, yappBack]

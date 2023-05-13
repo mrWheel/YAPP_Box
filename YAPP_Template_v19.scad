@@ -57,6 +57,10 @@ wallThickness       = 2.0;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
+//-- Total height of box = basePlaneThickness + lidPlaneThickness 
+//--                     + baseWallHeight + lidWallHeight
+//-- space between pcb and lidPlane :=
+//--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 14;
 lidWallHeight       = 14;
 

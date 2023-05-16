@@ -15,16 +15,13 @@
 //
 //-----------------------------------------------------------------------
 
-insertDiam  = 3.8;
-screwDiam   = 2.5;
-insertDiam2 = insertDiam + 0.2;
-screwDiam2  = screwDiam  + 0.2;
-insertDiam3 = insertDiam + 0.3;
-screwDiam3  = screwDiam  + 0.3;
-insertDiam4 = insertDiam + 0.3;
-screwDiam4  = screwDiam  + 0.3;
-
-
+//-- Bambu Lab X1C 0.4mm Nizzle PLA
+//insertDiam  = 3.8 + 0.4;
+//screwDiam   = 2.5 + 0.4;
+//-- Bambu Lab X1C 0.4mm Nizzle XT-Copolyester
+insertDiam  = 3.8 + 0.5;
+screwDiam   = 2.5 + 0.5;
+  
 
 include <../YAPP_Box/library/YAPPgenerator_v19.scad>
 
@@ -53,7 +50,7 @@ include <../YAPP_Box/library/YAPPgenerator_v19.scad>
                                  LEFT
 */
 
-printBaseShell      = true;
+printBaseShell      = false;
 printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
@@ -226,11 +223,11 @@ cutoutsGrill = [
 // (9) = { yappConnWithPCB }
 // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 connectors   =  [
-                  [ 5, 5, 4, screwDiam,  screwDiam*2,  insertDiam,  7, 5, 15, yappConnWithPCB, yappFrontLeft]
-                , [ 5, 5, 5, screwDiam2, screwDiam2*2, insertDiam2, 7, 5, 15, yappConnWithPCB, yappFrontRight]
-                , [ 5, 5, 6, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappBackLeft]
-                , [ 5, 5, 7, screwDiam4, screwDiam4*2, insertDiam4, 7, 5, 15, yappConnWithPCB, yappBackRight]
-                //  [ 5, 5, 8, screwDiam3, screwDiam3*2, insertDiam3, 7, 5, 15, yappConnWithPCB, yappAllCorners]
+                  [ 8, 8, 4, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappFrontLeft]
+                , [ 5, 5, 5, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappConnWithPCB, yappFrontRight]
+                , [ 5, 5, 6, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappConnWithPCB, yappBackLeft]
+                , [ 8, 8, 7, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappBackRight]
+                //  [ 5, 5, 8, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappConnWithPCB, yappAllCorners]
                 ];
 
 

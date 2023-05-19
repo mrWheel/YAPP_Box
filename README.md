@@ -13,7 +13,7 @@ or at the
 
 ## Rev. 2.0  (19-05-2023)
 
-New functionality (experimental)
+**New functionality (experimental)**
 
 With this array you can define where you want button guides for tactile switches.</br>
 
@@ -49,6 +49,8 @@ switchTrafel - the distance the button has to trafel to activate the tacktile sw
 poleDiameter - the diameter of the pole that connects the button cap with the plate
 buttonType   - either yappCircle or yappRectangle
 </pre>
+
+<hr>
 
 ## Rev. 1.8  (22-02-2023)
 

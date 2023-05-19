@@ -11,6 +11,43 @@ or at the
 
 <hr>
 
+## Rev. 2.0  (19-05-2023)
+
+New functionality (experimental)
+
+With this array you can define where you want button guides for tactile switches.</br>
+
+<pre>
+//-- pushButtons  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = capLength
+// (3) = capWidth
+// (4) = capAboveLid
+// (5) = switchHeight
+// (6) = switchTrafel
+// (7) = poleDiameter
+// (8) = buttonType  {yappCircle|yappRectangle}
+pushButtons = [
+                 [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
+               , [15, 10, 8, 6, 2, 4.5, 1, 3.5, yappRectangle]
+              ];
+</pre>
+
+![buttonGuides](https://github.com/mrWheel/YAPP_Box/assets/5585427/7940ec0e-10a3-408b-8c11-4d811efb7720)
+
+<pre>
+posx         - the position of the center of the tacktile switch on the PCB
+posy         - the position of the center of the tacktile switch on the PCB
+capLength    - the length of the button (if a yappRectangle) or the diameter (if yappCircle)
+capWidth     - the width of the button (if yappRectangle, otherwise ignored)
+capAboveLid  - how much the button cap is above the lid
+switchHeight - the height of the tactile switch
+switchTrafel - the distance the button has to trafel to activate the tacktile switch
+poleDiameter - the diameter of the pole that connects the button cap with the plate
+buttonType   - either yappCircle or yappRectangle
+</pre>
+
 ## Rev. 1.8  (22-02-2023)
 
 **This version breaks with the API for the following array's:**

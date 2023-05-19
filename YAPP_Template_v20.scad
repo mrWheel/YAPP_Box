@@ -105,6 +105,7 @@ showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
+inspectButtons      = 0;       
 //-- D E B U G ---------------------------------------
 
 
@@ -289,10 +290,8 @@ snapJoins   =   [
 // (8) = buttonType  {yappCircle|yappRectangle}
 pushButtons = [
               //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-          //     [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-          //   , [15, 10, 8, 6, 3, 4.5, 1, 3.5, yappRectangle]
                  [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-               , [15, 10, 8, 6, 2, 4.5, 1, 3.5, yappRectangle]
+               , [15, 10, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
               ];     
              
 //-- origin of labels is box [0,0,0]

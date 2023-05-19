@@ -15,7 +15,7 @@ or at the
 
 **New functionality (experimental)**
 
-With this array you can define where you want button guides for tactile switches.</br>
+With the **pushButtons**  array you can define where you want button guides for tactile switches.</br>
 
 <pre>
 //-- pushButtons  -- origin is pcb[0,0,0]

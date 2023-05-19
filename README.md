@@ -36,10 +36,12 @@ pushButtons = [
 
 ![buttonGuides](https://github.com/mrWheel/YAPP_Box/assets/5585427/7940ec0e-10a3-408b-8c11-4d811efb7720)
 
+The "Plate" has to be glued to the "Pole".
+
 <pre>
 posx         - the position of the center of the tacktile switch on the PCB
 posy         - the position of the center of the tacktile switch on the PCB
-capLength    - the length of the button (if a yappRectangle) or the diameter (if yappCircle)
+capLength    - the length of the button (if yappRectangle) or the diameter (if yappCircle)
 capWidth     - the width of the button (if yappRectangle, otherwise ignored)
 capAboveLid  - how much the button cap is above the lid
 switchHeight - the height of the tactile switch

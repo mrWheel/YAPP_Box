@@ -44,6 +44,7 @@ tubeWidth   - the width of the tube (not used if yappCircle)
 tubeWall    - the width of the wall around the led
 abovePcp    - how hight the tube will begin with respect to the top of the PCB
 tubeType    - whether the led shows as a circle (yappCircle) or a rectangle (yappRectangle)
+</pre>
 
 
 **New functionality *pushButtons* (experimental)**

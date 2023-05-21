@@ -36,6 +36,15 @@ lightTubes = [
 ![lightTube_top](https://github.com/mrWheel/YAPP_Box/assets/5585427/fe4eba60-416b-4b35-b0f3-4e3df204a900)
 ![lightTube_a](https://github.com/mrWheel/YAPP_Box/assets/5585427/6c79d4ff-faff-4e8d-8283-2d2a5d49d4d8)
 
+<pre>
+posx        - the position of the center of the led on the X-axes of the PCB
+posy        - the position of the center of the led on the Y-axes of the PCB
+tubeLength  - the length of the tube (if yappRectangle) or the diameter of the tube (if yappCircle)
+tubeWidth   - the width of the tube (not used if yappCircle)
+tubeWall    - the width of the wall around the led
+abovePcp    - how hight the tube will begin with respect to the top of the PCB
+tubeType    - whether the led shows as a circle (yappCircle) or a rectangle (yappRectangle)
+
 
 **New functionality *pushButtons* (experimental)**
 

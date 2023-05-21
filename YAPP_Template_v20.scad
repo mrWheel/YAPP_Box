@@ -105,7 +105,8 @@ showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectButtons      = 0;       
+inspectLightTubes   = false;
+inspectButtons      = false;
 //-- D E B U G ---------------------------------------
 
 
@@ -277,6 +278,19 @@ snapJoins   =   [
               //  , [20,             10, yappFront, yappBack]
               //  , [2.5,             5, yappBack,  yappFront, yappSymmetric]
                 ];
+               
+//-- lightTubes  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = tubeLength
+// (3) = tubeWidth
+// (4) = tubeWall
+// (5) = abovePcb
+// (6) = tubeType  {yappCircle|yappRectangle}
+lightTubes = [
+              //--- 0,  1, 2, 3, 4, 5, 6
+                  [15, 30, 5, 5, 1, 2, yappRectangle]
+              ];     
 
 //-- pushButtons  -- origin is pcb[0,0,0]
 // (0) = posx
@@ -290,8 +304,8 @@ snapJoins   =   [
 // (8) = buttonType  {yappCircle|yappRectangle}
 pushButtons = [
               //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-                 [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-               , [15, 10, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
+          //       [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
+                [15, 10, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
               ];     
              
 //-- origin of labels is box [0,0,0]

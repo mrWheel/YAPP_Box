@@ -11,11 +11,35 @@ or at the
 
 <hr>
 
-## Rev. 2.0  (19-05-2023)
+## Rev. 2.0  (21-05-2023)
 
-**New functionality (experimental)**
+**New functionality *lightTubes* (experimental)**
 
-With the **pushButtons**  array you can define where you want button guides for tactile switches.</br>
+With the **lightTubes** array you can define where you want tubes for LED's and NeoPixles**
+
+<pre>
+//-- lightTubes  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = tubeLength
+// (3) = tubeWidth
+// (4) = tubeWall
+// (5) = abovePcb
+// (6) = tubeType  {yappCircle|yappRectangle}
+lightTubes = [
+              //--- 0,    1, 2, 3, 4, 5, 6
+                  [84.5, 21, 3, 6, 1, 4, yappRectangle]
+                , [30,   21, 5, 0, 1, 2, yappCircle]
+              ];     
+</pre>
+
+![lightTube_top](https://github.com/mrWheel/YAPP_Box/assets/5585427/fe4eba60-416b-4b35-b0f3-4e3df204a900)
+![lightTube_a](https://github.com/mrWheel/YAPP_Box/assets/5585427/6c79d4ff-faff-4e8d-8283-2d2a5d49d4d8)
+
+
+**New functionality *pushButtons* (experimental)**
+
+With the **pushButtons** array you can define where you want button guides for tactile switches.</br>
 
 <pre>
 //-- pushButtons  -- origin is pcb[0,0,0]

@@ -51,7 +51,7 @@ include <../YAPP_Box/library/YAPPgenerator_v20.scad>
 */
 
 //-- which part(s) do you want to print?
-printBaseShell        = true;
+printBaseShell        = false;
 printLidShell         = true;
 printSwitchExtenders  = true;
 
@@ -93,7 +93,7 @@ standoffDiameter    = 6;
 
 
 //-- D E B U G -----------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false

@@ -51,8 +51,8 @@ include <../YAPP_Box/library/YAPPgenerator_v20.scad>
 
 
 //-- which part(s) do you want to print?
-printBaseShell        = true;
-printLidShell         = true;
+printBaseShell        = false;
+printLidShell         = false;
 printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
@@ -93,7 +93,7 @@ standoffDiameter    = 7;
 
 
 //-- D E B U G -----------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false

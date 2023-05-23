@@ -3241,7 +3241,7 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
         boxHeight = baseWallHeight+lidWallHeight;
         extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
 
-        //-debug-echo("postProcess(A):", extHeight=extHeight);
+        echo("postProcess(A):", extHeight=extHeight);
     
         if (isTrue(yappCircle, button))
               printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
@@ -3260,7 +3260,7 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
 
 //-- post processing switchExtenders ..
 //-- place switchExtendes in button ---
-if (!showSideBySide && printSwitchExtenders)
+if (!showSideBySide && printLidShell && printSwitchExtenders)
 {
   $fn=20;
   yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
@@ -3297,7 +3297,7 @@ if (!showSideBySide && printSwitchExtenders)
       posZ=(baseWallHeight+basePlaneThickness)+(lidWallHeight+lidPlaneThickness)+button[4];
 
       //-debug-echo("BB:", xPos=xPos, wallThickness=wallThickness,paddingFront=paddingFront, paddingBack=paddingBack, posX=posX);
-      //-debug-echo("postProcess(B):", extHeight=extHeight);
+      echo("postProcess(B):", extHeight=extHeight);
 
       translate([posX, posY, posZ])
       {

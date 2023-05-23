@@ -290,8 +290,9 @@ snapJoins   =   [
 // (6) = througLid {yappThroughLid}
 // (7) = tubeType  {yappCircle|yappRectangle}
 lightTubes = [
-              //--- 0,  1, 2, 3, 4, 5, 6
-                  [15, 30, 5, 5, 1, 2, yappRectangle]
+              //--- 0,  1, 2,   3, 4, 5, 6/7
+                  [15, 20, 1.5, 5, 1, 2, yappRectangle]
+               ,  [15, 30, 1.5, 5, 1, 2, yappRectangle, yappThroughLid]
               ];     
 
 //-- pushButtons  -- origin is pcb[0,0,0]

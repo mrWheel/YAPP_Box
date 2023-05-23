@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for <template>
+//  This is a YAPP_StandSmall_v20 test box
 //
-//  Version 2.0 (21-05-2023)
+//  Version 2.0 (23-05-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -15,12 +15,13 @@
 //
 //-----------------------------------------------------------------------
 
-
-polygonShape = [  [0,0],[20,15],[30,0],[40,15],[70,15]
-                 ,[50,30],[60,45], [40,45],[30,70]
-                 ,[20,45], [0,45]
-               ];
-
+//-- Bambu Lab X1C 0.4mm Nizzle PLA
+//insertDiam  = 3.8 + 0.4;
+//screwDiam   = 2.5 + 0.4;
+//-- Bambu Lab X1C 0.4mm Nizzle XT-Copolyester
+insertDiam  = 3.8 + 0.5;
+screwDiam   = 2.5 + 0.5;
+  
 
 include <../YAPP_Box/library/YAPPgenerator_v20.scad>
 
@@ -49,7 +50,6 @@ include <../YAPP_Box/library/YAPPgenerator_v20.scad>
                                  LEFT
 */
 
-
 //-- which part(s) do you want to print?
 printBaseShell        = true;
 printLidShell         = true;
@@ -61,22 +61,22 @@ pcbWidth            = 40;
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 1;
+paddingFront        = 2;
 paddingBack         = 1;
 paddingRight        = 1;
 paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 1.0;
+basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.0;
 
 //-- Total height of box = basePlaneThickness + lidPlaneThickness 
 //--                     + baseWallHeight + lidWallHeight
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 8;
-lidWallHeight       = 13;
+baseWallHeight      = 10;
+lidWallHeight       =  8;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -86,20 +86,20 @@ roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 4.0;  //-- only used for showPCB
+standoffHeight      = 3.0;  //-- only used for showPCB
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
-standoffDiameter    = 7;
+standoffDiameter    = 6;
 
 
 //-- D E B U G -----------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
-showPCB             = false;
+showPCB             = true;
 showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
@@ -109,7 +109,6 @@ inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 inspectLightTubes   = false;
 inspectButtons      = false;
 //-- D E B U G ---------------------------------------
-
 
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
@@ -121,11 +120,27 @@ inspectButtons      = false;
 // (6) = { yappHole, YappPin }
 // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 pcbStands =    [
-                  [5, 5, 4, 4, 9, yappBoth, yappFrontLeft]
-                , [5, 5, 4, 4, 9, yappBoth, yappBackRight]
-                , [5, 5, 4, 4, 9, yappBaseOnly, yappFrontRight]
-                , [5, 5, 4, 4, 9, yappBaseOnly, yappBackLeft]
+                  [5, 5, 3, 4, 9, yappBoth, yappFrontLeft]
+                , [5, 5, 3, 4, 9, yappBoth, yappBackRight]
+                , [5, 5, 3, 4, 9, yappBaseOnly, yappFrontRight]
+                , [5, 5, 3, 4, 9, yappBaseOnly, yappBackLeft]
                ];
+
+//-- Lid plane    -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = width
+// (3) = length
+// (4) = angle
+// (5) = { yappRectangle | yappCircle }
+// (6) = { yappCenter }
+cutoutsLid =  [
+               //     [20, 20, 10, 20, 10, yappRectangle]  
+               //   , [20, 50, 10, 20, 0, yappRectangle, yappCenter]
+               //   , [50, 50, 10, 2, 0, yappCircle]
+               //   , [pcbLength-10, 20, 15, 0, 0, yappCircle] 
+               //   , [50, pcbWidth, 5, 7, 0, yappRectangle, yappCenter]
+              ];
 
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -136,42 +151,11 @@ pcbStands =    [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBase =   [
-             //       [30, 0, 10, 24, yappRectangle]
-             //     , [pcbLength/2, pcbWidth/2, 12, 4, yappCircle]
-             //     , [pcbLength-8, 25, 10, 14, yappRectangle, yappCenter]
+                 //   [10, 10, 20, 10, 45, yappRectangle]
+                 // , [30, 10, 15, 10, 45, yappRectangle, yappCenter]
+                 // , [20, pcbWidth-20, 15, 0, 0, yappCircle]
+                 // , [pcbLength-15, 5, 10, 2, 0, yappCircle]
                 ];
-
-//-- Lid plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
-cutoutsLid  =   [
-             //     [20, 0, 10, 24, 0, yappRectangle]
-             //   , [pcbWidth-6, 40, 12, 4, 20, yappCircle]
-             //   , [30, 25, 10, 14, 45, yappRectangle, yappCenter]
-                ];
-
-//-- cutoutsGrill    -- origin is pcb[0,0,0]
-// (0) = xPos
-// (1) = yPos
-// (2) = grillWidth
-// (3) = grillLength
-// (4) = gWidth
-// (5) = gSpace
-// (6) = gAngle
-// (7) = plane { "base" | "led" }
-// (7) = {polygon points}}
-//
-//starShape =>>> [  [0,15],[20,15],[30,0],[40,15],[60,15]
-//                 ,[50,30],[60,45], [40,45],[30,60]
-//                 ,[20,45], [0,45],[10,30]
-//               ]
-cutoutsGrill =[
-              ];
 
 //-- front plane  -- origin is pcb[0,0,0]
 // (0) = posy
@@ -182,9 +166,7 @@ cutoutsGrill =[
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsFront =  [
-                    [1, -4, 37, 17, 0, yappRectangle]
-              //    , [30, 7.5, 15, 9, 0, yappRectangle, yappCenter]
-              //    , [0, 2, 10, 0, 0, yappCircle]
+                  [2,(baseWallHeight-5.5)*-1,pcbWidth-4, lidWallHeight+baseWallHeight, 0, yappRectangle]
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -196,9 +178,7 @@ cutoutsFront =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBack =   [
-              //      [10, 0, 10, 18, 0, yappRectangle]
-              //    , [30, 0, 10, 8, 0, yappRectangle, yappCenter]
-              //    , [pcbWidth, 0, 8, 0, 0, yappCircle]
+                  [2,(baseWallHeight-5.5)*-1,pcbWidth-4, lidWallHeight+baseWallHeight, 0, yappRectangle]
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -210,9 +190,6 @@ cutoutsBack =   [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsLeft =   [
-              //    , [0, 0, 15, 20, 0, yappRectangle]
-              //    , [30, 5, 25, 10, 0, yappRectangle, yappCenter]
-              //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
                 ];
 
 //-- right plane   -- origin is pcb[0,0,0]
@@ -224,10 +201,21 @@ cutoutsLeft =   [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsRight =  [
-              //      [0, 0, 15, 7, 0, yappRectangle]
-              //    , [30, 10, 25, 15, 0, yappRectangle, yappCenter]
-              //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
                 ];
+
+//-- cutoutGrills    -- origin is pcb[x0,y0, zx]
+// (0) = xPos
+// (1) = yPos
+// (2) = grillWidth
+// (3) = grillLength
+// (4) = gWidth
+// (5) = gSpace
+// (6) = gAngle
+// (7) = plane {"base" | "lid" }
+// (8) = {polygon points}}
+
+cutoutsGrill = [
+               ];
 
 //-- connectors 
 //-- normal         : origen = box[0,0,0]
@@ -243,11 +231,14 @@ cutoutsRight =  [
 // (8) = flangeDiam
 // (9) = { yappConnWithPCB }
 // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
-connectors   = [ 
-             //   [18, 10, 5, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight]
-             // , [18, 10, 5, 2.5, 5, 4.0, 6, yappConnWithPCB, yappFrontLeft]
-             // , [10, 10, 5, 2.5, 5, 5.0, 6, 4, 8, yappAllCorners]
-               ];
+connectors   =  [
+             //     [ 8, 8, 4, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappFrontLeft]
+             //   , [ 5, 5, 5, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappConnWithPCB, yappFrontRight]
+             //   , [ 5, 5, 6, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappConnWithPCB, yappBackLeft]
+             //   , [ 8, 8, 7, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappBackRight]
+                //  [ 5, 5, 8, screwDiam, screwDiam*2, insertDiam, 7, 5, 15, yappConnWithPCB, yappAllCorners]
+                ];
+
 
 //-- base mounts -- origen = box[x0,y0]
 // (0) = posx | posy
@@ -256,30 +247,22 @@ connectors   = [
 // (3) = height
 // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (5) = { yappCenter }
-baseMounts   =  [
-              //      [-5, 3.3, 10, 3, yappLeft, yappRight, yappCenter]
-              //    , [40, 3, 8, 3, yappBack, yappFront]
-              //    , [4, 3, 34, 3, yappFront]
-              //    , [25, 3, 3, 3, yappBack]
-                ];
-
+baseMounts   = [
+               ];
+               
 //-- snap Joins -- origen = box[x0,y0]
 // (0) = posx | posy
 // (1) = width
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
-snapJoins   =   [
-                  [(pcbWidth/2), 3, yappBack]
-                , [(pcbLength/2)+6, 3, yappLeft]
-                , [(pcbLength/2)+6, 3, yappRight]
-
-              //    [2,               5, yappLeft, yappRight, yappSymmetric]
-              //    [5,              10, yappLeft]
-              //  , [shellLength-2,  10, yappLeft]
-              //  , [20,             10, yappFront, yappBack]
-              //  , [2.5,             5, yappBack,  yappFront, yappSymmetric]
+snapJoins   =     [
+                  [(pcbLength/2)+1.5, 3, yappLeft, yappRight]
+              //    [5, 10, yappLeft]
+              //  , [shellLength-2, 10, yappLeft]
+              //  , [30,  10, yappFront, yappBack]
+              //  , [2.5, 3, 5, yappBack, yappFront, yappSymmetric]
                 ];
-               
+                              
 //-- lightTubes  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -291,7 +274,7 @@ snapJoins   =   [
 // (7) = tubeType  {yappCircle|yappRectangle}
 lightTubes = [
               //--- 0,  1, 2, 3, 4, 5, 6
-                  [15, 30, 5, 5, 1, 2, yappRectangle]
+              //    [15, 30, 5, 5, 1, 2, yappRectangle]
               ];     
 
 //-- pushButtons  -- origin is pcb[0,0,0]
@@ -306,22 +289,27 @@ lightTubes = [
 // (8) = buttonType  {yappCircle|yappRectangle}
 pushButtons = [
               //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-          //       [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-                [15, 10, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
+                 [15, 30, 8, 8, 0, 2,   1, 3.5, yappCircle]
+               , [15, 10, 8, 6, 3, 3.5, 1, 3.5, yappRectangle]
               ];     
              
+
 //-- origin of labels is box [0,0,0]
 // (0) = posx
 // (1) = posy/z
 // (2) = orientation
-// (3) = depth
-// (4) = plane {lid | base | left | right | front | back }
-// (5) = font
-// (6) = size
-// (7) = "label text"
-labelsPlane =   [
-                  //  [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
-                ];
+// (3) = plane {lid | base | left | right | front | back }
+// (4) = font
+// (5) = size
+// (6) = "label text"
+labelsPlane =  [
+               //     [10,  10,   0, 1, "lid",   "Liberation Mono:style=bold", 7, "YAPP" ]
+               //   , [100, 90, 180, 1, "base",  "Liberation Mono:style=bold", 7, "Base" ]
+               //   , [8,    8,   0, 1, "left",  "Liberation Mono:style=bold", 7, "Left" ]
+               //   , [10,   5,   0, 1, "right", "Liberation Mono:style=bold", 7, "Right" ]
+               //   , [40,  23,   0, 1, "front", "Liberation Mono:style=bold", 7, "Front" ]
+               //   , [5,    5,   0, 1, "back",  "Liberation Mono:style=bold", 7, "Back" ]
+               ];
 
 
 //========= MAIN CALL's ===========================================================

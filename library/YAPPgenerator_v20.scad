@@ -3244,8 +3244,9 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
         pcbTop2Lid= (baseWallHeight+lidWallHeight)-(standoffHeight+pcbThickness);
         boxHeight = baseWallHeight+lidWallHeight;
         extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
+        xOff      = max(cLength, cWidth);
 
-        echo("postProcess(A):", extHeight=extHeight);
+        echo("postProcess(A):", extHeight=extHeight, xOff=xOff);
     
         if (isTrue(yappCircle, button))
               printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
@@ -3253,7 +3254,8 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
         else  printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
                                       , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
         
-        printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
+        //--printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
+        printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
 
       } //-- for ...
     } //-- translate
@@ -3299,9 +3301,10 @@ if (!showSideBySide && printLidShell && printSwitchExtenders)
       posX=xPos+wallThickness+paddingBack;
       posY=(yPos+wallThickness+paddingLeft);
       posZ=(baseWallHeight+basePlaneThickness)+(lidWallHeight+lidPlaneThickness)+button[4];
+      xOff      = max(cLength, cWidth);
 
       //-debug-echo("BB:", xPos=xPos, wallThickness=wallThickness,paddingFront=paddingFront, paddingBack=paddingBack, posX=posX);
-      echo("postProcess(B):", extHeight=extHeight);
+      echo("postProcess(B):", extHeight=extHeight, xOff=xOff);
 
       translate([posX, posY, posZ])
       {

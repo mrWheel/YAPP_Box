@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v2.0.3 (23-05-2023)";
+Version="v2.0.4 (25-05-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -111,8 +111,8 @@ showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectLightTubes   = false; 
-inspectButtons      = false; 
+inspectLightTubes   = 0;        //-> { -1 | 0 | 1 }
+inspectButtons      = 0;        //-> { -1 | 0 | 1 } 
 
 //-- D E B U G ---------------------------------------
 
@@ -1654,15 +1654,15 @@ module buildLightTubes()
             cylinder(h=pcbTop2Lid, d=tLength+(tWall*2), center=true);
           translate([0,0,-0.5+throughLid])
             color("blue") 
-              cylinder(h=pcbTop2Lid+5, d=tLength, center=true);
+              cylinder(h=pcbTop2Lid+(throughLid+0.5), d=tLength, center=true);
           if (inspectLightTubes)
           {
-            thisX=tLength-(tLength/2);
+            thisX=(tLength-(tLength/2))*inspectLightTubes;
             //-debug-echo("buildLightTube()", thisX=thisX, tLength=tLength, tWall=tWall, wallThickness=wallThickness);
             translate([thisX+0,0,0])
             {
               color("white") 
-                cube([((tLength+tWall)/2)+2, tLength+tWall*1, pcbTop2Lid+1], center=true);
+                cube([((tLength+tWall)/2)+2, tLength+tWall*3, pcbTop2Lid+1], center=true);
             }
           }
         }
@@ -1682,11 +1682,13 @@ module buildLightTubes()
               cube([tWidth, tLength, pcbTop2Lid], center=true);
           if (inspectLightTubes)
           {
-            thisX=tLength-(tLength/2);
+            //-19-thisX=(tLength+(tWall*2))-(tLength/2);
+            thisX=(tLength*inspectLightTubes)-(tLength/2)*inspectLightTubes;
             translate([thisX,0,0])
             {
               color("white") 
-                cube([(tubeRib/2)+tWall, tubeRib+tWall*2, pcbTop2Lid+1], center=true);
+                //cube([(tubeRib/2)+(tWall*2), tubeRib+tWall*2, pcbTop2Lid+1], center=true);
+                cube([(tubeRib/2)+(tWall*2), tubeRib+tWall*3, pcbTop2Lid+1], center=true);
             }
           }
         }
@@ -1898,8 +1900,9 @@ module buildButtons()
       
       boxHeight = baseWallHeight+lidWallHeight;
       extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
+      xOff      = max(cLength, cWidth);
 
-      //-debug-echo("buildButtons()", extHeight=extHeight);
+      //-debug-echo("buildButtons()", i=i, extHeight=extHeight, xOff=xOff);
 
       if (printSwitchExtenders && showSideBySide)
       {
@@ -1909,7 +1912,8 @@ module buildButtons()
         else  printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
                                       , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
   
-        printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
+        //--printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
+        printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
       }
     
     } //-- for buttons ..

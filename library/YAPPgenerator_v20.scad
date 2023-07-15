@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v2.0.4 (25-05-2023)";
+Version="v2.0.4 (15-07-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -1597,8 +1597,8 @@ module makeLightTubes()
     //-debug-echo("makeLightTubes()", xPos=xPos, yPos=yPos, tLength=tLength, tWidth=tWidth, tWall=tWall, tAbvPcb=tAbvPcb);
     if (isTrue(yappCircle, tube))
     {
-      tmpArray = [[xPos, yPos, tLength, tWidth, 0, yappCircle, yappCenter]];
-      //-debug-echo("makeLightTubes()", tmpArray=tmpArray);
+      tmpArray = [[xPos, yPos, tLength, tWidth, tWidth, yappCircle, yappCenter]];
+      //-debug-echo("makeLightTubes(Circle)", tmpArray=tmpArray);
       cutoutsInXY("lid", tmpArray);
     }
     else if (isTrue(yappRectangle, tube))
@@ -1642,7 +1642,7 @@ module buildLightTubes()
     Y=yPos+wallThickness+paddingLeft;
     throughLid = isTrue(yappThroughLid, tube);
     //-debug-echo("buildLedTubes()", throughLid=throughLid);
-    //-debug-echo("buildLightTube()", xPos=xPos, X=X, yPos=yPos, Y=Y, tLength=tLength, tWall=tWall, pcbTop2Lid=pcbTop2Lid);
+    //-debug-echo("buildLightTube()", xPos=xPos, X=X, yPos=yPos, Y=Y, tLength=tLength, tWidth=tWidth, tWall=tWall, pcbTop2Lid=pcbTop2Lid);
     
     translate([X, Y, (pcbTop2Lid/-2)])
     {
@@ -1651,10 +1651,10 @@ module buildLightTubes()
         difference()
         {
           color("red") 
-            cylinder(h=pcbTop2Lid, d=tLength+(tWall*2), center=true);
+            cylinder(h=pcbTop2Lid, d=tWidth+(tWall*2), center=true);
           translate([0,0,-0.5+throughLid])
             color("blue") 
-              cylinder(h=pcbTop2Lid+(throughLid+0.5), d=tLength, center=true);
+              cylinder(h=pcbTop2Lid+(throughLid+0.5), d=tWidth, center=true);
           if (inspectLightTubes)
           {
             thisX=(tLength-(tLength/2))*inspectLightTubes;

@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v2.0.4 (15-07-2023)";
+Version="v2.0.4 (23-07-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -3154,7 +3154,8 @@ module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, 
       //--- pole
       translate([0, 0, ((extHeight+buttonCupDepth+capAboveLid)/-2)+1]) 
         color("orange")
-          cylinder(d=poleDiam, h=extHeight, center=true);
+          //-tst-cylinder(d=poleDiam, h=extHeight, center=true);
+          cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
     }
   }
   else
@@ -3168,7 +3169,8 @@ module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, 
       //--- pole
       translate([0, 0, (extHeight+buttonCupDepth+capAboveLid-0.5)/-2]) 
         color("purple")
-          cylinder(d=poleDiam, h=extHeight, center=true);
+          //-tst-cylinder(d=poleDiam, h=extHeight, center=true);
+          cylinder(d=(poleDiam+(buttonSlack/2)), h=extHeight, center=true);
     }
   }
 
@@ -3197,7 +3199,8 @@ module printSwitchPlate(poleDiam, capLength, buttonPlateThickness, yPos)
         cylinder(h=buttonPlateThickness, d=poleDiam+3, center=true);
       translate([0,0,-0.5])
         color("blue")
-          cylinder(h=buttonPlateThickness, d=poleDiam+0.2, center=true);
+          //-tst-cylinder(h=buttonPlateThickness, d=poleDiam+0.1+(buttonSlack/2), center=true);
+          cylinder(h=buttonPlateThickness, d=poleDiam+0.1-(buttonSlack/2), center=true);
     }
   }
     

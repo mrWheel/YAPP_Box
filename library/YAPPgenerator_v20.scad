@@ -3,7 +3,7 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v2.0.4 (23-07-2023)";
+Version="v2.0.5 (18-08-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -349,8 +349,8 @@ lightTubes = [
 // (8) = buttonType  {yappCircle|yappRectangle}
 pushButtons = [
               //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-                 [15, 30, 8, 8, 0, 2.3, 1, 3.5, yappCircle]
-               , [15, 10, 8, 6, 3, 5,   1, 3.5, yappRectangle]
+              //   [15, 30, 8, 8, 0, 2.3, 1, 3.5, yappCircle]
+              // , [15, 10, 8, 6, 3, 5,   1, 3.5, yappRectangle]
               ];     
              
 //-- origin of labels is box [0,0,0]
@@ -1597,7 +1597,8 @@ module makeLightTubes()
     //-debug-echo("makeLightTubes()", xPos=xPos, yPos=yPos, tLength=tLength, tWidth=tWidth, tWall=tWall, tAbvPcb=tAbvPcb);
     if (isTrue(yappCircle, tube))
     {
-      tmpArray = [[xPos, yPos, tLength, tWidth, tWidth, yappCircle, yappCenter]];
+      tWidthSmall = ((tWidth/2) < 3) ? 3 : (tWidth/2);    //-- 09-08-2023
+      tmpArray = [[xPos, yPos, tWidthSmall, tWidth, yappCircle, yappCenter]];
       //-debug-echo("makeLightTubes(Circle)", tmpArray=tmpArray);
       cutoutsInXY("lid", tmpArray);
     }
@@ -3200,7 +3201,7 @@ module printSwitchPlate(poleDiam, capLength, buttonPlateThickness, yPos)
       translate([0,0,-0.5])
         color("blue")
           //-tst-cylinder(h=buttonPlateThickness, d=poleDiam+0.1+(buttonSlack/2), center=true);
-          cylinder(h=buttonPlateThickness, d=poleDiam+0.1-(buttonSlack/2), center=true);
+          cylinder(h=buttonPlateThickness, d=poleDiam+0.2-(buttonSlack/2), center=true);
     }
   }
     
@@ -3269,10 +3270,11 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
 
 //-- post processing switchExtenders ..
 //-- place switchExtendes in button ---
-if (!showSideBySide && printLidShell && printSwitchExtenders)
+if (!showSideBySide && printLidShell && printSwitchExtenders && (len(pushButtons) > 0) )
 {
   $fn=20;
   yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
+
   //rotate([0,180,180])
   {
     for(i=[0:len(pushButtons)-1])  

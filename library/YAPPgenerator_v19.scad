@@ -159,7 +159,7 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
 // (4) = flangeDiam
 // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 pcbStands =    [
                 //     [          20,         20, 5, 6, 9, yappBoth, yappPin] 
                 //   , [           3,          3, 5, 6, 9, yappBoth, yappPin, yappAllCorners] 
@@ -281,7 +281,7 @@ cutoutsRight =  [
 // (7) = flangeHeight
 // (8) = flangeDiam
 // (9) = { yappConnWithPCB }
-// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 connectors   = [ 
              //   [18, 10, 5, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight]
              // , [18, 10, 5, 2.5, 5, 4.0, 6, yappConnWithPCB, yappFrontLeft]
@@ -986,7 +986,7 @@ module pcbHolders()
   // (4) = flangeDiam
   // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
   // (6) = { yappHole, YappPin }
-  // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+  // (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 
   for ( stand = pcbStands )
   {
@@ -1042,7 +1042,7 @@ module pcbPushdowns()
   // (4) = flangeDiam
   // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
   // (6) = { yappHole, YappPin }
-  // (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+  // (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
   for ( pushdown = pcbStands )
   {
     //echo("pcb_pushdowns:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
@@ -1178,7 +1178,7 @@ module cutoutsInXY(type)
         // (7) = supportHeight
         // (8) = supportDiam
         // (9) = { yappConnWithPCB }
-        // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+        // (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
         for(conn = connectors)
         {
           if (!isTrue(yappConnWithPCB, conn))
@@ -1255,7 +1255,7 @@ module cutoutsInXY(type)
             // (7) = supportHeight
             // (8) = supportDiam
             // (9) = { yappConnWithPCB }
-            // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+            // (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
             if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
             {
               translate([pcbX + conn[0], pcbY + conn[1], (basePlaneThickness*-1)])
@@ -2313,7 +2313,7 @@ module shellConnectors(plane)
     // (7) = flangeHeight
     // (8) = flangeDiam
     // (9) = { yappConnWithPCB }
-    // (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+    // (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 
     
     outD    = minOutside(conn[5]+1, conn[6]);

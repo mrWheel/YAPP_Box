@@ -111,7 +111,7 @@ inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 // (4) = flangeDiameter
 // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 pcbStands = [
                 [5, 5, 3, 5, 11, yappBoth, yappPin] 
             //   ,[5,            pcbWidth-5,  5, 4, 10, yappBoth, yappPin. yappAllCorners]
@@ -237,7 +237,7 @@ cutoutsGrill = [
 // (7) = flangeHeight
 // (8) = flangeDiam
 // (9) = { yappConnWithPCB }
-// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 connectors   =  [
                     [ 8,  8, 5, 2.5, 2.8, 3.8, 6, 6, 15, yappAllCorners]
                   , [15, 10, 5, 2.5, 2.8, 3.5, 6, 5, 11, yappBackLeft, yappBackRight, yappFrontLeft

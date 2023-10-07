@@ -102,7 +102,7 @@ buttonType   - either yappCircle or yappRectangle
 // (4) = flangeDiameter
 // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 pcbStands = [
                 [3,  3, 5, 3, 11, yappBoth, yappPin, yappAllCorners]
                ,[5,  5, 5, 4, 10, yappBoth, yappPin, yappBackLeft, yappFrontRight]
@@ -124,7 +124,7 @@ pcbStands = [
 // (7) = flangeHeight
 // (8) = flangeDiam
 // (9) = { yappConnWithPCB }
-// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 connectors   =  [
                     [ 8,  8, 5, 2.5, 2.8, 3.8, 6, 6, 15, yappAllCorners]
                   , [28, 58, 5, 2.5, 2.8, 3.8, 6, 6, 25, yappConnWithPCB]
@@ -150,7 +150,7 @@ connectors   =  [
 // (3) = flangeDiameter
 // (4) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (5) = { yappHole, YappPin }
-// (6) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (6) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 pcbStands = [
                 [3,  3, 3, 11, yappBoth, yappPin, yappAllCorners]
                ,[5,  5, 4, 10, yappBoth, yappPin, yappBackLeft, yappFrontRight]
@@ -171,7 +171,7 @@ pcbStands = [
 // (6) = flangeHeight
 // (7) = flangeDiam
 // (8) = { yappConnWithPCB }
-// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 connectors   =  [
                     [8, 8, 2.5, 2.8, 3.8, 6, 6, 15, yappAllCorners]
                   , [28, 58, 2.5, 2.8, 3.8, 6, 6, 25, yappConnWithPCB]

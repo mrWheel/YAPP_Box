@@ -92,7 +92,7 @@ standoffDiameter    = 4;
 // (4) = flangeDiam
 // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 pcbStands =     [
                   [3.6,  3, 2, yappBoth, yappPin]                     // back-left
                 , [3.6,  pcbWidth-3, 2, yappBoth, yappHole]           // back-right

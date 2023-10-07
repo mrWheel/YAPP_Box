@@ -97,7 +97,7 @@ inspectY          = 0;  //-> 0=none (>0 from front, <0 from back)
 // (4) = flangeDiam
 // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 pcbStands = [
                  [14.0,  2.5, 3.5, yappBoth, yappPin]         // back-left
                , [15.3, 50.7, 3.5, yappBaseOnly, yappPin] // back-right

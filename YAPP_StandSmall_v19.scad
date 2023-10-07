@@ -220,7 +220,7 @@ cutoutsGrill = [
 // (7) = flangeHeight
 // (8) = flangeDiam
 // (9) = { yappConnWithPCB }
-// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 connectors   =  [
                    [10, 9.5, 0, screwDiam3, headDiam3, insertDiam3, 7, 6, 15]
                  , [26, 7, 4.5, screwDiam2, headDiam2, insertDiam2, 4, 14, 15

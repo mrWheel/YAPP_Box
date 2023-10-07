@@ -254,7 +254,7 @@ cutoutsRight =  [
 // (6) = flangeHeight
 // (7) = flangeDiam
 // (8) = { yappConnShells | yappConnWithPCB }
-// (9) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (9) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 connectors   = [
                  [ 5,  5, screwDiamS, screwDiamS*2, insertDiamS, 6, 4, 12, yappConnWithPCB
                                               , yappBackLeft, yappFrontLeft, yappBackRight]

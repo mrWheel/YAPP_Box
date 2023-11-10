@@ -56,7 +56,6 @@ Version="v2.0.6 (10-11-2023)";
 //-- which part(s) do you want to print?
 printBaseShell        = false;
 printLidShell         = false;
-printSwitchExtenders  = true;
 printSwitchExtenders  = false;
 
 //-- pcb dimensions -- very important!!!
@@ -223,7 +222,7 @@ cutoutsLid  =   [
 // (4) = gWidth
 // (5) = gSpace
 // (6) = gAngle
-// (7) = plane { "base" | "led" }
+// (7) = plane { "base" | "lid" }
 // (7) = {polygon points}}
 //
 //starShape =>>> [  [0,15],[20,15],[30,0],[40,15],[60,15]
@@ -627,12 +626,12 @@ module printBaseSnapJoins()
     snapWidth  = snj[1];
     snapZposLR = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
     snapZposBF = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
-    tmpYmin    = (roundRadius*2)+(snapWidth/2);
+    tmpYmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
     tmpYmax    = shellWidth - tmpYmin;
     tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
     snapYpos   = min(tmpY, tmpYmax);
 
-    tmpXmin    = (roundRadius*2)+(snapWidth/2);
+    tmpXmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
     tmpXmax    = shellLength - tmpXmin;
     tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
     snapXpos   = min(tmpX, tmpXmax);
@@ -752,12 +751,12 @@ module printLidSnapJoins()
     snapHeight = 2;
     snapDiam   = 1.4;  // fixed
     
-    tmpYmin    = (roundRadius*2)+(snapWidth/2);
+    tmpYmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
     tmpYmax    = shellWidth - tmpYmin;
     tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
     snapYpos   = min(tmpY, tmpYmax);
 
-    tmpXmin    = (roundRadius*2)+(snapWidth/2);
+    tmpXmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
     tmpXmax    = shellLength - tmpXmin;
     tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
     snapXpos   = min(tmpX, tmpXmax);
@@ -2588,12 +2587,27 @@ module pcbStandoff(plane, pcbStandHeight, flangeHeight, flangeDiam, type, color)
     
     module standHole(color)
     {
-      color(color, 1.0)
+      if (useFillet) {
+        color(color, 1.0)
+        translate([0,0,-0.01])
+        union() {
+        translate([0,0,pcbStandHeight-pcbThickness]) 
+          sphere(d = standoffPinDiameter+.2+standoffHoleSlack, $fn = 20);
+        cylinder(
+          d = standoffPinDiameter+.2+standoffHoleSlack,
+          h = pcbStandHeight-pcbThickness,
+          center = false,
+          $fn = 20);
+        }
+      } else {
+        color(color, 1.0)
+        translate([0,0,-0.01])
         cylinder(
           d = standoffPinDiameter+.2+standoffHoleSlack,
           h = (pcbThickness*2)+pcbStandHeight+0.02,
           center = false,
           $fn = 20);
+      }
     } // standhole()
     
     //--------------------------------------------------
@@ -2885,9 +2899,7 @@ module pinFillet (pinRadius, filletRadius=0, facets=36) {
   voffset = (pinRadius < 0) ? 0 : fr;
   voffset2 = (pinRadius < 0) ? -fr : 0;  
   pr = (pinRadius < 0) ? -pinRadius : pinRadius;
-  
   step=360/ facets;
-
   translate([0,0, voffset2])
   difference() {
     difference() {
@@ -2907,16 +2919,10 @@ module pinFillet (pinRadius, filletRadius=0, facets=36) {
 module boxFillet (boxSize, filletRadius=0) {
 
   // Handle defaults
-
   fr = (filletRadius == 0) ? (boxSize < 0) ? -boxSize : boxSize : filletRadius;
-
   voffset = (boxSize < 0) ? 0 : fr;
   voffset2 = (boxSize < 0) ? -fr : 0;
-
   bs = (boxSize < 0) ? -boxSize : boxSize;
-
-  echo ("boxSize=", bs, "filletRadius=", fr, "voffset", voffset, "voffset2", voffset2);
-  
   translate([0,0, voffset2])
   difference() {
     difference() {

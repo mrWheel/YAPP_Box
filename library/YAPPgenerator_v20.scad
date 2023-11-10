@@ -3261,7 +3261,6 @@ module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, 
       //--- button cap
       translate([0,0,(capAboveLid/-2)+0.5]) color("red")
           cylinder(h=capAboveLid-1, d1=capLength-1.5, d2=capLength-1.0, center=true);
-          cylinder(h=capAboveLid-1, d1=capLength-0.5, d2=capLength, center=true);
       //--- pole
       translate([0, 0, ((extHeight+buttonCupDepth+capAboveLid)/-2)+1]) 
         color("orange")

@@ -1677,7 +1677,7 @@ module buildLightTubes()
         if (useFillet) {
           translate([0,0,(pcbTop2Lid/2)-lidPlaneThickness])
           color("red") pinFillet(-(tWidth+(tWall*2))/2,filletRadius);
-        }
+        } // ifFillet
       }
       else
       {
@@ -1708,7 +1708,7 @@ module buildLightTubes()
           tubeRib=max(tLength, tWidth);
           translate([0,0,(pcbTop2Lid/2)-lidPlaneThickness])
           color("red") boxFillet(-((tubeRib+(tWall*2))/2),filletRadius);
-        }
+        } // ifFillet
 
       }
     }
@@ -2551,7 +2551,7 @@ module pcbStandoff(plane, pcbStandHeight, flangeHeight, flangeDiam, type, color)
         } else {
           translate([0,0,-0.3]) 
             cylinder(h=min(flangeHeight, pcbStandHeight), d1=flangeDiam, d2=standoffDiameter);
-        }
+        } // ifFillet
       }
       if (plane == "lid")
       {
@@ -2571,7 +2571,7 @@ module pcbStandoff(plane, pcbStandHeight, flangeHeight, flangeDiam, type, color)
             translate([0,0,0])       
             cylinder(h=pcbStandHeight, d1=standoffDiameter/2, d2=flangeDiam);
           }
-        }
+        } // ifFillet
       }
 
     } // standoff()
@@ -2649,7 +2649,6 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
                 $fn = 20);
           //-- flange --
           if (useFillet) {
-					 
             translate([0,0,(basePlaneThickness-0.5)]) 
               {
                 pinFillet(d4/2,filletRadius);
@@ -2661,18 +2660,13 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
               {
                 cylinder(h=2, d1=fD, d2=d4);
               }
-            }
-					 
-            else  
-					 
-																											
-            {
+            } else {
               translate([0,0,(basePlaneThickness-0.5)]) 
               {
                 cylinder(h=fHm, d1=fD, d2=d4);
               }
             }
-          }
+          } // ifFillet
         }
         
         //-- screw head Hole --
@@ -2726,7 +2720,7 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
               translate([0,0,(ht-fH)+(lidPlaneThickness/2)]) 
                 cylinder(h=fH, d1=d4, d2=fD);
             }
-          }
+          } // ifFillet
         }  
         //-- insert --
         linear_extrude(ht)

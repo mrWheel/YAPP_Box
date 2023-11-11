@@ -50,8 +50,8 @@ include <../YAPP_Box/library/YAPPgenerator_v20.scad>
                                  LEFT
 */
 
-printBaseShell      = true;
-printLidShell       = true;
+printBaseShell        = true;
+printLidShell         = true;
 printSwitchExtenders  = true;
 
 

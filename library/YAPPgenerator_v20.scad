@@ -1759,7 +1759,7 @@ module buildButtons()
 {
   
   echo("buildButtons(): process ", len(pushButtons)," buttons");
-  if(len(pushButtons) > 0)
+  if (len(pushButtons) > 0)
   {
     for(i=[0:len(pushButtons)-1])  
     {

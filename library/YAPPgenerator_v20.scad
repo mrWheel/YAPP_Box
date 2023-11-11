@@ -13,6 +13,7 @@ Version="v2.0.6 (10-11-2023)";
 **   - Oliver Grafe (connectorsPCB)
 **   - Juan Jose Chong (dynamic standoff flange)
 **   - Dan Drum (cleanup code)
+**   - Dave Rosenhauer
 **
 **
 **  for many or complex cutoutsGrill you might need to adjust
@@ -159,7 +160,7 @@ shellInsideWidth  = pcbWidth+paddingLeft+paddingRight;
 shellWidth        = shellInsideWidth+(wallThickness*2)+0;
 shellInsideLength = pcbLength+paddingFront+paddingBack;
 shellLength       = pcbLength+(wallThickness*2)+paddingFront+paddingBack;
-shellpcbTop2Lid = baseWallHeight+lidWallHeight;
+shellpcbTop2Lid   = baseWallHeight+lidWallHeight;
 shellHeight       = basePlaneThickness+shellpcbTop2Lid+lidPlaneThickness;
 pcbX              = wallThickness+paddingBack;
 pcbY              = wallThickness+paddingLeft;
@@ -3458,22 +3459,25 @@ module printSwitch()
   // (6) = switchTrafel
   // (7) = poleDiameter
   // (8) = buttonType  {yappCircle|yappRectangle}
-  for(i=[0:len(pushButtons)-1])  
+  if (len(pushButtons) > 0)
   {
-    b=pushButtons[i];
-    //-debug-echo("printSwitch(",i,"): swHeight=", b[5], "swTrafel=", b[6], buttonPlateThickness=buttonPlateThickness);
-    posX=(b[0]+2.5);
-    posY=(b[1]+2.5);
-    posZ=standoffHeight+pcbThickness+basePlaneThickness+(b[5]/2);
-    //-- tacktile Switch base
-    translate([posX, posY, posZ])
-      color("black") cube([5, 5, b[5]], center=true);
-    //-- switchTrafel
-    translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)]) 
-      color("white") cylinder(h=b[6], d=4, center=true);
-    //-- buttonPlateThickness
-    translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)+((buttonPlateThickness+0.5)/2)]) 
-      color("orange", alpha=0.5) cylinder(h=buttonPlateThickness, d=5, center=true);
+      for(i=[0:len(pushButtons)-1])  
+      {
+        b=pushButtons[i];
+        //-debug-echo("printSwitch(",i,"): swHeight=", b[5], "swTrafel=", b[6], buttonPlateThickness=buttonPlateThickness);
+        posX=(b[0]+2.5);
+        posY=(b[1]+2.5);
+        posZ=standoffHeight+pcbThickness+basePlaneThickness+(b[5]/2);
+        //-- tacktile Switch base
+        translate([posX, posY, posZ])
+          color("black") cube([5, 5, b[5]], center=true);
+        //-- switchTrafel
+        translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)]) 
+          color("white") cylinder(h=b[6], d=4, center=true);
+        //-- buttonPlateThickness
+        translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)+((buttonPlateThickness+0.5)/2)]) 
+          color("orange", alpha=0.5) cylinder(h=buttonPlateThickness, d=5, center=true);
+      }
   }
 }
 

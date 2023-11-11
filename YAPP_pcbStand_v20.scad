@@ -23,7 +23,7 @@ insertDiam  = 3.8 + 0.5;
 screwDiam   = 2.5 + 0.5;
   
 
-include <../YAPP_Box/library/YAPPgenerator_v19.scad>
+include <../YAPP_Box/library/YAPPgenerator_v20.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -50,8 +50,10 @@ include <../YAPP_Box/library/YAPPgenerator_v19.scad>
                                  LEFT
 */
 
-printBaseShell      = false;
+printBaseShell      = true;
 printLidShell       = true;
+printSwitchExtenders  = true;
+
 
 // Edit these parameters for your own board dimensions
 wallThickness       = 2.0;
@@ -87,6 +89,9 @@ paddingBack         = 3;
 paddingRight        = 3;
 paddingLeft         = 3;
 
+//-- Use a fillet at the base of posts instead of 'flange'
+useFillet           = true;
+filletRadius        = wallThickness;        //0 = auto (fillet Radius = pin radius
 
 //-- D E B U G -----------------//-> Default ---------
 showSideBySide      = true;     //-> true
@@ -101,7 +106,7 @@ showPCB             = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
+inspectX            = 10;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 //-- D E B U G ---------------------------------------
 

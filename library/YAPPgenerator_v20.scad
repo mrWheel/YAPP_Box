@@ -13,7 +13,7 @@ Version="v2.0.6 (10-11-2023)";
 **   - Oliver Grafe (connectorsPCB)
 **   - Juan Jose Chong (dynamic standoff flange)
 **   - Dan Drum (cleanup code)
-**   - Dave Rosenhauer Ifillets)
+**   - Dave Rosenhauer (fillets)
 **
 **
 **  for many or complex cutoutsGrill you might need to adjust

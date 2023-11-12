@@ -51,13 +51,13 @@ include <../YAPP_Box/library/YAPPgenerator_v20.scad>
 
 
 //-- which part(s) do you want to print?
-printBaseShell        = false;
-printLidShell         = false;
+printBaseShell        = true;
+printLidShell         = true;
 printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 30;
-pcbWidth            = 40;
+pcbLength           = 60;
+pcbWidth            = 100;
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
@@ -92,8 +92,14 @@ standoffHoleSlack   = 0.4;
 standoffDiameter    = 7;
 
 
+//-- Use a fillet at the base of posts instead of 'flange'
+//useFillet           = true;
+//filletRadius        = wallThickness;        //0 = auto (fillet Radius = pin radius
+
+
+
 //-- D E B U G -----------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
@@ -116,15 +122,16 @@ inspectButtons      = 0;        //-> { -1 | 0 | 1 }
 // (1) = posy
 // (2) = standoffHeight
 // (3) = flangeHeight
-// (4) = flangeDiam
+// (4) = flangeDiam / filletRadius
 // (5) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (6) = { yappHole, YappPin }
-// (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+// (7) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (8) = { yappAddFillet }
 pcbStands =    [
-                  [5, 5, 4, 4, 9, yappBoth, yappFrontLeft]
-                , [5, 5, 4, 4, 9, yappBoth, yappBackRight]
-                , [5, 5, 4, 4, 9, yappBaseOnly, yappFrontRight]
-                , [5, 5, 4, 4, 9, yappBaseOnly, yappBackLeft]
+                  [5, 5, 4, 4, 0, yappBoth, yappFrontLeft, yappAddFillet]
+                , [5, 5, 4, 4, 0, yappBoth, yappBackRight, yappAddFillet]
+                , [5, 5, 4, 4, 0, yappBaseOnly, yappFrontRight, yappAddFillet]
+                , [5, 5, 4, 4, 0, yappBaseOnly, yappBackLeft, yappAddFillet]
                ];
 
 //-- base plane    -- origin is pcb[0,0,0]
@@ -182,7 +189,7 @@ cutoutsGrill =[
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsFront =  [
-                    [1, -4, 37, 17, 0, yappRectangle]
+              //      [1, -4, 37, 17, 0, yappRectangle]
               //    , [30, 7.5, 15, 9, 0, yappRectangle, yappCenter]
               //    , [0, 2, 10, 0, 0, yappCircle]
                 ];
@@ -240,13 +247,15 @@ cutoutsRight =  [
 // (5) = insertDiameter
 // (6) = outsideDiameter
 // (7) = flangeHeight
-// (8) = flangeDiam
+// (8) = flangeDiam  / filletRadius
 // (9) = { yappConnWithPCB }
-// (10) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+// (10) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
+// (11) = { yappAddFillet }
 connectors   = [ 
-             //   [18, 10, 5, 2.5, 5, 4.0, 6, 4, 11, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight]
-             // , [18, 10, 5, 2.5, 5, 4.0, 6, yappConnWithPCB, yappFrontLeft]
-             // , [10, 10, 5, 2.5, 5, 5.0, 6, 4, 8, yappAllCorners]
+             //   [18, 10, 5, 2.5, 5, 4.0, 6, 4, 0, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
+             // , [18, 20, 5, 2.5, 5, 4.0, 15, 4, 0, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
+             // , [18, 20, 5, 2.5, 5, 4.0, 6, 0, 0, yappConnWithPCB, yappFrontLeft, yappAddFillet]
+               [18, 20, 5, 2.5, 5, 5.0, 6, 4, 0, yappAllCorners, yappAddFillet]
                ];
 
 //-- base mounts -- origen = box[x0,y0]
@@ -256,9 +265,10 @@ connectors   = [
 // (3) = height
 // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (5) = { yappCenter }
+// (6) = { yappAddFillet }
 baseMounts   =  [
-              //      [-5, 3.3, 10, 3, yappLeft, yappRight, yappCenter]
-              //    , [40, 3, 8, 3, yappBack, yappFront]
+                    [45, 3.3, 10, 3, yappFront, yappLeft, yappRight, yappAddFillet]//, yappCenter]
+                  , [10, 6, 10, 3, yappBack, yappFront, yappAddFillet]
               //    , [4, 3, 34, 3, yappFront]
               //    , [25, 3, 3, 3, yappBack]
                 ];
@@ -289,10 +299,12 @@ snapJoins   =   [
 // (5) = abovePcb
 // (6) = througLid {yappThroughLid}
 // (7) = tubeType  {yappCircle|yappRectangle}
+// (8) = { yappAddFillet }
 lightTubes = [
               //--- 0,  1, 2,   3, 4, 5, 6/7
-                  [15, 20, 1.5, 5, 1, 2, yappRectangle]
-               ,  [15, 30, 1.5, 5, 1, 2, yappRectangle, yappThroughLid]
+                  [25, 30, 1.5, 5, 1, 2, yappRectangle]
+               ,  [25, 40, 1.5, 5, 1, 2, yappCircle]
+               ,  [25, 50, 1.5, 5, 1, 2, yappRectangle, yappThroughLid]
               ];     
 
 //-- pushButtons  -- origin is pcb[0,0,0]
@@ -308,7 +320,7 @@ lightTubes = [
 pushButtons = [
               //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
           //       [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-                [15, 10, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
+                [15, 60, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
               ];     
              
 //-- origin of labels is box [0,0,0]

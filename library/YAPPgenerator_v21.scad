@@ -2745,12 +2745,6 @@ module lidShell()
 
   pcbPushdowns();
   shellConnectors("lid");
-
-  // Moved to lidShell so they can be cut for inspection
-  lidHookOutside();
-  buildLightTubes();  //-2.0-
-  buildButtons();     //-2.0-
-  lidHookInside();
   
 } //  lidShell()
 
@@ -3265,10 +3259,9 @@ module YAPPgenerate()
             {
               translate([0, (5 + shellWidth+(shiftLid/2))*-2, 0])
               {
-                // Moved inside lidShell() so they can be cut by the inspection planes
-                //buildLightTubes();  //-2.0-
-                //buildButtons();     //-2.0-
-                //lidHookInside();
+                buildLightTubes();  //-2.0-
+                buildButtons();     //-2.0-
+                lidHookInside();
                 
                 difference()  // (t1) 
                 {
@@ -3352,11 +3345,10 @@ module YAPPgenerate()
           translate([0, 0, (baseWallHeight+basePlaneThickness+
                             lidWallHeight+lidPlaneThickness+onLidGap)])
           {
-            // Moved inside lidShell() so they can be cut by the inspection planes
-            //lidHookOutside();
-            //buildLightTubes();  //-2.0-
-            //buildButtons();     //-2.0-    
-            //lidHookInside();
+            lidHookOutside();
+            buildLightTubes();  //-2.0-
+            buildButtons();     //-2.0-    
+            lidHookInside();
 
             difference()  // (t2)
             {

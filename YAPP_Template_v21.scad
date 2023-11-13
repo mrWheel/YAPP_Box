@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 2.0 (21-05-2023)
+//  Version 2.1 (12-11-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -50,7 +50,7 @@ include <../YAPP_Box/library/YAPPgenerator_v21.scad>
 */
 
 // Override the default facet count of 20
-facetCount = 36;
+facetCount = 15;
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -94,18 +94,14 @@ standoffHoleSlack   = 0.4;
 standoffDiameter    = 7;
 
 
-//-- Use a fillet at the base of posts instead of 'flange'
-//useFillet           = true;
-//filletRadius        = wallThickness;        //0 = auto (fillet Radius = pin radius
-
-
-
 //-- D E B U G -----------------//-> Default ---------
 showSideBySide      = true;     //-> true
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
+colorLid            = "silver";
+colorBase           = "lightgray";
 showOrientation     = true;
 showPCB             = false;
 showSwitches        = false;
@@ -129,7 +125,7 @@ inspectButtons      = 0;        //-> { -1 | 0 | 1 }
 // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 // (n) = { yappAddFillet }
 pcbStands =    [
-                  [4, 4, 4, 2.5, yappBoth, yappFrontLeft, yappAddFillet]
+                  [4, 4, 4, 3.5, yappBoth, yappFrontLeft, yappAddFillet]
                 , [4, 4, 4, 2.5, yappBoth, yappBackRight, yappAddFillet]
                 , [5, 5, 4, 0, yappBaseOnly, yappFrontRight, yappAddFillet]
                 , [5, 5, 4, 0, yappBaseOnly, yappBackLeft, yappAddFillet]
@@ -190,7 +186,7 @@ cutoutsGrill =[
 // (n) = { yappRectangle | yappCircle }
 // (n) = { yappCenter }
 cutoutsFront =  [
-                    [1, -3, 37, 17, 0, yappRectangle, yappMinCutout]
+                    [25, -3, 37, 17, 0, yappRectangle, yappMinCutout]
               //    , [30, 7.5, 15, 9, 0, yappRectangle, yappCenter]
               //    , [0, 2, 10, 0, 0, yappCircle]
                 ];
@@ -252,8 +248,8 @@ cutoutsRight =  [
 // (n) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
 // (n) = { yappAddFillet }
 connectors   = [ 
-                [25, 10, 5, 2.5, 5, 4.0, 6, 0, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
-               ,[18, 20, 5, 2.5, 5, 5.0, 6, 2.5, yappAllCorners, yappAddFillet]
+                [25, 10, 5, 2.5, 5, 4.0, 6, 2, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
+               ,[18, 20, 5, 2.5, 5, 5.0, 6, 5.5, yappAllCorners, yappAddFillet]
              // , [18, 20, 5, 2.5, 5, 4.0, 15, 0, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
              // , [18, 20, 5, 2.5, 5, 4.0, 6, 0, yappConnWithPCB, yappFrontLeft, yappAddFillet]
                ];
@@ -268,7 +264,7 @@ connectors   = [
 // (n) = { yappAddFillet }
 baseMounts   =  [
                     [45, 3.3, 10, 3, yappFront, yappLeft, yappRight, yappAddFillet]//, yappCenter]
-                  , [10, 6, 10, 3, yappBack, yappFront, yappAddFillet]
+                  , [10, 6, 10, 3, yappBack, yappFront]
               //    , [4, 3, 34, 3, yappFront]
               //    , [25, 3, 3, 3, yappBack]
                 ];
@@ -319,9 +315,9 @@ lightTubes = [
 // (7) = poleDiameter
 // (n) = buttonType  {yappCircle|yappRectangle}
 pushButtons = [
-              //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-          //       [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-                [15, 60, 8, 6, 2, 3.5, 1, 3.5, yappRectangle]
+             //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
+                [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
+              , [15, 60, 8, 6, 2, 1.5, 1, 6.5, yappRectangle]
               ];     
              
 //-- origin of labels is box [0,0,0]
@@ -343,31 +339,37 @@ labelsPlane =   [
 //===========================================================
 module lidHookInside()
 {
-  //echo("lidHookInside(original) ..");
+  echo("lidHookInside(original) ..");
+  translate([40, 40, -10]) color("purple") cube([15,20,10]);
   
 } // lidHookInside(dummy)
   
 //===========================================================
 module lidHookOutside()
 {
-  //echo("lidHookOutside(original) ..");
+  echo("lidHookOutside(original) ..");
+  translate([(shellLength/2),-15,-13])
+  {
+    color("yellow") cube([20,15,10]);
+  }
   
 } // lidHookOutside(dummy)
 
 //===========================================================
 module baseHookInside()
 {
-  //echo("baseHookInside(original) ..");
+  echo("baseHookInside(original) ..");  
+  translate([10, 30, 0]) color("lightgreen") cube([15,25,8]);
   
 } // baseHookInside(dummy)
 
 //===========================================================
 module baseHookOutside()
 {
-  //echo("baseHookOutside(original) ..");
-  
-} // baseHookOutside(dummy)
+  echo("baseHookOutside(original) ..");
+  translate([shellLength-wallThickness, 65, 0]) color("green") cube([15,25,6]);
 
+} // baseHookOutside(dummy)
 
 
 

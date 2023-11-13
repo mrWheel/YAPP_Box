@@ -49,6 +49,8 @@ include <../YAPP_Box/library/YAPPgenerator_v21.scad>
                                  LEFT
 */
 
+// Override the default facet count of 20
+facetCount = 36;
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;

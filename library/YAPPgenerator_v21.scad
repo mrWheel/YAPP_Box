@@ -53,6 +53,8 @@ Version="v2.1.0 (12-11-2023)";
         0    X-as --->
                           LEFT
 */
+// Set the default facet count 
+facetCount = 20;
 
 //-- which part(s) do you want to print?
 printBaseShell        = false;
@@ -981,7 +983,7 @@ module showPCBmarkers(posX, posY, posZ)
               r = .5,
               h = markerHeight,
               center = true,
-              $fn = 20);
+              $fn = facetCount);
 
         translate([0, pcbWidth, basePlaneThickness+(onLidGap/2)])
           color("black")
@@ -989,7 +991,7 @@ module showPCBmarkers(posX, posY, posZ)
               r = .5,
               h = markerHeight,
               center = true,
-              $fn = 20);
+              $fn = facetCount);
 
         translate([pcbLength, pcbWidth, basePlaneThickness+(onLidGap/2)])
           color("black")
@@ -997,7 +999,7 @@ module showPCBmarkers(posX, posY, posZ)
               r = .5,
               h = markerHeight,
               center = true,
-              $fn = 20);
+              $fn = facetCount);
 
         translate([pcbLength, 0, basePlaneThickness+(onLidGap/2)])
           color("black")
@@ -1005,7 +1007,7 @@ module showPCBmarkers(posX, posY, posZ)
               r = .5,
               h = markerHeight,
               center = true,
-              $fn = 20);
+              $fn = facetCount);
 
         translate([(shellLength/2)-posX, 0, pcbThickness])
           rotate([0,90,0])
@@ -1014,7 +1016,7 @@ module showPCBmarkers(posX, posY, posZ)
                 r = .5,
                 h = shellLength+(wallThickness*2)+paddingBack,
                 center = true,
-                $fn = 20);
+                $fn = facetCount);
     
         translate([(shellLength/2)-posX, pcbWidth, pcbThickness])
           rotate([0,90,0])
@@ -1023,7 +1025,7 @@ module showPCBmarkers(posX, posY, posZ)
                 r = .5,
                 h = shellLength+(wallThickness*2)+paddingBack,
                 center = true,
-                $fn = 20);
+                $fn = facetCount);
                 
       } // show_markers
   }
@@ -1267,7 +1269,7 @@ module cutoutsInXY(type, XYcutoutsArray)
           translate([posx, posy, zPos])
             color("green")
               linear_extrude(thickness*2)
-                circle(d=cutOut[2], $fn=20);
+                circle(d=cutOut[2], $fn=facetCount);
         }
       } // for ..
       
@@ -1297,7 +1299,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 {
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
                 }
               }
             }
@@ -1308,7 +1310,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude(basePlaneThickness+3)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
@@ -1318,7 +1320,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude(basePlaneThickness+3)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
@@ -1329,7 +1331,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude(basePlaneThickness+3)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (!isTrue(yappAllCorners, conn) 
@@ -1342,7 +1344,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 {
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
                 }
               }
             }
@@ -1369,7 +1371,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude((basePlaneThickness*2)+1)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
@@ -1379,7 +1381,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude((basePlaneThickness*2)+1)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
@@ -1389,7 +1391,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude((basePlaneThickness*2)+1)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
@@ -1400,7 +1402,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude((basePlaneThickness*2)+1)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
             if (!isTrue(yappAllCorners, conn) 
@@ -1412,7 +1414,7 @@ module cutoutsInXY(type, XYcutoutsArray)
                 linear_extrude((basePlaneThickness*2)+1)
                   circle(
                     d = conn[4],  //-- screwHeadDiam
-                    $fn = 20);
+                    $fn = facetCount);
               }
             }
 
@@ -1511,7 +1513,7 @@ module cutoutsInXZ(type)
         translate([posx, (roundRadius+wallThickness+2), posz])
           rotate([90,0,0])
             color("green")
-              cylinder(h=wallThickness+roundRadius+3, d=cutOut[2], $fn=20);
+              cylinder(h=wallThickness+roundRadius+3, d=cutOut[2], $fn=facetCount);
       }
       
     } //   for cutOut's ..
@@ -1584,14 +1586,14 @@ module cutoutsInXZ(type)
           translate([posx, shellWidth+2, posz])
             rotate([90,0,0])
               color("green")
-                cylinder(h=wallThickness+roundRadius+3, d=cutOut[2], $fn=20);
+                cylinder(h=wallThickness+roundRadius+3, d=cutOut[2], $fn=facetCount);
         }
         else
         {
           translate([posx, shellWidth+2, posz])
             rotate([90,0,0])
               color("green")
-                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=20);
+                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=facetCount);
         }
       }
       
@@ -1680,14 +1682,14 @@ module cutoutsInYZ(type)
           translate([shellLength-(roundRadius+wallThickness+1), posy, posz])
              rotate([0, 90, 0])
               color("green")
-                cylinder(h=wallThickness+roundRadius+2, d=cutOut[2], $fn=20);
+                cylinder(h=wallThickness+roundRadius+2, d=cutOut[2], $fn=facetCount);
         }
         else
         {
           translate([shellLength-wallThickness-0.01, posy, posz])
             rotate([0, 90, 0])
               color("green")
-                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=20);
+                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=facetCount);
         }
       }
       
@@ -1763,14 +1765,14 @@ module cutoutsInYZ(type)
           translate([-1, posy, posz])
             rotate([0,90,0])
               color("green")
-                cylinder(h=wallThickness+3, d=cutOut[2], $fn=20);
+                cylinder(h=wallThickness+3, d=cutOut[2], $fn=facetCount);
         }
         else
         {
           translate([0, posy, posz])
             rotate([0,90,0])
               color("green")
-                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=20);
+                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=facetCount);
         }
       }
       
@@ -2759,7 +2761,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
     module standoff(color)
     {
       color(color,1.0)
-        cylinder(d = standoffDiameter, h = pcbStandHeight, center = false, $fn = 20);
+        cylinder(d = standoffDiameter, h = pcbStandHeight, center = false, $fn = facetCount);
       //-- flange --
       if (plane == "base")
       {
@@ -2788,7 +2790,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
           d = standoffPinDiameter,
           h = pcbThickness+pcbStandHeight+standoffPinDiameter,
           center = false,
-          $fn = 20);
+          $fn = facetCount);
     } // standPin()
     
     module standHole(color)
@@ -2798,12 +2800,12 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
         translate([0,0,-0.01])
         union() {
         translate([0,0,pcbStandHeight-pcbThickness]) 
-          sphere(d = standoffPinDiameter+.2+standoffHoleSlack, $fn = 20);
+          sphere(d = standoffPinDiameter+.2+standoffHoleSlack, $fn = facetCount);
         cylinder(
           d = standoffPinDiameter+.2+standoffHoleSlack,
           h = pcbStandHeight-pcbThickness,
           center = false,
-          $fn = 20);
+          $fn = facetCount);
         }
       }
       else
@@ -2814,7 +2816,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
           d = standoffPinDiameter+.2+standoffHoleSlack,
           h = (pcbThickness*2)+pcbStandHeight+0.02,
           center = false,
-          $fn = 20);
+          $fn = facetCount);
       }
     } // standhole()
     
@@ -2869,7 +2871,7 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
           linear_extrude(hb)
             circle(
                 d = d4, //-- outside Diam
-                $fn = 20);
+                $fn = facetCount);
           //-- flange --
           if (isTrue(yappAddFillet, conn))
           {
@@ -2914,7 +2916,7 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
           linear_extrude(ht)
               circle(
                 d = d4,
-                $fn = 20);
+                $fn = facetCount);
           //-- flange --
           if (isTrue(yappAddFillet, conn))
           {
@@ -2929,7 +2931,7 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
         linear_extrude(ht)
           circle(
                 d = d3, 
-                $fn = 20);
+                $fn = facetCount);
 
       } //  difference
     } // translate
@@ -3080,7 +3082,7 @@ module baseHookOutside()
 } // baseHookOutside(dummy)
 
 //===========================================================
-module pinFillet (pinRadius, filletRadius, facets=20) {
+module pinFillet (pinRadius, filletRadius, facets=facetCount) {
 
   fr = filletRadius;
   voffset = (pinRadius < 0) ? -fr : fr;
@@ -3117,7 +3119,7 @@ module boxFillet (boxSize, filletRadius=0) {
         rotate([0,0,dr])
         translate([bs+fr,0, voffset]) 
         rotate([90,0,0]) cylinder(h=bs*5,
-        r=fr, center=true,$fn=36);
+        r=fr, center=true,$fn=facetCount);
     }
     translate([0,0, fr]) cube(size=[(bs*2)-.04,(bs*2)-.04,fr*3], center=true);
   }
@@ -3172,9 +3174,7 @@ module YAPPgenerate()
   echo("YAPP:   copyright by Willem Aandewiel");
   echo("YAPP==========================================");
   
-  $fn=25;
-      
-            
+  $fn=facetCount;
       if (showShellZero)
       {
         markerHeight = shellHeight+onLidGap+10;
@@ -3185,7 +3185,7 @@ module YAPPgenerate()
                     r = .5,
                     h = markerHeight,
                     center = true,
-                    $fn = 20);
+                    $fn = facetCount);
       } //  showShellZero
       
       
@@ -3511,7 +3511,7 @@ module printSwitchPlate(poleDiam, capLength, buttonPlateThickness, yPos)
 //-- post processing switchExtenders ..
 if (!printBaseShell && !printLidShell && printSwitchExtenders)
 {
-  $fn=20;
+  $fn=facetCount;
   yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
   rotate([0,180,180])
   {
@@ -3566,7 +3566,7 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
 //-- place switchExtendes in button ---
 if (!showSideBySide && printLidShell && printSwitchExtenders && (len(pushButtons) > 0) )
 {
-  $fn=20;
+  $fn=facetCount;
   yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
 
   //rotate([0,180,180])

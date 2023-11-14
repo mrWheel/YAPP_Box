@@ -23,7 +23,7 @@ insertDiam  = 3.8 + 0.5;
 screwDiam   = 2.5 + 0.5;
   
 
-include <../YAPP_Box/library/YAPPgenerator_v20.scad>
+include <../YAPP_Box/library/YAPPgenerator_v21.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -98,6 +98,8 @@ onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
+colorBase           = "gray";
+colorLid            = "silver";
 showOrientation     = true;
 showPCB             = true;
 showSwitches        = false;

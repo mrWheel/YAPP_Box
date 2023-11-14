@@ -3349,22 +3349,25 @@ module printSwitch()
   // (6) = switchTrafel
   // (7) = poleDiameter
   // (8) = buttonType  {yappCircle|yappRectangle}
-  for(i=[0:len(pushButtons)-1])  
+  if (len(pushButtons) > 0)
   {
-    b=pushButtons[i];
-    //-debug-echo("printSwitch(",i,"): swHeight=", b[5], "swTrafel=", b[6], buttonPlateThickness=buttonPlateThickness);
-    posX=(b[0]+2.5);
-    posY=(b[1]+2.5);
-    posZ=standoffHeight+pcbThickness+basePlaneThickness+(b[5]/2);
-    //-- tacktile Switch base
-    translate([posX, posY, posZ])
-      color("black") cube([5, 5, b[5]], center=true);
-    //-- switchTrafel
-    translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)]) 
-      color("white") cylinder(h=b[6], d=4, center=true);
-    //-- buttonPlateThickness
-    translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)+((buttonPlateThickness+0.5)/2)]) 
-      color("orange", alpha=0.5) cylinder(h=buttonPlateThickness, d=5, center=true);
+    for(i=[0:len(pushButtons)-1])  
+    {
+      b=pushButtons[i];
+      //-debug-echo("printSwitch(",i,"): swHeight=", b[5], "swTrafel=", b[6], buttonPlateThickness=buttonPlateThickness);
+      posX=(b[0]+2.5);
+      posY=(b[1]+2.5);
+      posZ=standoffHeight+pcbThickness+basePlaneThickness+(b[5]/2);
+      //-- tacktile Switch base
+      translate([posX, posY, posZ])
+        color("black") cube([5, 5, b[5]], center=true);
+      //-- switchTrafel
+      translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)]) 
+        color("white") cylinder(h=b[6], d=4, center=true);
+      //-- buttonPlateThickness
+      translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)+((buttonPlateThickness+0.5)/2)]) 
+        color("orange", alpha=0.5) cylinder(h=buttonPlateThickness, d=5, center=true);
+    }
   }
 }
 

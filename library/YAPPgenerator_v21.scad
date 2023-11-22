@@ -3,7 +3,18 @@
 **  Yet Another Parameterised Projectbox generator
 **
 */
-Version="v2.1.0 (12-11-2023)";
+
+/*
+DMR todo
+  1. Change fillet to default allow to supress - Done
+  2. Change Centered to default and allow to override
+  3. Add default Coordinate systems to each object type (and document them)
+  
+  
+*/
+
+
+Version="v2.1.0 (20-11-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
@@ -26,6 +37,10 @@ Version="v2.1.0 (12-11-2023)";
 ***************************************************************************      
 */
 
+// If set to true will generate the sample box at every save
+debug = false;
+printMessages = debug;
+
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -36,15 +51,15 @@ Version="v2.1.0 (12-11-2023)";
 /*
       padding-back|<------pcb length --->|<padding-front
                             RIGHT
-        0    X-as ---> 
+        0    X-axis ---> 
         +----------------------------------------+   ---
         |                                        |    ^
         |                                        |   padding-right 
-        |                                        |    v
-        |    -5,y +----------------------+       |   ---              
- B    Y |         | 0,y              x,y |       |     ^              F
- A    - |         |                      |       |     |              R
- C    a |         |                      |       |     | pcb width    O
+      Y |                                        |    v
+      | |    -5,y +----------------------+       |   ---              
+ B    a |         | 0,y              x,y |       |     ^              F
+ A    x |         |                      |       |     |              R
+ C    i |         |                      |       |     | pcb width    O
  K    s |         |                      |       |     |              N
         |         | 0,0              x,0 |       |     v              T
       ^ |    -5,0 +----------------------+       |   ---
@@ -53,38 +68,40 @@ Version="v2.1.0 (12-11-2023)";
         0    X-as --->
                           LEFT
 */
-// Set the default facet count 
-facetCount = 20;
+
+// Set the default preview and render quality from 1-32  
+previewQuality = 5;   // Default = 5
+renderQuality = 10;   // Default = 12
 
 //-- which part(s) do you want to print?
-printBaseShell        = false;
-printLidShell         = false;
-printSwitchExtenders  = false;
+printBaseShell        = true;
+printLidShell         = true;
+printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-//-- pcb dimensions -- very important!!!
-pcbLength           = 30;
-pcbWidth            = 40;
+pcbLength           = 150; // Front to back
+pcbWidth            = 100; // Side to side
 pcbThickness        = 1.6;
                             
-//-xxxx-
 //-- padding between pcb and inside wall
-paddingFront        = 2;
+paddingFront        = 41;
 paddingBack         = 1;
 paddingRight        = 1;
 paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 1.5;
-lidPlaneThickness   = 1.0;
+basePlaneThickness  = 1.25;
+lidPlaneThickness   = 1.25;
 
-//-- Total height of box = basePlaneThickness + lidPlaneThickness 
-//--                     + baseWallHeight + lidWallHeight
+//-- Total height of box = lidPlaneThickness 
+//                       + lidWallHeight 
+//--                     + baseWallHeight 
+//                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 10;
-lidWallHeight       =  8;
+baseWallHeight      = 25;
+lidWallHeight       = 23;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -94,296 +111,453 @@ roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 3.0;  //-- used only for pushButton and showPCB
-standoffPinDiameter = 2.3;
-standoffHoleSlack   = 0.5;
+standoffHeight      = 10.0;  //-- used only for pushButton and showPCB
+standoffPinDiameter = 2.4;
+standoffHoleSlack   = 0.4;
 standoffDiameter    = 7;
 
 //-- D E B U G -----------------//-> Default ---------
 showSideBySide      = true;     //-> true
-onLidGap            = 0;
+onLidGap            = 10;
 shiftLid            = 5;
-colorLid            = "gold";   
-colorBase           = "silver";
+colorLid            = "YellowGreen";   
+colorBase           = "BurlyWood";
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
-showPCB             = true;
-showSwitches        = true;
+showPCB             = false;
+showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectLightTubes   = 0;        //-> { -1 | 0 | 1 }
-inspectButtons      = 0;        //-> { -1 | 0 | 1 } 
+inspectXfromBack    = true;    // View from the inspection cut foreward
+inspectYfromLeft    = true;     // View from the inspection cut to the right
+//inspectLightTubes   = 0;      //-> { -1 | 0 | 1 }
+//inspectButtons      = 0;      //-> { -1 | 0 | 1 } 
 
 //-- D E B U G ---------------------------------------
 
-/*
-********* don't change anything below this line ***************
-*/
+
+
+
+// Set the glogal for the quality
+facetCount = $preview ? previewQuality*4 : renderQuality*4;
 
 //-- better leave these ----------
 buttonWall          = 2.0;
 buttonCupDepth      = 3.0;
 buttonPlateThickness= 2.5;
-buttonSlack         = 0.5;
+buttonSlack         = 0.25;
 
 //-- constants, do not change (shifted to large negative values so another element in the array won't match
-yappRectangle   = -32001;
-yappCircle      = -32002;
-yappBoth        = -32003;
-yappLidOnly     = -32004;
-yappBaseOnly    = -32005;
-yappHole        = -32006;
-yappPin         = -32007;
-yappLeft        = -32008;
-yappRight       = -32009;
-yappFront       = -32010;
-yappBack        = -32011;
-yappCenter      = -32012;
-yappSymmetric   = -32013;
-yappAllCorners  = -32014;
-yappFrontLeft   = -32015;
-yappFrontRight  = -32016;
-yappBackLeft    = -32017;
-yappBackRight   = -32018;
-yappConnWithPCB = -32019;
-yappThroughLid  = -32020;
-yappAddFillet   = -32021;
-yappMinCutout   = -32022;
+// Shapes
+yappRectangle   = -30000;
+yappCircle      = -30001;
+yappPolygon     = -30002;
+yappRoundedRect = -30003;
+
+
+//Shell options
+yappBoth        = -30100;
+yappLidOnly     = -30101;
+yappBaseOnly    = -30102;
+
+//PCB standoff typrs
+yappHole        = -30200;
+yappPin         = -30201;
+
+// Faces
+yappLeft        = -30300;
+yappRight       = -30301;
+yappFront       = -30302;
+yappBack        = -30303;
+yappTop         = -30304;
+yappBottom      = -30305;
+
+// Placement Options
+yappCenter      = -30400;  // Cutouts, baseMounts, lightTubes, Buttons,pcbStands, Connectors]
+yappOrigin      = -30401;  // Cutouts, baseMounts, lightTubes, Buttons,pcbStands, Connectors]
+
+yappSymmetric   = -30402;  // Cutouts, snapJoins 
+yappAllCorners  = -30403;  // pcbStands, Connectors, 
+yappFrontLeft   = -30404;  // pcbStands, Connectors, 
+yappFrontRight  = -30405;  // pcbStands, Connectors, 
+yappBackLeft    = -30406;  // pcbStands, Connectors, 
+yappBackRight   = -30407;  // pcbStands, Connectors, 
+
+
+// Lightube options
+yappThroughLid  = -30500;
+
+// Misc Options
+yappNoFillet   = -30600; // PCB Supports, Connectors, Light Tubes, Buttons
+yappUseMask    = -30601; // Apply a mask to a cutout
+
+// Coordinate options
+yappPCBCoord    = -30700;
+yappBoxCoord  = -30701;
+
+//yappConnWithPCB - Depreciated use yappPCBCoord 
+
+// Grid options
+yappPatternSquareGrid  = -30800;
+yappPatternHexGrid     = -30801;
+
 
 //-------------------------------------------------------------------
+// Misc internal values
 
 shellInsideWidth  = pcbWidth+paddingLeft+paddingRight;
 shellWidth        = shellInsideWidth+(wallThickness*2)+0;
 shellInsideLength = pcbLength+paddingFront+paddingBack;
 shellLength       = pcbLength+(wallThickness*2)+paddingFront+paddingBack;
-shellpcbTop2Lid = baseWallHeight+lidWallHeight;
+shellpcbTop2Lid   = baseWallHeight+lidWallHeight;
 shellHeight       = basePlaneThickness+shellpcbTop2Lid+lidPlaneThickness;
 pcbX              = wallThickness+paddingBack;
 pcbY              = wallThickness+paddingLeft;
 pcbYlid           = wallThickness+pcbWidth+paddingRight;
 pcbZ              = basePlaneThickness+standoffHeight+pcbThickness;
-pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)
-                        -(standoffHeight+pcbThickness);
+pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)-(standoffHeight+pcbThickness);
+
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// Start of Debugging config (used if not overridden in template)
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+
+// ==================================================================
+// Shapes
+// ------------------------------------------------------------------
+
+// Shapes should be defined to fit into a 2x2 box (+/-1 in X and Y) - they will be scaled as needed.
+// defined as a vector of [x,y] vertices pairs.(min 3 vertices)
+// for example a triangle could be [[-1,-1],[0,1],[1,-1]] 
+
+// Pre-defined shapes
+shapeIsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
+shapeHexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
+shape6ptStar = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
 
 
-//-- pcb_standoffs  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = standoffHeight
-// (3) = filletRadius (0 = auto size)
-// (n) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (n) = { yappHole, YappPin }
-// (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-// (n) = { yappAddFillet }
+/*==================================================================
+ *** Masks ***
+ ------------------------------------------------------------------
+Parameters:
+  maskName = [
+   (0) = Grid pattern :{ yappPatternSquareGrid | yappPatternHexGrid }  
+   (1) = width
+   (2) = height
+   (3) = thickness
+   (4) = horizontal Repeat
+   (5) = vertical Repeat
+   (6) = grid rotation
+   (7) = openingShape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect}
+   (8) = openingWidth, 
+   (9) = openingLength, 
+   (10) = openingRadius
+   (11) = openingRotation
+   (12) = shape polygon : Requires if openingShape = yappPolygon];
+  ];
+*/
+maskHoneycomb = [
+yappPatternHexGrid,    //pattern
+  100,                  // width - must be over the opening size : adding extra will shift the mask within the opening
+  104,                  // height
+  2.1,                    // thickness - to do a full cutout make it > wall thickness
+  5,                    // hRepeat
+  5,                    // vRepeat
+  30,                    // rotation
+  yappPolygon,          // openingShape
+  4,                    // openingWidth, 
+  4,                    // openingLength, 
+  0,                    // openingRadius
+  30,                   //openingRotation
+  shapeHexagon];
+
+
+maskHexCircles = [
+yappPatternHexGrid,    //pattern
+  100,                  // width
+  100,                  // height
+  3,                    // thickness - to do a full cutout make it > wall thickness
+  5,                    // hRepeat
+  5,                    // vRepeat
+  0,                    // rotation
+  yappCircle,          // openingShape
+  0,                    // openingWidth, 
+  0,                    // openingLength, 
+  2,                    // openingRadius
+  0,                   //openingRotation
+  []];
+
+maskBars = [
+  yappPatternSquareGrid, //yappPatternSquareGrid,//pattern
+  100,                  // width
+  100,                  // height
+  3,                    // thickness - to do a full cutout make it > wall thickness
+  4,                    // hRepeat
+  100,                    // vRepeat
+  0,                    // rotation
+  yappRectangle,          // openingShape
+  2,                    // openingWidth, 
+  100,                    // openingLength, 
+  2.5,                    // openingRadius
+  0,                   //openingRotation
+  []
+];
+
+
+// Show sample of a Mask.in the negative X,Y quadrant
+//SampleMask(maskHoneycomb);
+
+/*===================================================================
+ *** PCB Supports ***
+ Pin and Socket standoffs 
+ ------------------------------------------------------------------
+Default origin =  yappPCBCoord : pcb[0,0,0]
+
+Parameters:
+  (0) = posx
+  (1) = posy
+  (2) = standoffHeight
+  (3) = filletRadius (0 = auto size)
+  (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
+  (n) = { yappHole, <yappPin> } // Baseplate support treatment
+  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  (n) = { yappBoxCoord, <yappPCBCoord> }  
+  (n) = { yappNoFillet }
+*/
 pcbStands = [
-                  [5, 5, 3, 2, yappBoth, yappFrontLeft, yappAddFillet]
-                , [5, 5, 3, 2, yappBoth, yappBackRight, yappAddFillet]
-                , [5, 5, 3, 0, yappBaseOnly, yappFrontRight, yappAddFillet]
-                , [5, 5, 3, 0, yappBaseOnly, yappBackLeft, yappAddFillet]
-            ];
+  [5, 5, standoffHeight, 0, yappHole]
+];
 
-//-- base plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-// (n) = { yappMinCutout }
-cutoutsBase =   [
-             //       [30, 0, 10, 24, yappRectangle]
-             //     , [pcbLength/2, pcbWidth/2, 12, 4, yappCircle]
-             //     , [pcbLength-8, 25, 10, 14, yappRectangle, yappCenter]
-                ];
 
-//-- Lid plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (5) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-// (n) = { yappMinCutout }
-cutoutsLid  =   [
-                [92,   45, 13, 15, 0, yappRectangle]              // microUSB
-             //     [20, 0, 10, 24, 0, yappRectangle]
-             //   , [pcbWidth-6, 40, 12, 4, 20, yappCircle]
-             //   , [30, 25, 10, 14, 45, yappRectangle, yappCenter]
-                ];
+/*===================================================================
+ *** Connectors ***
+ Standoffs with hole through base and socket in lid for screw type connections.
+ ------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+  
+Parameters:
+  (0) = posx
+  (1) = posy
+  (2) = pcbStandHeight
+  (3) = screwDiameter
+  (4) = screwHeadDiameter (don't forget to add extra for the fillet)
+  (5) = insertDiameter
+  (6) = outsideDiameter
+  (7) = filletRadius (0 = auto size)
+  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  (n) = { <yappBoxCoord>, yappPCBCoord }
+  (n) = { yappNoFillet }
+  
+*/
+connectors   =
+  [
+    [9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, 0, yappFrontRight]
+   ,[9, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontRight]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
+  ];
 
-//-- cutoutsGrill    -- origin is pcb[0,0,0]
-// (0) = xPos
-// (1) = yPos
-// (2) = grillWidth
-// (3) = grillLength
-// (4) = gWidth
-// (5) = gSpace
-// (6) = gAngle
-// (7) = plane { "base" | "lid" } //***POSSpecificConst***
-// (8) = {polygon points}}
-//
-//starShape =>>> [  [0,15],[20,15],[30,0],[40,15],[60,15]
-//                 ,[50,30],[60,45], [40,45],[30,60]
-//                 ,[20,45], [0,45],[10,30]
-//               ]
-cutoutsGrill =[
-              ];
+/*===================================================================
+*** Base Mounts ***
+  Mounting tabs on the outside of the box
+ ------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
 
-//-- front plane  -- origin is pcb[0,0,0]
-// (0) = posy
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (5) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-// (n) = { yappMinCutout }
-cutoutsFront =  [
-                  [2,(baseWallHeight-5.5)*-1,pcbWidth-4, lidWallHeight+baseWallHeight, 0, yappRectangle]
-                ];
+Parameters:
+  (0) = pos
+  (1) = screwDiameter
+  (2) = width
+  (3) = height
+  (4) = filletRadius
+  (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+  (n) = { yappNoFillet }
+*/
+baseMounts =
+[
+  [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
+];
 
-//-- back plane  -- origin is pcb[0,0,0]
-// (0) = posy
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-// (n) = { yappMinCutout }
-cutoutsBack =   [
-                  [2,(baseWallHeight-5.5)*-1,pcbWidth-4, lidWallHeight+baseWallHeight, 0, yappRectangle]
-                ];
 
-//-- left plane   -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-// (n) = { yappMinCutout }
-cutoutsLeft =   [
-              //    , [0, 0, 15, 20, 0, yappRectangle]
-              //    , [30, 5, 25, 10, 0, yappRectangle, yappCenter]
-              //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
-                ];
+/*===================================================================
+*** Cutouts ***
+  There are 6 cutouts one for each surface:
+    cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
 
-//-- right plane   -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-// (n) = { yappMinCutout }
-cutoutsRight =  [
-              //      [0, 0, 15, 7, 0, yappRectangle]
-              //    , [30, 10, 25, 15, 0, yappRectangle, yappCenter]
-              //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
-                ];
+Parameters:
+ (0) = from Back
+ (1) = from Left
+ (2) = width
+ (3) = length
+ (4) = radius
+ (5) = depth 0=Auto (plane thickness)
+ (6) = angle
+ (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect
+ (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
+ (9) = Mask : [] if not used.  - Required if yappUseMask specified -
+ (n) = { <yappBoxCoord> | yappPCBCoord }
+ (n) = { <yappOrigin>, yappCenter }
+ (n) = { yappUseMask }
+*/
 
-//-- connectors 
-//-- normal         : origen = box[0,0,0]
-//-- yappConnWithPCB: origen = pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = pcbStandHeight
-// (3) = screwDiameter
-// (4) = screwHeadDiameter
-// (5) = insertDiameter
-// (6) = outsideDiameter
-// (7) = filletRadius (0 = auto size)
-// (n) = { yappConnWithPCB }
-// (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-// (n) = { yappAddFillet }
-connectors   =  [ // x  y  H             screwHead              Out  fR
-                //  [5, 5, 4, 3, 5, 4.3 0, yappConnWithPCB, yappFrontRight]
-                //, [5, 5, 4, 3, 5, 4.3 3.5, yappConnWithPCB, yappBackLeft]
-                ];
+cutoutsBase = 
+[
+  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
+];
 
-//-- base mounts -- origen = box[x0,y0]
-// (0) = posx | posy
-// (1) = screwDiameter
-// (2) = width
-// (3) = height
-// (4) = filletRadius
-// (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappCenter }
-// (n) = { yappAddFillet }
+cutoutsLid  = 
+[
 
-baseMounts   =  [
-              //      [-5, 3.3, 10, 3, yappLeft, yappRight, yappCenter]
-              //    , [40, 3, 8, 3, yappBack, yappFront]
-              //    , [4, 3, 34, 3, yappFront]
-              //    , [25, 3, 3, 3, yappBack]
-                ];
+//Center test
+  [shellLength/2,shellWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter]
+ ,[pcbLength/2,pcbWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter, yappPCBCoord]
+//Edge tests
+ ,[shellLength/2,0,             2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+ ,[shellLength/2,shellWidth,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+ ,[0,            shellWidth/2,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+ ,[shellLength,  shellWidth/2,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+/**/
+];
 
-//-- snap Joins -- origen = box[x0,y0]
-// (0) = posx | posy
-// (1) = width
-// (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappSymmetric }
+cutoutsFront =  
+[
+
+];
+
+
+cutoutsBack = 
+[
+  [shellWidth/2,shellHeight/2 ,12,8, 2 ,0 ,0, yappRoundedRect, [], [], yappCenter]
+
+];
+
+cutoutsLeft =   
+[
+  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
+];
+
+cutoutsRight =  
+[
+
+];
+
+
+/*===================================================================
+*** Snap Joins ***
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+ (0) = posx | posy
+ (1) = width
+ (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+ (n) = { <yappOrigin> | yappCenter }
+ (n) = { yappSymmetric }
+*/
+
 snapJoins   =   [
-                  [(pcbLength/2)+1.5, 3, yappLeft, yappRight]
+                  [(shellWidth/2),     10, yappFront, yappCenter]
+                , [25,  10, yappBack, yappSymmetric, yappCenter]
+                , [(shellLength/2),    10, yappLeft, yappRight, yappCenter]
                 ];
 
-//-- lightTubes  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = tubeLength
-// (3) = tubeWidth
-// (4) = tubeWall
-// (5) = abovePcb
-// (6) = filletRadius
-// (n) = throughLid  {yappThroughLid}
-// (n) = tubeType    {yappCircle|yappRectangle}
-// (n) = { yappAddFillet }
-lightTubes = [
-              //--- 0,  1, 2, 3, 4, 5,   6
-             //   [84.5, 21, 3, 6, 1, 2, 0, yappRectangle, yappThroughLid]
-             // , [10, 10, 2, 5, 2, 2, 0, yappRectangle, yappThroughLid]
-             // , [10, 30, 5, 0, 2, 4, 0, yappThroughLid, yappCircle]
-              ];     
+/*===================================================================
+*** Light Tubes ***
+------------------------------------------------------------------
+Default origin = yappPCBCoord: PCB[0,0,0]
 
-//-- pushButtons  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = capLength
-// (3) = capWidth
-// (4) = capAboveLid
-// (5) = switchHeight
-// (6) = switchTrafel
-// (7) = poleDiameter
-// (n) = buttonType  {yappCircle|yappRectangle}
-pushButtons = [
-              //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-              //   [15, 30, 8, 8, 0, 2.3, 1, 3.5, yappCircle]
-              // , [15, 10, 8, 6, 3, 5,   1, 3.5, yappRectangle]
-              ];     
+Parameters:
+ (0) = posx
+ (1) = posy
+ (2) = tubeLength
+ (3) = tubeWidth
+ (4) = tubeWall
+ (5) = gapAbovePcb
+ (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
+ (7) = tubeType    {yappCircle|yappRectangle}
+ (8) = filletRadius
+ (n) = { yappBoxCoord, <yappPCBCoord> }
+ (n) = { yappNoFillet }
+*/
+
+lightTubes =
+[
+  [pcbLength/2,pcbWidth/2,  // Pos
+    5, 5,                   // W,L
+    1,                      // wall thickness
+    standoffHeight + pcbThickness + 4,    // Gap above base bottom
+    .5,                      // lensThickness (from 0 (open) to lidPlaneThickness)
+    yappRectangle,          // tubeType (Shape)
+    0,                      // filletRadius
+    yappPCBCoord            //
+  ]
+  ,[pcbLength/2,pcbWidth/2, // Pos
+    5, 5,                 // W,L
+    1,                      // wall thickness
+    12,                      // Gap above PCB
+    1,                    // lensThickness
+    yappRectangle,          // tubeType (Shape)
+    0,                      // filletRadius
+    yappCenter            //
+  ]
+];
+
+/*===================================================================
+*** Push Buttons ***
+------------------------------------------------------------------
+Default origin = yappPCBCoord: PCB[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy
+ (2) = capLength
+ (3) = capWidth
+ (4) = capAboveLid
+ (5) = switchHeight
+ (6) = switchTrafel
+ (7) = poleDiameter
+ (6) = filletRadius
+ (n) = buttonType  {yappCircle|yappRectangle}
+*/
+pushButtons = 
+[
+   [15, 60, 8, 6, 2, 3.5, 1, 3.5, 0, yappCircle, yappNoFillet]
+  ,[15, 40, 8, 6, 2, 3.5, 1, 3.5, 0, yappRectangle, yappNoFillet]
+];
              
-//-- origin of labels is box [0,0,0]
-// (0) = posx
-// (1) = posy/z
-// (2) = orientation
-// (3) = depth
-// (4) = plane {lid | base | left | right | front | back }
-// (5) = font
-// (6) = size
-// (7) = "label text"
-labelsPlane =   [
-                  //  [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
-                ];
+/*===================================================================
+*** Labels ***
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy/z
+ (2) = orientation
+ (3) = depth
+ (4) = plane {lid | base | left | right | front | back }
+ (5) = font
+ (6) = size
+ (7) = "label text"
+ */
+labelsPlane =
+[
+    [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+];
 
 
+
+
+
+//===========================================================
+// General functions
+//===========================================================
 //===========================================================
 function getMinRad(p1, wall) = ((p1<(wall+0.001)) ? 1 : (p1 - wall));
 
@@ -458,44 +632,55 @@ module printBaseMounts()
   
       module oneMount(bm, scrwX1pos, scrwX2pos)
       {
-        // [0]=pos, [1]=scrwDiameter, [2]=len
-        outRadius = bm[1];  // rad := diameter (r=6 := d=6)
-        bmX1pos   = scrwX1pos-bm[1];
-        bmX2pos   = scrwX2pos-outRadius;
-        bmYpos    = (bm[1]*-2);
-        bmLen     = (bm[1]*4)+bmYpos;
+        mountPos = bm[0];                // = posx | posy
+        mountOpeningDiameter = bm[1];    // = screwDiameter
+        mountWidth = bm[2];              // = width
+        mountHeight = bm[3];             // = Height
+        
+        outRadius = mountOpeningDiameter;  // rad := diameter (r=6 := d=6)
+        bmX1pos   = scrwX1pos-mountOpeningDiameter - mountPos;
+        bmX2pos   = scrwX2pos-outRadius - mountPos;
+        bmYpos    = (mountOpeningDiameter*-2);
+        bmLen     = (mountOpeningDiameter*4)+bmYpos;
 
-        difference()
+        translate([mountOpeningDiameter - ((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2))/2, 0, 0])
         {
+          difference()
           {
-              color("red")
-          //--roundedRect  x1, x2, y , l, h
-              roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,bm[3]], outRadius);
-          }
-          
-          translate([0, (bm[1]*-1), -1])
-          {
-            hull() 
             {
-              linear_extrude(bm[3]+2)
+                color("red")
+                roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,mountHeight], outRadius);
+            }
+            
+            translate([0, (mountOpeningDiameter*-1), -1])
+            {
+              color("blue")
+              hull() 
               {
-                //===translate([scrwX1pos, (bm[1]*-1.3), 4]) 
-                translate([scrwX1pos,0, 4]) 
-                  color("blue")
-                  {
-                    circle(bm[1]/2);
-                  }
-                //===translate([scrwX2pos, (bm[1]*-1.3), -4]) 
-                //==translate([scrwX2pos, sW+scrwYpos*-1, -4]) 
-                translate([scrwX2pos, 0, -4]) 
-                  color("blue")
-                    circle(bm[1]/2);
-              } //  extrude
-            } // hull
-          } //  translate
-        
-        } // difference..
-        
+                linear_extrude(mountHeight*2)
+                {
+                  translate([scrwX1pos - mountPos,0, 0]) 
+                    color("blue")
+                    {
+                      circle(mountOpeningDiameter/2);
+                    }
+                  translate([scrwX2pos - mountPos, 0, 0]) 
+                    color("blue")
+                      circle(mountOpeningDiameter/2);
+                } //  extrude
+              } // hull
+            } //  translate
+          
+          } // difference..
+          
+          // add fillet
+          if (!isTrue(yappNoFillet, bm))
+          {
+            color ("Red")
+            translate([scrwX1pos -mountOpeningDiameter - mountPos,0,0])  // x, Y, Z
+            linearFillet((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), mountHeight/4, 180);
+          }
+        }
       } //  oneMount()
       
     //--------------------------------------------------------------------
@@ -517,7 +702,7 @@ module printBaseMounts()
     {
       if (showPCBmarkers)
       {
-        color("red") translate([0,0,((shellHeight+onLidGap)/2)]) %cylinder(r=1,h=shellHeight+onLidGap+20, center=true);
+        color("Red") translate([0,0,((shellHeight+onLidGap)/2)]) %cylinder(r=1,h=shellHeight+onLidGap+20, center=true);
       }
       
       for (bm = baseMounts)
@@ -531,20 +716,15 @@ module printBaseMounts()
         // (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappLeft, bm))
         {
-          newWidth  = maxWidth(bm[2], bm[1], shellLength);
-          tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
-          tmpMinPos = minPos(tmpPos, bm[1]);
-          scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
-          scrwX2pos = scrwX1pos + newWidth;
-          oneMount(bm, scrwX1pos, scrwX2pos);
-          // add fillet
-          translate([scrwX1pos -bm[1],-(bm[3]/4), +bm[3]*5/4])  // x, Y, Z
-          rotate ([0,90,0])
-          color ("violet")
-          difference()
+          translate([bm[0],0, bm[3]])
+          rotate([0,180,0])
           {
-            cube([bm[3]/4,bm[3]/4,(scrwX2pos-scrwX1pos)+(bm[1]*2)]);
-            translate([0,0,-1]) cylinder(h=newWidth+bm[2]+20, r=bm[3]/4, center=false);
+            newWidth  = maxWidth(bm[2], bm[1], shellLength);
+            tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
+            tmpMinPos = minPos(tmpPos, bm[1]);
+            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
+            scrwX2pos = scrwX1pos + newWidth;
+            oneMount(bm, scrwX1pos, scrwX2pos);
           }
         } //  if yappLeft
         
@@ -559,7 +739,8 @@ module printBaseMounts()
           {
             mirror([1,0,0])
             {
-              translate([0,shellWidth*-1, 0])
+              translate([shellLength - bm[0],(shellWidth*-1), bm[3]])
+              rotate([0,180,0])
               {
                 newWidth  = maxWidth(bm[2], bm[1], shellLength);
                 tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
@@ -567,18 +748,6 @@ module printBaseMounts()
                 scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
                 scrwX2pos = scrwX1pos + newWidth;
                 oneMount(bm, scrwX1pos, scrwX2pos);
-                if (isTrue(yappAddFillet, bm))
-                {
-                  // add fillet
-                  translate([scrwX1pos -bm[1],-(bm[3]/4), +bm[3]*5/4])  // x, Y, Z
-                  rotate ([0,90,0])
-                  color ("violet")
-                  difference()
-                  {
-                    cube([bm[3]/4,bm[3]/4,(scrwX2pos-scrwX1pos)+(bm[1]*2)]);
-                    translate([0,0,-1]) cylinder(h=newWidth+bm[2]+20, r=bm[3]/4, center=false);
-                  }
-                }
               }
             } // mirror()
           } // rotate
@@ -592,40 +761,18 @@ module printBaseMounts()
         // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappFront, bm))
         {
-          rotate([0,180,0])
-          {
-            rotate([0,0,90])
-            {
-              rotate([0,0,180])
-              {
-                mirror([1,0,0])
-                {
-                  translate([0,shellLength*-1, (bm[3]*-1)])
-                  {
-                    newWidth  = maxWidth(bm[2], bm[1], shellWidth);
-                    tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
-                    tmpMinPos = minPos(tmpPos, bm[1]);
-                    scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
-                    scrwX2pos = scrwX1pos + newWidth;
-                    oneMount(bm, scrwX1pos, scrwX2pos);
-                    if (isTrue(yappAddFillet, bm))
-                    {
-                      // add fillet
-                      translate([scrwX1pos+(newWidth+bm[1]) ,-(bm[3]/4), -bm[3]/4])  // x, Y, Z
-                      rotate ([0,-90,0])
-                      color ("violet")
-                      difference()
-                      {
-                        cube([bm[3]/4,bm[3]/4,(scrwX2pos-scrwX1pos)+(bm[1]*2)]);
-                        translate([0,0,-1]) cylinder(h=newWidth+bm[2]+20, r=bm[3]/4, center=false);
-                      }
-                    }
-                  }
-                } // mirror
-              } //  rotate Z-ax
-            } // rotate Z-??
-          } //  rotate-Y
+          //echo("baseMountOffset",bm[0]);
           
+          translate([shellLength,bm[0], -(bm[3]*-1)])
+          rotate([0,180,90])
+          {
+            newWidth  = maxWidth(bm[2], bm[1], shellWidth);
+            tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
+            tmpMinPos = minPos(tmpPos, bm[1]);
+            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
+            scrwX2pos = scrwX1pos + newWidth;
+            oneMount(bm, scrwX1pos, scrwX2pos);
+          }
         } //  if yappFront
         
         // (0) = posx | posy
@@ -636,34 +783,16 @@ module printBaseMounts()
         if (isTrue(yappBack, bm))
         {
           //echo("printBaseMount: BACK!!");
-          rotate([0,180,0])
+          translate([0,bm[0], -(bm[3]*-1)])
+          rotate([0,180,-90])
           {
-            rotate([0,0,90])
-            {
-              translate([0,0,(bm[3]*-1)])
-              {
-                newWidth  = maxWidth(bm[2], bm[1], shellWidth);
-                tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
-                tmpMinPos = minPos(tmpPos, bm[1]);
-                scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
-                scrwX2pos = scrwX1pos + newWidth;
-                oneMount(bm, scrwX1pos, scrwX2pos);
-                if (isTrue(yappAddFillet, bm))
-                {
-                  // add fillet
-                  translate([scrwX1pos+(newWidth+bm[1]) ,-(bm[3]/4), -bm[3]/4])  // x, Y, Z
-                  rotate ([0,-90,0])
-                  color ("violet")
-                  difference()
-                  {
-                    cube([bm[3]/4,bm[3]/4,(scrwX2pos-scrwX1pos)+(bm[1]*2)]);
-                    translate([0,0,-1]) cylinder(h=newWidth+bm[2]+20, r=bm[3]/4, center=false);
-                  }
-                }
-              }
-            } // rotate Z-ax
-          } //  rotate Y-ax
-  
+            newWidth  = maxWidth(bm[2], bm[1], shellWidth);
+            tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
+            tmpMinPos = minPos(tmpPos, bm[1]);
+            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
+            scrwX2pos = scrwX1pos + newWidth;
+            oneMount(bm, scrwX1pos, scrwX2pos);
+          }
         } //  if yappFront
         
       } // for ..
@@ -686,24 +815,26 @@ module printBaseSnapJoins()
   
   for (snj = snapJoins)
   {
+    sideLength = ((isTrue(yappLeft, snj)) || (isTrue(yappRight, snj))) ? shellWidth : shellLength;
+    
     snapWidth  = snj[1];
-    snapZposLR = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
-    snapZposBF = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
-    tmpYmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
-    tmpYmax    = shellWidth - tmpYmin;
-    tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
-    snapYpos   = min(tmpY, tmpYmax);
+    snapStart  = (isTrue(yappCenter, snj)) ? snj[0] - snapWidth/2 : snj[0];
+    
+    snapZpos = (basePlaneThickness+baseWallHeight)-((snapHeight/2)-0.2);
 
-    tmpXmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
-    tmpXmax    = shellLength - tmpXmin;
-    tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
-    snapXpos   = min(tmpX, tmpXmax);
+    tmpAmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
+    tmpAmax    = sideLength - tmpAmin;
+    tmpA       = max(snapStart+(snapWidth/2), tmpAmin);
+    snapApos   = min(tmpA, tmpAmax);
+  
+    useCenter = (isTrue(yappCenter, snj));
+    
 
     if (isTrue(yappLeft, snj))
     {
-      translate([snapXpos-(snapWidth/2),
+      translate([snapApos-(snapWidth/2),
                     wallThickness/2,
-                    snapZposLR])
+                    snapZpos])
       {
         rotate([0,90,0])
           //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -711,9 +842,9 @@ module printBaseSnapJoins()
       }
       if (isTrue(yappSymmetric, snj))
       {
-        translate([shellLength-(snapXpos+(snapWidth/2)),
+        translate([shellLength-(snapApos+(snapWidth/2)),
                     wallThickness/2,
-                    snapZposLR])
+                    snapZpos])
         {
           rotate([0,90,0])
             color("blue") cylinder(d=snapDiam, h=snapWidth);
@@ -724,9 +855,9 @@ module printBaseSnapJoins()
     
     if (isTrue(yappRight, snj))
     {
-      translate([snapXpos-(snapWidth/2),
+      translate([snapApos-(snapWidth/2),
                     shellWidth-(wallThickness/2),
-                    snapZposLR])
+                    snapZpos])
       {
         rotate([0,90,0])
           //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -734,9 +865,9 @@ module printBaseSnapJoins()
       }
       if (isTrue(yappSymmetric, snj))
       {
-        translate([shellLength-(snapXpos+(snapWidth/2)),
+        translate([shellLength-(snapApos+(snapWidth/2)),
                     shellWidth-(wallThickness/2),
-                    snapZposLR])
+                    snapZpos])
         {
           rotate([0,90,0])
             //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -749,8 +880,8 @@ module printBaseSnapJoins()
     if (isTrue(yappBack, snj))
     {
       translate([(wallThickness/2),
-                    snapYpos-(snapWidth/2),
-                    snapZposBF])
+                    snapApos-(snapWidth/2),
+                    snapZpos])
       {
         rotate([270,0,0])
           //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -759,8 +890,8 @@ module printBaseSnapJoins()
       if (isTrue(yappSymmetric, snj))
       {
         translate([(wallThickness/2),
-                      shellWidth-(snapYpos+(snapWidth/2)),
-                      snapZposBF])
+                      shellWidth-(snapApos+(snapWidth/2)),
+                      snapZpos])
         {
           rotate([270,0,0])
             //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -773,8 +904,8 @@ module printBaseSnapJoins()
     if (isTrue(yappFront, snj))
     {
       translate([shellLength-(wallThickness/2),
-                    snapYpos-(snapWidth/2),
-                    snapZposBF])
+                    snapApos-(snapWidth/2),
+                    snapZpos])
       {
         rotate([270,0,0])
           //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -783,8 +914,8 @@ module printBaseSnapJoins()
       if (isTrue(yappSymmetric, snj))
       {
         translate([shellLength-(wallThickness/2),
-                      shellWidth-(snapYpos+(snapWidth/2)),
-                      snapZposBF])
+                      shellWidth-(snapApos+(snapWidth/2)),
+                      snapZpos])
         {
           rotate([270,0,0])
             //color("blue") cylinder(d=wallThickness, h=snapWidth);
@@ -810,36 +941,34 @@ module printLidSnapJoins()
 {
   for (snj = snapJoins)
   {
+    sideLength = ((isTrue(yappLeft, snj)) || (isTrue(yappRight, snj))) ? shellWidth : shellLength;
+    
     snapWidth  = snj[1]+1;
+    snapStart  = (isTrue(yappCenter, snj)) ? snj[0] - snapWidth/2 : snj[0];
+    
     snapHeight = 2;
     snapDiam   = 1.4;  // fixed
     
-    tmpYmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
-    tmpYmax    = shellWidth - tmpYmin;
-    tmpY       = max(snj[0]+(snapWidth/2), tmpYmin);
-    snapYpos   = min(tmpY, tmpYmax);
+    tmpAmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
+    tmpAmax    = shellWidth - tmpAmin;
+    tmpA       = max(snapStart+(snapWidth/2), tmpAmin);
+    snapApos   = min(tmpA, tmpAmax);
 
-    tmpXmin    = (roundRadius)+(snapWidth/2); // Only need 1 radius not 2
-    tmpXmax    = shellLength - tmpXmin;
-    tmpX       = max(snj[0]+(snapWidth/2), tmpXmin);
-    snapXpos   = min(tmpX, tmpXmax);
-
-    snapZposLR = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
-    snapZposBF = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
+    snapZpos = ((lidPlaneThickness+lidWallHeight)*-1)-(snapHeight/2)-0.5;
 
     if (isTrue(yappLeft, snj))
     {
-      translate([snapXpos-(snapWidth/2)-0.5,
+      translate([snapApos-(snapWidth/2)-0.5,
                     -0.5,
-                    snapZposLR])
+                    snapZpos])
       {
         color("red") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj))
       {
-        translate([shellLength-(snapXpos+(snapWidth/2))+0.5,
+        translate([shellLength-(snapApos+(snapWidth/2))+0.5,
                     -0.5,
-                    snapZposLR])
+                    snapZpos])
         {
           color("red") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
         }
@@ -849,17 +978,17 @@ module printLidSnapJoins()
     
     if (isTrue(yappRight, snj))
     {
-      translate([snapXpos-(snapWidth/2)-0.5,
+      translate([snapApos-(snapWidth/2)-0.5,
                     shellWidth-(wallThickness-0.5),
-                    snapZposLR])
+                    snapZpos])
       {
         color("red") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj))
       {
-        translate([shellLength-(snapXpos+(snapWidth/2)-0.5),
+        translate([shellLength-(snapApos+(snapWidth/2)-0.5),
                     shellWidth-(wallThickness-0.5),
-                    snapZposLR])
+                    snapZpos])
         {
           color("green") cube([snapWidth, wallThickness+1, snapDiam]);  // 13-02-2022
         }
@@ -870,16 +999,16 @@ module printLidSnapJoins()
     if (isTrue(yappBack, snj))
     {
       translate([-0.5,
-                    snapYpos-(snapWidth/2)-0.5,
-                    snapZposBF])
+                    snapApos-(snapWidth/2)-0.5,
+                    snapZpos])
       {
         color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj))
       {
         translate([-0.5,
-                      shellWidth-(snapYpos+(snapWidth/2))+0.5,
-                      snapZposBF])
+                      shellWidth-(snapApos+(snapWidth/2))+0.5,
+                      snapZpos])
         {
           color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
         }
@@ -890,16 +1019,16 @@ module printLidSnapJoins()
     if (isTrue(yappFront, snj))
     {
       translate([shellLength-wallThickness+0.5,
-                    snapYpos-(snapWidth/2)-0.5,
-                    snapZposBF])
+                    snapApos-(snapWidth/2)-0.5,
+                    snapZpos])
       {
         color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
       }
       if (isTrue(yappSymmetric, snj))
       {
         translate([shellLength-(wallThickness-0.5),
-                      shellWidth-(snapYpos+(snapWidth/2))+0.5,
-                      snapZposBF])
+                      shellWidth-(snapApos+(snapWidth/2))+0.5,
+                      snapZpos])
         {
           color("red") cube([wallThickness+1, snapWidth, snapDiam]);  // 13-02-2022
         }
@@ -918,53 +1047,118 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
 {
   iRad = getMinRad(rad, wall);
   
-      //--------------------------------------------------------
-      module minkowskiOuterBox(L, W, H, rad, plane, wall)
-      {
-              minkowski()
-              {
-                cube([L+(wall*2)-(rad*2), 
-                      W+(wall*2)-(rad*2), 
-                      (H*2)+(plane*2)-(rad*2)], 
-                      center=true);
-                sphere(rad);
-              }
-      }
-      //--------------------------------------------------------
-      module minkowskiInnerBox(L, W, H, iRad, plane, wall)
-      {
-              minkowski()
-              {
-                cube([L-((iRad*2)), 
-                W-((iRad*2)), 
-                (H*2)-((iRad*2))], 
-                center=true);
-                sphere(iRad);
-              }
-      }
-      //--------------------------------------------------------
+  //--------------------------------------------------------
+  module minkowskiOuterBox(L, W, H, rad, plane, wall)
+  {
+    minkowski()
+    {
+      cube([L+(wall*2)-(rad*2), W+(wall*2)-(rad*2), (H*2)+(plane*2)-(rad*2)], center=true);
+      sphere(rad); 
+    }
+
+  }
+
+  module minkowskiCutBox(L, W, H, rad, plane, wall)
+  {
+    minkowski()
+    {
+      cube([L+(wall)-(rad*2), W+(wall)-(rad*2), (H*2)+(plane)-(rad*2)], center=true);
+      sphere(rad); 
+    }
+
+  }
+  //--------------------------------------------------------
+  module minkowskiInnerBox(L, W, H, iRad, plane, wall)
+  {
+    minkowski()
+    {
+      cube([L-((iRad*2)), W-((iRad*2)), (H*2)-((iRad*2))], center=true);
+      sphere(iRad);
+    }
+  }
+  //--------------------------------------------------------
   
   //echo("Box:", L=L, W=W, H=H, rad=rad, iRad=iRad, wall=wall, plane=plane);
   //echo("Box:", L2=L-(rad*2), W2=W-(rad*2), H2=H-(rad*2), rad=rad, wall=wall);
   
+  
+  
+  if (shell=="base")
+  {
+    
+    if (len(baseMounts) > 0)
+    {
       difference()
       {
-        minkowskiOuterBox(L, W, H, rad, plane, wall);
-        minkowskiInnerBox(L, W, H, iRad, plane, wall);
-      } // difference
+        printBaseMounts();
+        minkowskiCutBox(L, W, H, iRad, plane, wall);
+      } // difference()
+    } // if (len(baseMounts) > 0)
+   
+    color("Orange")
+    difference()
+    {
+      // Objects to be cut to outside the box       
+      // move it to the origin of the base
+      translate ([-L/2, -W/2, -H]) // -baseWallHeight])
+        hookBaseOutside();
       
-      if (shell=="base")
-      {
-        if (len(baseMounts) > 0)
-        {
-          difference()
-          {
-            printBaseMounts();      
-            minkowskiInnerBox(L, W, H, iRad, plane, wall);
-          }
-        }
-      }
-          
+      minkowskiCutBox(L, W, H, iRad, plane, wall);
+    } // difference()
+    
+    //draw stuff inside the box
+    color("LightBlue")
+    intersection()
+    {
+      minkowskiCutBox(L, W, H, rad, plane, wall);
+      
+      translate ([-L/2, -W/2, -H]) //-baseWallHeight])
+        hookBaseInside();
+    } // intersection()
+    
+    // The actual box
+    color(colorBase)
+    difference()
+    {
+      minkowskiOuterBox(L, W, H, rad, plane, wall);
+      minkowskiInnerBox(L, W, H, iRad, plane, wall);
+    } // difference
+  
+    
+    
+  } // if (shell=="base")
+  else
+  {
+    //Lid
+    
+    color("Red")
+    difference()
+    {
+      // Objects to be cut to outside the box 
+      // move it to the origin of the base
+      translate ([-L/2, -W/2, H]) //lidWallHeight])
+      hookLidOutside();
+      minkowskiCutBox(L, W, H, iRad, plane, wall);
+    } // difference()
+
+    //draw stuff inside the box
+    color("LightGreen")
+    intersection()
+    {
+      minkowskiCutBox(L, W, H, rad, plane, wall);
+      translate ([-L/2, -W/2, H]) // lidWallHeight])
+        hookLidInside();
+    }
+    
+    color(colorLid)
+    //color("White")
+    difference()
+    {
+      minkowskiOuterBox(L, W, H, rad, plane, wall);
+      minkowskiInnerBox(L, W, H, iRad, plane, wall);
+    }; // difference
+    
+  }
 } //  minkowskiBox()
 
 
@@ -976,38 +1170,34 @@ module showPCBmarkers(posX, posY, posZ)
       if (showPCBmarkers)
       {
         markerHeight=shellHeight+onLidGap+10;
-        echo("Markers:", markerHeight=markerHeight);
+        //echo("Markers:", markerHeight=markerHeight);
         translate([0, 0, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
               h = markerHeight,
-              center = true,
-              $fn = facetCount);
+              center = true);
 
         translate([0, pcbWidth, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
               h = markerHeight,
-              center = true,
-              $fn = facetCount);
+              center = true);
 
         translate([pcbLength, pcbWidth, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
               h = markerHeight,
-              center = true,
-              $fn = facetCount);
+              center = true);
 
         translate([pcbLength, 0, basePlaneThickness+(onLidGap/2)])
           color("black")
             %cylinder(
               r = .5,
               h = markerHeight,
-              center = true,
-              $fn = facetCount);
+              center = true);
 
         translate([(shellLength/2)-posX, 0, pcbThickness])
           rotate([0,90,0])
@@ -1015,8 +1205,7 @@ module showPCBmarkers(posX, posY, posZ)
               %cylinder(
                 r = .5,
                 h = shellLength+(wallThickness*2)+paddingBack,
-                center = true,
-                $fn = facetCount);
+                center = true);
     
         translate([(shellLength/2)-posX, pcbWidth, pcbThickness])
           rotate([0,90,0])
@@ -1024,8 +1213,7 @@ module showPCBmarkers(posX, posY, posZ)
               %cylinder(
                 r = .5,
                 h = shellLength+(wallThickness*2)+paddingBack,
-                center = true,
-                $fn = facetCount);
+                center = true);
                 
       } // show_markers
   }
@@ -1036,7 +1224,7 @@ module showPCBmarkers(posX, posY, posZ)
 //===========================================================
 module printPCB(posX, posY, posZ)
 {
-  difference()  // (d0)
+  //difference()  // (d0)
   {
     {
       translate([posX, posY, posZ]) // (t1)
@@ -1048,6 +1236,7 @@ module printPCB(posX, posY, posZ)
       
     } // translate(t1)
 
+/*
     //--- show inspection X-as
     if (inspectX > 0)
     {
@@ -1078,7 +1267,7 @@ module printPCB(posX, posY, posZ)
         cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
       }
     }
-    
+    */
   } // difference(d0)
  
 } // printPCB()
@@ -1104,54 +1293,65 @@ module pcbHolders()
       //-- [0]posx, [1]posy, [2]standoffHeight, [3]flangeHeight, [4]flangeDiam 
       //--          , [5]{yappBoth|yappLidOnly|yappBaseOnly}
       //--          , [6]{yappHole|YappPin}
+    
+    
+    
+    
+    
+    
     pcbStandHeight  = stand[2];
     filletRad       = stand[3];
     standType = isTrue(yappHole, stand) ? yappHole : yappPin;
 
+    // Calculate based on the Coordinate system
+    usePCBCoord = isTrue(yappBoxCoord, stand) ? false : true ;
+    
+    offsetX   = usePCBCoord ? pcbX : 0;
+    offsetY   = usePCBCoord ? pcbY : 0;
+    connX   = stand[0];
+    connY   = stand[1];
+    lengthX   = usePCBCoord ? pcbLength : shellLength;
+    lengthY   = usePCBCoord ? pcbWidth : shellWidth;
+
+    allCorners = (isTrue(yappBackLeft, stand) && isTrue(yappFrontLeft, stand) && isTrue(yappFrontRight, stand) && isTrue(yappBackRight, stand)) ? false : true;
+
     if (!isTrue(yappLidOnly, stand))
     {
-      if (isTrue(yappAllCorners, stand) || isTrue(yappBackLeft, stand))
-        translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
-          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", isTrue(yappAddFillet, stand));
+      if (allCorners || isTrue(yappBackLeft, stand))
+         translate([offsetX+connX, offsetY + connY, basePlaneThickness])
+          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", !isTrue(yappNoFillet, stand));
 
-      if (isTrue(yappAllCorners, stand) || isTrue(yappFrontLeft, stand))
-        translate([(pcbX+pcbLength)-stand[0], pcbY+stand[1], basePlaneThickness])
-          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", isTrue(yappAddFillet, stand));
+      if (allCorners || isTrue(yappFrontLeft, stand))
+         translate([offsetX + lengthX - connX, offsetY + connY, basePlaneThickness])
+          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", !isTrue(yappNoFillet, stand));
 
-      if (isTrue(yappAllCorners, stand) || isTrue(yappFrontRight, stand))
-        translate([(pcbX+pcbLength)-stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
-          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", isTrue(yappAddFillet, stand));
+      if (allCorners || isTrue(yappFrontRight, stand))
+        translate([offsetX + lengthX - connX, offsetY + lengthY - connY, basePlaneThickness])
+          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", !isTrue(yappNoFillet, stand));
 
-      if (isTrue(yappAllCorners, stand) || isTrue(yappBackRight, stand))
-        translate([pcbX+stand[0], (pcbY+pcbWidth)-stand[1], basePlaneThickness])
-          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", isTrue(yappAddFillet, stand));
-
-      if (!isTrue(yappAllCorners, stand) 
-            && !isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) 
-            && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand))
-        translate([pcbX+stand[0], pcbY+stand[1], basePlaneThickness])
-          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", isTrue(yappAddFillet, stand));
-
+      if (allCorners || isTrue(yappBackRight, stand))
+        translate([offsetX + connX, offsetY + lengthY - connY, basePlaneThickness])
+          pcbStandoff("base", pcbStandHeight, filletRad, standType, "green", !isTrue(yappNoFillet, stand));
     } //if
-    
-  } //for
-    
+  } //for  
 } // pcbHolders()
 
 
 
 //===========================================================
+// Place the Pushdown in the Lid
 module pcbPushdowns() 
 {        
   //-- place pcb Standoff-pushdown on the lid
-  // (0) = posx
-  // (1) = posy
+  // (0) = fromLeft
+  // (1) = fromTop
   // (2) = standoffHeight
   // (3) = filletRadius (0 = auto size)
   // (n) = { yappBoth | yappLidOnly | yappBaseOnly }
   // (n) = { yappHole, YappPin }
   // (7) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  for ( pushdown = pcbStands )
+ 
+ for ( pushdown = pcbStands )
   {
     //echo("pcb_pushdowns:", pcbX=pcbX, pcbY=pcbY, pcbZ=pcbZ);
     //-- [0]posx, [1]posy, [2]standoffHeight, [3]flangeHeight, [4]flangeDiam 
@@ -1159,8 +1359,10 @@ module pcbPushdowns()
     //--          , [6]{yappHole|YappPin}
     //
     //-- stands in lid are alway's holes!
-    posx    = pcbX+pushdown[0];
-    posy    = (pcbY+pushdown[1]);
+    //posx    = pcbX+pushdown[0];
+    //posy    = pcbY+pushdown[1];
+    posx    = pushdown[0];
+    posy    = pushdown[1];
     filletRad = pushdown[3];
     
     pcbStandHeight=(baseWallHeight+lidWallHeight)
@@ -1170,111 +1372,406 @@ module pcbPushdowns()
                     -(pushdown[2]+pcbThickness);
 
 
+    // Calculate based on the Coordinate system
+    usePCBCoord = isTrue(yappBoxCoord, pushdown) ? false : true;
+    offsetX   = usePCBCoord ? pcbX : 0;
+    offsetY   = usePCBCoord ? pcbY : 0;
+    connX   = pushdown[0];
+    connY   = pushdown[1];
+    lengthX   = usePCBCoord ? pcbLength : shellLength;
+    lengthY   = usePCBCoord ? pcbWidth : shellWidth;
+
+allCorners = (isTrue(yappBackLeft, pushdown) && isTrue(yappFrontLeft, pushdown) && isTrue(yappFrontRight, pushdown) && isTrue(yappBackRight, pushdown)) ? false : true;
+
     if (!isTrue(yappBaseOnly, pushdown))
     {
-      if (isTrue(yappAllCorners, pushdown) || isTrue(yappBackLeft, pushdown))
+      if (allCorners || isTrue(yappBackLeft, pushdown))
       {
-        translate([pcbX+pushdown[0], pcbY+pushdown[1], pcbZlid*-1])
-          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", isTrue(yappAddFillet, pushdown));
+        translate([offsetX + connX, offsetY + connY, pcbZlid*-1])
+          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown));
       }
-      if (isTrue(yappAllCorners, pushdown) || isTrue(yappFrontLeft, pushdown))
+      if (allCorners || isTrue(yappFrontLeft, pushdown))
       {
-        translate([(pcbX+pcbLength)-pushdown[0], pcbY+pushdown[1], pcbZlid*-1])
-          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", isTrue(yappAddFillet, pushdown));
+        translate([offsetX + lengthX - connX, offsetY + connY, pcbZlid*-1])
+          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown));
       }
-      if (isTrue(yappAllCorners, pushdown) || isTrue(yappFrontRight, pushdown))
+      if (allCorners || isTrue(yappFrontRight, pushdown))
       {
-        translate([(pcbX+pcbLength)-pushdown[0], (pcbY+pcbWidth)-pushdown[1], pcbZlid*-1])
-          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", isTrue(yappAddFillet, pushdown));
+         translate([offsetX + lengthX - connX, offsetY + lengthY - connY, pcbZlid*-1])
+          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown));
       }
-      if (isTrue(yappAllCorners, pushdown) || isTrue(yappBackRight, pushdown))
+      if (allCorners || isTrue(yappBackRight, pushdown))
       {
-        translate([pcbX+pushdown[0], (pcbY+pcbWidth)-pushdown[1], pcbZlid*-1])
-          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", isTrue(yappAddFillet, pushdown));
+        translate([offsetX + connX, offsetY + lengthY - connY, pcbZlid*-1])
+          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown));
       }
-      if (!isTrue(yappAllCorners, pushdown) 
-            && !isTrue(yappBackLeft, pushdown) && !isTrue(yappFrontLeft, pushdown) 
-            && !isTrue(yappFrontRight, pushdown) && !isTrue(yappBackRight, pushdown))
-      {
-        translate([pcbX+pushdown[0], pcbY+pushdown[1], pcbZlid*-1])
-          pcbStandoff("lid", pcbStandHeight, filletRad, yappHole, "yellow", isTrue(yappAddFillet, pushdown));
-      }
-
     }
-
-  }
-    
+  }  
 } // pcbPushdowns()
 
 
+
+
+
 //===========================================================
-module cutoutsInXY(type, XYcutoutsArray)
+// Master module to process the 6 vectors for the box faces
+module makeCutouts(type)
 {      
-    function actZpos(T) = (T=="base")        ? -1 : ((roundRadius+lidPlaneThickness)*-1);
-    function planeThickness(T) = (T=="base") ? (basePlaneThickness+roundRadius+2)
-                                             : (lidPlaneThickness+roundRadius+2);
-    //-2.0-function setCutoutArray(T) = (T=="base") ? cutoutsBase : cutoutsLid;
-    //echo("cutoutsInXY()", type=type, XYcutoutsArray=XYcutoutsArray);
-    zPos = actZpos(type);
-    thickness = planeThickness(type);
+  if (type=="base")
+  { 
+    // The bottom plane is only on the Base
+    processCutoutList(yappBottom,  cutoutsBase, type); 
+  }
+  else
+  {
+    // The bottom plane is only on the Lid
+    processCutoutList(yappTop,     cutoutsLid, type);
+  }
+  // All others can cross bewteen the two
+  processCutoutList(yappLeft,    cutoutsLeft, type);
+  processCutoutList(yappRight,   cutoutsRight, type);
+  processCutoutList(yappFront,   cutoutsFront, type);
+  processCutoutList(yappBack,    cutoutsBack, type);
+
+} //makeCutouts()
+module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_x, base_pos_y, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ)
+{
+  useMask = isTrue(yappUseMask, cutOut);
   
-      //-- [0]pcb_x, [1]pcb_y, [2]width, [3]length, [4]angle
-      //-- [5]{yappRectangle | yappCircle}
-      //-- [6] yappCenter
-      //-2.0-for ( cutOut = setCutoutArray(type) )
-      for ( cutOut = XYcutoutsArray )
-      {
-        if (isTrue(yappRectangle, cutOut) && !isTrue(yappCenter, cutOut))  // org pcb_x/y
-        {
-          posx=pcbX+cutOut[0];
-          posy=pcbY+cutOut[1];
-          if (type=="base")
-          {
-            translate([posx, posy, zPos])
-            {
-              rotate([0,0,cutOut[4]])
-                color("blue")
-                cube([cutOut[3], cutOut[2], thickness+1]);
-            }
-          }
-          else
-          {
-            translate([posx, posy, zPos])
-            {
-              rotate([0,0,cutOut[4]])
-                color("blue")
-                cube([cutOut[3], cutOut[2], thickness+1]);
-            }
-          }
-            
-        }
-        else if (isTrue(yappRectangle, cutOut) && isTrue(yappCenter, cutOut))  // center around x/y
-        {
-          posx=pcbX+(cutOut[0]);
-          posy=pcbY+(cutOut[1]);
-          //if (type=="base")
-          //      echo("XY-base:", posx=posx, posy=posy, zPos=zPos);
-          //else  echo("XY-lid:", posx=posx, posy=posy, zPos=zPos);
-          translate([posx, posy, zPos])
-          {
-            rotate([0,0,cutOut[4]])
-              color("red")
-              cube([cutOut[3], cutOut[2], thickness*2],center = true);
-          }
-        }
-        else if (isTrue(yappCircle, cutOut))  // circle centered around x/y
-        {
-          posx=pcbX+cutOut[0];
-          posy=pcbY+(cutOut[1]+cutOut[2]/2)-cutOut[2]/2;
-          translate([posx, posy, zPos])
-            color("green")
-              linear_extrude(thickness*2)
-                circle(d=cutOut[2], $fn=facetCount);
-        }
-      } // for ..
+  if (useMask) 
+  {
+    intersection()
+    {
+      //shape
+      processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_x, base_pos_y, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+
+      // mask
+      theMask = cutOut[9];
+   //echo(theMask=theMask);
       
-      //--- make screw holes for connectors
-      if (type=="base")
+      translate([offset_x, offset_y, offset_z]) 
+      {
+        rotate([rot_X, rot_Y, rot_Z])
+        {
+          translate([base_pos_x, base_pos_y,wallDepth])
+          genMaskfromParam(theMask);
+        }// rotate
+      } //translate
+    }
+  }
+  else
+  {
+    processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_x, base_pos_y, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+  }
+}
+
+//===========================================================
+// Process the list passeed in
+module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_x, base_pos_y, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ)
+{
+  
+// (0) = from Back
+// (1) = from Left
+// (2) = width   : 
+// (3) = length
+// (4) = radius
+// (5) = depth 0=Auto (plane thickness)
+// (6) = angle
+// (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect
+// (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
+// (9) = Mask : [] if not used.  - Required if yappUseMask specified -
+// (n) = { <yappBoxCoord>, yappPCBCoord }
+// (n) = { yappCenter, yappUseMask }
+
+  zShift = invertZ ? -base_depth : 0;
+  
+// Output all of the current parameters
+  if (printMessages) echo("base_pos_x",base_pos_x);
+  if (printMessages) echo("base_pos_y",base_pos_y);
+  if (printMessages) echo("base_width",base_width);
+  if (printMessages) echo("base_height",base_height);
+  if (printMessages) echo("base_depth",base_depth);
+  if (printMessages) echo("wallDepth",wallDepth);
+
+
+  if (printMessages) echo ("rot_X", rot_X); 
+  if (printMessages) echo ("rot_Y", rot_Y); 
+  if (printMessages) echo ("rot_Z", rot_Z); 
+  if (printMessages) echo ("offset_x", offset_x); 
+  if (printMessages) echo ("offset_y", offset_y); 
+  if (printMessages) echo ("offset_z", offset_z); 
+  if (printMessages) echo ("pos_X", pos_X); 
+  if (printMessages) echo ("pos_Y", pos_Y); 
+  if (printMessages) echo ("theDepth", base_depth); 
+  if (printMessages) echo ("theAngle", base_angle);
+  if (printMessages) echo ("invertZ", invertZ); 
+  if (printMessages) echo ("zShift", zShift); 
+  
+  translate([offset_x, offset_y, offset_z]) 
+  {
+    rotate([rot_X, rot_Y, rot_Z])
+    {
+      translate([pos_X, pos_Y, 0]) 
+      {
+        // Draw the shape
+          color("Fuchsia")
+              translate([0, 0,((invertZ) ? wallDepth-base_depth : wallDepth) - 0.02])
+                //cube([base_width, base_height, base_depth +0.04]);
+                generateShape (cutOut[7],(isTrue(yappCenter, cutOut)), base_width, base_height, base_depth + 0.04, cutOut[4], cutOut[6], cutOut[8]);
+      } //translate
+    }// rotate
+  } //translate
+  
+  if (printMessages) echo ("------------------------------");
+}
+//===========================================================
+// Process the list passeed in
+module processCutoutList_Face(cutoutList, swapXY, swapWH, invertZ, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth)
+{
+      
+  for ( cutOut = cutoutList )
+  {
+
+    usePCBCoordinates = isTrue(yappPCBCoord, cutOut);
+    useCenterCoordinates = isTrue(yappCenter, cutOut);
+    
+    if (printMessages) echo("usePCBCoordinates", usePCBCoordinates);
+    if (printMessages) echo("useCenterCoordinates", useCenterCoordinates);
+    if (printMessages) echo("processCutoutList_Face", cutOut);
+
+    // Calc H&W if only Radius is given
+    tempWidth = (cutOut[7] == yappCircle) ? cutOut[4]*2 : cutOut[2];
+    tempLength = (cutOut[7] == yappCircle) ? cutOut[4]*2 : cutOut[3];
+    
+    // Extract the variables from the vector
+    base_pos_x  = (swapXY) ? cutOut[1] : cutOut[0];
+    base_pos_y  = (swapXY) ? cutOut[0] : cutOut[1];
+    base_width  = (swapWH) ? tempLength : tempWidth;
+    base_height = (swapWH) ? tempWidth : tempLength;
+    
+    
+    base_depth  = (cutOut[5] == 0) ? wallDepth + 0.04 : cutOut[5];
+    base_angle  = cutOut[6];
+    
+    base_pcbX  = (swapXY) ? pcbY : pcbX;
+    base_pcbY  = (swapXY) ? pcbX : pcbY;
+      
+
+    if (!usePCBCoordinates) 
+    {
+      if (printMessages) echo ("---Box---");
+      pos_X = base_pos_x ;
+      pos_Y = base_pos_y;
+      processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_x, base_pos_y, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+    } 
+    else 
+    {
+      if (printMessages) echo ("---PCB---");
+      pos_X = base_pos_x + base_pcbX;
+      pos_Y = base_pos_y + base_pcbY;
+      processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_x, base_pos_y, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+    }
+  } //for ( cutOut = cutoutList )
+}
+
+//===========================================================
+// Process the list passeed in
+module processCutoutList(face, cutoutList, type)
+{
+    //function actZpos(T) = (T=="base") ? pcbZ : pcbZlid*-1;
+
+    //-- Remove cutOuts from the specified plane
+    //-- Coordinates are from face when viewing the face on the base 
+    //   in the preview (note if lid is displayed next to base coordinates    
+    //   are different. 
+    // - [0] pos_x  : distance from the left
+    //   [1] pos_y  : distance from the bottom
+    //   [2] width  
+    //   [3] height  
+    //   [4] depth  : referenced from outside of shell (ignoring the radius)
+    //   [5] angle 
+    // - [n] {yappRectangle | yappCircle}  
+    // - [n] yappCenter  
+    // - [n] yappFromInsideOut : Change depth reference to be from inside of the shell (ignoring the radius)  
+    //         
+    //      [0]pos_x->|
+    //                |
+    //  L  |          +-----------+  ^ 
+    //  E  |          |           |  |
+    //  F  |          |<[2]length>|  [3]height
+    //  T  |          +-----------+  v   
+    //     |            ^
+    //     |            | [1]pos_y
+    //     |            v
+    //     |   +----------------------------- pcb(0,0)
+    //     |
+    //     +--------------------------------- box(0,0)
+
+//  if (printMessages) echo ("------------------------------"); 
+//  if (printMessages) echo ("processCutoutList started"); 
+ 
+  // Setup translations for the requested face
+  if (face == yappLeft) 
+  { // Working
+    if (printMessages) echo("Left Face");
+    rot_X = 90;      // Y
+    rot_Y = -90;      // X
+    rot_Z = 180;        // Z
+    offset_x = 0;//shellLength + wallThickness;
+    offset_y = -wallThickness;//shellWidth + wallThickness;;
+    offset_z = (type=="lid") ? -shellHeight : 0;
+    
+    wallDepth = wallThickness;
+    processCutoutList_Face(cutoutList, true, true, false, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+  }
+  else if (face == yappRight) 
+  {  // Working
+    if (printMessages) echo("Right Face");
+    rot_X = 90;      // Y
+    rot_Y = -90;      // X
+    rot_Z = 180;        // Z
+    offset_x = 0;//shellLength + wallThickness;
+    offset_y = shellWidth - wallThickness;;
+    offset_z = (type=="lid") ? -shellHeight : 0;
+    wallDepth = wallThickness;
+    processCutoutList_Face(cutoutList, true, true, true, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+  }
+  else if (face == yappFront) 
+  {  // Working
+    if (printMessages) echo("Front Face");
+    rot_X = 0;      // Y
+    rot_Y = -90;      // X
+    rot_Z = 0;        // Z
+    offset_x = shellLength + wallThickness;
+    offset_y = 0;
+    offset_z = (type=="lid") ? -shellHeight : 0;
+    wallDepth = wallThickness;
+    processCutoutList_Face(cutoutList, true, true, false, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+  }
+  else if (face == yappBack) 
+  {  // Working
+    if (printMessages) echo("Back Face");
+    rot_X = 0;      // Y
+    rot_Y = -90;      // X
+    rot_Z = 0;        // Z
+    offset_x = wallThickness; 
+    offset_y = 0;
+    offset_z = (type=="lid") ? -shellHeight : 0;
+    wallDepth = wallThickness;
+    processCutoutList_Face(cutoutList, true, true, true, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+  }
+  else if (face == yappTop) 
+  {  // Working
+    if (printMessages) echo("Top Face");
+    rot_X = 0;
+    rot_Y = 0;
+    rot_Z = 0;
+    offset_x = 0;
+    offset_y = 0;
+    offset_z = -lidPlaneThickness;
+    wallDepth = lidPlaneThickness;
+    processCutoutList_Face(cutoutList, false, true, true, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+  }
+  else if (face == yappBottom) 
+  {  // Working
+    if (printMessages) echo("Bottom Face");
+    rot_X = 0;
+    rot_Y = 0;
+    rot_Z = 0;
+    offset_x = 0;
+    offset_y = 0;
+    offset_z = -basePlaneThickness;
+    wallDepth = basePlaneThickness;
+    processCutoutList_Face(cutoutList, false, true, false, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+  }
+} // processCutoutList()
+
+//===========================================================
+module cutoutsForScrewHoles(type)
+{      
+  function actZpos(T) = (T=="base")        
+      ? -1 
+      : ((roundRadius+lidPlaneThickness)*-1);
+  function planeThickness(T) = (T=="base") 
+      ? (basePlaneThickness+roundRadius+2)
+      : (lidPlaneThickness+roundRadius+2);
+
+  zPos = actZpos(type);
+  thickness = planeThickness(type);
+
+  //-- [0]pcb_x, [1]pcb_y, [2]width, [3]length, [4]angle
+  //-- [5]{yappRectangle | yappCircle}
+  //-- [6] yappCenter
+  //-2.0-for ( cutOut = setCutoutArray(type) )
+
+  //--- make screw holes for connectors
+//  if (type=="base")
+//  {
+    // (0) = posx
+    // (1) = posy
+    // (2) = pcbStandHeight
+    // (3) = screwDiameter
+    // (4) = screwHeadDiameter
+    // (5) = insertDiameter
+    // (6) = outsideDiameter
+    // (7) = supportHeight
+    // (8) = supportDiam
+    // (n) = { yappPCBCoord }
+    // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+    for(conn = connectors)
+    {
+      if (!isTrue(yappPCBCoord, conn))
+      {
+        if(isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
+        {
+          translate([conn[0], conn[1], -0.02])
+          {
+            linear_extrude(basePlaneThickness+0.04)
+            {
+              circle(d = conn[4]);  //-- screwHeadDiam);
+            }
+          }
+        }
+        if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
+        {
+          translate([shellLength-conn[0], conn[1], -0.02])
+          { 
+            linear_extrude(basePlaneThickness+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+                
+          }
+        }
+        if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
+        {
+          translate([shellLength-conn[0], shellWidth-conn[1], -0.02])
+          { 
+            linear_extrude(basePlaneThickness+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
+        }
+        if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
+        {
+          translate([conn[0], shellWidth-conn[1], -0.02])
+          { 
+            linear_extrude(basePlaneThickness+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
+        }     
+        if (!isTrue(yappAllCorners, conn) 
+              && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
+              && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
+        {
+          translate([conn[0], conn[1], -0.02])
+          {
+            linear_extrude(basePlaneThickness+0.04)
+            {
+              circle(d = conn[4]);  //-- screwHeadDiam
+            }
+          }
+        }
+      } //-- connect Shells
+
+      if (isTrue(yappPCBCoord, conn))
       {
         // (0) = posx
         // (1) = posy
@@ -1285,544 +1782,134 @@ module cutoutsInXY(type, XYcutoutsArray)
         // (6) = outsideDiameter
         // (7) = supportHeight
         // (8) = supportDiam
-        // (n) = { yappConnWithPCB }
+        // (n) = { yappPCBCoord }
         // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-        for(conn = connectors)
+        if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
         {
-          if (!isTrue(yappConnWithPCB, conn))
+          translate([pcbX + conn[0], pcbY + conn[1], -0.02])
           {
-            if(isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
-            {
-              translate([conn[0], conn[1], (basePlaneThickness)*-1])
-              {
-                linear_extrude((basePlaneThickness*2)+1)
-                {
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-                }
-              }
-            }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
-            {
-              translate([shellLength-conn[0], conn[1], (basePlaneThickness-1)*-1])
-              { 
-                linear_extrude(basePlaneThickness+3)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
-            {
-              translate([shellLength-conn[0], shellWidth-conn[1], (basePlaneThickness-1)*-1])
-              { 
-                linear_extrude(basePlaneThickness+3)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
-            {
-              translate([conn[0], shellWidth-conn[1], (basePlaneThickness-1)*-1])
-              { 
-                color("green")
-                linear_extrude(basePlaneThickness+3)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (!isTrue(yappAllCorners, conn) 
-                  && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
-                  && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
-            {
-              translate([conn[0], conn[1], (basePlaneThickness)*-1])
-              {
-                linear_extrude((basePlaneThickness*2)+1)
-                {
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-                }
-              }
-            }
-
-          } //-- connect Shells
-
-          if (isTrue(yappConnWithPCB, conn))
-          {
-            // (0) = posx
-            // (1) = posy
-            // (2) = pcbStandHeight
-            // (3) = screwDiameter
-            // (4) = screwHeadDiameter
-            // (5) = insertDiameter
-            // (6) = outsideDiameter
-            // (7) = supportHeight
-            // (8) = supportDiam
-            // (n) = { yappConnWithPCB }
-            // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
-            {
-              translate([pcbX + conn[0], pcbY + conn[1], (basePlaneThickness*-1)])
-              {
-                linear_extrude((basePlaneThickness*2)+1)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
-            {
-              translate([pcbX+pcbLength-conn[0], pcbY+conn[1], (basePlaneThickness*-1)])
-              { 
-                linear_extrude((basePlaneThickness*2)+1)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
-            {
-              translate([pcbX+pcbLength-conn[0], pcbY+pcbWidth-conn[1], (basePlaneThickness*-1)])
-              { 
-                linear_extrude((basePlaneThickness*2)+1)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
-            {
-              translate([pcbX + conn[0], pcbY + pcbWidth-conn[1], (basePlaneThickness*-1)])
-              { 
-                color("green")
-                linear_extrude((basePlaneThickness*2)+1)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-            if (!isTrue(yappAllCorners, conn) 
-                  && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
-                  && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
-            {
-              translate([pcbX + conn[0], pcbY + conn[1], (basePlaneThickness*-1)])
-              {
-                linear_extrude((basePlaneThickness*2)+1)
-                  circle(
-                    d = conn[4],  //-- screwHeadDiam
-                    $fn = facetCount);
-              }
-            }
-
-          } // connWithPCB ..
-      } // for conn ..  
-      
-    } //-- base
-
-} //  cutoutsInXY(type)
-
-
-//===========================================================
-module cutoutsInXZ(type)
-{      
-    function actZpos(T) = (T=="base") ? pcbZ : pcbZlid*-1;
-
-    //-- place cutOuts in left plane
-    //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, [4]angle 
-    //-- [n]{yappRectangle | yappCircle}, 
-    //-- [6]yappCenter           
-    //         
-    //      [0]pos_x->|
-    //                |
-    //  F  |          +-----------+  ^ 
-    //  R  |          |           |  |
-    //  O  |          |<[2]length>|  [3]height
-    //  N  |          +-----------+  v   
-    //  T  |            ^
-    //     |            | [1]z_pos
-    //     |            v
-    //     +----------------------------- pcb(0,0)
-    //
-    for ( cutOut = cutoutsLeft )
-    {
-      //echo("XZ (Left):", cutOut);
-
-      // Change so the position of the Constants doesn't matter.
-      if (isTrue(yappRectangle, cutOut) && !isTrue(yappCenter, cutOut))
-      //if (cutOut[5]==yappRectangle && cutOut[6]!=yappCenter)
-      {
-        posx=pcbX+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        z=standoffHeight+pcbThickness+cutOut[1];
-        t=(baseWallHeight-ridgeHeight);
-        newH=newHeight(type, cutOut[3], z, t);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([posx, -1, posz])
-            color("red")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+roundRadius+2, newH]);
-        }
-        else
-        {
-          translate([posx, -0.01, posz])
-            color("red")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+0.02, newH]);
-        }
-      }
-      
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappRectangle, cutOut) && isTrue(yappCenter, cutOut))
-      //else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
-      {
-        posx=pcbX+cutOut[0]-(cutOut[2]/2);
-        //posz=actZpos(type)+cutOut[1];
-        posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-        z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
-        t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-        newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([posx+(cutOut[2]/2), wallThickness, posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
-            color("blue")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+roundRadius+2, newH], center=true);
-        }
-        else
-        {
-          translate([posx+(cutOut[2]/2), wallThickness, posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
-            color("blue")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+0.02, newH], center=true);
-        }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappCircle, cutOut))
-      //else if (cutOut[5]==yappCircle)
-      {
-        posx=pcbX+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        //echo("circle Left:", posx=posx, posz=posz);
-        translate([posx, (roundRadius+wallThickness+2), posz])
-          rotate([90,0,0])
             color("green")
-              cylinder(h=wallThickness+roundRadius+3, d=cutOut[2], $fn=facetCount);
-      }
-      
-    } //   for cutOut's ..
-
-    //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, [4]angle
-    //--                {yappRectangle | yappCircle}, yappCenter           
-    for ( cutOut = cutoutsRight )
-    {
-      //echo("XZ (Right):", cutOut);
-
-      // Change so the position of the Constants doesn't matter.
-      if (isTrue(yappRectangle, cutOut) && !isTrue(yappCenter, cutOut))
-      //if (cutOut[5]==yappRectangle && cutOut[6]!=yappCenter)
-      {
-        posx=pcbX+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        z=standoffHeight+pcbThickness+cutOut[1];
-        t=(baseWallHeight-ridgeHeight);
-        newH=newHeight(type, cutOut[3], z, t);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([posx, shellWidth-(wallThickness+roundRadius+1), posz])
-            color("red")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+roundRadius+2, newH]);
+            linear_extrude((basePlaneThickness)+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
         }
-        else
+        if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
         {
-          translate([posx, shellWidth-(wallThickness+roundRadius+1), posz])
-            color("red")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+0.02, newH]);
+          translate([pcbX+pcbLength-conn[0], pcbY+conn[1], -0.02])
+          {
+            color("green")
+            linear_extrude((basePlaneThickness)+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
         }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappRectangle, cutOut) && isTrue(yappCenter, cutOut))
-      //else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
-      {
-        posx=pcbX+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
-        t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-        newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
+        if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
         {
-          translate([posx, (shellWidth-2), posz+(pcbThickness*cos(cutOut[4]))])
-            color("blue")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], (wallThickness+roundRadius)*2+2, newH], center=true);
+          translate([pcbX+pcbLength-conn[0], pcbY+pcbWidth-conn[1], -0.02])
+          {
+            color("green")
+            linear_extrude((basePlaneThickness)+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
         }
-        else
+        if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
         {
-          translate([posx, (shellWidth-2), posz+(pcbThickness*cos(cutOut[4]))])
-            color("blue")
-              rotate([0,cutOut[4],0])
-                cube([cutOut[2], wallThickness+0.02, newH], center=true);
+          translate([pcbX + conn[0], pcbY + pcbWidth-conn[1], -0.02])
+          {
+            color("green")
+            linear_extrude((basePlaneThickness)+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
         }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappCircle, cutOut))
-      //else if (cutOut[5]==yappCircle)
-      {
-        posx=pcbX+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        //echo("circle Right:", posx=posx, posz=posz);
-        if (!isTrue(yappMinCutout, cutOut))
+        if (!isTrue(yappAllCorners, conn) 
+              && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
+              && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
         {
-          translate([posx, shellWidth+2, posz])
-            rotate([90,0,0])
-              color("green")
-                cylinder(h=wallThickness+roundRadius+3, d=cutOut[2], $fn=facetCount);
+          translate([pcbX + conn[0], pcbY + conn[1], -0.02])
+          {
+            linear_extrude((basePlaneThickness)+0.04)
+              circle(d = conn[4]);  //-- screwHeadDiam
+          }
         }
-        else
-        {
-          translate([posx, shellWidth+2, posz])
-            rotate([90,0,0])
-              color("green")
-                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=facetCount);
-        }
-      }
-      
-    } //  for ...
-
-} // cutoutsInXZ()
-
+      } // connWithPCB ..
+    } // for conn ..  
+//  } //-- base
+} // cutoutsForScrewHoles()
 
 //===========================================================
-module cutoutsInYZ(type)
-{
-    function actZpos(T) = (T=="base") ? pcbZ : (pcbZlid)*-1;
 
-    for ( cutOut = cutoutsFront )
-    {
-      // (0) = posy
-      // (1) = posz
-      // (2) = width
-      // (3) = height
-      // (4) = angle
-      // (5) = { yappRectangle | yappCircle }
-      // (6) = { yappCenter }
+              //
+              //        -->|             |<-- tubeLength and tubeWidth-->
+              //    --------             ----------------------------------------------------
+              //                                         # lidPlaneThickness             Leave .5mm is not yappThroughLid 
+              //    ----+--+             +--+---------------------------------------      
+              //        |  |             |  |   ^                    
+              //        |  |             |  |   |
+              //        |  |             |  |   #Tube Height
+              //        |  |             |  |   |
+              //        |  |             |  |   |
+              //        |  |             |  |   |
+              //        |  |             |  |   v
+              //        +--+             +--+   
+              //
+              //       #tAbvPcb
+              //        
+              //   +------------------------------------ topPcb 
+              //   |  # pcbThickness
+              //   +-+--+-------------------------------
+              //     |  | # standoffHeight
+              //-----+  +-------------------------------------
+              //              # basePlaneThickness
+              //---------------------------------------------
+//function copy(param, vector) = 
 
-      //-dbg-echo("YZ (Front):", plane=type, cutOut);
-
-      // Change so the position of the Constants doesn't matter.
-      if (isTrue(yappRectangle, cutOut) && !isTrue(yappCenter, cutOut))
-      //if (cutOut[5]==yappRectangle && cutOut[6]!=yappCenter)
-      {
-        posy=pcbY+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        z=standoffHeight+pcbThickness+cutOut[1];
-        t=baseWallHeight-ridgeHeight;
-        newH=newHeight(type, cutOut[3], z, t);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([shellLength-wallThickness-roundRadius-1, posy, posz])
-          rotate([cutOut[4],0,0])
-            color("blue")
-              cube([wallThickness+roundRadius+2, cutOut[2], newH]);       
-        }
-        else
-        {
-          translate([shellLength-wallThickness-0.01, posy, posz])
-          rotate([cutOut[4],0,0])
-            color("blue")
-              //cube([wallThickness+roundRadius+2, cutOut[2], newH]);
-              cube([(wallThickness)+0.02, cutOut[2], newH]);
-        }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappRectangle, cutOut) && isTrue(yappCenter, cutOut))
-      //else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
-      {
-        posy=pcbY+cutOut[0]-(cutOut[2]/2);
-        posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-        z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
-        t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-        newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([shellLength-(wallThickness+1), posy+(cutOut[2]/2), posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
-          color("blue")
-            rotate([cutOut[4],0,0])
-              cube([wallThickness+roundRadius+wallThickness+2, cutOut[2], newH], center=true);
-        }
-        else
-        {
-          translate([shellLength-0.01, posy+(cutOut[2]/2), posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
-            color("blue")
-              rotate([cutOut[4],0,0])
-                cube([(wallThickness)+0.02, cutOut[2], newH], center=true);
-        }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappCircle, cutOut))
-      //else if (cutOut[5]==yappCircle)
-      {
-        posy=pcbY+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([shellLength-(roundRadius+wallThickness+1), posy, posz])
-             rotate([0, 90, 0])
-              color("green")
-                cylinder(h=wallThickness+roundRadius+2, d=cutOut[2], $fn=facetCount);
-        }
-        else
-        {
-          translate([shellLength-wallThickness-0.01, posy, posz])
-            rotate([0, 90, 0])
-              color("green")
-                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=facetCount);
-        }
-      }
-      
-    } //   for cutOut's ..
-
-    //-- [0]pcb_x, [1]pcb_z, [2]width, [3]height, [4]angle
-    //--                {yappRectangle | yappCircle}, yappCenter           
-    for ( cutOut = cutoutsBack )
-    {
-      //echo("YZ (Back):", cutOut);
-
-      // Change so the position of the Constants doesn't matter.
-      if (isTrue(yappRectangle, cutOut) && !isTrue(yappCenter, cutOut))
-      //if (cutOut[5]==yappRectangle && cutOut[6]!=yappCenter)
-      {
-        posy=pcbY+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        z=standoffHeight+pcbThickness+cutOut[1];
-        t=baseWallHeight-ridgeHeight;
-        newH=newHeight(type, cutOut[3], z, t);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([-1 , posy, posz])
-            rotate([cutOut[4],0,0])
-              color("blue")
-                cube([wallThickness+roundRadius+2, cutOut[2], newH]);
-        }
-        else
-        {
-          translate([-0.01 , posy, posz])
-            rotate([cutOut[4],0,0])
-              color("blue")
-                cube([(wallThickness)+0.02, cutOut[2], newH]);
-        }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappRectangle, cutOut) && isTrue(yappCenter, cutOut))
-      //else if (cutOut[5]==yappRectangle && cutOut[6]==yappCenter)
-      {
-        posy=pcbY+cutOut[0]-(cutOut[2]/2);
-        posz=actZpos(type)+cutOut[1]-(cutOut[3]/2);
-        z=standoffHeight+pcbThickness+cutOut[1]-(cutOut[3]/2);
-        t=(baseWallHeight-ridgeHeight)-(cutOut[3]/2);
-        newH=newHeight(type, (cutOut[3]/2), z, t)+(cutOut[3]/2);
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          translate([(wallThickness+1), posy+(cutOut[2]/2), posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
-          //translate([-1, posy, posz])
-            rotate([cutOut[4],0,0])
-              color("orange")
-                cube([wallThickness+roundRadius+2, cutOut[2], newH], center=true);
-        }
-        else
-        {
-          translate([(wallThickness/2)+0.01, posy+(cutOut[2]/2), posz+(pcbThickness*cos(cutOut[4]))+(cutOut[3]/2)])
-            rotate([cutOut[4],0,0])
-              color("orange")   
-                cube([wallThickness+0.02, cutOut[2], newH], center=true);
-        }
-      }
-      // Change so the position of the Constants doesn't matter.
-      else if (isTrue(yappCircle, cutOut))
-      //else if (cutOut[5]==yappCircle)
-      {
-        posy=pcbY+cutOut[0];
-        posz=actZpos(type)+cutOut[1];
-        // Change to just cut through the wall but nothing more
-        if (!isTrue(yappMinCutout, cutOut))
-        {
-          //echo("circle Back:", posy=posy, posz=posz);
-          translate([-1, posy, posz])
-            rotate([0,90,0])
-              color("green")
-                cylinder(h=wallThickness+3, d=cutOut[2], $fn=facetCount);
-        }
-        else
-        {
-          translate([0, posy, posz])
-            rotate([0,90,0])
-              color("green")
-                cylinder(h=wallThickness+0.02, d=cutOut[2], $fn=facetCount);
-        }
-      }
-      
-    } // for ..
-
-} // cutoutsInYZ()
-
-
-//===========================================================
-module makeLightTubes()
+module lightTubeCutout()
 {
   for(tube=lightTubes)
   {
     //-- lightTubes  -- origin is pcb[0,0,0]
-    // (0) = posx
-    // (1) = posy
-    // (2) = tubeLength
-    // (3) = tubeWidth
-    // (4) = tubeWall
-    // (5) = abovePcb
-    // (6) = filletRadius (0 = auto size)
-    // (n) = throughLid {yappThroughLid}
-    // (n) = tubeType   {yappCircle|yappRectangle}
-    xPos      = tube[0];
-    yPos      = tube[1];
+// (0) = posx
+// (1) = posy
+// (2) = tubeLength
+// (3) = tubeWidth
+// (4) = tubeWall
+// (5) = gapAbovePcb
+// (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
+// (7) = tubeType    {yappCircle|yappRectangle}
+// (8) = filletRadius
+// (n) = { yappBoxCoord, <yappPCBCoord> }
+// (n) = { yappCenter, yappNoFillet }
+    if (printMessages) echo ("Tube Def",tube=tube);
+    // Calculate based on the Coordinate system
+    usePCBCoord = isTrue(yappBoxCoord, tube) ? false : true;
+    
+    xPos   = usePCBCoord ? tube[0] + pcbX : tube[0];
+    yPos   = usePCBCoord ? tube[1] + pcbY : tube[1];
+
     tLength   = tube[2];
     tWidth    = tube[3];
     tWall     = tube[4];
-    tAbvPcb   = tube[5];
-    //tTroughLid= tube[6];  //Not Used
-    //tType     = tube[7];  //Not Used
-    //-debug-echo("makeLightTubes()", xPos=xPos, yPos=yPos, tLength=tLength, tWidth=tWidth, tWall=tWall, tAbvPcb=tAbvPcb);
-    if (isTrue(yappCircle, tube))
-    {
-      tWidthSmall = ((tWidth/2) < 3) ? 3 : (tWidth/2);    //-- 09-08-2023
-      tmpArray = [[xPos, yPos, tWidthSmall, tWidth, yappCircle, yappCenter]];
-      //-debug-echo("makeLightTubes(Circle)", tmpArray=tmpArray);
-      cutoutsInXY("lid", tmpArray);
-    }
-    else if (isTrue(yappRectangle, tube))
-    {
-      tmpArray = [[xPos, yPos, tLength, tWidth, 0, yappRectangle, yappCenter]];
-      //-debug-echo("makeLightTubes()", tmpArray=tmpArray);
-      cutoutsInXY("lid", tmpArray);
-    }
-    else echo("makeLightTubes() ERROR! No type specified");
+    //tAbvPcb   = tube[5];
+    lensThickness = tube[6];
+    cutoutDepth = lidPlaneThickness-lensThickness;
+    shape = tube[7];
     
+    pcbTop2Lid = (baseWallHeight+lidWallHeight+lidPlaneThickness)-(standoffHeight+pcbThickness+tube[5]);
+    
+//    ECHO: "processCutoutList_Face", [75, 50, 1, 1, 5, 20, 45, -30000, -30400, -30700]
+//    ECHO: "Tube tempArray",        [[78, 53, 1.5, 5, 0, 5, 0, -30000, -30700, []]]
+
+    tmpArray = [[tube[0], tube[1], tLength, tWidth, tLength/2,  1+lidPlaneThickness, 0, shape,
+      ((usePCBCoord) ? yappPCBCoord : yappBoxCoord ),
+      yappCenter]];
+   
+    if (printMessages) echo ("Tube tempArray",tmpArray);
+    translate([0,0,-lensThickness])
+    {
+      processCutoutList(yappTop, tmpArray, "lid");
+    }
   } //-- for tubes
   
-} //  makeLightTubes()
+} //  lightTubeCutout()
 
 
 //===========================================================
@@ -1840,51 +1927,68 @@ module buildLightTubes()
     // (6) = filletRadius
     // (n) = throughLid {yappThroughLid}
     // (n) = tubeType   {yappCircle|yappRectangle}
-    xPos      = tube[0];
-    yPos      = tube[1];
-    tLength   = tube[2];
-    tWidth    = tube[3];
-    tWall     = tube[4];
-    tAbvPcb   = tube[5];
-    filletRad = tube[6];
-//    tTroughLid= tube[6];
-//    tType     = tube[7];
+    // Calculate based on the Coordinate system
 
-    pcbTop2Lid = (baseWallHeight+lidWallHeight+lidPlaneThickness)-(standoffHeight+pcbThickness+tAbvPcb);
-    X=xPos+wallThickness+paddingBack;
-    Y=yPos+wallThickness+paddingLeft;
-    throughLid = isTrue(yappThroughLid, tube);
-    //-debug-echo("buildLedTubes()", throughLid=throughLid);
-    //-debug-echo("buildLightTube()", xPos=xPos, X=X, yPos=yPos, Y=Y, tLength=tLength, tWidth=tWidth, tWall=tWall, pcbTop2Lid=pcbTop2Lid);
+    //-- lightTubes  -- origin is pcb[0,0,0]
+// (0) = posx
+// (1) = posy
+// (2) = tubeLength
+// (3) = tubeWidth
+// (4) = tubeWall
+// (5) = gapAbovePcb
+// (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
+// (7) = tubeType    {yappCircle|yappRectangle}
+// (8) = filletRadius
+// (n) = { yappBoxCoord, <yappPCBCoord> }
+// (n) = { yappCenter, yappNoFillet }
+
+    usePCBCoord = isTrue(yappBoxCoord, tube) ? false : true;
     
-    translate([X, Y, (pcbTop2Lid/-2)])
+    xPos   = usePCBCoord ? tube[0] + pcbX : tube[0];
+    yPos   = usePCBCoord ? tube[1] + pcbY : tube[1];
+
+    tLength       = tube[2];
+    tWidth        = tube[3];
+    tWall         = tube[4];
+    tAbvPcb       = tube[5];
+    lensThickness = tube[6];
+    tubeType      = tube[7];
+    filletRad     = tube[8];
+  
+    //pcbTop2Lid = (shellHeight+lidWallHeight+lidPlaneThickness) - (standoffHeight+pcbThickness+tAbvPcb);
+    
+    
+   pcbTop2Lid = (shellHeight) - (basePlaneThickness + lidPlaneThickness + tAbvPcb);
+   
+   
+    //X=xPos+wallThickness+paddingBack;
+    //Y=yPos+wallThickness+paddingLeft;
+    X=xPos;
+    Y=yPos;
+ //   throughLid = isTrue(yappThroughLid, tube) ? 0 : -0.5;
+    
+ 
+    if (printMessages) echo (baseWallHeight=baseWallHeight, lidWallHeight=lidWallHeight, lidPlaneThickness=lidPlaneThickness, standoffHeight=standoffHeight, pcbThickness=pcbThickness, tAbvPcb=tAbvPcb);
+    
+    if (printMessages) echo (pcbTop2Lid=pcbTop2Lid);
+    
+    translate([X, Y, ((pcbTop2Lid)/-2)-lidPlaneThickness])
     {
-      if (isTrue(yappCircle, tube))
+      if (tubeType == yappCircle)
       {
         difference()
         {
           color("red") 
-            cylinder(h=pcbTop2Lid, d=tWidth+(tWall*2), center=true);
+            cylinder(h=pcbTop2Lid, d=max(tWidth,tLength)+(tWall*2), center=true);
           
-          translate([0,0,-0.5+throughLid])
+          translate([0,0,-lensThickness - 0.02])
             color("blue") 
-              cylinder(h=pcbTop2Lid+(throughLid+0.5), d=tWidth, center=true);
-          if (inspectLightTubes)
-          {
-            thisX=(tLength-(tLength/2))*inspectLightTubes;
-            //-debug-echo("buildLightTube()", thisX=thisX, tLength=tLength, tWall=tWall, wallThickness=wallThickness);
-            translate([thisX+0,0,0])
-            {
-              color("white") 
-                cube([((tLength+tWall)/2)+2, tLength+tWall*3, pcbTop2Lid+1], center=true);
-            }
-          }
+              cylinder(h=pcbTop2Lid + lidPlaneThickness +0.02, d=tWidth, center=true);
         }
-        if (isTrue(yappAddFillet, tube))
+        if (!isTrue(yappNoFillet, tube))
         {
-          echo ("Add Fillet to Light Tube");
-          filletRadius = (filletRad==0) ? lidPlaneThickness/2 : filletRad; 
-          translate([0,0,(pcbTop2Lid/2)-lidPlaneThickness])
+          filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+          translate([0,0,(pcbTop2Lid/2)])//-lidPlaneThickness])
           color("red") pinFillet(-(tWidth+(tWall*2))/2,filletRadius);
         } // ifFillet
       }
@@ -1895,40 +1999,29 @@ module buildLightTubes()
           tubeRib=max(tLength, tWidth);
           color("red") 
             cube([tubeRib+(tWall*2), tubeRib+(tWall*2), pcbTop2Lid], center=true);
+          
           translate([0,0,tWall*-1])
             color("green") 
               cube([tubeRib, tubeRib, pcbTop2Lid], center=true);
-          translate([0,0, -0.5+throughLid])
+          translate([0,0, +lensThickness])
             color("blue") 
-              cube([tWidth, tLength, pcbTop2Lid], center=true);
-          if (inspectLightTubes)
-          {
-            //-19-thisX=(tLength+(tWall*2))-(tLength/2);
-            thisX=(tLength*inspectLightTubes)-(tLength/2)*inspectLightTubes;
-            translate([thisX,0,0])
-            {
-              color("white") 
-                //cube([(tubeRib/2)+(tWall*2), tubeRib+tWall*2, pcbTop2Lid+1], center=true);
-                cube([(tubeRib/2)+(tWall*2), tubeRib+tWall*3, pcbTop2Lid+1], center=true);
-            }
-          }
+              cube([tWidth, tLength, pcbTop2Lid+lensThickness], center=true);
         }
-        if ((isTrue(yappAddFillet, tube)))
+        if ((!isTrue(yappNoFillet, tube)))
         {
-          filletRadius = (filletRad==0) ? lidPlaneThickness/2 : filletRad; 
+          filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
           tubeRib=max(tLength, tWidth);
-          translate([0,0,(pcbTop2Lid/2)-lidPlaneThickness])
-          color("red") boxFillet(-((tubeRib+(tWall*2))/2),filletRadius);
+          translate([0,0,(pcbTop2Lid/2)])//-lidPlaneThickness])
+          color("red") rectangleFillet(tubeRib+(tWall*2), tubeRib+(tWall*2),filletRadius, 1);
         } // ifFillet
       }
     }
-
   } //--for(..)
-
 } //  buildLightTubes()
 
 
 //===========================================================
+// Create the cut through the lid
 module makeButtons()
 {
   
@@ -1943,41 +2036,34 @@ module makeButtons()
     // (5) = switchHeight
     // (6) = switchTrafel
     // (7) = poleDiameter
-    // (n) = buttonType  {yappCircle|yappRectangle} 
+    // (8) = filletRadius (0 = auto size)
+    // (9) = buttonType  {yappCircle|yappRectangle} 
+
     xPos      = button[0];
     yPos      = button[1];
     cLength   = button[2];
     cWidth    = button[3];
-    cAbvLid   = button[4]+buttonCupDepth;
-    swHeight  = button[5];
-    swTrafel  = button[6];
-    pDiam     = button[7];
-//    bType     = button[8];
+
     //-debug-echo("makeButtons()", xPos=xPos, yPos=yPos, cLength=cLength, cWidth=cWidth, cAbvLid=cAbvLid
     //-test-                    , pDiam=pDiam, swHeight=swHeight, swTrafel=swTrafel);
-    if (isTrue(yappCircle, button))
-    {
-      tmpArray = [[xPos, yPos, cWidth+1, cLength+1, 0, yappCircle, yappCenter]];
-      //-debug-echo("makeButtons()", tmpArray=tmpArray);
-      cutoutsInXY("lid", tmpArray);
-    }
-    else
-    {
-      tmpArray = [[xPos, yPos, cWidth+1, cLength+1, 0, yappRectangle, yappCenter]];
-      //-debug-echo("makeButtons()", tmpArray=tmpArray);
-      cutoutsInXY("lid", tmpArray);
-    }
+    tmpArray = [[xPos, yPos, 
+      cWidth + buttonSlack, cLength + buttonSlack,
+      (cWidth + buttonSlack+buttonWall)/2, 
+    0, 0 ,button[9], yappCenter, yappPCBCoord]];
     
+    if (printMessages) echo(">>>>>>>>> Button cutout", tmpArray=tmpArray);
+    processCutoutList(yappTop, tmpArray, "lid");
   } //-- for buttons
-  
 } //  makeButtons()
 
 
 //===========================================================
+// Create the cavity for the button
 module buildButtons()
 {
-  
-  echo("buildButtons(): process ", len(pushButtons)," buttons");
+  if (printMessages) echo("buildButtons(): process ", len(pushButtons)," buttons");
+
+  // Use an index so we can offset the buttons outside the shell
   if(len(pushButtons) > 0)
   {
     for(i=[0:len(pushButtons)-1])  
@@ -1992,7 +2078,8 @@ module buildButtons()
       // (5) = switchHeight
       // (6) = switchTrafel
       // (7) = poleDiameter
-      // (8) = buttonType  {yappCircle|yappRectangle}
+      // (8) = filletRadius (0 = auto size)
+      // (9) = buttonType  {yappCircle|yappRectangle} 
       xPos      = button[0];
       yPos      = button[1];
       cLength   = button[2];
@@ -2001,6 +2088,7 @@ module buildButtons()
       swHeight  = button[5];
       swTrafel  = button[6];
       pDiam     = button[7];
+      filletRad = button[8];
 //      bType     = button[8]; //not used
       //-debug-echo("buildButtons()", i=i, xPos=xPos, yPos=yPos, cLength=cLength, cAbvLid=cAbvLid, pDiam=pDiam
       //-test-                      , swHeight=swHeight, swTrafel=swTrafel, bType=bType);
@@ -2059,14 +2147,26 @@ module buildButtons()
                   {
                     cylinder(h=cupDepth, d=cLength+buttonSlack+buttonWall);
                   }
+                  
+                if (!isTrue(yappNoFillet, button))
+                {
+                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                  translate([(cLength+buttonSlack+buttonWall)/2,(cLength+buttonSlack+buttonWall)/2, cupDepth-filletRadius])
+                  color("violet") pinFillet(-(cLength+buttonSlack+buttonWall)/2,filletRadius);
+                } // ifFillet
               }
               //-------- outside pole holder
               translate([0, 0, (pcbTop2Lid-poleHolderLength-1)])
               {
                 color("gray") cylinder(h=poleHolderLength, d=pDiam+buttonSlack+buttonWall);
+                if (!isTrue(yappNoFillet, button))
+                {
+                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                  translate([0, 0, poleHolderLength - cupDepth + buttonWall/2])
+                  color("violet") pinFillet(-(pDiam+buttonSlack+buttonWall)/2,filletRadius);
+                } // ifFillet
               }
             } //-- union()
-            
             //-------- inside Cap 
             translate([((pDiam+buttonSlack)/-2),((pDiam+buttonSlack)/-2),pcbTop2Lid-(cupDepth-buttonWall)])
             {
@@ -2081,14 +2181,6 @@ module buildButtons()
             {
               color("orange") cylinder(h=pcbTop2Lid, d=pDiam+buttonSlack, center=true);
             }
-            //-- test test test --
-            if (inspectButtons)
-            {
-              translate([0, -7, 0]) 
-              {
-                color("white") cube([10,15,pcbTop2Lid]);
-              }
-            }
           } // difference()
         }
         else  //-- rectangle (square)
@@ -2099,17 +2191,29 @@ module buildButtons()
             union()
             {
               //-- outside rectangle
-              translate([(cLength+buttonSlack+buttonWall)/-2, (cWidth+buttonSlack+buttonWall)/-2
-                                       ,pcbTop2Lid-cupDepth]) 
+              translate([(cLength+buttonSlack+buttonWall)/-2, (cWidth+buttonSlack+buttonWall)/-2,pcbTop2Lid-cupDepth]) 
               {
                 color("red") 
                   cube([(cLength+buttonSlack+buttonWall), (cWidth+buttonSlack+buttonWall), cupDepth]);
+                if (!isTrue(yappNoFillet, button))
+                {
+                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                  translate([(cLength+buttonSlack+buttonWall)/2, (cWidth+buttonSlack+buttonWall)/2,filletRadius + cupDepth - lidPlaneThickness])
+                    color("violet") rectangleFillet((cLength+buttonSlack+buttonWall), (cWidth+buttonSlack+buttonWall), filletRadius, 1);
+                  
+                } // ifFillet
               }
               //-------- outside pole holder
               translate([0, 0, (pcbTop2Lid-poleHolderLength-1)])
               {
                 color("gray") cylinder(h=poleHolderLength, d=pDiam+buttonWall+buttonSlack);
-              }
+                 if (!isTrue(yappNoFillet, button))
+                {
+                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                  translate([0, 0, poleHolderLength - cupDepth + buttonWall/2])
+                  color("violet") pinFillet(-(pDiam+buttonSlack+buttonWall)/2,filletRadius);
+                } // ifFillet
+             }
             } //-- union()
   
             //-------- inside Cap 
@@ -2122,16 +2226,7 @@ module buildButtons()
             {
               color("orange") cylinder(d=pDiam+buttonSlack, h=pcbTop2Lid+10, center=true);
             }
-            //-- test test test --
-            if (inspectButtons)
-            {
-              translate([0, -7, 0]) 
-              {
-                color("white") cube([10,15,pcbTop2Lid]);
-              }
-            }
-          } //-- difference()
-          
+          } //-- difference()          
         } //--  if .. else
       } //-- translate()
       
@@ -2141,26 +2236,28 @@ module buildButtons()
 
       //-debug-echo("buildButtons()", i=i, extHeight=extHeight, xOff=xOff);
 
-      if (printSwitchExtenders && showSideBySide)
+      if (printSwitchExtenders && (showSideBySide || !$preview))
       {
+        if (printMessages) echo ("Printing the switch extenders");
         if (isTrue(yappCircle, button))
-              printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                      , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
-        else  printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                      , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
-  
+        {
+          printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
+                              , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
+        }
+        else
+        {
+          printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
+                              , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
+        }
         //--printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
         printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
       }
-    
     } //-- for buttons ..
-
   } //-- len(pushButtons) > 0
-  
 } //  buildButtons()
 
 
-
+/*
 //===========================================================
 module cutoutsGrill(type, planeTckns)
 {
@@ -2185,10 +2282,13 @@ module cutoutsGrill(type, planeTckns)
       function xStart(a, o1)    = (a<0) ? (o1*2) : 0; 
       function xEndpos(l1, o1)  = (l1+(o1*2));
 
-      //echo("1Gr", xC=xC, yC=yC, gW=gW, gL=gL, slotW=slotW, slotS=slotS, oneStep=oneStep
-      //          , newSlotL=newSlotL, xOverhang=xOverhang, newW=newW, gAngle=gAngle);
+     echo("1Gr", xC=xC, yC=yC, gW=gW, gL=gL, slotW=slotW, slotS=slotS, oneStep=oneStep
+                , newSlotL=newSlotL, xOverhang=xOverhang, newW=newW, gAngle=gAngle);
     
-      translate([0, yC, 0])
+      
+      
+      
+      translate([0, 0, 0])
       {
         if (gAngle < 0)
         {
@@ -2293,8 +2393,9 @@ module cutoutsGrill(type, planeTckns)
       nrSpikes  = grillW / (oneStep);
       xCenter   = grillL / 2;
       yCenter   = grillW / 2;
-      //echo(xCenter=xCenter, yCenter=yCenter, grillL=grillL, grillW=grillW
-      //                    , oneStep=oneStep, newSl=newSl, xOverhang=xOverhang);
+      
+      echo(xCenter=xCenter, yCenter=yCenter, grillL=grillL, grillW=grillW
+                          , oneStep=oneStep, newSl=newSl, xOverhang=xOverhang);
 
       translate([xPos+pcbX, yPos+pcbY, zPos])
       {
@@ -2313,17 +2414,21 @@ module cutoutsGrill(type, planeTckns)
           {
              color("gray") cube([grillL, grillW, planeTckns+0.5]);
           }
-          //-- subtract actual grill
-          oneGrill2(xCenter, yCenter, grillW, grillL, slotW, slotS, oneStep, newSl, xOverhang, newW, newA);
+          if (!isTrue(yappCenter, g)) 
+          {
+            //-- subtract actual grill
+            oneGrill2(xCenter, yCenter, grillW, grillL, slotW, slotS, oneStep, newSl, xOverhang, newW, newA);
+          } else {
+            //-- subtract actual grill (centered)
+            echo("***** Center *******");
+            oneGrill2(0, grillL/2, grillW, grillL, slotW, slotS, oneStep, newSl, xOverhang, newW, newA);
+          }
         }
-      }
-          
-    } // type = plane
-    
+      }       
+    } // type = plane 
   } //  for ..
-  
 } //  cutoutsGrill()
-       
+*/       
 
 //===========================================================
 module subtractLabels(plane, side)
@@ -2371,9 +2476,7 @@ module subtractLabels(plane, side)
           } // extrude
         } // rotate
       } // translate
-    
     } //  if base/front
-    
     // [0]x_pos, [1]y_pos, [2]orientation, [3]depth, [4]plane, [5]font, [6]size, [7]"text" 
 
     if (plane=="base" && side=="back" && label[4]=="back")
@@ -2394,23 +2497,22 @@ module subtractLabels(plane, side)
           } // extrude
         } // rotate
       } // translate
-    
     } //  if base/back
     
     if (plane=="base" && side=="left" && label[4]=="left")
     {
       translate([label[0], label[3]+0.01, label[1]]) 
       {
-          rotate([90,label[2],0])
+        rotate([90,label[2],0])
+        {
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            linear_extrude(max(label[3] + 0.02,0.0)) 
-            {
-              text(label[7]
-                    , font=label[5]
-                    , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
+            text(label[7]
+                  , font=label[5]
+                  , size=label[6]
+                  , direction="ltr"
+                  , halign="left"
+                  , valign="bottom");
           } // extrude
         } // rotate
       } // translate
@@ -2420,17 +2522,17 @@ module subtractLabels(plane, side)
     {
       translate([shellLength-label[0], shellWidth+0.005, label[1]]) 
       {
-          rotate([90,label[2],0])
+        rotate([90,label[2],0])
+        {
+          mirror([1,0,0])
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            mirror([1,0,0])
-            linear_extrude(max(label[3] + 0.02,0.0)) 
-            {
-              text(label[7]
-                    , font=label[5]
-                    , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
+            text(label[7]
+                  , font=label[5]
+                  , size=label[6]
+                  , direction="ltr"
+                  , halign="left"
+                  , valign="bottom");
           } // extrude
         } // rotate
       } // translate
@@ -2445,14 +2547,12 @@ module subtractLabels(plane, side)
         { 
           linear_extrude(max(label[3] + (lidPlaneThickness+0.02),0.0)) 
           {
-            {
-              text(label[7]
-                    , font=label[5]
-                    , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
-            } // mirror..
+            text(label[7]
+                  , font=label[5]
+                  , size=label[6]
+                  , direction="ltr"
+                  , halign="left"
+                  , valign="bottom");
           } // rotate
         } // extrude
       } // translate
@@ -2474,8 +2574,7 @@ module subtractLabels(plane, side)
                     , valign="bottom");
           } // extrude
         } // rotate
-      } // translate
-    
+      } // translate    
     } //  if lid/front
     
     if (plane=="lid" && side=="back" && label[4]=="back")
@@ -2496,23 +2595,21 @@ module subtractLabels(plane, side)
           } // extrude
         } // rotate
       } // translate
-    
     } //  if lid/back
-
     if (plane=="lid" && side=="left" && label[4]=="left")
     {
       translate([label[0], label[3]+0.01, (shellHeight*-1)+label[1]]) 
       {
-          rotate([90,label[2],0])
+        rotate([90,label[2],0])
+        {
+          linear_extrude(max(label[3] + 0.02,0.0)) 
           {
-            linear_extrude(max(label[3] + 0.02,0.0)) 
-            {
-              text(label[7]
-                    , font=label[5]
-                    , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
+            text(label[7]
+                  , font=label[5]
+                  , size=label[6]
+                  , direction="ltr"
+                  , halign="left"
+                  , valign="bottom");
           } // extrude
         } // rotate
       } // translate
@@ -2537,16 +2634,13 @@ module subtractLabels(plane, side)
         } // rotate
       } // translate
     } //  if..lid/right
-    
   } // for labels...
-
 } //  subtractLabels()
 
 
 //===========================================================
 module baseShell()
 {
-
     //-------------------------------------------------------------------
     module subtrbaseRidge(L, W, H, posZ, rad)
     {
@@ -2597,12 +2691,14 @@ module baseShell()
   posZ00 = (baseWallHeight) + basePlaneThickness;
   
   //echo("base:", posZ00=posZ00);
-  color(colorBase) translate([(shellLength/2), shellWidth/2, posZ00])
+  //color(colorBase) 
+  translate([(shellLength/2), shellWidth/2, posZ00])
   {
 
     difference()  //(b)
     {
-       minkowskiBox("base", shellInsideLength, shellInsideWidth, baseWallHeight, 
+      //color(colorBase) 
+      minkowskiBox("base", shellInsideLength, shellInsideWidth, baseWallHeight, 
                      roundRadius, basePlaneThickness, wallThickness);
       if (hideBaseWalls)
       {
@@ -2660,6 +2756,7 @@ module lidShell()
       //echo("Ridge:", L2=L-(rad*2), W2=W-(rad*2), H2=H, oRad=oRad, iRad=iRad);
 
       translate([0,0,(H-0.005)*-1])
+      //translate([0,0,-H])
       {
   
         difference()  // (b)
@@ -2672,7 +2769,7 @@ module lidShell()
               {
                 square([(L+wallThickness)-(oRad*2), (W+wallThickness)-(oRad*2)]
                         , center=true);
-                circle(rad);
+                circle(rad-0.03);
               }
             
           } // extrude
@@ -2701,8 +2798,9 @@ module lidShell()
   posZ00 = lidWallHeight+lidPlaneThickness;
   //echo("lid:", posZ00=posZ00);
 
-  color(colorLid) translate([(shellLength/2), shellWidth/2, posZ00*-1])
+  translate([(shellLength/2), shellWidth/2, posZ00*-1])
   {
+    //color(colorLid)
     difference()  //  d1
     {
       minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, 
@@ -2755,13 +2853,13 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
     module standoff(color)
     {
       color(color,1.0)
-        cylinder(d = standoffDiameter, h = pcbStandHeight, center = false, $fn = facetCount);
+        cylinder(d = standoffDiameter, h = pcbStandHeight, center = false);
       //-- flange --
       if (plane == "base")
       {
         if (useFillet) 
         {
-          filletRadius = (filletRad==0) ? basePlaneThickness/2 : filletRad; 
+          filletRadius = (filletRad==0) ? basePlaneThickness : filletRad; 
           color(color,1.0) pinFillet(standoffDiameter/2, filletRadius);
         } // ifFillet
       }
@@ -2769,7 +2867,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
       {
         if (useFillet) 
         {
-          filletRadius = (filletRad==0) ? lidPlaneThickness/2 : filletRad; 
+          filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
           translate([0,0,pcbStandHeight])
             color(color,1.0) pinFillet(-standoffDiameter/2, filletRadius);
         } // ifFillet
@@ -2780,26 +2878,35 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
     module standPin(color)
     {
       color(color, 1.0)
+          union() {
+      translate([0,0,pcbThickness+pcbStandHeight+standoffPinDiameter]) 
+          sphere(d = standoffPinDiameter);
+
         cylinder(
           d = standoffPinDiameter,
           h = pcbThickness+pcbStandHeight+standoffPinDiameter,
-          center = false,
-          $fn = facetCount);
+          center = false); 
+          }
     } // standPin()
     
     module standHole(color)
     {
-      if (useFillet) {
-        color(color, 1.0)
-        translate([0,0,-0.01])
-        union() {
-        translate([0,0,pcbStandHeight-pcbThickness]) 
-          sphere(d = standoffPinDiameter+.2+standoffHoleSlack, $fn = facetCount);
-        cylinder(
-          d = standoffPinDiameter+.2+standoffHoleSlack,
-          h = pcbStandHeight-pcbThickness,
-          center = false,
-          $fn = facetCount);
+      if (useFillet) 
+      {
+        filletZ = (plane == "base")? pcbThickness :pcbStandHeight-pcbThickness;
+        holeZ = (plane == "base")? pcbThickness + 0.02 : -0.02;
+        {
+          color(color, 1.0)
+         // translate([0,0,0])
+          union() {
+            translate([0,0,filletZ]) 
+              sphere(d = standoffPinDiameter+.2+standoffHoleSlack);
+            translate([0,0,holeZ]) 
+              cylinder(
+                d = standoffPinDiameter+.2+standoffHoleSlack,
+                h = pcbStandHeight-pcbThickness+0.02,
+                center = false);
+          }
         }
       }
       else
@@ -2809,8 +2916,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
         cylinder(
           d = standoffPinDiameter+.2+standoffHoleSlack,
           h = (pcbThickness*2)+pcbStandHeight+0.02,
-          center = false,
-          $fn = facetCount);
+          center = false);
       }
     } // standhole()
     
@@ -2827,14 +2933,13 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet)
         standoff(color);
         standHole(color);
       }
-    }
-        
+    }     
 } // pcbStandoff()
 
         
 //===========================================================
-//-- holdPcb = do we need to substract pcbHeight because we are holding the PCB?
-module connectorNew(plane, holdPcb, x, y, conn, outD) 
+//-- usePCBCoord = do we need to substract pcbHeight because we are holding the PCB?
+module connectorNew(plane, usePCBCoord, x, y, conn, outD) 
 {
     
   sH = conn[2]; //-- pcbStandHeight
@@ -2848,11 +2953,11 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
 
   if (plane=="base")
   {
-    color(colorBase) 
+    //color(colorBase) 
     translate([x, y, 0])
     {
       //-dbg-echo("connectorNew:", conn, sH=sH);
-      hb = holdPcb ? (sH+basePlaneThickness) : (baseWallHeight+basePlaneThickness);
+      hb = usePCBCoord ? (sH+basePlaneThickness) : (baseWallHeight+basePlaneThickness);
       //fHm = flangeHeight(hb, fH);
       //-dbg-echo("connectorNew:", hb=hb, sH=sH);
    
@@ -2863,13 +2968,10 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
           //-- outerCylinder --
           //-aaw-linear_extrude(hb)
           linear_extrude(hb)
-            circle(
-                d = d4, //-- outside Diam
-                $fn = facetCount);
-          //-- flange --
-          if (isTrue(yappAddFillet, conn))
+            circle(d = d4); //-- outside Diam
+          if (!isTrue(yappNoFillet, conn))
           {
-            filletRadius = (fR == 0) ? basePlaneThickness/2 : fR; 
+            filletRadius = (fR == 0) ? basePlaneThickness : fR; 
             translate([0,0,(basePlaneThickness)])
               {
                 pinFillet(d4/2, filletRadius);
@@ -2884,6 +2986,17 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
         translate([0,0,-1])  color("blue") cylinder(h=hb+2, d=d1);
         
       } //  difference
+
+          if (!isTrue(yappNoFillet, conn))
+          {
+            filletRadius = (fR == 0) ? basePlaneThickness : fR; 
+            translate([0,0,(hb-d1)])
+              {
+                pinFillet(-d2/2, -filletRadius);
+              }
+          }// ifFillet
+
+
     } //  translate
   } //  if base
   
@@ -2892,12 +3005,12 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
     // calculate the Z-position for the lid connector.
     // for a PCB connector, start the connector on top of the PCB to push it down.
     // calculation identical to the one used in pcbPushdowns()
-    zTemp      = holdPcb ? ((baseWallHeight+lidWallHeight+lidPlaneThickness-pcbThickness-sH)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
-    heightTemp = holdPcb ? ((baseWallHeight+lidWallHeight-sH-pcbThickness)) : lidWallHeight;
+    zTemp      = usePCBCoord ? ((baseWallHeight+lidWallHeight+lidPlaneThickness-pcbThickness-sH)*-1) : ((lidWallHeight+lidPlaneThickness)*-1);
+    heightTemp = usePCBCoord ? ((baseWallHeight+lidWallHeight-sH-pcbThickness)) : lidWallHeight;
 
     //-dbg-echo("connectorNew:", sH=sH, heightTemp=heightTemp, zTemp=zTemp);
     
-    color(colorLid) 
+    //color(colorLid) 
     translate([x, y, zTemp])
     {
       ht=(heightTemp);
@@ -2908,13 +3021,11 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
         {
           //-- outside Diameter --
           linear_extrude(ht)
-              circle(
-                d = d4,
-                $fn = facetCount);
+              circle(d = d4);
           //-- flange --
-          if (isTrue(yappAddFillet, conn))
+          if (!isTrue(yappNoFillet, conn))
           {
-            filletRadius = (fR == 0) ? basePlaneThickness/2 : fR;
+            filletRadius = (fR == 0) ? basePlaneThickness : fR;
             translate([0,0,ht]) 
             {
               pinFillet(-d4/2, filletRadius);
@@ -2922,10 +3033,9 @@ module connectorNew(plane, holdPcb, x, y, conn, outD)
           } // ifFillet
         }  
         //-- insert --
-        linear_extrude(ht)
-          circle(
-                d = d3, 
-                $fn = facetCount);
+        translate([0, 0, -0.02])
+          linear_extrude(ht + 0.02)
+            circle(d = d3);
 
       } //  difference
     } // translate
@@ -2949,34 +3059,58 @@ module shellConnectors(plane)
     // (5) = insertDiameter
     // (6) = outsideDiameter
     // (7) = filletRadius
-    // (n) = { yappConnWithPCB }
+    // (n) = { yappPCBCoord }
     // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 
     
     outD    = minOutside(conn[5]+1, conn[6]);
-    holdPcb = (isTrue(yappConnWithPCB, conn));
-    connX   = holdPcb ? pcbX+conn[0] : conn[0];
-    connY   = holdPcb ? pcbY+conn[1] : conn[1];
+    usePCBCoord = isTrue(yappPCBCoord, conn) ? true : false;
+    connX   = usePCBCoord ? pcbX+conn[0] : conn[0];
+    connY   = usePCBCoord ? pcbY+conn[1] : conn[1];
 
     //echo("shellConn():", pcbX=pcbX, connX=connX, paddingFront=paddingFront, pcbY=pcbY, connY=connY);
     
-    //-dbg-echo("lidConnector:", conn, holdPcb=holdPcb);
+    //-dbg-echo("lidConnector:", conn, usePCBCoord=usePCBCoord);
+    
     if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
-      connectorNew(plane, holdPcb, connX, connY, conn, outD);
+      connectorNew(plane, 
+        usePCBCoord, 
+        connX, 
+        connY, 
+        conn, 
+        outD);
 
     if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
-      connectorNew(plane, holdPcb, shellLength+paddingBack-paddingFront-connX, connY, conn, outD);
+      //connectorNew(plane, usePCBCoord, shellLength+paddingBack-paddingFront-connX, connY, conn, outD);
+      connectorNew(plane, 
+        usePCBCoord, 
+        shellLength + (usePCBCoord ? paddingBack : 0) - (usePCBCoord ? paddingFront : 0) -connX, 
+        connY, 
+        conn, 
+        outD);
 
     if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
-      connectorNew(plane, holdPcb, shellLength+paddingBack-paddingFront-connX, shellWidth+paddingLeft-paddingRight-connY, conn, outD);
+      //connectorNew(plane, usePCBCoord, shellLength+paddingBack-paddingFront-connX, shellWidth+paddingLeft-paddingRight-connY, conn, outD);
+      connectorNew(plane, 
+      usePCBCoord, 
+      shellLength + (usePCBCoord ? paddingBack : 0) - (usePCBCoord ? paddingFront : 0) -connX, 
+      shellWidth+ + (usePCBCoord ? paddingLeft : 0) - (usePCBCoord ? paddingRight : 0) -connY, 
+      conn, 
+      outD);
 
     if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
-      connectorNew(plane, holdPcb, connX, shellWidth+paddingLeft-paddingRight-connY, conn, outD);
+      //connectorNew(plane, usePCBCoord, connX, shellWidth+paddingLeft-paddingRight-connY, conn, outD);
+      connectorNew(plane, 
+      usePCBCoord, 
+      connX, 
+      shellWidth+ + (usePCBCoord ? paddingLeft : 0) - (usePCBCoord ? paddingRight : 0) -connY, 
+      conn, 
+      outD);
 
-    if (!isTrue(yappAllCorners, conn) 
-          && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
-          && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
-      connectorNew(plane, holdPcb, connX, connY, conn, outD);
+  //  if (!isTrue(yappAllCorners, conn) 
+  //        && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
+  //        && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
+  //    connectorNew(plane, usePCBCoord, connX, connY, conn, outD);
       
   } // for ..
   
@@ -3048,58 +3182,70 @@ module showOrientation()
 //========= MAIN CALL's ===========================================================
   
 //===========================================================
-module lidHookInside()
+// origin = box(0,0,0)
+module hookLidInside()
 {
-  //echo("lidHookInside(original) ..");
-  
-} // lidHookInside(dummy)
+  //echo("hookLidInside(original) ..");
+  //translate([shellLength/2,10,0])
+  //sphere(r=20);
+} // hookLidInside(dummy)
   
 //===========================================================
-module lidHookOutside()
+// origin = box(0,0,chellHeight)
+module hookLidOutside()
 {
-  //echo("lidHookOutside(original) ..");
+  //echo("hookLidOutside(original) ..");
+  //translate([10,10,10])
+  //sphere(r=20);
   
-} // lidHookOutside(dummy)
+} // hookLidOutside(dummy)
 
 //===========================================================
-module baseHookInside()
+// origin = box(0,0,0)
+module hookBaseInside()
 {
-  //echo("baseHookInside(original) ..");
-  
-} // baseHookInside(dummy)
+  //echo("hookBaseInside(original) ..");
+  //translate([shellLength/2,10,0])
+  //sphere(r=20);
+    
+} // hookBaseInside(dummy)
 
 //===========================================================
-module baseHookOutside()
+// origin = box(0,0,0)
+module hookBaseOutside()
 {
-  //echo("baseHookOutside(original) ..");
+  //echo("hookBaseOutside(original) ..");
+  //  sphere(r=20);
   
-} // baseHookOutside(dummy)
+} // hookBaseOutside(dummy)
 
 //===========================================================
-module pinFillet (pinRadius, filletRadius, facets=facetCount) {
+module pinFillet (pinRadius, filletRadius) {
 
-  fr = filletRadius;
+  fr = abs(filletRadius);
   voffset = (pinRadius < 0) ? -fr : fr;
-  voffset2 = (pinRadius < 0) ? 0 : fr;  
+  voffset2 = (pinRadius < 0) ? 0 : -fr;  
+  
+  xoffset = (filletRadius < 0) ? -fr : 0;
+  voffset3 = (filletRadius < 0) ? (fr*2) : 0;
   pr = (pinRadius < 0) ? -pinRadius : pinRadius;
-  step=360/ facets;
-  halfstep=step/2; 
   // Change to simplier fillet calculation
   translate([0,0, voffset])
-    rotate_extrude($fn=facets)
-      translate([-fr-pr, 0, 0])
+    rotate_extrude()
+      translate([-fr-pr+voffset3, 0, 0])
         difference()
         {
-          translate([0, -voffset2]) square(fr);
+          translate([xoffset, voffset2]) square(fr);
           circle(fr);
         }
 } //pinFillet()
 
 //===========================================================
-module boxFillet (boxSize, filletRadius=0) {
+module boxFillet (boxSize, filletRadius) {
 
   // Handle defaults
-  fr = (filletRadius == 0) ? (boxSize < 0) ? -boxSize : boxSize : filletRadius;
+  //fr = (filletRadius == 0) ? (boxSize < 0) ? -boxSize : boxSize : filletRadius;
+  fr = filletRadius;
   voffset = (boxSize < 0) ? 0 : fr;
   voffset2 = (boxSize < 0) ? -fr : 0;
   bs = (boxSize < 0) ? -boxSize : boxSize;
@@ -3113,11 +3259,301 @@ module boxFillet (boxSize, filletRadius=0) {
         rotate([0,0,dr])
         translate([bs+fr,0, voffset]) 
         rotate([90,0,0]) cylinder(h=bs*5,
-        r=fr, center=true,$fn=facetCount);
+        r=fr, center=true);
     }
     translate([0,0, fr]) cube(size=[(bs*2)-.04,(bs*2)-.04,fr*3], center=true);
   }
 } //boxFillet
+
+//===========================================================
+module boxFillet (boxSize, filletRadius) {
+
+  // Handle defaults
+  //fr = (filletRadius == 0) ? (boxSize < 0) ? -boxSize : boxSize : filletRadius;
+  fr = filletRadius;
+  voffset = (boxSize < 0) ? 0 : fr;
+  voffset2 = (boxSize < 0) ? -fr : 0;
+  bs = (boxSize < 0) ? -boxSize : boxSize;
+  translate([0,0, voffset2])
+  difference()
+  {
+    difference()
+    {
+      translate([0,0, fr/2]) cube(size=[(bs+fr)*2,(bs+fr)*2,fr], center=true);
+      for(dr=[0:90:270])
+        rotate([0,0,dr])
+        translate([bs+fr,0, voffset]) 
+        rotate([90,0,0]) cylinder(h=bs*5,
+        r=fr, center=true);
+    }
+    translate([0,0, fr]) cube(size=[(bs*2)-.04,(bs*2)-.04,fr*3], center=true);
+  }
+} //boxFillet
+
+//===========================================================
+module linearFillet(length, radius, rotation)
+{
+  
+  // Spin it to the desired rotation
+  rotate([rotation,0,0])
+  // Bring it to normal orientation
+  translate([length,0,0])  // x, Y, Z
+  rotate ([0,-90,0]) 
+  difference()
+  {
+    translate([-0.05,-0.05,0]) 
+      cube([radius+0.05, radius+0.05, length], center=false);
+    translate([radius,radius,-0.1]) 
+      cylinder(h=length+0.2, r=radius, center=false);
+  }
+} //linearFillet
+
+//===========================================================
+// Set boxWidth to negative to invert the fillet in the Z axis
+// Orientation  (0 = Normal 1= Flip in Z, 2 = flip inside
+module rectangleFillet (boxWidth, boxLength, filletRadius, orientation=0)
+{  
+  flipZ = (orientation % 2 >= 1 ) ? 1 : 0;
+  outside = (orientation % 4 >= 2);
+
+  fr = abs(filletRadius);
+  voffset = (boxWidth < 0) ? 0 : fr;
+  voffset2 = (boxWidth < 0) ? -fr : 0;
+  bx = (boxWidth < 0) ? -boxWidth/2 : boxWidth/2;
+  by = boxLength/2;
+  boxRatio = bx/by;
+  
+  mirror([0,0,flipZ])
+  
+  if (!outside) 
+  {
+    translate([0,0, voffset2])
+    difference()
+    {
+      difference()
+      {
+        translate([0,0, fr/2]) cube(size=[(bx+fr)*2,(by+fr)*2,fr], center=true);
+        for(dr=[0,180])
+          rotate([0,0,dr])
+            translate([bx+fr,0, voffset]) 
+              rotate([90,0,0]) 
+                cylinder(h=by*2 + (fr*5), r=fr, center=true);
+        for(dr=[90,270])
+          rotate([0,0,dr])
+            translate([by+fr,0, voffset]) 
+              rotate([90,0,0]) 
+                cylinder(h=bx*2 + (fr*5), r=fr, center=true);
+      }
+      translate([0,0, fr]) cube(size=[(bx*2)-.04,(by*2)-.04,fr*3], center=true);
+    }
+  }
+  else
+  {
+    translate([0,0, voffset2])
+    // front/back
+    for(dr=[0,180])
+    {
+      rotate([0,0,dr])
+      difference() 
+      {
+        translate([bx - (fr/2),0, fr/2]) 
+        cube(size=[fr, by*2, fr], center=true);
+          translate([bx-fr,0, voffset]) 
+            rotate([90,0,0]) 
+              cylinder(h=by*2 + (fr*5), r=fr, center=true);
+      }
+    }
+    //left right
+    for(dr=[90,270])
+    {
+      rotate([0,0,dr])
+      difference() 
+      {
+        translate([by - (fr/2),0, fr/2]) 
+        cube(size=[fr, bx*2, fr], center=true);
+          translate([by-fr,0, voffset]) 
+            rotate([90,0,0]) 
+              cylinder(h=bx*2 + (fr*5), r=fr, center=true);
+      }
+    }
+  }
+  
+} //rectangleFillet
+
+module roundedRectangle2D(width,length,radius)
+{
+  if (radius > width/2 || radius > length/2) {
+      echo("Warning radius too large");
+  }
+  hull() {
+    translate ([(-width/2) + radius, (-length/2) + radius,0]) circle(r=radius);
+    translate ([(+width/2) - radius, (-length/2) + radius,0]) circle(r=radius);
+    translate ([(-width/2) + radius, (+length/2) - radius,0]) circle(r=radius);
+    translate ([(+width/2) - radius, (+length/2) - radius,0]) circle(r=radius);
+  }
+} //roundedRectangle2D
+
+
+
+module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotation, Polygon)
+// Creates a shape centered at 0,0 in the XY and from 0-thickness in the Z
+{ 
+//  echo (Shape=Shape, Center=Center, Width=Width, Length=Length, Thickness=Thickness, Radius=Radius, Rotation=Rotation, Polygon=Polygon);
+  
+  rotate([0,0,Rotation])
+  {
+    linear_extrude(height = Thickness)
+    { 
+      if (Shape == yappCircle)
+      {
+        translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+        circle(r=Radius);
+      } 
+      else if (Shape == yappRectangle)
+      {
+        translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+        {
+          square([Width,Length], center=true); 
+        }
+      } 
+      else if (Shape == yappRoundedRect)
+      {
+        {
+          translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+          roundedRectangle2D(Width,Length,Radius);
+        }
+      }
+      else if (Shape == yappPolygon)
+      {
+        translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+        scale([Width,Length,0]){
+          polygon(Polygon);
+        }
+      }
+    }
+  }
+} //generateShape
+
+
+module genMaskfromParam(params) {
+genMask(
+  params[0], //pattern, 
+  params[1], //width, 
+  params[2], //height, 
+  params[3], //thickness, 
+  params[4], //hRepeat, 
+  params[5], //vRepeat, 
+  params[6], //rotation, 
+  params[7], //openingShape, 
+  params[8], //openingWidth, 
+  params[9], //openingLength, 
+  params[10], //openingRadius, 
+  params[11], //openingRotation, 
+  params[12] //polygon)
+  );
+} //genMaskfromParam
+
+
+module genMask(pattern, width, height, thickness, hRepeat, vRepeat, rotation, openingShape, openingWidth, openingLength, openingRadius, openingRotation, polygon)
+{
+  rotate([0,0,rotation])
+  translate([-width/2, -height/2,0])
+  {
+    if (pattern == yappPatternSquareGrid) 
+    {
+      for(hpos=[0:hRepeat:width])
+      {
+        for(vpos=[0:vRepeat:height])
+        {
+          translate([hpos,vpos,0]) 
+          {
+            generateShape (openingShape, true, 
+            (openingWidth==0) ? width :openingWidth, 
+            (openingLength==0) ? height : openingLength, 
+            thickness, openingRadius, openingRotation, polygon);
+          }
+        }
+      }
+    } else if (pattern == yappPatternHexGrid) 
+    {
+      hexRepeatH = hRepeat;
+      hexRepeatV = (sqrt(3) * hRepeat/2);
+
+      for(hpos=[0:hexRepeatH:width])
+      {
+        for(vpos=[0:hexRepeatV*2:height])
+        {
+          translate([hpos,vpos,0]) 
+          {
+            generateShape (openingShape, true, 
+            (openingWidth==0) ? width :openingWidth, 
+            (openingLength==0) ? height : openingLength, 
+            thickness, openingRadius,openingRotation, polygon);
+          }
+          translate([hpos-(hexRepeatH/2),vpos+hexRepeatV,0]) 
+          {
+            generateShape (openingShape, true,
+            (openingWidth==0) ? width :openingWidth, 
+            (openingLength==0) ? height : openingLength, 
+            thickness, openingRadius,openingRotation, polygon);
+          }
+        }
+      }
+    } 
+  }
+} // genMask
+
+
+
+
+module drawlid() {
+  // Draw objects not cut by the lid
+  buildLightTubes();  //-2.0-
+  buildButtons();     //-2.0-
+
+
+ 
+// Comment out to see objects instead of cutting them from the lid 
+  difference()  // (t1) 
+  {
+    // Draw the lid
+    lidShell();
+    
+    // Remove parts of it
+    lightTubeCutout();   //-2.0-
+    makeButtons();      //-2.0-
+ //   buildButtons();     //-2.0-
+    
+//    cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
+    
+    // Do all of the face cuts
+    makeCutouts("lid");  
+
+    if (ridgeHeight < 3)
+    {
+      echo("ridgeHeight < 3mm: no SnapJoins possible");
+    }
+    else
+    {
+      printLidSnapJoins();
+    }
+    color("red") subtractLabels("lid", "lid");
+    color("red") subtractLabels("lid", "front");
+    color("red") subtractLabels("lid", "back");
+    color("red") subtractLabels("lid", "left");
+    color("red") subtractLabels("lid", "right");
+  } //  difference(t1)
+
+  translate([shellLength-15, -15, 0])
+    linear_extrude(1) 
+      mirror([1,0,0])
+        %text("LEFT"
+              , font="Liberation Mono:style=bold"
+              , size=8
+              , direction="ltr"
+              , halign="left"
+              , valign="bottom");
+}
 
 //===========================================================
 module YAPPgenerate()
@@ -3169,39 +3605,71 @@ module YAPPgenerate()
   echo("YAPP==========================================");
   
   $fn=facetCount;
+  
+  difference() // Inspection cuts
+  {
+    union()
+    {
+  
       if (showShellZero)
       {
-        markerHeight = shellHeight+onLidGap+10;
+        ZmarkerHeight = shellHeight+onLidGap;
         //-- box[0,0] marker --
-        translate([0, 0, (markerHeight/2)-5])
+        translate([0, 0, (ZmarkerHeight/2)])
           color("red")
             %cylinder(
                     r = .5,
-                    h = markerHeight,
-                    center = true,
-                    $fn = facetCount);
+                    h = ZmarkerHeight,
+                    center = true);
+
+        XmarkerHeight = shellLength;
+        //-- box[0,0] marker --
+        rotate([0,90,0])
+        translate([0, 0, (XmarkerHeight/2)])
+          color("green")
+            %cylinder(
+                    r = .5,
+                    h = XmarkerHeight,
+                    center = true);
+
+        YmarkerHeight = shellWidth;
+        //-- box[0,0] marker --
+        rotate([-90,0,0])
+        translate([0, 0, (YmarkerHeight/2)])
+          color("blue")
+            %cylinder(
+                    r = .5,
+                    h = YmarkerHeight,
+                    center = true);
+
       } //  showShellZero
-      
-      
+
       if (printBaseShell) 
       {
-        if (showPCB)
+        if ($preview && showPCB)
         {
-          %printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
-          %showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
+          printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
+          showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
         }
-        else if (showPCBmarkers) %showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
-                  
-        baseHookOutside();
-        
+        else if ($preview && showPCBmarkers) 
+        {
+          showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
+        }
+                          
+// Comment out to see objects instead of cutting them from the base 
         difference()  // (a)
         {
+          // Draw the base shell
           baseShell();
           
-          cutoutsInXY("base", cutoutsBase);
-          cutoutsGrill("base", basePlaneThickness+roundRadius+2);
-          cutoutsInXZ("base");
-          cutoutsInYZ("base");
+          // Remove parts of it
+//          cutoutsInXY("base", cutoutsBase);
+          cutoutsForScrewHoles("base");
+//          cutoutsGrill("base", basePlaneThickness+roundRadius+2);
+          //cutoutsInXZ("base");
+          //cutoutsInYZ("base");
+            
+          makeCutouts("base");
 
           color("blue") subtractLabels("base", "base");
           color("blue") subtractLabels("base", "front");
@@ -3209,39 +3677,12 @@ module YAPPgenerate()
           color("blue") subtractLabels("base", "left");
           color("blue") subtractLabels("base", "right");
 
-          //--- show inspection X-as
-          if (inspectX > 0)
-          {
-            translate([shellLength-inspectX,-2,-2]) 
-            {
-              cube([shellLength, shellWidth+10, shellHeight+3]);
-            }
-          } else if (inspectX < 0)
-          {
-            translate([(shellLength*-1)+abs(inspectX),-2-10,-2]) 
-            {
-              cube([shellLength, shellWidth+20, shellHeight+3]);
-              }
-          }
-      
-          //--- show inspection Y-as
-          if (inspectY > 0)
-          {
-            translate([-1, inspectY-shellWidth, -2]) 
-            {
-              cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
-            }
-          }
-          else if (inspectY < 0)
-          {
-            translate([-1, (shellWidth-abs(inspectY)), -2]) 
-            {
-              cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
-            }
-          }
         } //  difference(a)
         
-        baseHookInside();
+     //   hookBaseInside();
+        
+        
+        drawButtonExtenders();
         
         if (showOrientation) showOrientation();
 
@@ -3250,8 +3691,10 @@ module YAPPgenerate()
       
       if (printLidShell)
       {
-       if (showSideBySide)
+        echo ("Print lid");
+       if (showSideBySide || !$preview)
         {
+          echo ("Side by side");
           //-- lid side-by-side
           mirror([0,0,1])
           {
@@ -3259,164 +3702,69 @@ module YAPPgenerate()
             {
               translate([0, (5 + shellWidth+(shiftLid/2))*-2, 0])
               {
-                buildLightTubes();  //-2.0-
-                buildButtons();     //-2.0-
-                lidHookInside();
-                
-                difference()  // (t1) 
-                {
-                  lidShell();
-                  
-                  makeLightTubes();   //-2.0-
-                  makeButtons();      //-2.0-
-               //   buildButtons();     //-2.0-
-                  
-                  cutoutsInXY("lid", cutoutsLid);
-                  cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
-                  cutoutsInXZ("lid");
-                  cutoutsInYZ("lid");
-
-                  if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible"); 
-                  else printLidSnapJoins();
-                  color("red") subtractLabels("lid", "lid");
-                  color("red") subtractLabels("lid", "front");
-                  color("red") subtractLabels("lid", "back");
-                  color("red") subtractLabels("lid", "left");
-                  color("red") subtractLabels("lid", "right");
-
-                  //--- show inspection X-as
-                  if (inspectX > 0)
-                  {
-                    translate([shellLength-abs(inspectX), -2,
-                                (lidWallHeight+lidPlaneThickness+ridgeHeight+8)*-1]) 
-                    {
-                      cube([shellLength, shellWidth+3, 
-                                (lidWallHeight+ridgeHeight+lidPlaneThickness+10)]);
-                    }
-                  }
-                  else if (inspectX < 0)
-                  {
-                    translate([(shellLength*-1)+abs(inspectX), -2,
-                                (lidWallHeight+lidPlaneThickness+ridgeHeight+2)*-1]) 
-                    {
-                      cube([shellLength, shellWidth+3, 
-                                shellHeight+ridgeHeight+lidPlaneThickness+4]);
-                    }
-                  }
-              
-                  //--- show inspection Y-as
-                  if (inspectY > 0)
-                  {
-                    translate([-1, inspectY-shellWidth, 
-                                (lidWallHeight+lidPlaneThickness+ridgeHeight+2)*-1]) 
-                    {
-                      cube([shellLength+2, shellWidth, 
-                                lidWallHeight+ridgeHeight+lidPlaneThickness+4]);
-                    }
-                  }
-                  else if (inspectY < 0)
-                  {
-                    translate([-1, (shellWidth-abs(inspectY)), (lidWallHeight+ridgeHeight+3)*-1]) 
-                    {
-                      cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness+ridgeHeight)+5]);
-                    }
-                  }
-                } //  difference(t1)
-            
-                lidHookOutside();
-                
-                translate([shellLength-15, -15, 0])
-                  linear_extrude(1) 
-                    mirror([1,0,0])
-                      %text("LEFT"
-                            , font="Liberation Mono:style=bold"
-                            , size=8
-                            , direction="ltr"
-                            , halign="left"
-                            , valign="bottom");
-
+                drawlid();
               } // translate
- 
             } //  mirror  
           } //  mirror  
         }
         else  // lid on base
         {
+          echo ("Print lid on base");
           translate([0, 0, (baseWallHeight+basePlaneThickness+
                             lidWallHeight+lidPlaneThickness+onLidGap)])
           {
-            lidHookOutside();
-            buildLightTubes();  //-2.0-
-            buildButtons();     //-2.0-    
-            lidHookInside();
-
-            difference()  // (t2)
-            {
-              lidShell();
-
-              makeLightTubes(); //-2.0-
-              makeButtons();    //-2.0-
-              
-              cutoutsInXY("lid", cutoutsLid);
-              cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
-              cutoutsInXZ("lid");
-              cutoutsInYZ("lid");
-
-              if (ridgeHeight < 3)  echo("ridgeHeight < 3mm: no SnapJoins possible");
-              else printLidSnapJoins();
-              color("red") subtractLabels("lid", "lid");
-              color("red") subtractLabels("lid", "front");
-              color("red") subtractLabels("lid", "back");
-              color("red") subtractLabels("lid", "left");
-              color("red") subtractLabels("lid", "right");
-
-              //--- show inspection X-as
-              if (inspectX > 0)
-              {
-                translate([shellLength-inspectX, -2, 
-                           (shellHeight+lidPlaneThickness+ridgeHeight+4)*-1])
-                {
-                  cube([shellLength, shellWidth+3, 
-                            (((shellHeight+lidPlaneThickness+ridgeHeight)*2)+onLidGap)]);
-                }
-              }
-              else if (inspectX < 0)
-              {
-                translate([(shellLength*-1)+abs(inspectX), -2, 
-                           (shellHeight)*-1])
-                {
-                  cube([shellLength, shellWidth+3, 
-                            (shellHeight+onLidGap)]);
-                }
-              }
-          
-              //--- show inspection Y-as
-              if (inspectY > 0)
-              {
-                translate([-1, inspectY-shellWidth, 
-                           (lidWallHeight+ridgeHeight+lidPlaneThickness+2)*-1])
-                {
-                  cube([shellLength+2, shellWidth, 
-                            (lidWallHeight+lidPlaneThickness+ridgeHeight+4)]);
-                }
-              }
-              else if (inspectY < 0)
-              {
-                translate([-1, (shellWidth-abs(inspectY)), ((lidWallHeight+lidPlaneThickness+4)*-1)]) 
-                {
-                  cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness+ridgeHeight+5)]);
-                }
-              }
-          
-            } //  difference(t2)
-            
-
+            drawlid();
           } //  translate ..
 
         } // lid on top off Base
         
       } // printLidShell()
-
+      
+      
+      if (printBaseShell && showSwitches)
+      {
+        %printSwitch();
+      }
+    } //union
+      
+    //--- show inspection X-as
+    if (inspectX != 0)
+    {
+      maskLength = shellLength * 3;
+      maskWidth = shellWidth * 3;
+      maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
+      if (!inspectXfromBack)
+      {
+        color("White",0.1)
+        translate([inspectX, -shellWidth/2,-maskHeight/4])
+        cube([maskLength, maskWidth, maskHeight]);
+      }
+      else
+      {
+        translate([-maskLength + inspectX, -shellWidth/2,-maskHeight/4])
+        cube([maskLength, maskWidth, maskHeight]);
+      }
+    }
+    
+        //--- show inspection X-as
+    if (inspectY != 0)
+    {
+      maskLength = shellLength * 3;
+      maskWidth = shellWidth * 3;
+      maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
+      if (!inspectYfromLeft)
+      {
+        color("White",0.1)
+        translate([-shellLength/2, inspectY, -maskHeight/4])
+        cube([maskLength, maskWidth, maskHeight]);
+      }
+      else
+      {
+        translate([-shellLength/2,-maskWidth + inspectY,-maskHeight/4])
+        cube([maskLength, maskWidth, maskHeight]);
+      }
+    }
+  }// Inspection cuts
 } //  YAPPgenerate()
 
 
@@ -3500,14 +3848,68 @@ module printSwitchPlate(poleDiam, capLength, buttonPlateThickness, yPos)
 //-develop-develop-develop-YAPPgenerate();
 
 
-//-- post processing switchExtenders ..
-if (!printBaseShell && !printLidShell && printSwitchExtenders)
+module drawButtonExtenders()
 {
-  $fn=facetCount;
-  yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
-  rotate([0,180,180])
+  //-- post processing switchExtenders ..
+  if (!printBaseShell && !printLidShell && printSwitchExtenders)
   {
-    translate([0,yOffset*-1,0])
+    yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
+    rotate([0,180,180])
+    {
+      translate([0,yOffset*-1,0])
+      {
+        for(i=[0:len(pushButtons)-1])  
+        {
+          button=pushButtons[i];
+          //-- pushButtons  -- origin is pcb[0,0,0]
+          // (0) = posx
+          // (1) = posy
+          // (2) = capLength
+          // (3) = capWidth
+          // (4) = capAboveLid
+          // (5) = switchHeight
+          // (6) = switchTrafel
+          // (7) = poleDiameter
+          // (n) = buttonType  {yappCircle|yappRectangle}
+          xPos      = button[0];
+          yPos      = button[1];
+          cLength   = button[2];
+          cWidth    = button[3];
+          cAbvLid   = button[4]+buttonCupDepth;
+          swHeight  = button[5];
+          swTrafel  = button[6];
+          pDiam     = button[7];
+      //    bType     = button[8];
+          pcbTop2Lid= (baseWallHeight+lidWallHeight)-(standoffHeight+pcbThickness);
+          boxHeight = baseWallHeight+lidWallHeight;
+          extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
+          xOff      = max(cLength, cWidth);
+
+          if (printMessages) echo("postProcess(A):", extHeight=extHeight, xOff=xOff);
+      
+          if (isTrue(yappCircle, button))
+                printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
+                                        , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
+          else  printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
+                                        , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
+          
+          //--printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
+          printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
+
+        } //-- for ...
+      } //-- translate
+
+    } //-- rotate
+  } //-- postProcess
+
+
+  //-- post processing switchExtenders ..
+  //-- place switchExtendes in button ---
+  if (!(showSideBySide || !$preview) && printLidShell && printSwitchExtenders && (len(pushButtons) > 0) )
+  {
+    yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
+
+    //rotate([0,180,180])
     {
       for(i=[0:len(pushButtons)-1])  
       {
@@ -3521,6 +3923,7 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
         // (5) = switchHeight
         // (6) = switchTrafel
         // (7) = poleDiameter
+        // (8) = filletRadius
         // (n) = buttonType  {yappCircle|yappRectangle}
         xPos      = button[0];
         yPos      = button[1];
@@ -3530,99 +3933,45 @@ if (!printBaseShell && !printLidShell && printSwitchExtenders)
         swHeight  = button[5];
         swTrafel  = button[6];
         pDiam     = button[7];
-    //    bType     = button[8];
+     //   bType     = button[8];
         pcbTop2Lid= (baseWallHeight+lidWallHeight)-(standoffHeight+pcbThickness);
         boxHeight = baseWallHeight+lidWallHeight;
         extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
+        
+        posX=xPos+wallThickness+paddingBack;
+        posY=(yPos+wallThickness+paddingLeft);
+        posZ=(baseWallHeight+basePlaneThickness)+(lidWallHeight+lidPlaneThickness)+button[4];
         xOff      = max(cLength, cWidth);
 
-        echo("postProcess(A):", extHeight=extHeight, xOff=xOff);
-    
+        //-debug-echo("BB:", xPos=xPos, wallThickness=wallThickness,paddingFront=paddingFront, paddingBack=paddingBack, posX=posX);
+        if (printMessages) echo("postProcess(B):", extHeight=extHeight, xOff=xOff);
+
+        translate([posX, posY, posZ])
+        {
         if (isTrue(yappCircle, button))
-              printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                      , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
-        else  printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                      , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
-        
-        //--printSwitchPlate(pDiam, cLength, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
-        printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
-
-      } //-- for ...
-    } //-- translate
-
-  } //-- rotate
-} //-- postProcess
+            color("purple")
+              printSwitchExtender(true, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
+                                      , boxHeight, 0, 0);
+        else  
+            color("purple")
+              printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
+                                       , boxHeight, 0, 0);
+        }
+      } //-- for ..
 
 
-//-- post processing switchExtenders ..
-//-- place switchExtendes in button ---
-if (!showSideBySide && printLidShell && printSwitchExtenders && (len(pushButtons) > 0) )
-{
-  $fn=facetCount;
-  yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
+    } //-- rotate
+  } //-- postProcess
 
-  //rotate([0,180,180])
+
+  if (showCenterMarkers)
   {
-    for(i=[0:len(pushButtons)-1])  
-    {
-      button=pushButtons[i];
-      //-- pushButtons  -- origin is pcb[0,0,0]
-      // (0) = posx
-      // (1) = posy
-      // (2) = capLength
-      // (3) = capWidth
-      // (4) = capAboveLid
-      // (5) = switchHeight
-      // (6) = switchTrafel
-      // (7) = poleDiameter
-      // (n) = buttonType  {yappCircle|yappRectangle}
-      xPos      = button[0];
-      yPos      = button[1];
-      cLength   = button[2];
-      cWidth    = button[3];
-      cAbvLid   = button[4]+buttonCupDepth;
-      swHeight  = button[5];
-      swTrafel  = button[6];
-      pDiam     = button[7];
-   //   bType     = button[8];
-      pcbTop2Lid= (baseWallHeight+lidWallHeight)-(standoffHeight+pcbThickness);
-      boxHeight = baseWallHeight+lidWallHeight;
-      extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
-      
-      posX=xPos+wallThickness+paddingBack;
-      posY=(yPos+wallThickness+paddingLeft);
-      posZ=(baseWallHeight+basePlaneThickness)+(lidWallHeight+lidPlaneThickness)+button[4];
-      xOff      = max(cLength, cWidth);
-
-      //-debug-echo("BB:", xPos=xPos, wallThickness=wallThickness,paddingFront=paddingFront, paddingBack=paddingBack, posX=posX);
-      echo("postProcess(B):", extHeight=extHeight, xOff=xOff);
-
-      translate([posX, posY, posZ])
-      {
-      if (isTrue(yappCircle, button))
-          color("purple")
-            printSwitchExtender(true, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                    , boxHeight, 0, 0);
-      else  
-          color("purple")
-            printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                     , boxHeight, 0, 0);
-      }
-    } //-- for ..
-
-
-  } //-- rotate
-} //-- postProcess
-
-
-if (showCenterMarkers)
-{
-    translate([shellLength/2, shellWidth/2,-1]) 
-    color("blue") %cube([1,shellWidth+20,1], true);
-    translate([shellLength/2, shellWidth/2,-1]) 
-    color("blue") %cube([shellLength+20,1,1], true);
+      translate([shellLength/2, shellWidth/2,-1]) 
+      color("blue") %cube([1,shellWidth+20,1], true);
+      translate([shellLength/2, shellWidth/2,-1]) 
+      color("blue") %cube([shellLength+20,1,1], true);
+  }
 }
-
 //-------- test -- test -- test -- test -- test --------
 module printSwitch()
 {
@@ -3657,10 +4006,16 @@ module printSwitch()
   }
 }
 
-if (printBaseShell && showSwitches)
+
+module SampleMask(theMask)
 {
-  %printSwitch();
-}
+  if (debug)
+  {
+    translate([-theMask[1],-theMask[2],0])
+      genMaskfromParam(theMask);
+  }
+} //SampleMask
+
 /*
 ****************************************************************************
 *
@@ -3685,3 +4040,6 @@ if (printBaseShell && showSwitches)
 * 
 ****************************************************************************
 */
+
+//---- This is where the magic happens ----
+if (debug) YAPPgenerate();

@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 2.1 (22-11-2023)
+//  Version 2.0 (21-05-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -123,9 +123,9 @@ inspectYfromLeft    = true;     // View from the inspection cut to the right
 // for example a triangle could be [[-1,-1],[0,1],[1,-1]] 
 
 // Pre-defined shapes
-shapeIsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
-shapeHexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
-shape6ptStar = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
+Shape_IsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
+Shape_Hexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
+Shape_6pt_Star = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
 
 
 
@@ -149,7 +149,7 @@ Parameters:
    (12) = shape polygon : Requires if openingShape = yappPolygon];
   ];
 */
-maskHoneycomb = [
+honeycombMask = [
 yappPatternHexGrid,    //pattern
   100,                  // width - must be over the opening size : adding extra will shift the mask within the opening
   104,                  // height
@@ -162,10 +162,10 @@ yappPatternHexGrid,    //pattern
   4,                    // openingLength, 
   0,                    // openingRadius
   30,                   //openingRotation
-  shapeHexagon];
+  Shape_Hexagon];
 
 
-maskHexCircles = [
+hexCirclesMask = [
 yappPatternHexGrid,    //pattern
   100,                  // width
   100,                  // height
@@ -180,7 +180,7 @@ yappPatternHexGrid,    //pattern
   0,                   //openingRotation
   []];
 
-maskBars = [
+barsMask = [
   yappPatternSquareGrid, //yappPatternSquareGrid,//pattern
   100,                  // width
   100,                  // height
@@ -198,7 +198,7 @@ maskBars = [
 
 
 // Show sample of a Mask.in the negative X,Y quadrant
-//SampleMask(maskHoneycomb);
+//SampleMask(honeycombMask);
 
 /*===================================================================
  *** PCB Supports ***
@@ -296,7 +296,7 @@ Parameters:
 
 cutoutsBase = 
 [
-  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
+  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, Shape_Hexagon, honeycombMask, yappCenter, yappUseMask]
 ];
 
 cutoutsLid  = 
@@ -327,7 +327,7 @@ cutoutsBack =
 
 cutoutsLeft =   
 [
-  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
+  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, Shape_Hexagon, barsMask, yappCenter, yappUseMask]
 ];
 
 cutoutsRight =  
@@ -441,39 +441,39 @@ labelsPlane =
 
 
 //===========================================================
-module hookLidInside()
+module lidHookInside()
 {
-  echo("hookLidInside(original) ..");
+  echo("lidHookInside(original) ..");
   translate([40, 40, -8]) color("purple") cube([15,20,10]);
   
-} // hookLidInside(dummy)
+} // lidHookInside(dummy)
   
 //===========================================================
-module hookLidOutside()
+module lidHookOutside()
 {
-  echo("hookLidOutside(original) ..");
+  echo("lidHookOutside(original) ..");
   translate([(shellLength/2),-5,-5])
   {
     color("yellow") cube([20,15,10]);
   }  
-} // hookLidOutside(dummy)
+} // lidHookOutside(dummy)
 
 //===========================================================
-module hookBaseInside()
+module baseHookInside()
 {
-  //echo("hookBaseInside(original) ..");
-  echo("hookBaseInside(original) ..");  
+  //echo("baseHookInside(original) ..");
+  echo("baseHookInside(original) ..");  
   translate([10, 30, -5]) color("lightgreen") cube([15,25,8]);
   
-} // hookBaseInside(dummy)
+} // baseHookInside(dummy)
 
 //===========================================================
-module hookBaseOutside()
+module baseHookOutside()
 {
-  echo("hookBaseOutside(original) ..");
+  echo("baseHookOutside(original) ..");
   translate([shellLength-wallThickness-10, 55, -5]) color("green") cube([15,25,10]);
   
-} // hookBaseOutside(dummy)
+} // baseHookOutside(dummy)
 
 
 

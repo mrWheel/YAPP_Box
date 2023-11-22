@@ -236,9 +236,9 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)-(standoffHe
 // for example a triangle could be [[-1,-1],[0,1],[1,-1]] 
 
 // Pre-defined shapes
-Shape_IsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
-Shape_Hexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
-Shape_6pt_Star = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
+shapeIsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
+shapeHexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
+shape6ptStar = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
 
 
 /*==================================================================
@@ -261,7 +261,7 @@ Parameters:
    (12) = shape polygon : Requires if openingShape = yappPolygon];
   ];
 */
-honeycombMask = [
+maskHoneycomb = [
 yappPatternHexGrid,    //pattern
   100,                  // width - must be over the opening size : adding extra will shift the mask within the opening
   104,                  // height
@@ -274,10 +274,10 @@ yappPatternHexGrid,    //pattern
   4,                    // openingLength, 
   0,                    // openingRadius
   30,                   //openingRotation
-  Shape_Hexagon];
+  shapeHexagon];
 
 
-hexCirclesMask = [
+maskHexCircles = [
 yappPatternHexGrid,    //pattern
   100,                  // width
   100,                  // height
@@ -292,7 +292,7 @@ yappPatternHexGrid,    //pattern
   0,                   //openingRotation
   []];
 
-barsMask = [
+maskBars = [
   yappPatternSquareGrid, //yappPatternSquareGrid,//pattern
   100,                  // width
   100,                  // height
@@ -302,7 +302,7 @@ barsMask = [
   0,                    // rotation
   yappRectangle,          // openingShape
   2,                    // openingWidth, 
-  0,                    // openingLength, 
+  100,                    // openingLength, 
   2.5,                    // openingRadius
   0,                   //openingRotation
   []
@@ -310,7 +310,7 @@ barsMask = [
 
 
 // Show sample of a Mask.in the negative X,Y quadrant
-//SampleMask(honeycombMask);
+//SampleMask(maskHoneycomb);
 
 /*===================================================================
  *** PCB Supports ***
@@ -321,7 +321,7 @@ Default origin =  yappPCBCoord : pcb[0,0,0]
 Parameters:
   (0) = posx
   (1) = posy
-  (2) = additional standoffHeight
+  (2) = standoffHeight
   (3) = filletRadius (0 = auto size)
   (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
   (n) = { yappHole, <yappPin> } // Baseplate support treatment
@@ -408,7 +408,7 @@ Parameters:
 
 cutoutsBase = 
 [
-  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, Shape_Hexagon, honeycombMask, yappCenter, yappUseMask]
+  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
 ];
 
 cutoutsLid  = 
@@ -439,7 +439,7 @@ cutoutsBack =
 
 cutoutsLeft =   
 [
-  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, Shape_Hexagon, barsMask, yappCenter, yappUseMask]
+  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
 ];
 
 cutoutsRight =  
@@ -1101,7 +1101,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
       // Objects to be cut to outside the box       
       // move it to the origin of the base
       translate ([-L/2, -W/2, -H]) // -baseWallHeight])
-        baseHookOutside();
+        hookBaseOutside();
       
       minkowskiCutBox(L, W, H, iRad, plane, wall);
     } // difference()
@@ -1113,7 +1113,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
       minkowskiCutBox(L, W, H, rad, plane, wall);
       
       translate ([-L/2, -W/2, -H]) //-baseWallHeight])
-        baseHookInside();
+        hookBaseInside();
     } // intersection()
     
     // The actual box
@@ -1137,7 +1137,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
       // Objects to be cut to outside the box 
       // move it to the origin of the base
       translate ([-L/2, -W/2, H]) //lidWallHeight])
-      lidHookOutside();
+      hookLidOutside();
       minkowskiCutBox(L, W, H, iRad, plane, wall);
     } // difference()
 
@@ -1147,7 +1147,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
     {
       minkowskiCutBox(L, W, H, rad, plane, wall);
       translate ([-L/2, -W/2, H]) // lidWallHeight])
-        lidHookInside();
+        hookLidInside();
     }
     
     color(colorLid)
@@ -3183,41 +3183,41 @@ module showOrientation()
   
 //===========================================================
 // origin = box(0,0,0)
-module lidHookInside()
+module hookLidInside()
 {
-  //echo("lidHookInside(original) ..");
+  //echo("hookLidInside(original) ..");
   //translate([shellLength/2,10,0])
   //sphere(r=20);
-} // lidHookInside(dummy)
+} // hookLidInside(dummy)
   
 //===========================================================
 // origin = box(0,0,chellHeight)
-module lidHookOutside()
+module hookLidOutside()
 {
-  //echo("lidHookOutside(original) ..");
+  //echo("hookLidOutside(original) ..");
   //translate([10,10,10])
   //sphere(r=20);
   
-} // lidHookOutside(dummy)
+} // hookLidOutside(dummy)
 
 //===========================================================
 // origin = box(0,0,0)
-module baseHookInside()
+module hookBaseInside()
 {
-  //echo("baseHookInside(original) ..");
+  //echo("hookBaseInside(original) ..");
   //translate([shellLength/2,10,0])
   //sphere(r=20);
     
-} // baseHookInside(dummy)
+} // hookBaseInside(dummy)
 
 //===========================================================
 // origin = box(0,0,0)
-module baseHookOutside()
+module hookBaseOutside()
 {
-  //echo("baseHookOutside(original) ..");
+  //echo("hookBaseOutside(original) ..");
   //  sphere(r=20);
   
-} // baseHookOutside(dummy)
+} // hookBaseOutside(dummy)
 
 //===========================================================
 module pinFillet (pinRadius, filletRadius) {
@@ -3679,7 +3679,7 @@ module YAPPgenerate()
 
         } //  difference(a)
         
-     //   baseHookInside();
+     //   hookBaseInside();
         
         
         drawButtonExtenders();

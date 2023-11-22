@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 2.1 (12-11-2023)
+//  Version 2.1 (22-11-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -14,13 +14,6 @@
 //                                                  ^^^^^^
 //
 //-----------------------------------------------------------------------
-
-
-polygonShape = [  [0,0],[20,15],[30,0],[40,15],[70,15]
-                 ,[50,30],[60,45], [40,45],[30,70]
-                 ,[20,45], [0,45]
-               ];
-
 
 include <../YAPP_Box/library/YAPPgenerator_v21.scad>
 
@@ -49,8 +42,9 @@ include <../YAPP_Box/library/YAPPgenerator_v21.scad>
                                  LEFT
 */
 
-// Override the default facet count of 20
-facetCount = 15;
+// Set the default preview and render quality from 1-32  
+previewQuality = 5;   // Default = 5
+renderQuality = 10;   // Default = 12
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -58,27 +52,29 @@ printLidShell         = true;
 printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 60;
-pcbWidth            = 100;
+pcbLength           = 150; // Front to back
+pcbWidth            = 100; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 1;
+paddingFront        = 41;
 paddingBack         = 1;
 paddingRight        = 1;
 paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 1.0;
-lidPlaneThickness   = 1.0;
+basePlaneThickness  = 1.25;
+lidPlaneThickness   = 1.25;
 
-//-- Total height of box = basePlaneThickness + lidPlaneThickness 
-//--                     + baseWallHeight + lidWallHeight
+//-- Total height of box = lidPlaneThickness 
+//                       + lidWallHeight 
+//--                     + baseWallHeight 
+//                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 8;
-lidWallHeight       = 13;
+baseWallHeight      = 25;
+lidWallHeight       = 23;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -88,20 +84,21 @@ roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 4.0;  //-- only used for showPCB
+standoffHeight      = 10.0;  //-- used only for pushButton and showPCB
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 standoffDiameter    = 7;
 
 
+
 //-- D E B U G -----------------//-> Default ---------
 showSideBySide      = true;     //-> true
-onLidGap            = 0;
-shiftLid            = 1;
+onLidGap            = 10;
+shiftLid            = 5;
+colorLid            = "YellowGreen";   
+colorBase           = "BurlyWood";
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
-colorLid            = "silver";
-colorBase           = "lightgray";
 showOrientation     = true;
 showPCB             = false;
 showSwitches        = false;
@@ -110,266 +107,374 @@ showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectLightTubes   = 0;        //-> { -1 | 0 | 1 }
-inspectButtons      = 0;        //-> { -1 | 0 | 1 }
+inspectXfromBack    = true;    // View from the inspection cut foreward
+inspectYfromLeft    = true;     // View from the inspection cut to the right
+//inspectLightTubes   = 0;      //-> { -1 | 0 | 1 }
+//inspectButtons      = 0;      //-> { -1 | 0 | 1 } 
+
 //-- D E B U G ---------------------------------------
 
+// ==================================================================
+// Shapes
+// ------------------------------------------------------------------
 
-//-- pcb_standoffs  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = standoffHeight
-// (3) = filletRadius (0 = auto size)
-// (n) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (n) = { yappHole, YappPin }
-// (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-// (n) = { yappAddFillet }
-pcbStands =    [
-                  [4, 4, 4, 3.5, yappBoth, yappFrontLeft, yappAddFillet]
-                , [4, 4, 4, 2.5, yappBoth, yappBackRight, yappAddFillet]
-                , [5, 5, 4, 0, yappBaseOnly, yappFrontRight, yappAddFillet]
-                , [5, 5, 4, 0, yappBaseOnly, yappBackLeft, yappAddFillet]
-               ];
+// Shapes should be defined to fit into a 2x2 box (+/-1 in X and Y) - they will be scaled as needed.
+// defined as a vector of [x,y] vertices pairs.(min 3 vertices)
+// for example a triangle could be [[-1,-1],[0,1],[1,-1]] 
 
-//-- base plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-cutoutsBase =   [
-             //       [30, 0, 10, 24, yappRectangle]
-             //     , [pcbLength/2, pcbWidth/2, 12, 4, yappCircle]
-             //     , [pcbLength-8, 25, 10, 14, yappRectangle, yappCenter]
-                ];
+// Pre-defined shapes
+shapeIsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
+shapeHexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
+shape6ptStar = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
 
-//-- Lid plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-cutoutsLid  =   [
-             //     [20, 0, 10, 24, 0, yappRectangle]
-             //   , [pcbWidth-6, 40, 12, 4, 20, yappCircle]
-             //   , [30, 25, 10, 14, 45, yappRectangle, yappCenter]
-                ];
 
-//-- cutoutsGrill    -- origin is pcb[0,0,0]
-// (0) = xPos
-// (1) = yPos
-// (2) = grillWidth
-// (3) = grillLength
-// (4) = gWidth
-// (5) = gSpace
-// (6) = gAngle
-// (7) = plane { "base" | "led" }
-// (7) = {polygon points}}
-//
-//starShape =>>> [  [0,15],[20,15],[30,0],[40,15],[60,15]
-//                 ,[50,30],[60,45], [40,45],[30,60]
-//                 ,[20,45], [0,45],[10,30]
-//               ]
-cutoutsGrill =[
-              ];
 
-//-- front plane  -- origin is pcb[0,0,0]
-// (0) = posy
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-cutoutsFront =  [
-                    [25, -3, 37, 17, 0, yappRectangle, yappMinCutout]
-              //    , [30, 7.5, 15, 9, 0, yappRectangle, yappCenter]
-              //    , [0, 2, 10, 0, 0, yappCircle]
-                ];
+/*==================================================================
+ *** Masks ***
+ ------------------------------------------------------------------
+Parameters:
+  maskName = [
+   (0) = Grid pattern :{ yappPatternSquareGrid | yappPatternHexGrid }  
+   (1) = width
+   (2) = height
+   (3) = thickness
+   (4) = horizontal Repeat
+   (5) = vertical Repeat
+   (6) = grid rotation
+   (7) = openingShape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect}
+   (8) = openingWidth, 
+   (9) = openingLength, 
+   (10) = openingRadius
+   (11) = openingRotation
+   (12) = shape polygon : Requires if openingShape = yappPolygon];
+  ];
+*/
+maskHoneycomb = [
+yappPatternHexGrid,    //pattern
+  100,                  // width - must be over the opening size : adding extra will shift the mask within the opening
+  104,                  // height
+  2.1,                    // thickness - to do a full cutout make it > wall thickness
+  5,                    // hRepeat
+  5,                    // vRepeat
+  30,                    // rotation
+  yappPolygon,          // openingShape
+  4,                    // openingWidth, 
+  4,                    // openingLength, 
+  0,                    // openingRadius
+  30,                   //openingRotation
+  shapeHexagon];
 
-//-- back plane  -- origin is pcb[0,0,0]
-// (0) = posy
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-cutoutsBack =   [
-              //      [10, 0, 10, 18, 0, yappRectangle]
-              //    , [30, 0, 10, 8, 0, yappRectangle, yappCenter]
-              //    , [pcbWidth, 0, 8, 0, 0, yappCircle]
-                ];
 
-//-- left plane   -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-cutoutsLeft =   [
-              //    , [0, 0, 15, 20, 0, yappRectangle]
-              //    , [30, 5, 25, 10, 0, yappRectangle, yappCenter]
-              //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
-                ];
+maskHexCircles = [
+yappPatternHexGrid,    //pattern
+  100,                  // width
+  100,                  // height
+  3,                    // thickness - to do a full cutout make it > wall thickness
+  5,                    // hRepeat
+  5,                    // vRepeat
+  0,                    // rotation
+  yappCircle,          // openingShape
+  0,                    // openingWidth, 
+  0,                    // openingLength, 
+  2,                    // openingRadius
+  0,                   //openingRotation
+  []];
 
-//-- right plane   -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posz
-// (2) = width
-// (3) = height
-// (4) = angle
-// (n) = { yappRectangle | yappCircle }
-// (n) = { yappCenter }
-cutoutsRight =  [
-              //      [0, 0, 15, 7, 0, yappRectangle]
-              //    , [30, 10, 25, 15, 0, yappRectangle, yappCenter]
-              //    , [pcbLength-10, 2, 10, 0, 0, yappCircle]
-                ];
+maskBars = [
+  yappPatternSquareGrid, //yappPatternSquareGrid,//pattern
+  100,                  // width
+  100,                  // height
+  3,                    // thickness - to do a full cutout make it > wall thickness
+  4,                    // hRepeat
+  100,                    // vRepeat
+  0,                    // rotation
+  yappRectangle,          // openingShape
+  2,                    // openingWidth, 
+  0,                    // openingLength, 
+  2.5,                    // openingRadius
+  0,                   //openingRotation
+  []
+];
 
-//-- connectors 
-//-- normal         : origen = box[0,0,0]
-//-- yappConnWithPCB: origen = pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = pcbStandHeight
-// (3) = screwDiameter
-// (4) = screwHeadDiameter
-// (5) = insertDiameter
-// (6) = outsideDiameter
-// (7) = filletRadius (0 = auto size)
-// (n) = { yappConnWithPCB }
-// (n) = { yappAllCorners | yappFrontLeft | yappFrondRight | yappBackLeft | yappBackRight }
-// (n) = { yappAddFillet }
-connectors   = [ 
-                [25, 10, 5, 2.5, 5, 4.0, 6, 2, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
-               ,[18, 20, 5, 2.5, 5, 5.0, 6, 5.5, yappAllCorners, yappAddFillet]
-             // , [18, 20, 5, 2.5, 5, 4.0, 15, 0, yappConnWithPCB, yappFrontRight, yappBackLeft, yappBackRight, yappAddFillet]
-             // , [18, 20, 5, 2.5, 5, 4.0, 6, 0, yappConnWithPCB, yappFrontLeft, yappAddFillet]
-               ];
 
-//-- base mounts -- origen = box[x0,y0]
-// (0) = posx | posy
-// (1) = screwDiameter
-// (2) = width
-// (3) = height
-// (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappCenter }
-// (n) = { yappAddFillet }
-baseMounts   =  [
-                    [45, 3.3, 10, 3, yappFront, yappLeft, yappRight, yappAddFillet]//, yappCenter]
-                  , [10, 6, 10, 3, yappBack, yappFront]
-              //    , [4, 3, 34, 3, yappFront]
-              //    , [25, 3, 3, 3, yappBack]
-                ];
+// Show sample of a Mask.in the negative X,Y quadrant
+//SampleMask(maskHoneycomb);
 
-//-- snap Joins -- origen = box[x0,y0]
-// (0) = posx | posy
-// (1) = width
-// (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-// (n) = { yappSymmetric }
+/*===================================================================
+ *** PCB Supports ***
+ Pin and Socket standoffs 
+ ------------------------------------------------------------------
+Default origin =  yappPCBCoord : pcb[0,0,0]
+
+Parameters:
+  (0) = posx
+  (1) = posy
+  (2) = additional standoffHeight
+  (3) = filletRadius (0 = auto size)
+  (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
+  (n) = { yappHole, <yappPin> } // Baseplate support treatment
+  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  (n) = { yappBoxCoord, <yappPCBCoord> }  
+  (n) = { yappNoFillet }
+*/
+pcbStands = [
+  [5, 5, standoffHeight, 0, yappHole]
+];
+
+
+/*===================================================================
+ *** Connectors ***
+ Standoffs with hole through base and socket in lid for screw type connections.
+ ------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+  
+Parameters:
+  (0) = posx
+  (1) = posy
+  (2) = pcbStandHeight
+  (3) = screwDiameter
+  (4) = screwHeadDiameter (don't forget to add extra for the fillet)
+  (5) = insertDiameter
+  (6) = outsideDiameter
+  (7) = filletRadius (0 = auto size)
+  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  (n) = { <yappBoxCoord>, yappPCBCoord }
+  (n) = { yappNoFillet }
+  
+*/
+connectors   =
+  [
+    [9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, 0, yappFrontRight]
+   ,[9, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontRight]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
+  ];
+
+/*===================================================================
+*** Base Mounts ***
+  Mounting tabs on the outside of the box
+ ------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+  (0) = pos
+  (1) = screwDiameter
+  (2) = width
+  (3) = height
+  (4) = filletRadius
+  (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+  (n) = { yappNoFillet }
+*/
+baseMounts =
+[
+  [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
+];
+
+
+/*===================================================================
+*** Cutouts ***
+  There are 6 cutouts one for each surface:
+    cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+ (0) = from Back
+ (1) = from Left
+ (2) = width
+ (3) = length
+ (4) = radius
+ (5) = depth 0=Auto (plane thickness)
+ (6) = angle
+ (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect
+ (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
+ (9) = Mask : [] if not used.  - Required if yappUseMask specified -
+ (n) = { <yappBoxCoord> | yappPCBCoord }
+ (n) = { <yappOrigin>, yappCenter }
+ (n) = { yappUseMask }
+*/
+
+cutoutsBase = 
+[
+  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
+];
+
+cutoutsLid  = 
+[
+
+//Center test
+//  [shellLength/2,shellWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter]
+// ,[pcbLength/2,pcbWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter, yappPCBCoord]
+//Edge tests
+// ,[shellLength/2,0,             2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+// ,[shellLength/2,shellWidth,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+// ,[0,            shellWidth/2,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+// ,[shellLength,  shellWidth/2,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
+/**/
+];
+
+cutoutsFront =  
+[
+
+];
+
+
+cutoutsBack = 
+[
+  [shellWidth/2,shellHeight/2 ,12,8, 2 ,0 ,0, yappRoundedRect, [], [], yappCenter]
+
+];
+
+cutoutsLeft =   
+[
+  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
+];
+
+cutoutsRight =  
+[
+
+];
+
+
+/*===================================================================
+*** Snap Joins ***
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+ (0) = posx | posy
+ (1) = width
+ (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+ (n) = { <yappOrigin> | yappCenter }
+ (n) = { yappSymmetric }
+*/
+
 snapJoins   =   [
-                  [(pcbWidth/2), 3, yappBack]
-                , [(pcbLength/2)+6, 3, yappLeft]
-                , [(pcbLength/2)+6, 3, yappRight]
-
-              //    [2,               5, yappLeft, yappRight, yappSymmetric]
-              //    [5,              10, yappLeft]
-              //  , [shellLength-2,  10, yappLeft]
-              //  , [20,             10, yappFront, yappBack]
-              //  , [2.5,             5, yappBack,  yappFront, yappSymmetric]
+                  [(shellWidth/2),     10, yappFront, yappCenter]
+                , [25,  10, yappBack, yappSymmetric, yappCenter]
+                , [(shellLength/2),    10, yappLeft, yappRight, yappCenter]
                 ];
-               
-//-- lightTubes  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = tubeLength
-// (3) = tubeWidth
-// (4) = tubeWall
-// (5) = abovePcb
-// (6) = filletRadius (0 = auto size)
-// (n) = througLid {yappThroughLid}
-// (n) = tubeType  {yappCircle|yappRectangle}
-// (n) = { yappAddFillet }
-lightTubes = [
-              //--- 0,  1, 2,   3, 4, 5, 6/7
-                  [25, 30, 1.5, 5, 1, 2, 2.5, yappRectangle, yappAddFillet]
-               ,  [25, 40, 1.5, 5, 1, 2, 2, yappCircle, yappAddFillet]
-               ,  [25, 50, 1.5, 5, 1, 2, 0, yappRectangle, yappThroughLid, yappAddFillet]
-              ];     
 
-//-- pushButtons  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = capLength
-// (3) = capWidth
-// (4) = capAboveLid
-// (5) = switchHeight
-// (6) = switchTrafel
-// (7) = poleDiameter
-// (n) = buttonType  {yappCircle|yappRectangle}
-pushButtons = [
-             //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-                [15, 30, 8, 8, 0, 1,   1, 3.5, yappCircle]
-              , [15, 60, 8, 6, 2, 1.5, 1, 3.5, yappRectangle]
-              ];     
+/*===================================================================
+*** Light Tubes ***
+------------------------------------------------------------------
+Default origin = yappPCBCoord: PCB[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy
+ (2) = tubeLength
+ (3) = tubeWidth
+ (4) = tubeWall
+ (5) = gapAbovePcb
+ (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
+ (7) = tubeType    {yappCircle|yappRectangle}
+ (8) = filletRadius
+ (n) = { yappBoxCoord, <yappPCBCoord> }
+ (n) = { yappNoFillet }
+*/
+
+lightTubes =
+[
+  [pcbLength/2,pcbWidth/2,  // Pos
+    5, 5,                   // W,L
+    1,                      // wall thickness
+    standoffHeight + pcbThickness + 4,    // Gap above base bottom
+    .5,                      // lensThickness (from 0 (open) to lidPlaneThickness)
+    yappRectangle,          // tubeType (Shape)
+    0,                      // filletRadius
+    yappPCBCoord            //
+  ]
+  ,[pcbLength/2+30,pcbWidth/2, // Pos
+    5, 5,                 // W,L
+    1,                      // wall thickness
+    12,                      // Gap above PCB
+    0,                    // lensThickness
+    yappCircle,          // tubeType (Shape)
+    0,                      // filletRadius
+    yappCenter            //
+  ]
+];
+
+/*===================================================================
+*** Push Buttons ***
+------------------------------------------------------------------
+Default origin = yappPCBCoord: PCB[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy
+ (2) = capLength
+ (3) = capWidth
+ (4) = capAboveLid
+ (5) = switchHeight
+ (6) = switchTrafel
+ (7) = poleDiameter
+ (6) = filletRadius
+ (n) = buttonType  {yappCircle|yappRectangle}
+*/
+pushButtons = 
+[
+   [15, 60, 8, 6, 2, 3.5, 1, 3.5, 0, yappCircle, yappNoFillet]
+  ,[15, 40, 8, 6, 2, 3.5, 1, 3.5, 0, yappRectangle, yappNoFillet]
+];
              
-//-- origin of labels is box [0,0,0]
-// (0) = posx
-// (1) = posy/z
-// (2) = orientation
-// (3) = depth
-// (4) = plane {lid | base | left | right | front | back }
-// (5) = font
-// (6) = size
-// (7) = "label text"
-labelsPlane =   [
-                  //  [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
-                ];
+/*===================================================================
+*** Labels ***
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy/z
+ (2) = orientation
+ (3) = depth
+ (4) = plane {lid | base | left | right | front | back }
+ (5) = font
+ (6) = size
+ (7) = "label text"
+ */
+labelsPlane =
+[
+    [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+];
 
 
-//========= MAIN CALL's ===========================================================
+//===========================================================
+module hookLidInside()
+{
+  echo("hookLidInside(original) ..");
+  translate([40, 40, -8]) color("purple") cube([15,20,10]);
+  
+} // hookLidInside(dummy)
   
 //===========================================================
-module lidHookInside()
+module hookLidOutside()
 {
-  echo("lidHookInside(original) ..");
-  translate([40, 40, -10]) color("purple") cube([15,20,10]);
-  
-} // lidHookInside(dummy)
-  
-//===========================================================
-module lidHookOutside()
-{
-  echo("lidHookOutside(original) ..");
-  translate([(shellLength/2),-15,-13])
+  echo("hookLidOutside(original) ..");
+  translate([(shellLength/2),-5,-5])
   {
     color("yellow") cube([20,15,10]);
-  }
-  
-} // lidHookOutside(dummy)
+  }  
+} // hookLidOutside(dummy)
 
 //===========================================================
-module baseHookInside()
+module hookBaseInside()
 {
-  echo("baseHookInside(original) ..");  
-  translate([10, 30, 0]) color("lightgreen") cube([15,25,8]);
+  //echo("hookBaseInside(original) ..");
+  echo("hookBaseInside(original) ..");  
+  translate([10, 30, -5]) color("lightgreen") cube([15,25,8]);
   
-} // baseHookInside(dummy)
+} // hookBaseInside(dummy)
 
 //===========================================================
-module baseHookOutside()
+module hookBaseOutside()
 {
-  echo("baseHookOutside(original) ..");
-  translate([shellLength-wallThickness, 65, 0]) color("green") cube([15,25,6]);
+  echo("hookBaseOutside(original) ..");
+  translate([shellLength-wallThickness-10, 55, -5]) color("green") cube([15,25,10]);
+  
+} // hookBaseOutside(dummy)
 
-} // baseHookOutside(dummy)
 
 
 

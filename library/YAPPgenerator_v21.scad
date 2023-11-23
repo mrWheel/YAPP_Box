@@ -1313,7 +1313,7 @@ module pcbHolders()
     lengthX   = usePCBCoord ? pcbLength : shellLength;
     lengthY   = usePCBCoord ? pcbWidth : shellWidth;
 
-    allCorners = (isTrue(yappBackLeft, stand) && isTrue(yappFrontLeft, stand) && isTrue(yappFrontRight, stand) && isTrue(yappBackRight, stand)) ? false : true;
+    allCorners = ((!isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand)) || (isTrue(yappAllCorners, stand)) ) ? true : false;
 
     if (!isTrue(yappLidOnly, stand))
     {
@@ -1381,7 +1381,7 @@ module pcbPushdowns()
     lengthX   = usePCBCoord ? pcbLength : shellLength;
     lengthY   = usePCBCoord ? pcbWidth : shellWidth;
 
-allCorners = (isTrue(yappBackLeft, pushdown) && isTrue(yappFrontLeft, pushdown) && isTrue(yappFrontRight, pushdown) && isTrue(yappBackRight, pushdown)) ? false : true;
+    allCorners = ((!isTrue(yappBackLeft, pushdown) && !isTrue(yappFrontLeft, pushdown) && !isTrue(yappFrontRight, pushdown) && !isTrue(yappBackRight, pushdown)) || (isTrue(yappAllCorners, pushdown)) ) ? true : false;
 
     if (!isTrue(yappBaseOnly, pushdown))
     {

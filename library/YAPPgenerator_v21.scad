@@ -360,7 +360,7 @@ connectors   =
     [9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, 0, yappFrontRight]
    ,[9, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
    ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontRight]
-   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft, yappThroughLid]
   ];
 
 /*===================================================================
@@ -3534,7 +3534,7 @@ module drawlid() {
  //   buildButtons();     //-2.0-
     
 //    cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
-    #cutoutsForScrewHoles("lid");
+    cutoutsForScrewHoles("lid");
 
     // Do all of the face cuts
     makeCutouts("lid");  

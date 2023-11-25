@@ -75,8 +75,8 @@ renderQuality = 10;   // Default = 12
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
-printLidShell         = true;
-printSwitchExtenders  = true;
+printLidShell         = true; //true;
+printSwitchExtenders  = true; //true;
 
 //-- pcb dimensions -- very important!!!
 pcbLength           = 150; // Front to back
@@ -120,7 +120,8 @@ standoffDiameter    = 7;
 showSideBySide      = true;     //-> true
 onLidGap            = 10;
 shiftLid            = 5;
-colorLid            = "YellowGreen";   
+colorLid            = "YellowGreen";
+lidAlpha            = 1.0;      // 0 for fully transparent
 colorBase           = "BurlyWood";
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
@@ -136,6 +137,14 @@ inspectXfromBack    = true;    // View from the inspection cut foreward
 inspectYfromLeft    = true;     // View from the inspection cut to the right
 //inspectLightTubes   = 0;      //-> { -1 | 0 | 1 }
 //inspectButtons      = 0;      //-> { -1 | 0 | 1 } 
+//-- Import a supported mesh file for your PCB.
+//-- If empty or undefined, a box will be printed.
+//-- Use rotation then translation to move the back, left, bottom 
+//-- of the mesh to the origin (ignored if pcbFilename not given).
+pcbFilename         = "";
+pcbRotation         = [0,0,0];
+pcbTranslation      = [110, 0, 0]; 
+
 
 //-- D E B U G ---------------------------------------
 
@@ -352,7 +361,7 @@ Parameters:
   (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
   (n) = { <yappBoxCoord>, yappPCBCoord }
   (n) = { yappNoFillet }
-  
+
 */
 connectors   =
   [
@@ -369,7 +378,7 @@ connectors   =
 Default origin = yappBoxCoord: box[0,0,0]
 
 Parameters:
-  (0) = pos
+  (0) = pos - if a vector, 2nd dimension is distance between hole center and shell wall
   (1) = screwDiameter
   (2) = width
   (3) = height
@@ -379,7 +388,8 @@ Parameters:
 */
 baseMounts =
 [
-  [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
+  [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet], //, yappCenter]
+  [[0,10], 3, 0, 3, yappFront, yappBack, yappNoFillet]
 ];
 
 
@@ -413,6 +423,7 @@ cutoutsBase =
 
 cutoutsLid  = 
 [
+  [shellLength/2,shellWidth/2 ,15,15, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask],
 
 //Center test
   [shellLength/2,shellWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter]
@@ -632,7 +643,8 @@ module printBaseMounts()
   
       module oneMount(bm, scrwX1pos, scrwX2pos)
       {
-        mountPos = bm[0];                // = posx | posy
+        pos = bm[0];                     // = posx | posy or [posx, posy] | [posy, posx]
+        mountPos = is_list(pos) ? pos[0] : pos;// = posx | posy
         mountOpeningDiameter = bm[1];    // = screwDiameter
         mountWidth = bm[2];              // = width
         mountHeight = bm[3];             // = Height
@@ -640,8 +652,8 @@ module printBaseMounts()
         outRadius = mountOpeningDiameter;  // rad := diameter (r=6 := d=6)
         bmX1pos   = scrwX1pos-mountOpeningDiameter - mountPos;
         bmX2pos   = scrwX2pos-outRadius - mountPos;
-        bmYpos    = (mountOpeningDiameter*-2);
-        bmLen     = (mountOpeningDiameter*4)+bmYpos;
+        bmYpos    = is_list(pos) && len(pos) > 1 ? -pos[1] - mountOpeningDiameter: (mountOpeningDiameter*-2); // mount length
+        bmLen     = -bmYpos;
 
         translate([mountOpeningDiameter - ((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2))/2, 0, 0])
         {
@@ -652,7 +664,7 @@ module printBaseMounts()
                 roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,mountHeight], outRadius);
             }
             
-            translate([0, (mountOpeningDiameter*-1), -1])
+            translate([0, (bmYpos + mountOpeningDiameter), -1])
             {
               color("blue")
               hull() 
@@ -708,21 +720,21 @@ module printBaseMounts()
       for (bm = baseMounts)
       {
         c = isTrue(yappCenter, bm);
-        
         // (0) = posx | posy
         // (1) = screwDiameter
         // (2) = width
         // (3) = Height
         // (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+        mountPos = is_list(bm[0]) ? bm[0][0] : bm[0];// = posx | posy
         if (isTrue(yappLeft, bm))
         {
-          translate([bm[0],0, bm[3]])
+          translate([mountPos,0, bm[3]])
           rotate([0,180,0])
           {
             newWidth  = maxWidth(bm[2], bm[1], shellLength);
-            tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
+            tmpPos    = calcScrwPos(mountPos, newWidth, shellLength, c);
             tmpMinPos = minPos(tmpPos, bm[1]);
-            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
+            scrwX1pos = mountPos; 
             scrwX2pos = scrwX1pos + newWidth;
             oneMount(bm, scrwX1pos, scrwX2pos);
           }
@@ -739,13 +751,13 @@ module printBaseMounts()
           {
             mirror([1,0,0])
             {
-              translate([shellLength - bm[0],(shellWidth*-1), bm[3]])
+              translate([shellLength - mountPos,(shellWidth*-1), bm[3]])
               rotate([0,180,0])
               {
                 newWidth  = maxWidth(bm[2], bm[1], shellLength);
-                tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
+                tmpPos    = calcScrwPos(mountPos, newWidth, shellLength, c);
                 tmpMinPos = minPos(tmpPos, bm[1]);
-                scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
+                scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
                 scrwX2pos = scrwX1pos + newWidth;
                 oneMount(bm, scrwX1pos, scrwX2pos);
               }
@@ -763,13 +775,13 @@ module printBaseMounts()
         {
           //echo("baseMountOffset",bm[0]);
           
-          translate([shellLength,bm[0], -(bm[3]*-1)])
+          translate([shellLength,mountPos, -(bm[3]*-1)])
           rotate([0,180,90])
           {
             newWidth  = maxWidth(bm[2], bm[1], shellWidth);
-            tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
+            tmpPos    = calcScrwPos(mountPos, newWidth, shellWidth, c);
             tmpMinPos = minPos(tmpPos, bm[1]);
-            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
+            scrwX1pos = mountPos; 
             scrwX2pos = scrwX1pos + newWidth;
             oneMount(bm, scrwX1pos, scrwX2pos);
           }
@@ -783,13 +795,13 @@ module printBaseMounts()
         if (isTrue(yappBack, bm))
         {
           //echo("printBaseMount: BACK!!");
-          translate([0,bm[0], -(bm[3]*-1)])
+          translate([0,mountPos, -(bm[3]*-1)])
           rotate([0,180,-90])
           {
             newWidth  = maxWidth(bm[2], bm[1], shellWidth);
-            tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
+            tmpPos    = calcScrwPos(mountPos, newWidth, shellWidth, c);
             tmpMinPos = minPos(tmpPos, bm[1]);
-            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
+            scrwX1pos = mountPos; 
             scrwX2pos = scrwX1pos + newWidth;
             oneMount(bm, scrwX1pos, scrwX2pos);
           }
@@ -1150,7 +1162,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
         hookLidInside();
     }
     
-    color(colorLid)
+    color(colorLid, lidAlpha)
     //color("White")
     difference()
     {
@@ -1230,7 +1242,11 @@ module printPCB(posX, posY, posZ)
       translate([posX, posY, posZ]) // (t1)
       {
         color("red")
+        if (is_undef(pcbFilename) || pcbFilename == "") {
           cube([pcbLength, pcbWidth, pcbThickness]);
+        } else {
+          translate(pcbTranslation) rotate(pcbRotation) import(pcbFilename);
+        }
       }
       showPCBmarkers(posX, posY, posZ);
       
@@ -1447,13 +1463,16 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
 
       // mask
       theMask = cutOut[9];
-   //echo(theMask=theMask);
+      //echo(theMask=theMask);
       
-      translate([offset_x, offset_y, offset_z]) 
+      maskThickness = max(theMask[3], (cutOut[5] == 0 ? wallDepth + 0.04 : cutOut[5]));
+      base_zPos = wallDepth - (invertZ ? maskThickness : 0);
+   //echo(theMask=theMask, invertZ=invertZ, offset_z=offset_z, zPos=zPos, "theMask[3]", theMask[3], "cutOut[5]", cutOut[5]);
+      translate([offset_x, offset_y, offset_z])
       {
         rotate([rot_X, rot_Y, rot_Z])
         {
-          translate([base_pos_x, base_pos_y,wallDepth])
+          translate([base_pos_x, base_pos_y, base_zPos])
           genMaskfromParam(theMask);
         }// rotate
       } //translate
@@ -3525,7 +3544,7 @@ module drawlid() {
  //   buildButtons();     //-2.0-
     
 //    cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
-    
+
     // Do all of the face cuts
     makeCutouts("lid");  
 

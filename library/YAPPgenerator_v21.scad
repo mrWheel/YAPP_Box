@@ -188,7 +188,7 @@ yappBackLeft    = -30406;  // pcbStands, Connectors,
 yappBackRight   = -30407;  // pcbStands, Connectors, 
 
 
-// Lightube options
+// Lightube and Connectors options
 yappThroughLid  = -30500;
 
 // Misc Options
@@ -352,7 +352,8 @@ Parameters:
   (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
   (n) = { <yappBoxCoord>, yappPCBCoord }
   (n) = { yappNoFillet }
-  
+  (n) = { yappThroughLid }
+
 */
 connectors   =
   [
@@ -1690,14 +1691,15 @@ module processCutoutList(face, cutoutList, type)
 module cutoutsForScrewHoles(type)
 {      
   function actZpos(T) = (T=="base")        
-      ? -1 
-      : ((roundRadius+lidPlaneThickness)*-1);
+      ? -0.02 
+      : -planeThickness(type)+.02;
   function planeThickness(T) = (T=="base") 
       ? (basePlaneThickness+roundRadius+2)
       : (lidPlaneThickness+roundRadius+2);
 
   zPos = actZpos(type);
   thickness = planeThickness(type);
+  
 
   //-- [0]pcb_x, [1]pcb_y, [2]width, [3]length, [4]angle
   //-- [5]{yappRectangle | yappCircle}
@@ -1718,61 +1720,65 @@ module cutoutsForScrewHoles(type)
     // (8) = supportDiam
     // (n) = { yappPCBCoord }
     // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+    //  (n) = { yappThroughLid }
     for(conn = connectors)
     {
-      if (!isTrue(yappPCBCoord, conn))
+      if ((isTrue(yappThroughLid, conn) && type != "base")
+         ||  (!isTrue(yappThroughLid, conn) && type == "base"))
       {
-        if(isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
+        if (!isTrue(yappPCBCoord, conn))
         {
-          translate([conn[0], conn[1], -0.02])
+          if(isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
           {
-            linear_extrude(basePlaneThickness+0.04)
+            translate([conn[0], conn[1], zPos])
             {
-              circle(d = conn[4]);  //-- screwHeadDiam);
+              linear_extrude(thickness+0.04)
+              {
+                circle(d = conn[4]);  //-- screwHeadDiam);
+              }
             }
           }
-        }
-        if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
-        {
-          translate([shellLength-conn[0], conn[1], -0.02])
-          { 
-            linear_extrude(basePlaneThickness+0.04)
-              circle(d = conn[4]);  //-- screwHeadDiam
-                
-          }
-        }
-        if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
-        {
-          translate([shellLength-conn[0], shellWidth-conn[1], -0.02])
-          { 
-            linear_extrude(basePlaneThickness+0.04)
-              circle(d = conn[4]);  //-- screwHeadDiam
-          }
-        }
-        if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
-        {
-          translate([conn[0], shellWidth-conn[1], -0.02])
-          { 
-            linear_extrude(basePlaneThickness+0.04)
-              circle(d = conn[4]);  //-- screwHeadDiam
-          }
-        }     
-        if (!isTrue(yappAllCorners, conn) 
-              && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
-              && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
-        {
-          translate([conn[0], conn[1], -0.02])
+          if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
           {
-            linear_extrude(basePlaneThickness+0.04)
-            {
-              circle(d = conn[4]);  //-- screwHeadDiam
+            translate([shellLength-conn[0], conn[1], zPos])
+            { 
+              linear_extrude(thickness+0.04)
+                circle(d = conn[4]);  //-- screwHeadDiam
+                  
             }
           }
-        }
-      } //-- connect Shells
+          if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
+          {
+            translate([shellLength-conn[0], shellWidth-conn[1], zPos])
+            { 
+              linear_extrude(thickness+0.04)
+                circle(d = conn[4]);  //-- screwHeadDiam
+            }
+          }
+          if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
+          {
+            translate([conn[0], shellWidth-conn[1], zPos])
+            { 
+              linear_extrude(thickness+0.04)
+                circle(d = conn[4]);  //-- screwHeadDiam
+            }
+          }     
+          if (!isTrue(yappAllCorners, conn) 
+                && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
+                && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
+          {
+            translate([conn[0], conn[1], zPos])
+            {
+              linear_extrude(thickness+0.04)
+              {
+                circle(d = conn[4]);  //-- screwHeadDiam
+              }
+            }
+          }
+        } //-- connect Shells
 
-      if (isTrue(yappPCBCoord, conn))
-      {
+        if (isTrue(yappPCBCoord, conn))
+        {
         // (0) = posx
         // (1) = posy
         // (2) = pcbStandHeight
@@ -1784,39 +1790,40 @@ module cutoutsForScrewHoles(type)
         // (8) = supportDiam
         // (n) = { yappPCBCoord }
         // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+        // (n) = { yappThroughLid }
         if (isTrue(yappAllCorners, conn) || isTrue(yappBackLeft, conn))
         {
-          translate([pcbX + conn[0], pcbY + conn[1], -0.02])
+          translate([pcbX + conn[0], pcbY + conn[1], zPos])
           {
             color("green")
-            linear_extrude((basePlaneThickness)+0.04)
+            linear_extrude((thickness)+0.04)
               circle(d = conn[4]);  //-- screwHeadDiam
           }
         }
         if (isTrue(yappAllCorners, conn) || isTrue(yappFrontLeft, conn))
         {
-          translate([pcbX+pcbLength-conn[0], pcbY+conn[1], -0.02])
+          translate([pcbX+pcbLength-conn[0], pcbY+conn[1], zPos])
           {
             color("green")
-            linear_extrude((basePlaneThickness)+0.04)
+            linear_extrude((thickness)+0.04)
               circle(d = conn[4]);  //-- screwHeadDiam
           }
         }
         if (isTrue(yappAllCorners, conn) || isTrue(yappFrontRight, conn))
         {
-          translate([pcbX+pcbLength-conn[0], pcbY+pcbWidth-conn[1], -0.02])
+          translate([pcbX+pcbLength-conn[0], pcbY+pcbWidth-conn[1], zPos])
           {
             color("green")
-            linear_extrude((basePlaneThickness)+0.04)
+            linear_extrude((thickness)+0.04)
               circle(d = conn[4]);  //-- screwHeadDiam
           }
         }
         if (isTrue(yappAllCorners, conn) || isTrue(yappBackRight, conn))
         {
-          translate([pcbX + conn[0], pcbY + pcbWidth-conn[1], -0.02])
+          translate([pcbX + conn[0], pcbY + pcbWidth-conn[1], zPos])
           {
             color("green")
-            linear_extrude((basePlaneThickness)+0.04)
+            linear_extrude((thickness)+0.04)
               circle(d = conn[4]);  //-- screwHeadDiam
           }
         }
@@ -1824,13 +1831,14 @@ module cutoutsForScrewHoles(type)
               && !isTrue(yappBackLeft, conn)   && !isTrue(yappFrontLeft, conn)
               && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn))
         {
-          translate([pcbX + conn[0], pcbY + conn[1], -0.02])
+          translate([pcbX + conn[0], pcbY + conn[1], zPos])
           {
-            linear_extrude((basePlaneThickness)+0.04)
+            linear_extrude((thickness)+0.04)
               circle(d = conn[4]);  //-- screwHeadDiam
           }
         }
       } // connWithPCB ..
+      }  
     } // for conn ..  
 //  } //-- base
 } // cutoutsForScrewHoles()
@@ -3061,6 +3069,7 @@ module shellConnectors(plane)
     // (7) = filletRadius
     // (n) = { yappPCBCoord }
     // (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+    // (n) = { yappThroughLid }
 
     
     outD    = minOutside(conn[5]+1, conn[6]);
@@ -3525,7 +3534,8 @@ module drawlid() {
  //   buildButtons();     //-2.0-
     
 //    cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
-    
+    #cutoutsForScrewHoles("lid");
+
     // Do all of the face cuts
     makeCutouts("lid");  
 

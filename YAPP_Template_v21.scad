@@ -204,7 +204,7 @@ maskBars = [
  *** PCB Supports ***
  Pin and Socket standoffs 
  ------------------------------------------------------------------
-Default origin =  yappPCBCoord : pcb[0,0,0]
+Default origin =  yappCoordPCB : pcb[0,0,0]
 
 Parameters:
   (0) = posx
@@ -214,7 +214,7 @@ Parameters:
   (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
   (n) = { yappHole, <yappPin> } // Baseplate support treatment
   (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  (n) = { yappCoordBox, <yappPCBCoord> }  
+  (n) = { yappCoordBox, <yappCoordPCB> }  
   (n) = { yappNoFillet }
 */
 pcbStands = [
@@ -238,7 +238,7 @@ Parameters:
   (6) = outsideDiameter
   (7) = filletRadius (0 = auto size)
   (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  (n) = { <yappCoordBox>, yappPCBCoord }
+  (n) = { <yappCoordBox>, yappCoordPCB }
   (n) = { yappNoFillet }
   
 */
@@ -267,8 +267,8 @@ Parameters:
 */
 baseMounts =
 [
- // [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
-   [[10,10], 3, 0, 3, yappFront, yappBack]
+  [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
+ //  [[10,10], 3, 0, 3, yappFront, yappBack]
 ];
 
 
@@ -290,7 +290,7 @@ Parameters:
  (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect
  (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
  (9) = Mask : [] if not used.  - Required if yappUseMask specified -
- (n) = { <yappCoordBox> | yappPCBCoord }
+ (n) = { <yappCoordBox> | yappCoordPCB }
  (n) = { <yappOrigin>, yappCenter }
  (n) = { yappUseMask }
 */
@@ -305,7 +305,7 @@ cutoutsLid  =
 
 //Center test
 //  [shellLength/2,shellWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter]
-// ,[pcbLength/2,pcbWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter, yappPCBCoord]
+// ,[pcbLength/2,pcbWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter, yappCoordPCB]
 //Edge tests
 // ,[shellLength/2,0,             2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
 // ,[shellLength/2,shellWidth,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
@@ -359,7 +359,7 @@ snapJoins   =   [
 /*===================================================================
 *** Light Tubes ***
 ------------------------------------------------------------------
-Default origin = yappPCBCoord: PCB[0,0,0]
+Default origin = yappCoordPCB: PCB[0,0,0]
 
 Parameters:
  (0) = posx
@@ -371,7 +371,7 @@ Parameters:
  (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
  (7) = tubeType    {yappCircle|yappRectangle}
  (8) = filletRadius
- (n) = { yappCoordBox, <yappPCBCoord> }
+ (n) = { yappCoordBox, <yappCoordPCB> }
  (n) = { yappNoFillet }
 */
 
@@ -384,7 +384,7 @@ lightTubes =
     .5,                      // lensThickness (from 0 (open) to lidPlaneThickness)
     yappRectangle,          // tubeType (Shape)
     0,                      // filletRadius
-    yappPCBCoord            //
+    yappCoordPCB            //
   ]
   ,[pcbLength/2+30,pcbWidth/2, // Pos
     5, 5,                 // W,L
@@ -400,7 +400,7 @@ lightTubes =
 /*===================================================================
 *** Push Buttons ***
 ------------------------------------------------------------------
-Default origin = yappPCBCoord: PCB[0,0,0]
+Default origin = yappCoordPCB: PCB[0,0,0]
 
 Parameters:
  (0) = posx

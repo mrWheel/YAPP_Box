@@ -4,16 +4,6 @@
 **
 */
 
-/*
-DMR todo
-  1. Change fillet to default allow to supress - Done
-  2. Change Centered to default and allow to override
-  3. Add default Coordinate systems to each object type (and document them)
-  
-  
-*/
-
-
 Version="v2.1.0 (20-11-2023)";
 /*
 **
@@ -27,7 +17,7 @@ Version="v2.1.0 (20-11-2023)";
 **   - Dave Rosenhauer (fillets)
 **
 **
-**  for many or complex cutoutsGrill you might need to adjust
+**  for many or complex cutouts you might need to adjust
 **  the number of elements:
 **
 **      Preferences->Advanced->Turn of rendering at 100000 elements
@@ -38,8 +28,8 @@ Version="v2.1.0 (20-11-2023)";
 */
 
 // If set to true will generate the sample box at every save
-debug = false;
-printMessages = debug;
+debug = true;
+printMessages = false;
 
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
@@ -117,7 +107,7 @@ standoffHoleSlack   = 0.4;
 standoffDiameter    = 7;
 
 //-- D E B U G -----------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 onLidGap            = 10;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
@@ -153,11 +143,12 @@ buttonSlack         = 0.25;
 
 //-- constants, do not change (shifted to large negative values so another element in the array won't match
 // Shapes
-yappRectangle   = -30000;
-yappCircle      = -30001;
-yappPolygon     = -30002;
-yappRoundedRect = -30003;
-
+yappRectangle       = -30000;
+yappCircle          = -30001;
+yappPolygon         = -30002;
+yappRoundedRect     = -30003;
+yappCircleWithFlats = -30004;
+yappCircleWithKey   = -30005;
 
 //Shell options
 yappBoth        = -30100;
@@ -414,16 +405,20 @@ Parameters:
 
 cutoutsBase = 
 [
-  [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordPCB]
+  [0, 0, 10, 10, 0, 0, 0,  yappRectangle, yappCoordPCB]
 , [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB]
 , [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox]
 , [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox]
 //  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
+ , [shellLength/2,shellWidth/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellWidth/2 ,10, 5, 20 ,0 ,0, yappCircleWithKey,yappCenter]
+
+
 ];
 
 cutoutsLid  = 
 [
-  [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
+  [0, 0, 0, 0, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
 , [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
 , [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
 , [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
@@ -432,6 +427,13 @@ cutoutsLid  =
 , [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB]
 , [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox]
 , [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox]
+
+
+//yappCircleWithFlats
+ , [shellLength/2,shellWidth/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+
+// , [shellLength/2,shellWidth/2 ,10, 5, 20 ,0 ,0, yappCircleWithKey,yappCenter]
+
 
 //Center test
 //  [shellLength/2,shellWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter]
@@ -450,6 +452,11 @@ cutoutsFront =
 , [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
 , [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
 , [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
+
+ , [shellWidth/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellWidth/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
+
+
 ];
 
 
@@ -465,6 +472,9 @@ cutoutsBack =
 , [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
 //  [shellWidth/2,shellHeight/2 ,12,8, 2 ,0 ,0, yappRoundedRect, [], [], yappCenter]
 
+ , [shellWidth/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellWidth/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
+
 ];
 
 cutoutsLeft =   
@@ -474,6 +484,8 @@ cutoutsLeft =
 , [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
 , [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
 //  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
+ , [shellLength/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
 ];
 
 cutoutsRight =  
@@ -486,6 +498,9 @@ cutoutsRight =
 , [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
 , [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
 , [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
+
+ , [shellLength/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
 
 ];
 
@@ -1143,9 +1158,9 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
       // Objects to be cut to outside the box       
       // move it to the origin of the base
       translate ([-L/2, -W/2, -H]) // -baseWallHeight])
-        hookBaseOutside();
-      
-      minkowskiCutBox(L, W, H, iRad, plane, wall);
+        hookBaseOutside();    
+      minkowskiCutBox(L, W, H, rad, plane, wall);
+//      minkowskiInnerBox(L, W, H, iRad, plane, wall);
     } // difference()
     
     //draw stuff inside the box
@@ -1153,6 +1168,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
     intersection()
     {
       minkowskiCutBox(L, W, H, rad, plane, wall);
+//      minkowskiOuterBox(L, W, H, rad, plane, wall);
       
       translate ([-L/2, -W/2, -H]) //-baseWallHeight])
         hookBaseInside();
@@ -1180,7 +1196,8 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
       // move it to the origin of the base
       translate ([-L/2, -W/2, H]) //lidWallHeight])
       hookLidOutside();
-      minkowskiCutBox(L, W, H, iRad, plane, wall);
+      minkowskiCutBox(L, W, H, rad, plane, wall);
+//      minkowskiInnerBox(L, W, H, iRad, plane, wall);
     } // difference()
 
     //draw stuff inside the box
@@ -1188,6 +1205,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
     intersection()
     {
       minkowskiCutBox(L, W, H, rad, plane, wall);
+//      minkowskiOuterBox(L, W, H, rad, plane, wall);
       translate ([-L/2, -W/2, H]) // lidWallHeight])
         hookLidInside();
     }
@@ -1277,41 +1295,7 @@ module printPCB(posX, posY, posZ)
       showPCBmarkers(posX, posY, posZ);
       
     } // translate(t1)
-
-/*
-    //--- show inspection X-as
-    if (inspectX > 0)
-    {
-      translate([shellLength-inspectX,-2,-2]) 
-      {
-        cube([shellLength, shellWidth+3, shellHeight+3]);
-      }
-    } else if (inspectX < 0)
-    {
-      translate([(shellLength*-1)+abs(inspectX),-2,-2]) 
-      {
-        cube([shellLength, shellWidth+3, shellHeight+3]);
-      }
-    }
-
-    //--- show inspection Y-as
-    if (inspectY > 0)
-    {
-      translate([-1, inspectY-shellWidth, -2]) 
-      {
-        cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
-      }
-    }
-    else if (inspectY < 0)
-    {
-      translate([-1, (shellWidth-abs(inspectY)), -2]) 
-      {
-        cube([shellLength+2, shellWidth, (baseWallHeight+basePlaneThickness)+4]);
-      }
-    }
-    */
-  } // difference(d0)
- 
+  } // difference(d0) 
 } // printPCB()
 
 
@@ -1452,13 +1436,63 @@ module pcbPushdowns()
 } // pcbPushdowns()
 
 
-
+//===========================================================
+// Sanity check the 6 vectors for the box faces
+module sanityCheckCutouts() 
+{
+  module sanityCheckCutoutList(listName, cutoutList) 
+  {
+    echo("Sanity Checking " , listName);
+    if (is_list(cutoutList)) {
+      // Go throught the vector checking each one
+      for(pos = [0 : len(cutoutList)-1])
+      //for ( cutOut = cutoutList )
+      {
+        cutOut = cutoutList[pos];
+        // Check that there are at least the minimun elements
+        // Cutouts require 9 elements
+        echo (cutOut=cutOut);
+        assert((len(cutOut) >= 9), str("Cutout ", listName, " item ", pos, " require 9 parameters at a minimum.") );
+        assert((isTrue(cutOut[7],[yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey])), str("Cutout ", listName, " item ", pos, " param 7 required to be one of the following yappRectangle, yappCircle, yappPolygon, yappRoundedRect.") );
+      }
+    } else {
+      echo (listName + " is not a valid list");
+    }
+  }
+  
+  // See what lists we have
+  if (cutoutsBase != undef) 
+  {
+    sanityCheckCutoutList("cutoutsBase", cutoutsBase);
+  }
+  if (cutoutsLid != undef) 
+  {
+    sanityCheckCutoutList("cutoutsLid", cutoutsLid);
+  }
+  if (cutoutsLeft != undef) 
+  {
+    sanityCheckCutoutList("cutoutsLeft",cutoutsLeft);
+  }
+  if (cutoutsRight != undef) 
+  {
+    sanityCheckCutoutList("cutoutsRight", cutoutsRight);
+  }
+  if (cutoutsFront != undef) 
+  {
+    sanityCheckCutoutList("cutoutsFront", cutoutsFront);
+  }
+  if (cutoutsBack != undef) 
+  {
+    sanityCheckCutoutList("cutoutsBack", cutoutsBack);
+  }
+}
 
 
 //===========================================================
 // Master module to process the 6 vectors for the box faces
 module makeCutouts(type)
 {      
+  sanityCheckCutouts();
   if (type=="base")
   { 
     // The bottom plane is only on the Base
@@ -1704,6 +1738,10 @@ module processCutoutList(face, cutoutList, type)
 
 //  if (printMessages) echo ("------------------------------"); 
 //  if (printMessages) echo ("processCutoutList started"); 
+ 
+ 
+  
+ 
  
   // Setup translations for the requested face
   if (face == yappLeft) 
@@ -2352,179 +2390,6 @@ module buildButtons()
   } //-- len(pushButtons) > 0
 } //  buildButtons()
 
-
-/*
-//===========================================================
-module cutoutsGrill(type, planeTckns)
-{
-  //--------------------------------------------------------------------
-  function actZpos(T)             = (T=="base")     ? -1 : ((roundRadius+lidPlaneThickness)*-1);
-  function angleLim(a)            = (a>60 || a<-60) ? 60*sign(a) : a;
-  function calcAB(c, BC)          = (BC * tan(c));
-  function calcBC(c, AC)          = (AC / cos(c));
-  function calcAC(c, AB)          = (AB * tan(c));
-  
-  //                   C |      
-  //                     | \       BC = AB / cos(c)
-  //                     |  \      AB = BC * tan(c)
-  //                     |   \     AC = AB * tan(c)
-  //                     |    \
-  //                   A +-----+ B
-  
-  
-    //-------------------------------------------------------------------
-    module oneGrill2(xC, yC, gW, gL, slotW, slotS, oneStep, newSlotL, xOverhang, newW, gAngle)
-    {
-      function xStart(a, o1)    = (a<0) ? (o1*2) : 0; 
-      function xEndpos(l1, o1)  = (l1+(o1*2));
-
-     echo("1Gr", xC=xC, yC=yC, gW=gW, gL=gL, slotW=slotW, slotS=slotS, oneStep=oneStep
-                , newSlotL=newSlotL, xOverhang=xOverhang, newW=newW, gAngle=gAngle);
-    
-      
-      
-      
-      translate([0, 0, 0])
-      {
-        if (gAngle < 0)
-        {
-          //echo("[a<0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", gL);
-          for(posX=[xStart(gAngle, xOverhang) : oneStep : gL])
-          {
-            translate([(posX-slotS/2),-(yC+(newW/2)),0]) 
-            {
-              rotate([0,0,gAngle])
-              {
-                if ((posX > 0) || (posX <= gL))
-                {
-                  cube([slotS, newSlotL , planeTckns]);
-                }
-              } //  rotate
-            } // transl..
-          } // for posX..
-        } // gAngle < 0
-        
-        else if (gAngle > 0)
-        {
-          //echo("[a>0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", xEndpos(gL, xOverhang));
-          for(posX=[xStart(gAngle, xOverhang) : oneStep : xEndpos(gL, xOverhang)])
-          {
-            translate([(posX-slotS/2),-(yC+(newW/2)),0]) 
-            {
-              rotate([0,0,gAngle])
-              {
-                if ((posX > 0) || (posX <= gL))
-                {
-                  cube([slotS, newSlotL , planeTckns]);
-                }
-              } //  rotate
-            } // transl..
-          } // for posX..
-        }
-        
-        else  // angle == 0
-        {
-          if (gW > gL) 
-          {
-            echo(gW=gW, ">", gL=gL, "add 90 graden ..");
-            echo("[a==0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", gW);
-
-            for(posY=[gW/-2 : oneStep : gW/2])
-            {
-              translate([-(xC)+(gL/2), posY, 0]) 
-              {
-                if ((posY > 0) || (posY <= gW))
-                {
-                  cube([gL ,slotS, planeTckns]);
-                }
-              } // transl..
-            } // for posY..
-          }
-          else
-          {
-            //echo("[a==0] for ", xStart(gAngle, xOverhang), "step", oneStep, "to", gL);
-            for(posX=[(gL/-2) : oneStep : (gL/2)])
-            {
-              translate([xC+posX,-(yC+(newW/2)),0]) 
-              {
-                if ((posX > 0) || (posX <= gL))
-                {
-                  cube([slotS, newSlotL , planeTckns]);
-                }
-              } // transl..
-            } // for posX..
-          }
-        }
-      } //  transl..
-    } //  oneGrill2()
-
-
-  for(g=cutoutsGrill)
-  {
-    xPos    = g[0];
-    yPos    = g[1];
-    grillW  = g[2];
-    grillL  = g[3];
-    slotW   = g[4];
-    slotS   = g[5];
-    slotA   = g[6];
-    plane   = g[7];
-    polyg   = g[8];
-
-    //echo("parm", xPos=xPos, yPos=yPos, grillW=grillW, grillL=grillL, slotA=slotA
-    //           , slotW=slotW, slotS=slotS, plane=plane);
-    
-    if (type==plane)
-    {
-      zPos      = actZpos(plane);    
-      
-      newA      = angleLim(slotA);
-      newW      = abs(calcBC(newA, slotW));
-      newS      = abs(calcBC(newA, slotS));
-      newSl     = abs(calcBC(newA, grillW+newW));
-     
-      xOverhang = calcAB(newA, grillW/2);
-
-      oneStep   = newW+newS;
-      nrSpikes  = grillW / (oneStep);
-      xCenter   = grillL / 2;
-      yCenter   = grillW / 2;
-      
-      echo(xCenter=xCenter, yCenter=yCenter, grillL=grillL, grillW=grillW
-                          , oneStep=oneStep, newSl=newSl, xOverhang=xOverhang);
-
-      translate([xPos+pcbX, yPos+pcbY, zPos])
-      {
-        difference()
-        {
-          //--- set base of grill
-          if (polyg) 
-          {
-            echo("use polygon(",polyg,")");
-            linear_extrude(height=planeTckns-0.5)
-            {  
-              color("blue") polygon(polyg);
-            }
-          }
-          else
-          {
-             color("gray") cube([grillL, grillW, planeTckns+0.5]);
-          }
-          if (!isTrue(yappCenter, g)) 
-          {
-            //-- subtract actual grill
-            oneGrill2(xCenter, yCenter, grillW, grillL, slotW, slotS, oneStep, newSl, xOverhang, newW, newA);
-          } else {
-            //-- subtract actual grill (centered)
-            echo("***** Center *******");
-            oneGrill2(0, grillL/2, grillW, grillL, slotW, slotS, oneStep, newSl, xOverhang, newW, newA);
-          }
-        }
-      }       
-    } // type = plane 
-  } //  for ..
-} //  cutoutsGrill()
-*/       
 
 //===========================================================
 module subtractLabels(plane, side)
@@ -3282,8 +3147,8 @@ module showOrientation()
 module hookLidInside()
 {
   //echo("hookLidInside(original) ..");
-  //translate([shellLength/2,10,0])
-  //sphere(r=20);
+  translate([shellLength/2,10,0])
+  sphere(r=20);
 } // hookLidInside(dummy)
   
 //===========================================================
@@ -3291,8 +3156,8 @@ module hookLidInside()
 module hookLidOutside()
 {
   //echo("hookLidOutside(original) ..");
-  //translate([10,10,10])
-  //sphere(r=20);
+  translate([10,10,10])
+  sphere(r=20);
   
 } // hookLidOutside(dummy)
 
@@ -3526,6 +3391,30 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
           polygon(Polygon);
         }
       }
+      else if (Shape == yappCircleWithFlats)
+      {      
+        translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+        {
+          intersection()
+          { 
+            circle(r=Radius);    
+            square([Width, Radius*2], center=true);
+          }
+        }
+      }
+      else if (Shape == yappCircleWithKey)
+      {
+        echo (Width=Width, Length=Length, Radius=Radius);  
+        translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+        {
+          difference()
+          {
+          circle(r=Radius); 
+          translate ([Radius - (Width/2),0,0]) 
+            square([Width, Length ], center=true);
+          }
+        }
+      }
     }
   }
 } //generateShape
@@ -3618,10 +3507,7 @@ module drawlid() {
     // Remove parts of it
     lightTubeCutout();   //-2.0-
     makeButtons();      //-2.0-
- //   buildButtons();     //-2.0-
-    
-//    cutoutsGrill("lid", lidPlaneThickness+roundRadius+2);
-    
+        
     // Do all of the face cuts
     makeCutouts("lid");  
 
@@ -3759,11 +3645,7 @@ module YAPPgenerate()
           baseShell();
           
           // Remove parts of it
-//          cutoutsInXY("base", cutoutsBase);
           cutoutsForScrewHoles("base");
-//          cutoutsGrill("base", basePlaneThickness+roundRadius+2);
-          //cutoutsInXZ("base");
-          //cutoutsInYZ("base");
             
           makeCutouts("base");
 

@@ -357,10 +357,10 @@ Parameters:
 */
 connectors   =
   [
-    [9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, 0, yappFrontRight]
-   ,[9, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
-   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontRight]
-   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft, yappThroughLid]
+    [9, 15, 10, 2.5, 6 + 1.25, 8, 9, 0, yappFrontRight]
+   ,[9, 15, 10, 2.5, 6+ 1.25, 8.0, 9, 0, yappFrontLeft]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 8.0, 9, 0, yappFrontRight]
+   ,[34, 15, 10, 2.5, 6+ 1.25, 8.0, 9, 0, yappFrontLeft, yappThroughLid]
   ];
 
 /*===================================================================
@@ -2993,16 +2993,20 @@ module connectorNew(plane, usePCBCoord, x, y, conn, outD)
         //-- screwHole --
         translate([0,0,-1])  color("blue") cylinder(h=hb+2, d=d1);
         
+        //-- insert hole --
+        if (isTrue(yappThroughLid, conn)) translate([0, 0, -0.02])
+          linear_extrude(hb + 0.04)
+            circle(d = d3);
       } //  difference
 
-          if (!isTrue(yappNoFillet, conn))
+          if (!isTrue(yappNoFillet, conn) && !isTrue(yappThroughLid, conn))
           {
             filletRadius = (fR == 0) ? basePlaneThickness : fR; 
             translate([0,0,(hb-d1)])
               {
                 pinFillet(-d2/2, -filletRadius);
               }
-          }// ifFillet
+          }// ifFillet && !throughLid
 
 
     } //  translate
@@ -3040,11 +3044,18 @@ module connectorNew(plane, usePCBCoord, x, y, conn, outD)
             }
           } // ifFillet
         }  
-        //-- insert --
-        translate([0, 0, -0.02])
-          linear_extrude(ht + 0.02)
+        //-- insert or screw hole --
+        
+        if (isTrue(yappThroughLid, conn)) 
+        {
+          //-- screwHole --
+          translate([0,0,-1])  color("blue") cylinder(h=ht+2, d=d1);
+        } else {
+          //-- insert hole --
+          translate([0, 0, -0.02])
+          linear_extrude(ht - 0.02)
             circle(d = d3);
-
+        }
       } //  difference
     } // translate
     

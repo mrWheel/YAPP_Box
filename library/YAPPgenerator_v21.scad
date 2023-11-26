@@ -121,8 +121,9 @@ showSideBySide      = true;     //-> true
 onLidGap            = 10;
 shiftLid            = 5;
 colorLid            = "YellowGreen";
-lidAlpha            = 1.0;      // 0 for fully transparent
+alphaLid            = 1.0;      // 0 for fully transparent
 colorBase           = "BurlyWood";
+alphaBase           = 1.0;      // 0 for fully transparent
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
@@ -1129,7 +1130,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
     } // intersection()
     
     // The actual box
-    color(colorBase)
+    color(colorBase, alphaBase)
     difference()
     {
       minkowskiOuterBox(L, W, H, rad, plane, wall);
@@ -1162,7 +1163,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
         hookLidInside();
     }
     
-    color(colorLid, lidAlpha)
+    color(colorLid, alphaLid)
     //color("White")
     difference()
     {

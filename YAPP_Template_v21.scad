@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 2.0 (21-05-2023)
+//  Version 2.1 (22-11-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -123,9 +123,9 @@ inspectYfromLeft    = true;     // View from the inspection cut to the right
 // for example a triangle could be [[-1,-1],[0,1],[1,-1]] 
 
 // Pre-defined shapes
-Shape_IsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
-Shape_Hexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
-Shape_6pt_Star = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
+shapeIsoTriangle = [[-1,-sqrt(3)/2],[0,sqrt(3)/2],[1,-sqrt(3)/2]];
+shapeHexagon = [[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]];
+shape6ptStar = [[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]];
 
 
 
@@ -149,7 +149,7 @@ Parameters:
    (12) = shape polygon : Requires if openingShape = yappPolygon];
   ];
 */
-honeycombMask = [
+maskHoneycomb = [
 yappPatternHexGrid,    //pattern
   100,                  // width - must be over the opening size : adding extra will shift the mask within the opening
   104,                  // height
@@ -162,10 +162,10 @@ yappPatternHexGrid,    //pattern
   4,                    // openingLength, 
   0,                    // openingRadius
   30,                   //openingRotation
-  Shape_Hexagon];
+  shapeHexagon];
 
 
-hexCirclesMask = [
+maskHexCircles = [
 yappPatternHexGrid,    //pattern
   100,                  // width
   100,                  // height
@@ -180,7 +180,7 @@ yappPatternHexGrid,    //pattern
   0,                   //openingRotation
   []];
 
-barsMask = [
+maskBars = [
   yappPatternSquareGrid, //yappPatternSquareGrid,//pattern
   100,                  // width
   100,                  // height
@@ -198,7 +198,7 @@ barsMask = [
 
 
 // Show sample of a Mask.in the negative X,Y quadrant
-//SampleMask(honeycombMask);
+//SampleMask(maskHoneycomb);
 
 /*===================================================================
  *** PCB Supports ***
@@ -214,7 +214,7 @@ Parameters:
   (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
   (n) = { yappHole, <yappPin> } // Baseplate support treatment
   (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  (n) = { yappBoxCoord, <yappPCBCoord> }  
+  (n) = { yappCoordBox, <yappPCBCoord> }  
   (n) = { yappNoFillet }
 */
 pcbStands = [
@@ -226,7 +226,7 @@ pcbStands = [
  *** Connectors ***
  Standoffs with hole through base and socket in lid for screw type connections.
  ------------------------------------------------------------------
-Default origin = yappBoxCoord: box[0,0,0]
+Default origin = yappCoordBox: box[0,0,0]
   
 Parameters:
   (0) = posx
@@ -238,7 +238,7 @@ Parameters:
   (6) = outsideDiameter
   (7) = filletRadius (0 = auto size)
   (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  (n) = { <yappBoxCoord>, yappPCBCoord }
+  (n) = { <yappCoordBox>, yappPCBCoord }
   (n) = { yappNoFillet }
   
 */
@@ -254,7 +254,7 @@ connectors   =
 *** Base Mounts ***
   Mounting tabs on the outside of the box
  ------------------------------------------------------------------
-Default origin = yappBoxCoord: box[0,0,0]
+Default origin = yappCoordBox: box[0,0,0]
 
 Parameters:
   (0) = pos
@@ -267,7 +267,8 @@ Parameters:
 */
 baseMounts =
 [
-  [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
+ // [shellLength/2, 3, 10, 3, yappLeft, yappRight, yappNoFillet]//, yappCenter]
+   [[10,10], 3, 0, 3, yappFront, yappBack]
 ];
 
 
@@ -276,7 +277,7 @@ baseMounts =
   There are 6 cutouts one for each surface:
     cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
 ------------------------------------------------------------------
-Default origin = yappBoxCoord: box[0,0,0]
+Default origin = yappCoordBox: box[0,0,0]
 
 Parameters:
  (0) = from Back
@@ -289,14 +290,14 @@ Parameters:
  (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect
  (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
  (9) = Mask : [] if not used.  - Required if yappUseMask specified -
- (n) = { <yappBoxCoord> | yappPCBCoord }
+ (n) = { <yappCoordBox> | yappPCBCoord }
  (n) = { <yappOrigin>, yappCenter }
  (n) = { yappUseMask }
 */
 
 cutoutsBase = 
 [
-  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, Shape_Hexagon, honeycombMask, yappCenter, yappUseMask]
+  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
 ];
 
 cutoutsLid  = 
@@ -327,7 +328,7 @@ cutoutsBack =
 
 cutoutsLeft =   
 [
-  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, Shape_Hexagon, barsMask, yappCenter, yappUseMask]
+  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
 ];
 
 cutoutsRight =  
@@ -339,7 +340,7 @@ cutoutsRight =
 /*===================================================================
 *** Snap Joins ***
 ------------------------------------------------------------------
-Default origin = yappBoxCoord: box[0,0,0]
+Default origin = yappCoordBox: box[0,0,0]
 
 Parameters:
  (0) = posx | posy
@@ -370,7 +371,7 @@ Parameters:
  (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
  (7) = tubeType    {yappCircle|yappRectangle}
  (8) = filletRadius
- (n) = { yappBoxCoord, <yappPCBCoord> }
+ (n) = { yappCoordBox, <yappPCBCoord> }
  (n) = { yappNoFillet }
 */
 
@@ -422,7 +423,7 @@ pushButtons =
 /*===================================================================
 *** Labels ***
 ------------------------------------------------------------------
-Default origin = yappBoxCoord: box[0,0,0]
+Default origin = yappCoordBox: box[0,0,0]
 
 Parameters:
  (0) = posx
@@ -441,39 +442,39 @@ labelsPlane =
 
 
 //===========================================================
-module lidHookInside()
+module hookLidInside()
 {
-  echo("lidHookInside(original) ..");
+  echo("hookLidInside(original) ..");
   translate([40, 40, -8]) color("purple") cube([15,20,10]);
   
-} // lidHookInside(dummy)
+} // hookLidInside(dummy)
   
 //===========================================================
-module lidHookOutside()
+module hookLidOutside()
 {
-  echo("lidHookOutside(original) ..");
+  echo("hookLidOutside(original) ..");
   translate([(shellLength/2),-5,-5])
   {
     color("yellow") cube([20,15,10]);
   }  
-} // lidHookOutside(dummy)
+} // hookLidOutside(dummy)
 
 //===========================================================
-module baseHookInside()
+module hookBaseInside()
 {
-  //echo("baseHookInside(original) ..");
-  echo("baseHookInside(original) ..");  
+  //echo("hookBaseInside(original) ..");
+  echo("hookBaseInside(original) ..");  
   translate([10, 30, -5]) color("lightgreen") cube([15,25,8]);
   
-} // baseHookInside(dummy)
+} // hookBaseInside(dummy)
 
 //===========================================================
-module baseHookOutside()
+module hookBaseOutside()
 {
-  echo("baseHookOutside(original) ..");
+  echo("hookBaseOutside(original) ..");
   translate([shellLength-wallThickness-10, 55, -5]) color("green") cube([15,25,10]);
   
-} // baseHookOutside(dummy)
+} // hookBaseOutside(dummy)
 
 
 

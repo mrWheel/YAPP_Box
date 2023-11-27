@@ -28,7 +28,7 @@ Version="v2.1.0 (20-11-2023)";
 */
 
 // If set to true will generate the sample box at every save
-debug = true;
+debug = false;
 printMessages = false;
 
 //---------------------------------------------------------
@@ -115,7 +115,7 @@ colorBase           = "BurlyWood";
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
-showPCB             = true;
+showPCB             = false;
 showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
@@ -124,13 +124,11 @@ inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
 inspectXfromBack    = true;    // View from the inspection cut foreward
 inspectYfromLeft    = true;     // View from the inspection cut to the right
-//inspectLightTubes   = 0;      //-> { -1 | 0 | 1 }
-//inspectButtons      = 0;      //-> { -1 | 0 | 1 } 
 
 //-- D E B U G ---------------------------------------
 
-
-
+// ******************************
+//  REMOVE BELOW FROM TEMPLATE
 
 // Set the glogal for the quality
 facetCount = $preview ? previewQuality*4 : renderQuality*4;
@@ -188,7 +186,7 @@ yappUseMask    = -30601; // Apply a mask to a cutout
 
 // Coordinate options
 yappCoordPCB    = -30700;
-yappCoordBox  = -30701;
+yappCoordBox    = -30701;
 
 yappLeftOrigin = -30702;
 yappGlobalOrigin = -30703;
@@ -214,6 +212,10 @@ pcbY              = wallThickness+paddingLeft;
 pcbYlid           = wallThickness+pcbWidth+paddingRight;
 pcbZ              = basePlaneThickness+standoffHeight+pcbThickness;
 pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)-(standoffHeight+pcbThickness);
+
+//  REMOVE ABOVE FROM TEMPLATE
+// ******************************
+
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
@@ -405,32 +407,30 @@ Parameters:
 
 cutoutsBase = 
 [
-  [0, 0, 10, 10, 0, 0, 0,  yappRectangle, yappCoordPCB]
-, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB]
-, [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox]
-, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox]
+//  [0, 0, 10, 10, 0, 0, 0,  yappRectangle, yappCoordPCB]
+//, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB]
+//, [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox]
+//, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox]
 //  [shellLength/2-20,shellWidth/2 ,55,55, 5 ,0 ,30, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter, yappUseMask]
- , [shellLength/2,shellWidth/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellWidth/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
 // , [shellLength/2,shellWidth/2 ,10, 5, 20 ,0 ,0, yappCircleWithKey,yappCenter]
-
-
 ];
 
 cutoutsLid  = 
 [
-  [0, 0, 0, 0, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
-, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
-, [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
-, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
+//  [0, 0, 0, 0, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
+//, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
+//, [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
+//, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
 
-,  [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordPCB]
-, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB]
-, [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox]
-, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox]
+//,  [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordPCB]
+//, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordPCB]
+//, [0, 0, 10, 10, 0, 0, 0, yappRectangle, yappCoordBox]
+//, [10, 0, 10, 10, 5, 0, 0, yappCircle, yappCoordBox]
 
 
 //yappCircleWithFlats
- , [shellLength/2,shellWidth/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellWidth/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
 
 // , [shellLength/2,shellWidth/2 ,10, 5, 20 ,0 ,0, yappCircleWithKey,yappCenter]
 
@@ -448,12 +448,12 @@ cutoutsLid  =
 
 cutoutsFront =  
 [
-  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
-, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
+//  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
+//, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
 
- , [shellWidth/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellWidth/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
 // , [shellWidth/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
 
 
@@ -462,46 +462,45 @@ cutoutsFront =
 
 cutoutsBack = 
 [
-  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
-, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
-,  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
-, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
+//  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
+//, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
+//,  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
+//, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
 //  [shellWidth/2,shellHeight/2 ,12,8, 2 ,0 ,0, yappRoundedRect, [], [], yappCenter]
 
- , [shellWidth/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellWidth/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
 // , [shellWidth/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
 
 ];
 
 cutoutsLeft =   
 [
-  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
-, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
+//  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
+//, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
 //  [shellWidth/2,shellHeight/2 ,55,55, 10 ,0 ,30, yappPolygon, shapeHexagon, maskBars, yappCenter, yappUseMask]
- , [shellLength/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
 // , [shellLength/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
 ];
 
 cutoutsRight =  
 [
-  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
-, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
-,  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
-, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
-, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
+//  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB, yappLeftOrigin]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB, yappLeftOrigin]
+//, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox, yappLeftOrigin]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox, yappLeftOrigin]
+//,  [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordPCB]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordPCB]
+//, [0, 0, 10, 15, 0, 0, 0, yappRectangle, yappCoordBox]
+//, [10, 0, 10, 15, 5, 0, 0, yappCircle, yappCoordBox]
 
- , [shellLength/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
+// , [shellLength/2,shellHeight/2 ,0, 30, 20 ,0 ,0, yappCircleWithFlats,yappCenter]
 // , [shellLength/2,shellHeight/2 ,10, 5, 20 ,0 ,180, yappCircleWithKey,yappCenter]
-
 ];
 
 
@@ -573,8 +572,8 @@ Default origin = yappCoordPCB: PCB[0,0,0]
 Parameters:
  (0) = posx
  (1) = posy
- (2) = capLength
- (3) = capWidth
+ (2) = capLength for yappRectangle, capDiameter for yappCircle
+ (3) = capWidth for yappRectangle, not used for yappCircle
  (4) = capAboveLid
  (5) = switchHeight
  (6) = switchTrafel
@@ -584,7 +583,7 @@ Parameters:
 */
 pushButtons = 
 [
-//   [15, 60, 8, 6, 2, 3.5, 1, 3.5, 0, yappCircle, yappNoFillet]
+//   [15, 60, 10, 0, 2, 3.5, 1, 4, 0, yappCircle]
 //  ,[15, 40, 8, 6, 2, 3.5, 1, 3.5, 0, yappRectangle, yappNoFillet]
 ];
              
@@ -609,6 +608,102 @@ labelsPlane =
 ];
 
 
+
+//========= HOOK dummy functions ============================
+  
+// Hook functions allow you to add 3d objects to the case.
+// Lid/Base = Shell part to attach the object to.
+// Inside/Outside = Join the object from the midpoint of the shell to the inside/outside.
+// Pre/Post = Attach the object Pre or Post doing Cutouts/Stands/Connectors.
+
+//===========================================================
+// origin = box(0,0,0)
+module hookLidInsidePre()
+{
+  //echo("hookLidInside(original) ..");
+  //translate([shellLength/2,10,0])
+  //sphere(r=20);
+} // hookLidInside(dummy)
+
+//===========================================================
+// origin = box(0,0,0)
+module hookLidInsidePost()
+{
+  //echo("hookLidInside(original) ..");
+//  translate([shellLength/2,10,0])
+//  sphere(r=20);
+} // hookLidInside(dummy)
+  
+//===========================================================
+//===========================================================
+// origin = box(0,0,shellHeight)
+module hookLidOutsidePre()
+{
+  //echo("hookLidOutside(original) ..");
+  //translate([10,10,10])
+  //sphere(r=20);
+  
+} // hookLidOutside(dummy)
+
+//===========================================================
+// origin = box(0,0,shellHeight)
+module hookLidOutsidePost()
+{
+  //echo("hookLidOutside(original) ..");
+//  translate([shellLength/2,-12,0])
+//  sphere(r=20);
+  
+} // hookLidOutside(dummy)
+
+//===========================================================
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseInsidePre()
+{
+  //echo("hookBaseInside(original) ..");
+  //translate([shellLength/2,10,0])
+  //sphere(r=20);
+    
+} // hookBaseInside(dummy)
+
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseInsidePost()
+{
+  //echo("hookBaseInside(original) ..");
+//  translate([shellLength/2,10,0])
+//  sphere(r=20);   
+} // hookBaseInside(dummy)
+
+//===========================================================
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseOutsidePre()
+{
+  //echo("hookBaseOutside(original) ..");
+  //  sphere(r=20);
+  
+} // hookBaseOutside(dummy)
+
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseOutsidePost()
+{
+  //echo("hookBaseOutside(original) ..");
+//  translate([shellLength/2,-12,0])
+//  sphere(r=20);
+} // hookBaseOutside(dummy)
+
+//===========================================================
+//===========================================================
+
+// **********************************************************
+// **********************************************************
+// **********************************************************
+// *************** END OF TEMPLATE SECTION ******************
+// **********************************************************
+// **********************************************************
+// **********************************************************
 
 
 
@@ -1100,7 +1195,7 @@ module printLidSnapJoins()
 
 
 //===========================================================
-module minkowskiBox(shell, L, W, H, rad, plane, wall)
+module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
 {
   iRad = getMinRad(rad, wall);
   
@@ -1138,86 +1233,141 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall)
   //echo("Box:", L=L, W=W, H=H, rad=rad, iRad=iRad, wall=wall, plane=plane);
   //echo("Box:", L2=L-(rad*2), W2=W-(rad*2), H2=H-(rad*2), rad=rad, wall=wall);
   
-  
-  
-  if (shell=="base")
+  if (preCutouts) 
   {
+        
     
-    if (len(baseMounts) > 0)
+    if (shell=="base")
     {
+      if (len(baseMounts) > 0)
+      {
+        difference()
+        {
+          printBaseMounts();
+          minkowskiCutBox(L, W, H, iRad, plane, wall);
+        } // difference()
+      } // if (len(baseMounts) > 0)
+     
+      color("Orange")
       difference()
       {
-        printBaseMounts();
-        minkowskiCutBox(L, W, H, iRad, plane, wall);
+        // Objects to be cut to outside the box       
+        // move it to the origin of the base
+        translate ([-L/2, -W/2, -H]) // -baseWallHeight])
+          hookBaseOutsidePre();    
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiInnerBox(L, W, H, iRad, plane, wall);
       } // difference()
-    } // if (len(baseMounts) > 0)
-   
-    color("Orange")
-    difference()
-    {
-      // Objects to be cut to outside the box       
-      // move it to the origin of the base
-      translate ([-L/2, -W/2, -H]) // -baseWallHeight])
-        hookBaseOutside();    
-      minkowskiCutBox(L, W, H, rad, plane, wall);
-//      minkowskiInnerBox(L, W, H, iRad, plane, wall);
-    } // difference()
-    
-    //draw stuff inside the box
-    color("LightBlue")
-    intersection()
-    {
-      minkowskiCutBox(L, W, H, rad, plane, wall);
-//      minkowskiOuterBox(L, W, H, rad, plane, wall);
       
-      translate ([-L/2, -W/2, -H]) //-baseWallHeight])
-        hookBaseInside();
-    } // intersection()
+      //draw stuff inside the box
+      color("LightBlue")
+      intersection()
+      {
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiOuterBox(L, W, H, rad, plane, wall);
+        
+        translate ([-L/2, -W/2, -H]) //-baseWallHeight])
+          hookBaseInsidePre();
+      } // intersection()
+      
+      // The actual box
+      color(colorBase)
+      difference()
+      {
+        minkowskiOuterBox(L, W, H, rad, plane, wall);
+        minkowskiInnerBox(L, W, H, iRad, plane, wall);
+      } // difference
     
-    // The actual box
-    color(colorBase)
-    difference()
+      
+      
+    } // if (shell=="base")
+    else
     {
-      minkowskiOuterBox(L, W, H, rad, plane, wall);
-      minkowskiInnerBox(L, W, H, iRad, plane, wall);
-    } // difference
-  
-    
-    
-  } // if (shell=="base")
-  else
-  {
-    //Lid
-    
-    color("Red")
-    difference()
-    {
-      // Objects to be cut to outside the box 
-      // move it to the origin of the base
-      translate ([-L/2, -W/2, H]) //lidWallHeight])
-      hookLidOutside();
-      minkowskiCutBox(L, W, H, rad, plane, wall);
-//      minkowskiInnerBox(L, W, H, iRad, plane, wall);
-    } // difference()
+      //Lid
+      
+      color("Red")
+      difference()
+      {
+        // Objects to be cut to outside the box 
+        // move it to the origin of the base
+        translate ([-L/2, -W/2, H]) //lidWallHeight])
+        hookLidOutsidePre();
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiInnerBox(L, W, H, iRad, plane, wall);
+      } // difference()
 
-    //draw stuff inside the box
-    color("LightGreen")
-    intersection()
-    {
-      minkowskiCutBox(L, W, H, rad, plane, wall);
-//      minkowskiOuterBox(L, W, H, rad, plane, wall);
-      translate ([-L/2, -W/2, H]) // lidWallHeight])
-        hookLidInside();
+      //draw stuff inside the box
+      color("LightGreen")
+      intersection()
+      {
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiOuterBox(L, W, H, rad, plane, wall);
+        translate ([-L/2, -W/2, H]) // lidWallHeight])
+          hookLidInsidePre();
+      }
+      
+      color(colorLid)
+      //color("White")
+      difference()
+      {
+        minkowskiOuterBox(L, W, H, rad, plane, wall);
+        minkowskiInnerBox(L, W, H, iRad, plane, wall);
+      }; // difference
+      
     }
-    
-    color(colorLid)
-    //color("White")
-    difference()
+  }
+  else 
+  {
+    // Only add the Post hooks
+    if (shell=="base")
     {
-      minkowskiOuterBox(L, W, H, rad, plane, wall);
-      minkowskiInnerBox(L, W, H, iRad, plane, wall);
-    }; // difference
-    
+      color("Orange")
+      difference()
+      {
+        // Objects to be cut to outside the box       
+        // move it to the origin of the base
+        translate ([-L/2, -W/2, -H]) // -baseWallHeight])
+          hookBaseOutsidePost();    
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiInnerBox(L, W, H, iRad, plane, wall);
+      } // difference()
+      
+      //draw stuff inside the box
+      color("LightBlue")
+      intersection()
+      {
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiOuterBox(L, W, H, rad, plane, wall);
+        
+        translate ([-L/2, -W/2, -H]) //-baseWallHeight])
+          hookBaseInsidePost();
+      } // intersection()      
+    } // if (shell=="base")
+    else
+    {
+      //Lid
+      
+      color("Red")
+      difference()
+      {
+        // Objects to be cut to outside the box 
+        // move it to the origin of the base
+        translate ([-L/2, -W/2, H]) //lidWallHeight])
+        hookLidOutsidePost();
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+  //      minkowskiInnerBox(L, W, H, iRad, plane, wall);
+      } // difference()
+
+      //draw stuff inside the box
+      color("LightGreen")
+      intersection()
+      {
+        translate ([-L/2, -W/2, H]) // lidWallHeight])
+          hookLidInsidePost();
+        minkowskiCutBox(L, W, H, rad, plane, wall);
+      //  minkowskiOuterBox(L, W, H, rad, plane, wall);
+      }
+    }
   }
 } //  minkowskiBox()
 
@@ -1443,7 +1593,7 @@ module sanityCheckCutouts()
   module sanityCheckCutoutList(listName, cutoutList) 
   {
     echo("Sanity Checking " , listName);
-    if (is_list(cutoutList)) {
+    if (is_list(cutoutList) && len(cutoutList)>0) {
       // Go throught the vector checking each one
       for(pos = [0 : len(cutoutList)-1])
       //for ( cutOut = cutoutList )
@@ -1456,7 +1606,7 @@ module sanityCheckCutouts()
         assert((isTrue(cutOut[7],[yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey])), str("Cutout ", listName, " item ", pos, " param 7 required to be one of the following yappRectangle, yappCircle, yappPolygon, yappRoundedRect.") );
       }
     } else {
-      echo (listName + " is not a valid list");
+      echo (listName, " is not a valid list");
     }
   }
   
@@ -2177,15 +2327,18 @@ module makeButtons()
     yPos      = button[1];
     cLength   = button[2];
     cWidth    = button[3];
-
+    
     //-debug-echo("makeButtons()", xPos=xPos, yPos=yPos, cLength=cLength, cWidth=cWidth, cAbvLid=cAbvLid
     //-test-                    , pDiam=pDiam, swHeight=swHeight, swTrafel=swTrafel);
     tmpArray = [[xPos, yPos, 
       cWidth + buttonSlack, cLength + buttonSlack,
-      (cWidth + buttonSlack+buttonWall)/2, 
+//      (cWidth + buttonSlack+buttonWall)/2, 
+      (cLength + buttonSlack)/2, 
     0, 0 ,button[9], yappCenter, yappCoordPCB]];
     
-    if (printMessages) echo(">>>>>>>>> Button cutout", tmpArray=tmpArray);
+    echo(tmpArray=tmpArray);
+    //if (printMessages) 
+      echo(">>>>>>>>> Button cutout", tmpArray=tmpArray);
     processCutoutList(yappTop, tmpArray, "lid");
   } //-- for buttons
 } //  makeButtons()
@@ -2264,7 +2417,7 @@ module buildButtons()
       //-debug-                      , buttonPlateThickness=(buttonPlateThickness-0.5)
       //-debug-                      , poleHolderLength=poleHolderLength);
   
-      translate([rX, rY, (pcbTop2Lid*-1)-0.5])
+      translate([rX, rY, (pcbTop2Lid*-1)])
       {
         if (isTrue(yappCircle, button))
         {
@@ -2274,7 +2427,10 @@ module buildButtons()
             union()
             {
               //--------- outside circle
-              translate([(cLength+buttonSlack+buttonWall)/-2,(cLength+buttonSlack+buttonWall)/-2,pcbTop2Lid-cupDepth]) 
+              translate([(cLength+buttonSlack+buttonWall)/-2,
+                (cLength+buttonSlack+buttonWall)/-2,
+                //pcbTop2Lid+cupDepth-buttonPlateThickness])
+                pcbTop2Lid-cupDepth]) 
               {
                 color("red") 
                   translate([(cLength+buttonSlack+buttonWall)/2,(cLength+buttonSlack+buttonWall)/2, 0])
@@ -2285,7 +2441,9 @@ module buildButtons()
                 if (!isTrue(yappNoFillet, button))
                 {
                   filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-                  translate([(cLength+buttonSlack+buttonWall)/2,(cLength+buttonSlack+buttonWall)/2, cupDepth-filletRadius])
+                  translate([(cLength+buttonSlack+buttonWall)/2,
+                    (cLength+buttonSlack+buttonWall)/2,
+                    cupDepth-lidPlaneThickness])
                   color("violet") pinFillet(-(cLength+buttonSlack+buttonWall)/2,filletRadius);
                 } // ifFillet
               }
@@ -2658,9 +2816,9 @@ module baseShell()
 
     difference()  //(b)
     {
-      //color(colorBase) 
+      // Create the shell and add the Mounts and Hooks
       minkowskiBox("base", shellInsideLength, shellInsideWidth, baseWallHeight, 
-                     roundRadius, basePlaneThickness, wallThickness);
+                     roundRadius, basePlaneThickness, wallThickness, true);
       if (hideBaseWalls)
       {
         //--- wall's
@@ -2686,8 +2844,7 @@ module baseShell()
                         (ridgeHeight*-1), roundRadius);
       }
       
-    } // difference(b)
-      
+    } // difference(b)  
   } // translate
   
   pcbHolders();
@@ -2696,6 +2853,7 @@ module baseShell()
   else printBaseSnapJoins();
 
   shellConnectors("base");
+
 
 } //  baseShell()
 
@@ -2765,7 +2923,7 @@ module lidShell()
     difference()  //  d1
     {
       minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, 
-                   roundRadius, lidPlaneThickness, wallThickness);
+                   roundRadius, lidPlaneThickness, wallThickness, true);
       if (hideLidWalls)
       {
         //--- cutoff wall
@@ -2800,6 +2958,8 @@ module lidShell()
                   newRidge(ridgeHeight), 
                   roundRadius);
     }
+
+
   } // translate
 
   pcbPushdowns();
@@ -3139,46 +3299,6 @@ module showOrientation()
             
 } // showOrientation()
 
-
-//========= MAIN CALL's ===========================================================
-  
-//===========================================================
-// origin = box(0,0,0)
-module hookLidInside()
-{
-  //echo("hookLidInside(original) ..");
-  translate([shellLength/2,10,0])
-  sphere(r=20);
-} // hookLidInside(dummy)
-  
-//===========================================================
-// origin = box(0,0,chellHeight)
-module hookLidOutside()
-{
-  //echo("hookLidOutside(original) ..");
-  translate([10,10,10])
-  sphere(r=20);
-  
-} // hookLidOutside(dummy)
-
-//===========================================================
-// origin = box(0,0,0)
-module hookBaseInside()
-{
-  //echo("hookBaseInside(original) ..");
-  //translate([shellLength/2,10,0])
-  //sphere(r=20);
-    
-} // hookBaseInside(dummy)
-
-//===========================================================
-// origin = box(0,0,0)
-module hookBaseOutside()
-{
-  //echo("hookBaseOutside(original) ..");
-  //  sphere(r=20);
-  
-} // hookBaseOutside(dummy)
 
 //===========================================================
 module pinFillet (pinRadius, filletRadius) {
@@ -3526,6 +3646,17 @@ module drawlid() {
     color("red") subtractLabels("lid", "right");
   } //  difference(t1)
 
+
+  //Add the Post 
+  posZ00 = lidWallHeight+lidPlaneThickness;
+  //echo("lid:", posZ00=posZ00);
+
+  translate([(shellLength/2), shellWidth/2, posZ00*-1])
+  {
+
+  minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, false);
+  }
+  // Add the text
   translate([shellLength-15, -15, 0])
     linear_extrude(1) 
       mirror([1,0,0])
@@ -3659,7 +3790,15 @@ module YAPPgenerate()
         
      //   hookBaseInside();
         
-        
+         // Draw the post base hooks
+          posZ00 = (baseWallHeight) + basePlaneThickness;
+          translate([(shellLength/2), shellWidth/2, posZ00])
+          {
+
+            minkowskiBox("base", shellInsideLength, shellInsideWidth, baseWallHeight, roundRadius, basePlaneThickness, wallThickness, false);
+          }
+
+
         drawButtonExtenders();
         
         if (showOrientation) showOrientation();

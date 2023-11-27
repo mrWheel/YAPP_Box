@@ -111,7 +111,9 @@ showSideBySide      = true;     //-> true
 onLidGap            = 10;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
+alphaLid            = 1.0;   
 colorBase           = "BurlyWood";
+alphaBase           = 1.0;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
@@ -1271,7 +1273,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // intersection()
       
       // The actual box
-      color(colorBase)
+      color(colorBase, alphaBase)
       difference()
       {
         minkowskiOuterBox(L, W, H, rad, plane, wall);
@@ -1306,7 +1308,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
           hookLidInsidePre();
       }
       
-      color(colorLid)
+      color(colorLid, alphaLid)
       //color("White")
       difference()
       {
@@ -2242,8 +2244,9 @@ module buildLightTubes()
     //pcbTop2Lid = (shellHeight+lidWallHeight+lidPlaneThickness) - (standoffHeight+pcbThickness+tAbvPcb);
     
     
-   pcbTop2Lid = (shellHeight) - (basePlaneThickness + lidPlaneThickness + tAbvPcb);
+   pcbTop2Lid = (shellHeight) - (basePlaneThickness + lidPlaneThickness + pcbThickness + standoffHeight + tAbvPcb);
    
+   echo(pcbTop2Lid=pcbTop2Lid);
    
     //X=xPos+wallThickness+paddingBack;
     //Y=yPos+wallThickness+paddingLeft;
@@ -2810,7 +2813,6 @@ module baseShell()
   posZ00 = (baseWallHeight) + basePlaneThickness;
   
   //echo("base:", posZ00=posZ00);
-  //color(colorBase) 
   translate([(shellLength/2), shellWidth/2, posZ00])
   {
 
@@ -2919,7 +2921,6 @@ module lidShell()
 
   translate([(shellLength/2), shellWidth/2, posZ00*-1])
   {
-    //color(colorLid)
     difference()  //  d1
     {
       minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, 
@@ -3074,7 +3075,6 @@ module connectorNew(plane, usePCBCoord, x, y, conn, outD)
 
   if (plane=="base")
   {
-    //color(colorBase) 
     translate([x, y, 0])
     {
       //-dbg-echo("connectorNew:", conn, sH=sH);
@@ -3130,8 +3130,7 @@ module connectorNew(plane, usePCBCoord, x, y, conn, outD)
     heightTemp = usePCBCoord ? ((baseWallHeight+lidWallHeight-sH-pcbThickness)) : lidWallHeight;
 
     //-dbg-echo("connectorNew:", sH=sH, heightTemp=heightTemp, zTemp=zTemp);
-    
-    //color(colorLid) 
+
     translate([x, y, zTemp])
     {
       ht=(heightTemp);
@@ -3852,7 +3851,7 @@ module YAPPgenerate()
       maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
       if (!inspectXfromBack)
       {
-        color("White",0.1)
+        color("White",1.0)
         translate([inspectX, -shellWidth/2,-maskHeight/4])
         cube([maskLength, maskWidth, maskHeight]);
       }
@@ -3871,7 +3870,7 @@ module YAPPgenerate()
       maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
       if (!inspectYfromLeft)
       {
-        color("White",0.1)
+        color("White",1.0)
         translate([-shellLength/2, inspectY, -maskHeight/4])
         cube([maskLength, maskWidth, maskHeight]);
       }
@@ -4118,7 +4117,7 @@ module printSwitch()
           color("white") cylinder(h=b[6], d=4, center=true);
         //-- buttonPlateThickness
         translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)+((buttonPlateThickness+0.5)/2)]) 
-          color("orange", alpha=0.5) cylinder(h=buttonPlateThickness, d=5, center=true);
+          color("orange") cylinder(h=buttonPlateThickness, d=5, center=true);
       }
   }
 }

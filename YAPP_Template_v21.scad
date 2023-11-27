@@ -279,6 +279,16 @@ baseMounts =
 ------------------------------------------------------------------
 Default origin = yappCoordBox: box[0,0,0]
 
+                      Required                Not Used        Note
+                    +-----------------------+---------------+------------------------------------
+yappRectangle       | width, length         | radius        |
+yappCircle          | radius                | width, length |
+yappPolygon         | width, length         | radius        |
+yappRoundedRect     | width, length, radius |               |     
+yappCircleWithFlats | width, radius         | length        | length=distance between flats
+yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
+
+
 Parameters:
  (0) = from Back
  (1) = from Left
@@ -287,7 +297,7 @@ Parameters:
  (4) = radius
  (5) = depth 0=Auto (plane thickness)
  (6) = angle
- (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect
+ (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey
  (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
  (9) = Mask : [] if not used.  - Required if yappUseMask specified -
  (n) = { <yappCoordBox> | yappCoordPCB }
@@ -441,38 +451,80 @@ labelsPlane =
 ];
 
 
+//========= HOOK dummy functions ============================
+  
+// Hook functions allow you to add 3d objects to the case.
+// Lid/Base = Shell part to attach the object to.
+// Inside/Outside = Join the object from the midpoint of the shell to the inside/outside.
+// Pre/Post = Attach the object before (Pre) or after (Post) applying Cutouts/Stands/Connectors.
+
 //===========================================================
-module hookLidInside()
+module hookLidInsidePre()
 {
-  echo("hookLidInside(original) ..");
-  translate([40, 40, -8]) color("purple") cube([15,20,10]);
+  //echo("hookLidInside(original) ..");
+  //translate([40, 40, -8]) cube([15,20,10]);
   
 } // hookLidInside(dummy)
   
 //===========================================================
-module hookLidOutside()
+module hookLidInsidePost()
 {
-  echo("hookLidOutside(original) ..");
-  translate([(shellLength/2),-5,-5])
-  {
-    color("yellow") cube([20,15,10]);
-  }  
+  //echo("hookLidInside(original) ..");
+  //translate([40, 40, -8]) cube([15,20,10]);
+  
+} // hookLidInside(dummy)
+  
+//===========================================================
+module hookLidOutsidePre()
+{
+  //echo("hookLidOutside(original) ..");
+  //translate([(shellLength/2),-5,-5])
+  //{
+  //  cube([20,15,10]);
+  //}  
+} // hookLidOutside(dummy)
+//===========================================================
+module hookLidOutsidePost()
+{
+  //echo("hookLidOutside(original) ..");
+  //translate([(shellLength/2),-5,-5])
+  //{
+  //  cube([20,15,10]);
+  //}  
 } // hookLidOutside(dummy)
 
 //===========================================================
-module hookBaseInside()
+module hookBaseInsidePre()
 {
   //echo("hookBaseInside(original) ..");
-  echo("hookBaseInside(original) ..");  
-  translate([10, 30, -5]) color("lightgreen") cube([15,25,8]);
+  translate([80, 30, -5]) 
+    cube([15,25,10]);
+  
+} // hookBaseInside(dummy)
+//===========================================================
+module hookBaseInsidePost()
+{
+  //echo("hookBaseInside(original) ..");  
+  translate([60, 30, -5])
+    cube([15,25,10]);
   
 } // hookBaseInside(dummy)
 
 //===========================================================
-module hookBaseOutside()
+module hookBaseOutsidePre()
 {
-  echo("hookBaseOutside(original) ..");
-  translate([shellLength-wallThickness-10, 55, -5]) color("green") cube([15,25,10]);
+  //echo("hookBaseOutside(original) ..");
+  //translate([shellLength-wallThickness-10, 55, -5]) 
+  //  cube([15,25,10]);
+  
+} // hookBaseOutside(dummy)
+
+//===========================================================
+module hookBaseOutsidePost()
+{
+ // echo("hookBaseOutside(original) ..");
+ // translate([shellLength-wallThickness-10, 55, -5])
+ //   cube([15,25,10]);
   
 } // hookBaseOutside(dummy)
 

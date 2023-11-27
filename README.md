@@ -11,6 +11,258 @@ or at the
 
 <hr>
 
+## Rev. 2.1  (22-11-2023)
+
+** New functionality **
+Cutout Shapes
+	Cutouts now support more shapes.
+		yappRectangle    : Rectangle with size 'width' x 'length' 
+		yappCircle       : Circle with radius of 'radius'
+		yappRoundedRect  : Rectangle with size 'width' x 'length' and corner radius of 'radius'
+		yappPolygon      : User defined polygon. Three standard shapes are included for use/reference - 'shapeIsoTriangle', 'shapeHexagon', 'shape6ptStar' 
+    yappCircleWithFlats : Circle with radius of 'radius' with the sides clipped to width (length is not used)
+    yappCircleWithKey   : Circle with radius of 'radius' with a rectangular key of width x length (length is key depth)
+Cutout Masks
+
+Fillets
+	Fillets are automatically added to all appropriate items.  
+	This can be overridden with the yappNoFillet option.  
+	Fillet radius can also be changed from default (same as connected wall thickness) with the filletRadius parameter.
+
+//========= HOOK dummy functions ============================
+  
+// Hook functions allow you to add 3d objects to the case.
+// Lid/Base = Shell part to attach the object to.
+// Inside/Outside = Join the object from the midpoint of the shell to the inside/outside.
+// Pre/Post = Attach the object Pre or Post doing Cutouts/Stands/Connectors.
+
+//===========================================================
+// origin = box(0,0,0)
+module hookLidInsidePre()
+{
+} // hookLidInsidePre()
+
+//===========================================================
+// origin = box(0,0,0)
+module hookLidInsidePost()
+{
+} // hookLidInsidePost()
+  
+//===========================================================
+//===========================================================
+// origin = box(0,0,shellHeight)
+module hookLidOutsidePre()
+{
+} // hookLidOutsidePre()
+
+//===========================================================
+// origin = box(0,0,shellHeight)
+module hookLidOutsidePost()
+{
+} // hookLidOutsidePost()
+
+//===========================================================
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseInsidePre()
+{
+} // hookBaseInsidePre()
+
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseInsidePost()
+{
+} // hookBaseInsidePost()
+
+//===========================================================
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseOutsidePre()
+{
+} // hookBaseOutsidePre()
+
+//===========================================================
+// origin = box(0,0,0)
+module hookBaseOutsidePost()
+{
+} // hookBaseOutsidePost()
+
+//===========================================================
+//===========================================================
+
+
+** Refinements **
+	Updated definition standards:
+	Parameters:
+		(0) = Parentheses with a number indicates a required parameter.
+		(n) = Parentheses with a 'n' indicates an optional parameter must be after the required parameters.
+		{ Optional parameter }
+		< Default value>
+		| means one or more values from the list are allowed
+		, means only one value from the list is allowed
+	
+
+**This version breaks with the API for the following array's:**
+
+<pre>
+/*===================================================================
+ *** PCB Supports ***
+ Pin and Socket standoffs 
+ ------------------------------------------------------------------
+Default origin =  yappPCBCoord : pcb[0,0,0]
+
+Parameters:
+  (0) = posx
+  (1) = posy
+  (2) = standoffHeight
+  (3) = filletRadius (0 = auto size)
+  (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
+  (n) = { yappHole, <yappPin> } // Baseplate support treatment
+  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  (n) = { yappBoxCoord, <yappPCBCoord> }  
+  (n) = { yappNoFillet }
+*/
+</pre>
+
+<pre>
+*===================================================================
+ *** Connectors ***
+ Standoffs with hole through base and socket in lid for screw type connections.
+ ------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+  
+Parameters:
+  (0) = posx
+  (1) = posy
+  (2) = pcbStandHeight
+  (3) = screwDiameter
+  (4) = screwHeadDiameter (don't forget to add extra for the fillet)
+  (5) = insertDiameter
+  (6) = outsideDiameter
+  (7) = filletRadius (0 = auto size)
+  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  (n) = { <yappBoxCoord>, yappPCBCoord }
+  (n) = { yappNoFillet }
+  
+*/</pre>
+
+<pre>
+/*===================================================================
+*** Base Mounts ***
+  Mounting tabs on the outside of the box
+ ------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+  (0) = pos
+  (1) = screwDiameter
+  (2) = width
+  (3) = height
+  (4) = filletRadius
+  (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+  (n) = { yappNoFillet }
+*/
+</pre>
+
+<pre>
+/*===================================================================
+*** Cutouts ***
+  There are 6 cutouts one for each surface:
+    cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+                      Required                Not Used        Note
+                    +-----------------------+---------------+------------------------------------
+yappRectangle       | width, length         | radius        |
+yappCircle          | radius                | width, length |
+yappPolygon         | width, length         | radius        |
+yappRoundedRect     | width, length, radius |               |     
+yappCircleWithFlats | width, radius         | length        | length=distance between flats
+yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
+
+
+Parameters:
+ (0) = from Back
+ (1) = from Left
+ (2) = width
+ (3) = length
+ (4) = radius
+ (5) = depth 0=Auto (plane thickness)
+ (6) = angle
+ (7) = yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey
+ (8) = Polygon : [] if not used.  - Required if yappPolygon specified -
+ (9) = Mask : [] if not used.  - Required if yappUseMask specified -
+ (n) = { <yappCoordBox> | yappCoordPCB }
+ (n) = { <yappOrigin>, yappCenter }
+ (n) = { yappUseMask }
+ (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
+
+
+*/
+</pre>
+
+<pre>
+/*===================================================================
+*** Snap Joins ***
+------------------------------------------------------------------
+Default origin = yappBoxCoord: box[0,0,0]
+
+Parameters:
+ (0) = posx | posy
+ (1) = width
+ (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+ (n) = { <yappOrigin> | yappCenter }
+ (n) = { yappSymmetric }
+*/
+</pre>
+
+<pre>
+/*===================================================================
+*** Light Tubes ***
+------------------------------------------------------------------
+Default origin = yappPCBCoord: PCB[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy
+ (2) = tubeLength
+ (3) = tubeWidth
+ (4) = tubeWall
+ (5) = gapAbovePcb
+ (6) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole
+ (7) = tubeType    {yappCircle|yappRectangle}
+ (8) = filletRadius
+ (n) = { yappBoxCoord, <yappPCBCoord> }
+ (n) = { yappNoFillet }
+*/
+</pre>
+
+<pre>
+/*===================================================================
+*** Push Buttons ***
+------------------------------------------------------------------
+Default origin = yappPCBCoord: PCB[0,0,0]
+
+Parameters:
+ (0) = posx
+ (1) = posy
+ (2) = capLength
+ (3) = capWidth
+ (4) = capAboveLid
+ (5) = switchHeight
+ (6) = switchTrafel
+ (7) = poleDiameter
+ (6) = filletRadius
+ (n) = buttonType  {yappCircle|yappRectangle}
+*/
+</pre>
+
+<pre>
+</pre>
+
+
+
 ## Rev. 2.0  (21-05-2023)
 
 **New functionality *lightTubes* (experimental)**

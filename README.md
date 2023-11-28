@@ -11,23 +11,29 @@ or at the
 
 <hr>
 
-## Rev. 2.1  (22-11-2023)
+## Rev. 2.1  (27-11-2023)
 
 ** New functionality **
+<pre>
 Cutout Shapes
 	Cutouts now support more shapes.
-		yappRectangle    : Rectangle with size 'width' x 'length' 
-		yappCircle       : Circle with radius of 'radius'
-		yappRoundedRect  : Rectangle with size 'width' x 'length' and corner radius of 'radius'
-		yappPolygon      : User defined polygon. Three standard shapes are included for use/reference - 'shapeIsoTriangle', 'shapeHexagon', 'shape6ptStar' 
-    yappCircleWithFlats : Circle with radius of 'radius' with the sides clipped to width (length is not used)
-    yappCircleWithKey   : Circle with radius of 'radius' with a rectangular key of width x length (length is key depth)
+		yappRectangle		: Rectangle with size 'width' x 'length' 
+		yappCircle		: Circle with radius of 'radius'
+		yappRoundedRect		: Rectangle with size 'width' x 'length' and corner radius of 'radius'
+		yappPolygon		: User defined polygon. Three standard shapes are included for 
+					  use/reference - 'shapeIsoTriangle', 'shapeHexagon', 'shape6ptStar' 
+		yappCircleWithFlats	: Circle with radius of 'radius' with the sides clipped to width (length 
+					  is not used)
+    		yappCircleWithKey	: Circle with radius of 'radius' with a rectangular key of width x length 
+				   	  (length is key depth)
+
 Cutout Masks
 
 Fillets
 	Fillets are automatically added to all appropriate items.  
 	This can be overridden with the yappNoFillet option.  
-	Fillet radius can also be changed from default (same as connected wall thickness) with the filletRadius parameter.
+	Fillet radius can also be changed from default (same as connected wall thickness) with the filletRadius 
+	parameter.
 
 //========= HOOK dummy functions ============================
   
@@ -100,8 +106,8 @@ module hookBaseOutsidePost()
 		< Default value>
 		| means one or more values from the list are allowed
 		, means only one value from the list is allowed
-	
 
+</pre>
 **This version breaks with the API for the following array's:**
 
 <pre>

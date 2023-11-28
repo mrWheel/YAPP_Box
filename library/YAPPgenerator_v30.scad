@@ -2476,7 +2476,7 @@ module makeButtons()
     cLength   = button[2];
     cWidth    = button[3];
     
-    shape     = getShapeWithDefault(button[8],yappRectangle);
+    shape     = getShapeWithDefault(button[9],yappRectangle);
       
     //-debug-echo("makeButtons()", xPos=xPos, yPos=yPos, cLength=cLength, cWidth=cWidth, cAbvLid=cAbvLid
     //-test-                    , pDiam=pDiam, swHeight=swHeight, swTrafel=swTrafel);

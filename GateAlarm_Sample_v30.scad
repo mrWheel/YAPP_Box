@@ -15,7 +15,7 @@
 //
 //-----------------------------------------------------------------------
 
-include <../YAPP_Box/library/YAPPgenerator_v21.scad>
+include <../YAPP_Box/library/YAPPgenerator_v30.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -55,7 +55,7 @@ printSwitchExtenders  = true;
 // Electro cookie 30 row
 pcbLength           = 88.9; // Front to back
 pcbWidth            = 52.1; // Side to side
-pcbThickness        = 1.4;
+pcbThickness        = 1.7;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 23;
@@ -85,10 +85,10 @@ roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 10.0;  //-- used only for pushButton and showPCB
-standoffPinDiameter = 1.8;
-standoffHoleSlack   = 0.4;
-standoffDiameter    = 5.0;
+defaultStandoffHeight      = 10.0;  //-- used only for pushButton and showPCB
+defaultStandoffPinDiameter = 1.7;
+defaultStandoffHoleSlack   = 0.4;
+defaultStandoffDiameter    = 4.0;
 
 
 
@@ -103,7 +103,7 @@ alphaBase           = 1;//0.25;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
-showPCB             = true;
+showPCB             = false;
 showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
@@ -167,6 +167,7 @@ yappPatternHexGrid,    //pattern
   5,                    // hRepeat
   5,                    // vRepeat
   30,                    // rotation
+  0,                    // rotation
   yappPolygon,          // openingShape
   4,                    // openingWidth, 
   4,                    // openingLength, 

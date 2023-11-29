@@ -68,7 +68,7 @@ pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 2;
-paddingBack         = 1;
+paddingBack         = 5;
 paddingRight        = 1;
 paddingLeft         = 1;
 

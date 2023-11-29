@@ -1421,7 +1421,6 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         translate ([-L/2, -W/2, H]) //lidWallHeight])
         hookLidOutsidePre();
         minkowskiCutBox(L, W, H, rad, plane, wall);
-  //      minkowskiInnerBox(L, W, H, iRad, plane, wall);
       } // difference()
       //draw stuff inside the box
       color("LightGreen")

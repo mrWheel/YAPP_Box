@@ -108,7 +108,7 @@ lidWallHeight       =  5;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;
+ridgeHeight         = 5.0;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
@@ -254,13 +254,13 @@ cutoutsLid  =
 cutoutsFront =  
 [
     [ 8.5, 0, 15, 16, 0,   yappRectangle, 4, yappCoordPCB]    //-- RJ12
-   ,[-6,   0,  0,  7, 4.5, yappCircleWithFlats, 0, 90, yappCenter, yappCoordPCB] //-- powerJack
+   ,[pcbWidth-6,   0,  0,  7, 4.5, yappCircleWithFlats, 0, 90, yappCenter, yappCoordPCB] //-- powerJack
 ];
 
 cutoutsBack =   
 [
- //-- 0,   1, 2, 3, 4, 5, 6, n
-    [34,  15, 0, 0, 6, yappCircle, 3, yappCenter, yappCoordPCB]  //-- antennaConnector
+ //-- 0,   1, 2, 3, 4, 5,          6, n
+    [34,  15, 0, 0, 6, yappCircle, 10, yappCenter, yappCoordPCB]  //-- antennaConnector
 ];
 
 //-- base mounts -- origen = box[x0,y0]
@@ -300,7 +300,7 @@ snapJoins   =
 //========= MAIN CALL's ===========================================================
   
 //===========================================================
-module hookLidInsidePost()
+module hookLidInside()
 {
   echo("hookLidInsidePost(switchBox) ..");
   
@@ -320,7 +320,7 @@ module hookLidInsidePost()
   }
   
   
-} // hookLidInsidePost(dummy)
+} // hookLidInside(dummy)
   
 
 //----------------------------------------------------------

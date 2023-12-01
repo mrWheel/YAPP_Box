@@ -44,9 +44,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                                  LEFT
 */
 
-// Set the default preview and render quality from 1-32  
-previewQuality = 5;   // Default =  5
-renderQuality  = 5;   // Default = 10
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -78,7 +75,7 @@ lidWallHeight       = 13;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 5.0;
+ridgeHeight         = 3.6;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
@@ -90,8 +87,10 @@ standoffHoleSlack   = 0.4;
 standoffDiameter    = 7;
 
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = false;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 5;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
@@ -106,11 +105,13 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectLightTubes   = false;
-inspectButtons      = false;
-//-- D E B U G ---------------------------------------
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Base)
+inspectXfromBack    = true;     //-> View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = true;     //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------

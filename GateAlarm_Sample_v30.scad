@@ -3,14 +3,14 @@
 //
 //  This is a box for <template>
 //
-//  Version 2.1 (22-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
 //  for many or complex cutouts you might need to adjust
 //  the number of elements:
 //
-//      Preferences->Advanced->Turn of rendering at 100000 elements
+//      Preferences->Advanced->Turn of rendering at 250000 elements
 //                                                  ^^^^^^
 //
 //-----------------------------------------------------------------------
@@ -42,10 +42,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                                  LEFT
 */
 
-// Set the default preview and render quality from 1-32  
-// WARNING high values can cause extremely long render/preview times!
-previewQuality = 5;   // Default = 5
-renderQuality  = 15;   // Default = 8
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -80,21 +76,23 @@ lidWallHeight       = 8;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 6.0;
+ridgeHeight         = 3.0;
 ridgeSlack          = 0.3;
 roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-defaultStandoffHeight      = 10.0;  //-- used only for pushButton and showPCB
-defaultStandoffPinDiameter = 1.7;
-defaultStandoffHoleSlack   = 0.4;
-defaultStandoffDiameter    = 4.0;
+standoffHeight      = 10.0;  //-- used only for pushButton and showPCB
+standoffPinDiameter = 1.7;
+standoffHoleSlack   = 0.4;
+standoffDiameter    = 4.0;
 
 
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = true;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 15;       //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
@@ -109,14 +107,12 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
+inspectX            = 0;        //-> 0=none (>0 from back)
+inspectY            = 0;        //-> 0=none (>0 from right)
 inspectXfromBack    = false;    // View from the inspection cut foreward
 inspectYfromLeft    = true;     // View from the inspection cut to the right
-//inspectLightTubes   = 0;      //-> { -1 | 0 | 1 }
-//inspectButtons      = 0;      //-> { -1 | 0 | 1 } 
-
-//-- D E B U G ---------------------------------------
+inspectZfromTop     = true;
+//-- C O N T R O L ---------------------------------------
 
 //===================================================================
 // *** PCB Supports ***

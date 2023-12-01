@@ -6,7 +6,7 @@
 //    Rendering takes ~ 11 minutes (renderQuality 10)
 //    Rendering takes ~  5 minutes (renderQuality 5)
 //
-//  Version 3.0 (29-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -52,9 +52,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                                  LEFT
 */
 
-// Set the default preview and render quality from 1-32  
-previewQuality = 5;   // Default =  5
-renderQuality  = 5;   // Default = 10
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -73,7 +70,7 @@ paddingRight        = 1;
 paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
-wallThickness       = 2.0;
+wallThickness       = 1.4;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.0;
 
@@ -82,24 +79,26 @@ lidPlaneThickness   = 1.0;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 10;
-lidWallHeight       =  8;
+lidWallHeight       = 10;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 5.0;
+ridgeHeight         = 3.0;  //-> at least 1.8 * wallThickness
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 3.0;  
+standoffHeight      = 3.0;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 standoffDiameter    = 6;
 
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = false;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 5;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
@@ -114,11 +113,13 @@ showSwitches        = true;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 18;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectLightTubes   = false;
-inspectButtons      = false;
-//-- D E B U G ---------------------------------------
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Base)
+inspectXfromBack    = false;     //-> View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = true;     //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 
 //===================================================================
@@ -211,8 +212,6 @@ cutoutsBack =
 
 cutoutsLeft =  
 [
-//-- 0, 1,            2,             3, 4, 5
-    [3, 2, shellLength-6, shellHeight-4, 2, yappRoundedRect]
 ];
 
 
@@ -285,8 +284,8 @@ baseMounts   =
 pushButtons = 
 [
  //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-    [15, 30, 8, 0, 0, 2,   1, 3.5, undef, yappCircle]
-   ,[15, 10, 8, 6, 3, 3.5, 1, 3.5, undef, yappRectangle]
+    [15, 30, 8, 0, 0, 3,   1, 3.5, undef, yappCircle]
+   ,[15, 10, 8, 6, 3, 5.5, 1, 3.5, undef, yappRectangle]
 ];     
              
 

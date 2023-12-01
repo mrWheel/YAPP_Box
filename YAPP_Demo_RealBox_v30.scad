@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for Test - transmitter/receiver
+//  This is a box for Demo RealBox - transmitter/receiver
 //
-//  Version 3.0 (29-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -14,7 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-makeTransmitter = true; //-- {true|false}
+makeTransmitter = false; //-- {true|false}
 
 //=========== DON'T CHANGE ANYTING BELOW THIS LINE ==================
 
@@ -23,8 +23,6 @@ insertDiam = 4.1;
 leftPadding = makeTransmitter ? 1 : 15;
 
 include <../YAPP_Box/library/YAPPgenerator_v30.scad>
-
-include <../YAPP_Box/library/RoundedCubes.scad>
 
 
 /*
@@ -74,9 +72,6 @@ switchWidth         = 13;
 */
 
 
-// Set the default preview and render quality from 1-32  
-previewQuality = 5;   // Default =  5
-renderQuality  = 5;   // Default = 12
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -92,10 +87,10 @@ pcbThickness        = 1.6;
 paddingFront        = 1;
 paddingBack         = 1;
 paddingRight        = 1;
-paddingLeft         = leftPadding; // {1 | 15};
+paddingLeft         = leftPadding; //-> set on top of file;
 
 //-- Edit these parameters for your own box dimensions
-wallThickness       = 2;
+wallThickness       = 1.8;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
@@ -108,7 +103,7 @@ lidWallHeight       =  5;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 5.0;
+ridgeHeight         = 3.5;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
@@ -120,8 +115,10 @@ standoffHoleSlack   = 0.4;
 standoffDiameter    = 5;
 
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = false;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
@@ -134,11 +131,13 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectXfromBack    = true;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
-//-- D E B U G ---------------------------------------
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack    = true;     // View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = false;    //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 
 
@@ -243,9 +242,9 @@ cutoutsBase =
 cutoutsLid  =   
 [
  //-- 0,    1,    2,  3, 4, 5, 6, 7              8,  9,  n
-    [-3,   30,    8, 13, 0, yappRectangle, yappCoordPCB]             //-- antennaConnector
-   ,[45,    8.5, 15, 18, 0, yappRectangle, 4, yappCoordPCB]          //-- RJ12
-   ,[49.5, 41.5, 12, 14, 0, yappRectangle, yappCenter, yappCoordPCB] //-- switchBlock
+    [-3,   30,   13,  8, 0, yappRectangle, yappCoordPCB]             //-- antennaConnector
+   ,[45,    8.5, 18, 15, 0, yappRectangle, 4, yappCoordPCB]          //-- RJ12
+   ,[49.5, 41.5, 14, 12, 0, yappRectangle, yappCenter, yappCoordPCB] //-- switchBlock
 ];
 
               
@@ -254,7 +253,7 @@ cutoutsLid  =
 cutoutsFront =  
 [
     [ 8.5, 0, 15, 16, 0,   yappRectangle, 4, yappCoordPCB]    //-- RJ12
-   ,[pcbWidth-6,   0,  0,  7, 4.5, yappCircleWithFlats, 0, 90, yappCenter, yappCoordPCB] //-- powerJack
+   ,[-6,   0,  0,  7, 4.5, yappCircleWithFlats, 0, 90, yappCenter, yappCoordPCB] //-- powerJack
 ];
 
 cutoutsBack =   

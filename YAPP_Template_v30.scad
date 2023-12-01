@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (28-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -45,9 +45,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                           LEFT
 */
 
-// Set the default preview and render quality from 1-32  
-previewQuality = 5;   // Default = 5
-renderQuality  = 5;   // Default = 12
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -60,10 +57,10 @@ pcbWidth            = 100; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 1;
-paddingBack         = 1;
-paddingRight        = 1;
-paddingLeft         = 1;
+paddingFront        = 2;
+paddingBack         = 2;
+paddingRight        = 2;
+paddingLeft         = 2;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
@@ -92,14 +89,16 @@ standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
-//-- D E B U G -----------------//-> Default ---------
-showSideBySide      = true;     //-> true
+//-- C O N T R O L -------------//-> Default ---------------------------
+showSideBySide      = false;     //-> true
+previewQuality      = 5;        // Value between 1 and 32, Default = 5
+renderQuality       = 5;        // Value between 1 and 32, Default = 8
 onLidGap            = 1;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
-alphaLid            = 0.7;
+alphaLid            = 0.8;
 colorBase           = "BurlyWood";
-alphaBase           = 0.7;
+alphaBase           = 0.8;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
@@ -108,14 +107,14 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectZ            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectXfromBack    = true;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
-inspectZfromTop     = false;     // View from the inspection cut down
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Base)
+inspectXfromBack    = true;     //-> View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = true;     //-> View from the inspection cut down
 
-//-- D E B U G ---------------------------------------
+//-- C O N T R O L -----------------------------------------------------
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
@@ -329,25 +328,6 @@ baseMounts =
 //  [shellLength/2, 3, 10, 3, 2, yappLeft, yappRight]//, yappCenter]
 ];
 
-//===================================================================
-//  *** Snap Joins ***
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx | posy
-//    (1) = width
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//   Optional:
-//    (n) = { <yappOrigin> | yappCenter }
-//    (n) = { yappSymmetric }
-//    (n) = { yappRectangle } == Make a diamond shape snap
-//-------------------------------------------------------------------
-snapJoins   =   
-[
-
-];
 
 //===================================================================
 //  *** Light Tubes ***

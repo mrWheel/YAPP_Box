@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (29-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -41,9 +41,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                                  LEFT
 */
 
-// Set the default preview and render quality from 1-32  
-previewQuality = 5;   // Default =  5
-renderQuality  = 5;   // Default = 12
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -90,11 +87,13 @@ standoffDiameter    = 8;
 
 
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = false;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
 shiftLid            = 5;
-colorLid            = "Yellow";   
+colorLid            = "gray";   
 alphaLid            = 1;//0.2;   
 colorBase           = "silver";
 alphaBase           = 1;//0.2;
@@ -106,10 +105,13 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectXfromBack    = true;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack    = true;     // View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = false;    //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 
 
@@ -145,7 +147,7 @@ pcbStands = [
 //===================================================================
 //  *** Cutouts ***
 //    There are 6 cutouts one for each surface:
-//      cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+//      cutoutsBase (Bottom), cutoutsLid (Top), cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
@@ -171,9 +173,10 @@ pcbStands = [
 //    (7) = angle : Default = 0
 //    (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
 //    (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
+//    (n) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
 //    (n) = { <yappCoordBox> | yappCoordPCB }
 //    (n) = { <yappOrigin>, yappCenter }
-//  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
+//  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 //-------------------------------------------------------------------
 
 cutoutsBase = 
@@ -186,16 +189,21 @@ cutoutsBase =
 cutoutsLid  = 
 [
  //--  0,  1,  2,  3, 4, n
-    [ 20, 20, 25, 15, 0, yappRectangle]
-   ,[ 40, 20, 25, 15, 5, yappRoundedRect]
-   ,[ 60, 20,  0,  0, 8, yappCircle]
-   ,[ 80, 20,  0, 14, 8, yappCircleWithFlats]
-   ,[100, 20,  4,  5, 8, yappCircleWithKey]
-   ,[130, 20, 30, 30, 8, yappPolygon, 
+    [ 25, 70, 15, 25, 0, yappRectangle, undef, 30, yappCenter]
+   ,[ 25, 30, 15, 25, 0, yappRectangle, yappCenter]
+   ,[ 50, 70, 15, 25, 5, yappRoundedRect, undef, 30, yappCenter]
+   ,[ 50, 30, 15, 25, 5, yappRoundedRect, yappCenter]
+   ,[ 75, 30,  0,  0, 8, yappCircle, yappCenter]
+   ,[100, 70, 12,  0, 8, yappCircleWithFlats, undef, 30, yappCenter]
+   ,[100, 30, 12,  0, 8, yappCircleWithFlats, yappCenter]
+   ,[125, 70,  4,  5, 8, yappCircleWithKey, undef, 30, yappCenter]
+   ,[125, 30,  4,  5, 8, yappCircleWithKey, yappCenter]
+   ,[160, 30, 30, 30, 8, yappPolygon, 
          [yappPolygonDef,[
             [-0.50,0],[-0.25,+0.433012],[+0.45,-0.433012],[-0.25,-0.433012]]
-         ]]
-   ,[120, 55, 30, 30, 10, yappPolygon, shape6ptStar]
+            
+         ], yappCenter]
+   ,[160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter]
 ];
 
 cutoutsFront = 
@@ -214,11 +222,12 @@ cutoutsBack =
 
 cutoutsLeft = 
 [
- //--  0,  1,  2,  3, 4, n
+ //--  0,  1,  2,  3, 4, 5,6,7,n
     [ 30,  3, 25, 15, 3, yappRoundedRect]
    ,[ 30, 30, 25, 15, 3, yappRoundedRect]
    ,[160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter]
-   ,[ 90,  4, 50, 40, 0, yappRectangle, maskBars]  // although I wouldn't revomment doing bars across the overlap
+   ,[ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter]  // although I wouldn't recomment doing bars across the overlap
+   ,[ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter]  // although I wouldn't recomment doing bars across the overlap
 ];
 
 cutoutsRight = 

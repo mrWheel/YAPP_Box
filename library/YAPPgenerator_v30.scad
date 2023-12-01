@@ -4,23 +4,23 @@
 **
 */
 
-Version="v3.0.0 (29-11-2023)";
+Version="v3.0.0 (01-12-2023)";
 /*
 **
-**  Copyright (c) 2021, 2022, 2023 Willem Aandewiel
+**  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
 **
 **  With help from:
 **   - Keith Hadley (parameterized label depth)
 **   - Oliver Grafe (connectorsPCB)
 **   - Juan Jose Chong (dynamic standoff flange)
 **   - Dan Drum (cleanup code)
-**   - Dave Rosenhauer (fillets)
+**   - Dave Rosenhauer (fillets and a lot more)
 **
 **
 **  for many or complex cutouts you might need to adjust
 **  the number of elements:
 **
-**      Preferences->Advanced->Turn of rendering at 100000 elements
+**      Preferences->Advanced->Turn of rendering at 250000 elements
 **                                                  ^^^^^^
 **
 **  TERMS OF USE: MIT License. See base offile.
@@ -59,10 +59,6 @@ printMessages = debug;
                           LEFT
 */
 
-// Set the default preview and render quality from 1-32 over 12 not recommended 
-// WARNING high values can cause extremely long render/preview times!
-previewQuality = 5;   // Default = 5
-renderQuality  = 8;   // Default = 8
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -110,8 +106,10 @@ standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = true;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
@@ -126,14 +124,13 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectZ            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectXfromBack    = true;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
-inspectZfromTop     = false;     // View from the inspection cut down
-
-//-- D E B U G ---------------------------------------
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack    = true;     //-> View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = false;    //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 // ******************************
 //  REMOVE BELOW FROM TEMPLATE
@@ -1035,7 +1032,8 @@ module printBaseSnapJoins()
   if (len(snapJoins) > 0) 
   {
     echo (ridgeHeight=ridgeHeight,wallThickness=wallThickness);
-    assert ((ridgeHeight >= (wallThickness*2.5)), "ridgeHeight < 2.5 times wallThickness: no SnapJoins possible");
+//aaw//assert ((ridgeHeight >= (wallThickness*2.5)), "ridgeHeight < 2.5 times wallThickness: no SnapJoins possible");
+    assert ((ridgeHeight >= (wallThickness*1.8)), "ridgeHeight < 1.8 times wallThickness: no SnapJoins possible");
   }
 
   for (snj = snapJoins)
@@ -1262,7 +1260,8 @@ module printLidSnapJoins()
   if (len(snapJoins) > 0) 
   {
     echo (ridgeHeight=ridgeHeight,wallThickness=wallThickness);
-    assert ((ridgeHeight >= (wallThickness*2.5)), "ridgeHeight < 2.5 times wallThickness: no SnapJoins possible");
+//aaw//assert ((ridgeHeight >= (wallThickness*2.5)), "ridgeHeight < 2.5 times wallThickness: no SnapJoins possible");
+    assert ((ridgeHeight >= (wallThickness*1.8)), "ridgeHeight < 1.8 times wallThickness: no SnapJoins possible");
   }
   
   for (snj = snapJoins)
@@ -1275,14 +1274,16 @@ module printLidSnapJoins()
     snapStart  = (isTrue(yappCenter, snj)) ? snj[0] - snapWidth/2 : snj[0] - 0.5;
     
     snapHeight = (!diamondshape) ? (wallThickness*2)-0.5 : ridgeHeight-1;
-    snapDiam   = (!diamondshape) ? (wallThickness*1.1) : wallThickness/sqrt(2);
+//aaw//snapDiam   = (!diamondshape) ? (wallThickness*1.1) : wallThickness/sqrt(2);
+    snapDiam   = (!diamondshape) ? (wallThickness*1.0) : wallThickness/sqrt(2);
     tmpAmin    = (roundRadius)+(snapWidth/2);
     tmpAmax    = shellWidth - tmpAmin;
     tmpA       = max(snapStart+(snapWidth/2), tmpAmin);
     snapApos   = min(tmpA, tmpAmax);
 
-    snapZpos = (!diamondshape) ? ((lidPlaneThickness+lidWallHeight)*-1)-(wallThickness*1.1)
-    : ((lidPlaneThickness+lidWallHeight)*-1)-(wallThickness);
+//aaw//snapZpos = (!diamondshape) ? ((lidPlaneThickness+lidWallHeight)*-1)-(wallThickness*1.1)
+    snapZpos = (!diamondshape) ? ((lidPlaneThickness+lidWallHeight)*-1)-(wallThickness*1.0)
+                               : ((lidPlaneThickness+lidWallHeight)*-1)-(wallThickness);
 
     if(!diamondshape)
     {

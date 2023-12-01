@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (28-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -44,10 +44,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                           LEFT
 */
 
-// Set the default preview and render quality from 1-32 over 12 not recommended 
-// WARNING high values can cause extremely long render/preview times!
-previewQuality = 5;   // Default = 5
-renderQuality  = 8;   // Default = 8
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -82,7 +78,7 @@ lidWallHeight       = 23;
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight 
 //     or 2.5x wallThickness if using snaps
-ridgeHeight         = 6.0;
+ridgeHeight         = 3.6;
 ridgeSlack          = 0.2;
 
 //-- Radius of the shell corners
@@ -95,14 +91,16 @@ standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
-//-- D E B U G -----------------//-> Default ---------
-showSideBySide      = false;     //-> true
+//-- C O N T R O L -------------//-> Default ---------
+showSideBySide      = true;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 5;
-colorLid            = "YellowGreen";   
-alphaLid            = 0.5; // 1;
+colorLid            = "gray";   
+alphaLid            = 0.9; // 1;
 colorBase           = "BurlyWood";
-alphaBase           = 0.5; // 1;
+alphaBase           = 0.9; // 1;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
@@ -111,14 +109,13 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectZ            = 25.5;        //-> 0=none (>0 from left, <0 from right)
-inspectXfromBack    = true;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
-inspectZfromTop     = false;     // View from the inspection cut down
-
-//-- D E B U G ---------------------------------------
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack    = true;     // View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = false;    //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 
 //===================================================================

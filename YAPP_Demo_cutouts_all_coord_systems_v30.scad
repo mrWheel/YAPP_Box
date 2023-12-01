@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (29-11-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -41,9 +41,6 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
                                  LEFT
 */
 
-// Set the default preview and render quality from 1-32  
-previewQuality = 5;   // Default =  5
-renderQuality  = 5;   // Default = 12
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
@@ -51,15 +48,15 @@ printLidShell         = true;
 printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 150; // Front to back
-pcbWidth            = 100; // Side to side
+pcbLength           = 100; // Front to back
+pcbWidth            =  80; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 40;
-paddingBack         = 20;
-paddingRight        = 10;
-paddingLeft         = 30;
+paddingFront        = 10;
+paddingBack         = 10;
+paddingRight        = 30;
+paddingLeft         = 40;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
@@ -90,8 +87,10 @@ standoffDiameter    = 8;
 
 
 
-//-- D E B U G -----------------//-> Default ---------
+//-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = false;     //-> true
+previewQuality      = 5;        //-> from 1 to 32, Default = 5
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
 shiftLid            = 5;
 colorLid            = "Yellow";   
@@ -106,39 +105,16 @@ showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
-inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
-inspectXfromBack    = true;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
+inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectY            = 0;        //-> 0=none (>0 from Right)
+inspectZ            = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack    = true;     // View from the inspection cut foreward
+inspectYfromLeft    = true;     //-> View from the inspection cut to the right
+inspectZfromTop     = false;    //-> View from the inspection cut down
+//-- C O N T R O L ---------------------------------------
 
 
 
-//===================================================================
-//   *** PCB Supports ***
-//   Pin and Socket standoffs 
-//-------------------------------------------------------------------
-//  Default origin =  yappCoordPCB : pcb[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx
-//    (1) = posy
-//   Optional:
-//    (2) = Height to bottom of PCB : Default = standoffHeight
-//    (3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
-//    (4) = standoffDiameter    Default = standoffDiameter;
-//    (5) = standoffPinDiameter Default = standoffPinDiameter;
-//    (6) = standoffHoleSlack   Default = standoffHoleSlack;
-//    (7) = filletRadius (0 = auto size)
-//    (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    (n) = { yappHole, <yappPin> } // Baseplate support treatment
-//    (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-//    (n) = { yappCoordBox, <yappCoordPCB> }  
-//    (n) = { yappNoFillet }
-//-------------------------------------------------------------------
-pcbStands = [
-  [5, 5, yappHole]
-];
 
 
 
@@ -192,12 +168,12 @@ cutoutsLid  =
   // All 8 Coordinate combinations of (yappOrigin | yappCenter) and  (yappCoordBox | yappCoordPCB) and (yappLeftOrigin |yappGlobalOrigin)
   [25,15, 20, 10,  2, yappRoundedRect, yappCenter]
  ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
- ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB, yappLeftOrigin]
- ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappLeftOrigin]
- ,[25,15, 20, 10,  2, yappRoundedRect]
- ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB]
- ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB, yappLeftOrigin]
- ,[25,15, 20, 10,  2, yappRoundedRect, yappLeftOrigin]
+ ,[25,15, 20, 12,  2, yappRoundedRect, yappCenter, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 12,  2, yappRoundedRect, yappCenter, yappLeftOrigin]
+ ,[25,15, 20, 14,  2, yappRoundedRect]
+ ,[25,15, 20, 14,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 16,  2, yappRoundedRect, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 16,  2, yappRoundedRect, yappLeftOrigin]
 ];
 
 cutoutsFront = 
@@ -247,29 +223,6 @@ cutoutsRight =
  ,[25,15, 20, 10,  2, yappRoundedRect, yappLeftOrigin]
 ];
 
-
-
-//===================================================================
-//  *** Snap Joins ***
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx | posy
-//    (1) = width
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//   Optional:
-//    (n) = { <yappOrigin> | yappCenter }
-//    (n) = { yappSymmetric }
-//    (n) = { yappRectangle } == Make a diamond shape snap
-//-------------------------------------------------------------------
-snapJoins   =   
-[
-    [(shellWidth/2)-40,     10, yappFront, yappCenter, yappSymmetric]
-   ,[25,  10, yappBack, yappSymmetric, yappCenter, yappRectangle]
-   ,[(shellLength/2)-60,    10, yappLeft, yappRight, yappCenter, yappRectangle, yappSymmetric]
-];
 
 
 

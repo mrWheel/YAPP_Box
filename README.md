@@ -11,7 +11,7 @@ or at the
 
 <hr>
 
-## Rev. 2.1  (27-11-2023)
+## Rev. 3.0  (01-12-2023)
 
 ** New functionality **
 <pre>
@@ -24,7 +24,7 @@ Cutout Shapes
 					  use/reference - 'shapeIsoTriangle', 'shapeHexagon', 'shape6ptStar' 
 		yappCircleWithFlats	: Circle with radius of 'radius' with the sides clipped to width (length 
 					  is not used)
-    		yappCircleWithKey	: Circle with radius of 'radius' with a rectangular key of width x length 
+    yappCircleWithKey	: Circle with radius of 'radius' with a rectangular key of width x length 
 				   	  (length is key depth)
 
 Cutout Masks
@@ -40,58 +40,30 @@ Fillets
 // Hook functions allow you to add 3d objects to the case.
 // Lid/Base = Shell part to attach the object to.
 // Inside/Outside = Join the object from the midpoint of the shell to the inside/outside.
-// Pre/Post = Attach the object Pre or Post doing Cutouts/Stands/Connectors.
 
 //===========================================================
 // origin = box(0,0,0)
-module hookLidInsidePre()
+module hookLidInside()
 {
-} // hookLidInsidePre()
-
-//===========================================================
-// origin = box(0,0,0)
-module hookLidInsidePost()
-{
-} // hookLidInsidePost()
+} // hookLidInside()
   
 //===========================================================
-//===========================================================
 // origin = box(0,0,shellHeight)
-module hookLidOutsidePre()
+module hookLidOutside()
 {
-} // hookLidOutsidePre()
-
-//===========================================================
-// origin = box(0,0,shellHeight)
-module hookLidOutsidePost()
-{
-} // hookLidOutsidePost()
-
-//===========================================================
-//===========================================================
-// origin = box(0,0,0)
-module hookBaseInsidePre()
-{
-} // hookBaseInsidePre()
+} // hookLidOutside()
 
 //===========================================================
 // origin = box(0,0,0)
-module hookBaseInsidePost()
+module hookBaseInside()
 {
-} // hookBaseInsidePost()
-
-//===========================================================
-//===========================================================
-// origin = box(0,0,0)
-module hookBaseOutsidePre()
-{
-} // hookBaseOutsidePre()
+} // hookBaseInside()
 
 //===========================================================
 // origin = box(0,0,0)
-module hookBaseOutsidePost()
+module hookBaseOutside()
 {
-} // hookBaseOutsidePost()
+} // hookBaseOutside()
 
 //===========================================================
 //===========================================================
@@ -283,7 +255,7 @@ Parameters:
 
 ## Rev. 2.0  (21-05-2023)
 
-**New functionality *lightTubes* (experimental)**
+**New functionality *lightTubes* **
 
 With the **lightTubes** array you can define where you want tubes for LED's and NeoPixles**
 

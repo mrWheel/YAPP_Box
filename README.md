@@ -13,7 +13,7 @@ or at the
 
 ## Rev. 3.0  (01-12-2023)
 
-** New functionality **
+**New functionality**
 <pre>
 Cutout Shapes
 	Cutouts now support more shapes.
@@ -24,7 +24,7 @@ Cutout Shapes
 					  use/reference - 'shapeIsoTriangle', 'shapeHexagon', 'shape6ptStar' 
 		yappCircleWithFlats	: Circle with radius of 'radius' with the sides clipped to width (length 
 					  is not used)
-    yappCircleWithKey	: Circle with radius of 'radius' with a rectangular key of width x length 
+    		yappCircleWithKey	: Circle with radius of 'radius' with a rectangular key of width x length 
 				   	  (length is key depth)
 
 Cutout Masks
@@ -75,7 +75,7 @@ module hookBaseOutside()
 		(0) = Parentheses with a number indicates a required parameter.
 		(n) = Parentheses with a 'n' indicates an optional parameter must be after the required parameters.
 		{ Optional parameter }
-		< Default value>
+		&lt;Default value&gt;
 		| means one or more values from the list are allowed
 		, means only one value from the list is allowed
 

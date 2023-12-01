@@ -60,15 +60,15 @@ pcbWidth            = 100; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 41;
-paddingBack         = 31;
-paddingRight        = 21;
+paddingFront        = 1;
+paddingBack         = 1;
+paddingRight        = 1;
 paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 1.25;
-lidPlaneThickness   = 1.25;
+basePlaneThickness  = 1.5;
+lidPlaneThickness   = 1.5;
 
 //-- Total height of box = lidPlaneThickness 
 //                       + lidWallHeight 
@@ -87,7 +87,7 @@ roundRadius         = 3.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 15.0;  //-- used for PCB Supports, Push Button and showPCB
+standoffHeight      = 10.0;  //-- used for PCB Supports, Push Button and showPCB
 standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
@@ -97,9 +97,9 @@ showSideBySide      = true;     //-> true
 onLidGap            = 1;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
-alphaLid            = 0.7;//0.2;   
+alphaLid            = 0.7;
 colorBase           = "BurlyWood";
-alphaBase           = 0.7;//0.2;
+alphaBase           = 0.7;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
@@ -110,8 +110,10 @@ showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from front, <0 from back)
 inspectY            = 0;        //-> 0=none (>0 from left, <0 from right)
+inspectZ            = 0;        //-> 0=none (>0 from left, <0 from right)
 inspectXfromBack    = true;    // View from the inspection cut foreward
 inspectYfromLeft    = true;     // View from the inspection cut to the right
+inspectZfromTop     = false;     // View from the inspection cut down
 
 //-- D E B U G ---------------------------------------
 
@@ -124,27 +126,27 @@ inspectYfromLeft    = true;     // View from the inspection cut to the right
 //==================================================================
 //  *** Shapes ***
 //------------------------------------------------------------------
-//  There are a view pré defines shapes and masks
+//  There are a view pre defines shapes and masks
 //  shapes:
 //      shapeIsoTriangle, shapeHexagon, shape6ptStar
 //
 //  masks:
-//      maskHoneycomb, maskHexCircles, maskBars
+//      maskHoneycomb, maskHexCircles, maskBars, maskOffsetBars
 //
 //------------------------------------------------------------------
-// Shapes should be defined to fit into a 2x2 box (+/-1 in X and Y) - they will be scaled as needed.
+// Shapes should be defined to fit into a 1x1 box (+/-0.5 in X and Y) - they will be scaled as needed.
 // defined as a vector of [x,y] vertices pairs.(min 3 vertices)
-// for example a triangle could be [yappPolygonDef,[[-1,-1],[0,1],[1,-1]]];
+// for example a triangle could be [yappPolygonDef,[[-0.5,-0.5],[0,0.5],[0.5,-0.5]]];
 //  To see how to add your own shapes and mask see the YAPPgenerator program
 //------------------------------------------------------------------
 
 
-// Show sample of a Mask.in the negative X,Y quadrant
+// Show sample of a Mask
 //SampleMask(maskHoneycomb);
 
 //===================================================================
-//   *** PCB Supports ***
-//   Pin and Socket standoffs 
+// *** PCB Supports ***
+// Pin and Socket standoffs 
 //-------------------------------------------------------------------
 //  Default origin =  yappCoordPCB : pcb[0,0,0]
 //
@@ -173,8 +175,8 @@ pcbStands =
 
 
 //===================================================================
-//   *** Connectors ***
-//   Standoffs with hole through base and socket in lid for screw type connections.
+//  *** Connectors ***
+//  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //  
@@ -206,7 +208,7 @@ connectors   =
 //===================================================================
 //  *** Cutouts ***
 //    There are 6 cutouts one for each surface:
-//      cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+//      cutoutsBase (Bottom), cutoutsLid (Top), cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
@@ -232,11 +234,11 @@ connectors   =
 //    (7) = angle : Default = 0
 //    (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
 //    (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
+//    (n) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
 //    (n) = { <yappCoordBox> | yappCoordPCB }
 //    (n) = { <yappOrigin>, yappCenter }
-//    (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
+//  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 //-------------------------------------------------------------------
-
 cutoutsBase = 
 [
   [65,shellWidth/2 ,55,55, 5, yappPolygon ,0 ,30, yappCenter, shapeHexagon, maskHexCircles]
@@ -328,6 +330,26 @@ baseMounts =
 ];
 
 //===================================================================
+//  *** Snap Joins ***
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    (0) = posx | posy
+//    (1) = width
+//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+//   Optional:
+//    (n) = { <yappOrigin> | yappCenter }
+//    (n) = { yappSymmetric }
+//    (n) = { yappRectangle } == Make a diamond shape snap
+//-------------------------------------------------------------------
+snapJoins   =   
+[
+
+];
+
+//===================================================================
 //  *** Light Tubes ***
 //-------------------------------------------------------------------
 //  Default origin = yappCoordPCB: PCB[0,0,0]
@@ -342,9 +364,8 @@ baseMounts =
 //    (5) = gapAbovePcb
 //    (6) = tubeType    {yappCircle|yappRectangle}
 //   Optional:
-//    (7) = lensThickness (how much to leave on the top of the lid for the light 
-//          to shine through 0 for open hole : Default = 0/Open
-//    (8) = Height to top of PCB : Default/undef = standoffHeight+pcbThickness
+//    (7) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole : Default = 0/Open
+//    (8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    (9) = filletRadius : Default = 0/Auto 
 //    (n) = { yappCoordBox, <yappCoordPCB> }
 //    (n) = { yappNoFillet }
@@ -407,110 +428,93 @@ pushButtons =
 //  Parameters:
 //   (0) = posx
 //   (1) = posy/z
-//   (2) = orientation
-//   (3) = depth
-//   (4) = plane {lid | base | left | right | front | back }
+//   (2) = rotation degrees CCW
+//   (3) = depth : positive values go into case (Remove) negative valies are raised (Add)
+//   (4) = plane {yappLeft | yappRight | yappFront | yappBack | yappTop | yappBottom}
 //   (5) = font
 //   (6) = size
 //   (7) = "label text"
 //-------------------------------------------------------------------
 labelsPlane =
 [
-    [5, 5, 0, 1, "lid", "Liberation Mono:style=bold", 5, "YAPP" ]
+    [5, 5, 0, 1, yappTop, "Liberation Mono:style=bold", 5, "YAPP" ]
 ];
 
 
 
-//========= HOOK dummy functions ============================
+//========= HOOK functions ============================
   
 // Hook functions allow you to add 3d objects to the case.
 // Lid/Base = Shell part to attach the object to.
 // Inside/Outside = Join the object from the midpoint of the shell to the inside/outside.
-// Pre/Post = Attach the object Pre or Post doing Cutouts/Stands/Connectors.
+// Pre = Attach the object Pre before doing Cutouts/Stands/Connectors. 
 
 //===========================================================
 // origin = box(0,0,0)
 module hookLidInsidePre()
 {
-  //echo("hookLidInside(original) ..");
-  //translate([shellLength/2,10,0])
-  //sphere(r=20);
-} // hookLidInside(dummy)
+  if (printMessages) echo("hookLidInsidePre() ..");
+} // hookLidInsidePre()
 
 //===========================================================
 // origin = box(0,0,0)
-module hookLidInsidePost()
+module hookLidInside()
 {
-  //echo("hookLidInside(original) ..");
-//  translate([shellLength/2,10,0])
-//  sphere(r=20);
-} // hookLidInside(dummy)
+  if (printMessages) echo("hookLidInside() ..");
+} // hookLidInside()
   
 //===========================================================
 //===========================================================
 // origin = box(0,0,shellHeight)
 module hookLidOutsidePre()
 {
-  //echo("hookLidOutside(original) ..");
-  //translate([10,10,10])
-  //sphere(r=20);
-  
-} // hookLidOutside(dummy)
+  if (printMessages) echo("hookLidOutsidePre() ..");
+} // hookLidOutsidePre()
 
 //===========================================================
 // origin = box(0,0,shellHeight)
-module hookLidOutsidePost()
+module hookLidOutside()
 {
-  //echo("hookLidOutside(original) ..");
-//  translate([shellLength/2,-12,0])
-//  sphere(r=20);
-  
-} // hookLidOutside(dummy)
+  if (printMessages) echo("hookLidOutside() ..");
+} // hookLidOutside()
 
 //===========================================================
 //===========================================================
 // origin = box(0,0,0)
 module hookBaseInsidePre()
 {
-  //echo("hookBaseInside(original) ..");
-  //translate([shellLength/2,10,0])
-  //sphere(r=20);
-    
-} // hookBaseInside(dummy)
+  if (printMessages) echo("hookBaseInsidePre() ..");
+} // hookBaseInsidePre()
 
 //===========================================================
 // origin = box(0,0,0)
-module hookBaseInsidePost()
+module hookBaseInside()
 {
-  //echo("hookBaseInside(original) ..");
-//  translate([shellLength/2,10,0])
-//  sphere(r=20);   
-} // hookBaseInside(dummy)
+  if (printMessages) echo("hookBaseInside() ..");
+} // hookBaseInside()
 
 //===========================================================
 //===========================================================
 // origin = box(0,0,0)
 module hookBaseOutsidePre()
 {
-  //echo("hookBaseOutside(original) ..");
-  //  sphere(r=20);
-  
-} // hookBaseOutside(dummy)
+  if (printMessages) echo("hookBaseOutsidePre() ..");
+} // hookBaseOutsidePre()
 
 //===========================================================
 // origin = box(0,0,0)
-module hookBaseOutsidePost()
+module hookBaseOutside()
 {
-  //echo("hookBaseOutside(original) ..");
-//  translate([shellLength/2,-12,0])
-//  sphere(r=20);
-} // hookBaseOutside(dummy)
+  if (printMessages) echo("hookBaseOutside() ..");
+} // hookBaseOutside()
 
-//===========================================================
-//===========================================================
-
-
-
+// **********************************************************
+// **********************************************************
+// **********************************************************
+// *************** END OF TEMPLATE SECTION ******************
+// **********************************************************
+// **********************************************************
+// **********************************************************
 
 //---- This is where the magic happens ----
 YAPPgenerate();

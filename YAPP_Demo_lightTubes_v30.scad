@@ -78,7 +78,7 @@ lidWallHeight       = 13;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;
+ridgeHeight         = 5.0;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 

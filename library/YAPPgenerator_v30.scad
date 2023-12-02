@@ -28,7 +28,7 @@ Version="v3.0.0 (01-12-2023)";
 */
 
 // If set to true will generate the sample box at every save
-debug = false;
+debug = true;
 printMessages = debug;
 
 //---------------------------------------------------------
@@ -87,17 +87,17 @@ lidPlaneThickness   = 1.5;
 //                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 25;
-lidWallHeight       = 23;
+baseWallHeight      = 15;
+lidWallHeight       = 35;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight 
 //     or 2.5x wallThickness if using snaps
-ridgeHeight         = 6.0;
+ridgeHeight         = 5.0;
 ridgeSlack          = 0.2;
 
 //-- Radius of the shell corners
-roundRadius         = 3;
+roundRadius         = 5;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
@@ -107,10 +107,10 @@ standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 8;        //-> from 1 to 32, Default = 8
-onLidGap            = 0;
+renderQuality       = 5;        //-> from 1 to 32, Default = 8
+onLidGap            = 10;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
 alphaLid            = 1;
@@ -676,19 +676,33 @@ pushButtons =
 //-------------------------------------------------------------------
 labelsPlane =
 [
-//  [5, 5, 0, 1, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
-// ,[5, 5, 0, 1, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
-// ,[5, 5, 0, 1, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
-// ,[5, 5, 0, 1, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right " ]
-// ,[5, 5, 0, 1, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
-// ,[5, 5, 0, 1, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
+  [5, 5, 0, 3, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
+ ,[5, 5, 0, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+ ,[5, 5, 0, 3, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
+ ,[5, 5, 0, 3, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
+ ,[5, 5, 0, 3, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
+ ,[5, 5, 0, 3, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
  
-// ,[15, 15, 45, -1, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
-// ,[15, 15, 45, -1, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
-// ,[15, 15, 45, -1, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
-// ,[15, 15, 45, -1, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right " ]
-// ,[15, 15, 45, -1, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
-// ,[15, 15, 45, -1, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
+ ,[10, 15, 45, 3, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
+ ,[10, 15, 45, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+ ,[10, 15, 45, 3, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
+ ,[10, 15, 45, 3, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
+ ,[10, 15, 45, 3, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
+ ,[10, 15, 45, 3, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
+
+ ,[35, 5, 0, -2, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
+ ,[35, 5, 0, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+ ,[35, 5, 0, -2, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
+ ,[35, 5, 0, -2, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
+ ,[35, 5, 0, -2, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
+ ,[35, 5, 0, -2, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
+ 
+ ,[30, 15, 45, -2, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
+ ,[30, 15, 45, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+ ,[30, 15, 45, -2, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
+ ,[30, 15, 45, -2, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
+ ,[30, 15, 45, -2, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
+ ,[30, 15, 45, -2, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
 ];
 
 
@@ -1532,6 +1546,9 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         minkowskiInnerBox(L, W, H, iRad, plane, wall);
       } // difference
    
+      // Draw the labels that are added (raised) from the case
+      color("DarkGreen") drawLabels(yappBase, false);
+
     } // if (shell=="base")
     else
     {
@@ -1562,6 +1579,11 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         minkowskiOuterBox(L, W, H, rad, plane, wall);
         minkowskiInnerBox(L, W, H, iRad, plane, wall);
       } // difference  
+
+
+      // Draw the labels that are added (raised) from the case
+      color("DarkGreen") drawLabels(yappLid, false);
+
     }
   }
   else // preCutouts
@@ -2710,16 +2732,30 @@ module buildButtons()
 module drawLabels(casePart, subtract)
 {
   
-  //echo ("drawLabels", casePart=casePart, subtract=subtract);
   for ( label = labelsPlane )
   {
+    
+    // If we are adding to the lid  we need to shift it because we are drawing before the lid is positioned
+    shiftX = (!subtract) ? -shellLength/2 : 0 ;
+    shiftY = (!subtract) ? -shellWidth/2 : 0 ;
+        
+    shiftZ = (!subtract) 
+      ? (casePart== yappLid) 
+        ? (lidWallHeight + lidPlaneThickness) 
+        : -baseWallHeight - basePlaneThickness
+      : 0 ;
+        
+    translate([shiftX, shiftY, shiftZ])
+    {
     // Check if the label is valid for the for subtract value 
     if (((label[3] > 0) && subtract) || ((label[3] < 0) && !subtract))
     {
+      theDepth = (subtract) ? label[3] : -label[3];
+        
       if ((casePart== yappLid) && (label[4]==yappTop))
       {
         if (printMessages) echo ("Draw text on Top");
-        theDepth = (subtract) ? min(label[3],lidPlaneThickness*2/3) : -label[3];
+        //theDepth = (subtract) ? label[3] : -label[3];
         offset_depth = (subtract) ?  0.01 : theDepth -0.01;
         
         translate([label[0], label[1], offset_depth - theDepth]) 
@@ -2742,7 +2778,6 @@ module drawLabels(casePart, subtract)
       if ((casePart== yappBase) && (label[4]==yappBottom))
       {
         if (printMessages) echo ("Draw text on Bottom");
-        theDepth = (subtract) ? min(label[3],basePlaneThickness*2/3) : -label[3];
         offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
         
         translate([label[0], shellWidth-label[0], offset_depth]) 
@@ -2769,7 +2804,6 @@ module drawLabels(casePart, subtract)
       {
         if (printMessages) echo ("Draw text on Front");
         offset_v = (casePart==yappLid) ? -shellHeight : 0;
-        theDepth = (subtract) ? min(label[3],wallThickness/3) : -label[3];       
         offset_depth = (subtract) ?  0.01 : theDepth - 0.01;
 
         translate([shellLength - theDepth + offset_depth, label[0], offset_v + label[1]]) 
@@ -2792,7 +2826,6 @@ module drawLabels(casePart, subtract)
       {
         if (printMessages) echo ("Draw text on Back", casePart);
         offset_v = (casePart==yappLid) ? -shellHeight : 0;
-        theDepth = (subtract) ? min(label[3],wallThickness/3) : -label[3];
         offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
 
         translate([offset_depth, shellWidth-label[0], offset_v + label[1]]) 
@@ -2817,9 +2850,7 @@ module drawLabels(casePart, subtract)
       {
         if (printMessages) echo ("Draw text on Left", casePart);
         offset_v = (casePart==yappLid) ? -shellHeight : 0;
-        theDepth = (subtract) ? min(label[3],wallThickness/3) : -label[3];
         offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
-
         translate([label[0], theDepth+offset_depth, offset_v + label[1]]) 
         {
           rotate([90,-label[2],0])
@@ -2841,10 +2872,9 @@ module drawLabels(casePart, subtract)
       {
         if (printMessages) echo ("Draw text on Right");
         offset_v = (casePart==yappLid) ? -shellHeight : 0;
-        theDepth = (subtract) ? min(label[3],wallThickness/3) : -label[3];
         offset_depth = (subtract) ?  0.01 : theDepth - 0.01;
-
-        translate([shellLength-label[0], shellWidth+offset_depth, offset_v + label[1]]) 
+        // Not sure why this is off by 1.5!!!
+        translate([shellLength-label[0], shellWidth + offset_depth, -1.5 + offset_v + label[1]]) 
         {
           rotate([90,label[2],0])
           {
@@ -2862,8 +2892,9 @@ module drawLabels(casePart, subtract)
         } // translate
       } //  if..base/right
     } // Valid check
+    } // Translate
   } // for labels
-} //  subtractLabels()
+} //  drawLabels()
 
 
 //===========================================================
@@ -2882,17 +2913,17 @@ module baseShell()
       {
         translate([0,0,posZ])
         {
+          // The outside doesn't need to be a minkowski form so just use a cube
           //-- outside of ridge
-          linear_extrude(H+1)
-          {
-              minkowski()
-              {
-                square([(L+wallThickness+1)-(oRad*2), (W+wallThickness+1)-(oRad*2)]
                         , center=true);
                 circle(rad);
               }
             
           } // extrude
+          // Extent it by an extra case size in all directions so it will remove any raised text.  
+          translate([-L ,-W, 0]) {
+            cube([L*3, W*3, shellHeight*3]);
+          }
         }
         
         //-- hollow inside
@@ -3037,10 +3068,11 @@ module lidShell()
       else  //-- normal
       {
         //--- cutoff lower half
-        translate([((shellLength/2)+2)*-1,((shellWidth/2)+2)*-1,shellHeight*-1])
+        // Leave the Ridge height so we can trim out the part we don't want
+        translate([-shellLength,-shellWidth,-shellHeight -  newRidge(ridgeHeight)])
         {
           color(colorLid, alphaLid)
-          cube([(shellLength+3)*1, (shellWidth+3)*1, shellHeight], center=false);
+          cube([(shellLength)*2, (shellWidth)*2, shellHeight], center=false);
         } // translate
       } //  if normal
     } // difference(d1)
@@ -3719,21 +3751,19 @@ module drawLid() {
     printLidSnapJoins();
 
     // Draw the labels that are carved into the case
-    color("red") drawLabels(yappLid, true);
+    color("Red") drawLabels(yappLid, true);
     
   } //  difference(t1)
-
-  // Draw the labels that are added (raised) from the case
-  color("blue") drawLabels(yappLid, false);
   
-  //Add the Post 
-  posZ00 = lidWallHeight+lidPlaneThickness;
-  //echo("lid:", posZ00=posZ00);
-
-  translate([(shellLength/2), shellWidth/2, posZ00*-1])
-  {
-    minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, false);
-  }
+//  //Add the Post 
+//  posZ00 = lidWallHeight+lidPlaneThickness;
+//  //echo("lid:", posZ00=posZ00);
+//
+//  translate([(shellLength/2), shellWidth/2, posZ00*-1])
+//  {
+//    minkowskiBox("lid", shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, false);
+//  }
+  
   // Add the text
   translate([shellLength-15, -15, 0])
     linear_extrude(1) 
@@ -3876,13 +3906,12 @@ module YAPPgenerate()
             
           makeCutouts("base");
 
-          color("orange") drawLabels(yappBase, true);
+          
+          // Draw the labels that are carved into the case
+          color("Red") drawLabels(yappBase, true);
 
         } //  difference(a)
         
-        // Draw the labels that are added (raised) from the case
-        color("green") drawLabels(yappBase, false);
-
        // Draw the post base hooks
         posZ00 = (baseWallHeight) + basePlaneThickness;
         translate([(shellLength/2), shellWidth/2, posZ00])

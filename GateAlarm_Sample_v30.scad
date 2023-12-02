@@ -76,7 +76,7 @@ lidWallHeight       = 8;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;
+ridgeHeight         = 5.0;
 ridgeSlack          = 0.3;
 roundRadius         = 2.0;
 
@@ -92,7 +92,7 @@ standoffDiameter    = 4.0;
 //-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = true;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 15;       //-> from 1 to 32, Default = 8
+renderQuality       = 12;       //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   

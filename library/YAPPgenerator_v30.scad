@@ -2915,11 +2915,6 @@ module baseShell()
         {
           // The outside doesn't need to be a minkowski form so just use a cube
           //-- outside of ridge
-                        , center=true);
-                circle(rad);
-              }
-            
-          } // extrude
           // Extent it by an extra case size in all directions so it will remove any raised text.  
           translate([-L ,-W, 0]) {
             cube([L*3, W*3, shellHeight*3]);

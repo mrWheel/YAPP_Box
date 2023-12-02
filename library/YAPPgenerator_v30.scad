@@ -28,7 +28,7 @@ Version="v3.0.0 (01-12-2023)";
 */
 
 // If set to true will generate the sample box at every save
-debug = true;
+debug = false;
 printMessages = debug;
 
 //---------------------------------------------------------
@@ -676,33 +676,33 @@ pushButtons =
 //-------------------------------------------------------------------
 labelsPlane =
 [
-  [5, 5, 0, 3, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
- ,[5, 5, 0, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
- ,[5, 5, 0, 3, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
- ,[5, 5, 0, 3, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
- ,[5, 5, 0, 3, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
- ,[5, 5, 0, 3, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
+//  [5, 5, 0, 3, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
+// ,[5, 5, 0, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+// ,[5, 5, 0, 3, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
+// ,[5, 5, 0, 3, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
+// ,[5, 5, 0, 3, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
+//  ,[5, 5, 0, 3, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
  
- ,[10, 15, 45, 3, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
- ,[10, 15, 45, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
- ,[10, 15, 45, 3, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
- ,[10, 15, 45, 3, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
- ,[10, 15, 45, 3, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
- ,[10, 15, 45, 3, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
+//  ,[10, 15, 45, 3, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
+//  ,[10, 15, 45, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  ,[10, 15, 45, 3, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
+//  ,[10, 15, 45, 3, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
+//  ,[10, 15, 45, 3, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
+//  ,[10, 15, 45, 3, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
 
- ,[35, 5, 0, -2, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
- ,[35, 5, 0, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
- ,[35, 5, 0, -2, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
- ,[35, 5, 0, -2, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
- ,[35, 5, 0, -2, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
- ,[35, 5, 0, -2, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
+//  ,[35, 5, 0, -2, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
+//  ,[35, 5, 0, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  ,[35, 5, 0, -2, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
+//  ,[35, 5, 0, -2, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
+//  ,[35, 5, 0, -2, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
+//  ,[35, 5, 0, -2, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
  
- ,[30, 15, 45, -2, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
- ,[30, 15, 45, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
- ,[30, 15, 45, -2, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
- ,[30, 15, 45, -2, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
- ,[30, 15, 45, -2, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
- ,[30, 15, 45, -2, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
+//  ,[30, 15, 45, -2, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
+//  ,[30, 15, 45, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  ,[30, 15, 45, -2, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
+//  ,[30, 15, 45, -2, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
+//  ,[30, 15, 45, -2, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
+//  ,[30, 15, 45, -2, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
 ];
 
 

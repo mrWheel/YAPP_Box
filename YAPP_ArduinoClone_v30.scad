@@ -3,7 +3,7 @@
 //
 //  This will generate a projectbox for a "Arduino UNO 'clone'"
 //
-//  Version 3.0 (01-12-2023)
+//  Version 3.0 (02-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
@@ -39,11 +39,11 @@ printBaseShell    = true;
 printLidShell     = true;
 
 
-myPcb = "./STL/MODELS/Arduino_Model.stl";
+myPcb = "./STL/MODELS/Arduino_Uno_model.stl";
 
-if (false)
+if (true)
 {
-  translate([36.5, 30, 4.5]) 
+  translate([900.5, -271, 2.6]) 
   {
     rotate([0,0,0]) color("lightgray") import(myPcb);
   }
@@ -94,7 +94,7 @@ shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;    //-> false
-colorBase           = "white";
+colorBase           = "gray";
 showPCB             = false;
 showSwitches        = false;
 showPCBmarkers      = false;
@@ -134,12 +134,12 @@ inspectZfromTop     = false;    //-> View from the inspection cut down
 //-------------------------------------------------------------------
 pcbStands = 
 [
-    [14.9, 1.4, yappBoth, yappBackLeft, yappNoFillet]             // back-left
-   ,[13.6, 1.8, yappBaseOnly, yappBackRight]        // back-right
-   ,[16,   8, undef, undef, 4, 0.5, 0,1, yappLidOnly, yappHole, yappBackRight]  // push down
-   ,[3,    5.6, yappBoth, yappPin, yappFrontLeft, yappNoFillet]   // front-left
-   ,[3,   17.2, yappBoth, yappPin, yappFrontRight, yappNoFillet]  // front-right
-             ];
+  [13.8, 1.75, yappBoth, yappBackLeft, yappNoFillet]                           // back-left
+ ,[15,   2.7,  yappBaseOnly, yappBackRight]                                    // back-right
+ ,[14.5, 8,    undef, undef, 4, 0.5, 0,1, yappLidOnly, yappHole, yappBackRight]  // push down
+ ,[2.4,  7,    yappBoth, yappPin, yappFrontLeft, yappNoFillet]                 // front-left
+ ,[2.4, 18.2,  yappBoth, yappPin, yappFrontRight, yappNoFillet]                // front-right
+];
 
 //===================================================================
 //  *** Cutouts ***
@@ -177,17 +177,17 @@ pcbStands =
 //-------------------------------------------------------------------
 cutoutsLid =  
 [
-    [ 4,   38,  15, 13,   1,   yappRoundedRect, 6, yappCenter, yappCoordPCB]  // USB (right)
-   ,[ 5,    6,  18, 10,   1,   yappRoundedRect, 5, yappCenter, yappCoordPCB]  // Power Jack
-   ,[40,   53,  50, 10,   0,   yappRectangle, yappCenter, yappCoordPCB]       // right headers
-   ,[45.5, -1,  40, 10,   0,   yappRectangle, yappCenter, yappCoordPCB]       // left headers
-   ,[36,    2,  21, 10,   0,   yappRectangle, yappCenter, yappCoordPCB]       // left power header
-   ,[65,   30,   7, 10.0, 0,   yappRectangle, yappCenter, yappCoordPCB]       // ICSP1
-   ,[ 3,   47,   8,  0,   2.5, yappCircle,                yappCoordPCB]       // reset button
-   ,[25,   22.5, 3,  3.5, 0,   yappRectangle, yappCenter, yappCoordPCB]       // led 13
-   ,[25,   29,   3,  3.5, 0,   yappRectangle, yappCenter, yappCoordPCB]       // TX
-   ,[25,   35,   3,  3.5, 0,   yappRectangle, yappCenter, yappCoordPCB]       // RX
-   ,[25,   42,   3,  3.5, 0,   yappRectangle, yappCenter, yappCoordPCB]       // PWR
+    [ 4, 38,   14, 14,   2,   yappRoundedRect, 20, yappCenter, yappCoordPCB]  // USB (right)
+   ,[ 4,  7.5, 14, 10,   1,   yappRoundedRect, yappCenter, yappCoordPCB]      // Power Jack
+//   ,[40,   53,  50, 10,   2,   yappRoundedRect, 10, yappCenter, yappCoordPCB]       // right headers
+//   ,[45.5, -1,  40, 10,   0,   yappRectangle, yappCenter, yappCoordPCB]     // left headers
+   ,[38,  3,   23, 10,   2,   yappRoundedRect, yappCenter, yappCoordPCB]      // left power header
+   ,[65, 27.5,  7, 10.0, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // ICSP1
+   ,[ 3, 47.5,  8,  0,   3,   yappCircle,                  yappCoordPCB]      // reset button
+   ,[26, 22.5,  3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // led 13
+   ,[26, 29,    3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // TX
+   ,[26, 35,    3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // RX
+   ,[26, 42,    3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // PWR
 ];
               
 //-- base plane    -- origin is pcb[0,0,0]
@@ -203,9 +203,8 @@ cutoutsBase =
 // (1) = posz
 cutoutsBack = 
 [
-    [38, 5, 13, 13, 0, yappRectangle, 5, yappCenter, yappCoordPCB]  // USB
-   //,[6,  5, 10,     11, 0, yappRectangle, 5, yappCenter, yappCoordPCB]  // Power Jack
-   ,[6,  7, 10,     11, 6, yappCircle, 0, yappCenter, yappCoordPCB]  // Power Jack
+    [38,  5, 14, 13, 0, yappRectangle, yappCenter, yappCoordPCB]  // USB
+   ,[7.5, 3, 10, 11, 6, yappRectangle, yappCenter, yappCoordPCB]  // Power Jack
 ];
 
 //-- right plane  -- origin is pcb[0,0,0]
@@ -213,14 +212,14 @@ cutoutsBack =
 // (1) = posZ
 cutoutsRight = 
 [
-    [40, 7, 50, 3,  0,  yappRectangle, yappCenter, yappCoordPCB]          // right headers
+    [42, 7, 50, 3,  2,  yappRoundedRect, 10, yappCenter, yappCoordPCB]          // right headers
 ];
 //-- right plane  -- origin is pcb[0,0,0]
 // (0) = posX
 // (1) = posZ
 cutoutsLeft = 
 [
-    [45.5, 7, 40, 3, 0,  yappRectangle, yappCenter, yappCoordPCB]           // left headers
+    [46.5, 7, 41, 3, 2,  yappRoundedRect, 9, yappCenter, yappCoordPCB]           // left headers
 ];
 
 

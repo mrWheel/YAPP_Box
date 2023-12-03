@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (01-12-2023)
+//  Version 3.0 (03-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -45,7 +45,7 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
 //-- which part(s) do you want to print?
 printBaseShell        = true;
 printLidShell         = true;
-printSwitchExtenders  = true;
+printSwitchExtenders  = false;
 
 //-- pcb dimensions -- very important!!!
 pcbLength           = 150; // Front to back
@@ -90,12 +90,12 @@ standoffDiameter    = 8;
 //-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 8;        //-> from 1 to 32, Default = 8
+renderQuality       = 6;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
 shiftLid            = 5;
 colorLid            = "gray";   
 alphaLid            = 1;//0.2;   
-colorBase           = "silver";
+colorBase           = "yellow";
 alphaBase           = 1;//0.2;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
@@ -139,7 +139,7 @@ inspectZfromTop     = false;    //-> View from the inspection cut down
 //    (n) = { yappNoFillet }
 //-------------------------------------------------------------------
 pcbStands = [
-  [5, 5, yappHole]
+  //[5, 5, yappHole]
 ];
 
 
@@ -184,6 +184,10 @@ cutoutsBase =
  //--  0,  1,  2,  3, 4, n
     [120, 40, 30, 30, 10, yappPolygon, shape6ptStar]
    ,[ 60, 55, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter]
+//-- Test
+   ,[115, 95, 20, 30, 10, yappCircle, 10]       //--> OK!
+   ,[140, 90, 20, 30,  1, yappRectangle, 10]    //--> OK!
+   ,[165, 90, 20, 30,  3, yappRoundedRect, 10]  //--> OK!
 ];
 
 cutoutsLid  = 
@@ -204,6 +208,10 @@ cutoutsLid  =
             
          ], yappCenter]
    ,[160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter]
+//-- buggy
+   ,[115, 95, 20, 30, 10, yappCircle, 10]     //--> BUG!
+   ,[140, 90, 20, 30, 1, yappRectangle, 10]   //--> BUG!
+   ,[165, 90, 20, 30, 3, yappRoundedRect, 10] //--> BUG!
 ];
 
 cutoutsFront = 
@@ -226,14 +234,19 @@ cutoutsLeft =
     [ 30,  3, 25, 15, 3, yappRoundedRect]
    ,[ 30, 30, 25, 15, 3, yappRoundedRect]
    ,[160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter]
-   ,[ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter]  // although I wouldn't recomment doing bars across the overlap
-   ,[ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter]  // although I wouldn't recomment doing bars across the overlap
+   ,[ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
+   ,[ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
 ];
 
 cutoutsRight = 
 [
-    [40, 3, 25, 15, 3, yappRoundedRect]
-   ,[40, 30, 25, 15, 3, yappRoundedRect]
+    [90,  5, 20, 15,  4, yappRoundedRect]   
+   ,[15, 40, 20, 15, 10, yappCircle, 15]      //--> OK
+   ,[40, 40, 20, 15,  5, yappRoundedRect, 15] //--> OK
+   ,[65, 40, 20, 15,  0, yappRectangle, 15]   //--> OK
+   ,[15, -5, 20, 15, 10, yappCircle, 15]      //--> OK
+   ,[40, -5, 20, 15,  5, yappRoundedRect, 15] //--> OK
+   ,[65, -5, 20, 15,  0, yappRectangle, 15]   //--> OK
 ];
 
 

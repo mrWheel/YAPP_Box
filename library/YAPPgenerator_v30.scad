@@ -87,8 +87,8 @@ lidPlaneThickness   = 1.5;
 //                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 15;
-lidWallHeight       = 35;
+baseWallHeight      = 25;
+lidWallHeight       = 25;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight 
@@ -107,10 +107,10 @@ standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 5;        //-> from 1 to 32, Default = 8
-onLidGap            = 10;
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
+onLidGap            = 0;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
 alphaLid            = 1;
@@ -2985,7 +2985,6 @@ module baseShell()
   shellConnectors("base");
 } //  baseShell()
 
-
 //===========================================================
 module lidShell()
 {
@@ -2993,7 +2992,7 @@ module lidShell()
   function newRidge(p1) = (p1>0.5) ? p1-0.5 : p1;
 
     //-------------------------------------------------------------------
-    module addlidRidge(L, W, H, rad)
+    module removeLidRidge(L, W, H, rad)
     {
       wall = (wallThickness/2);
       oRad = rad;
@@ -3003,39 +3002,21 @@ module lidShell()
       //echo("Ridge:", L2=L-(rad*2), W2=W-(rad*2), H2=H, oRad=oRad, iRad=iRad);
 
       translate([0,0,(H-0.005)*-1])
-      //translate([0,0,-H])
       {
-        difference()  // (b)
+        //-- hollow inside
+        translate([0, 0, -1])
         {
-          //-- outside of ridge
+          //color("green")
           linear_extrude(H+1)
           {
               minkowski()
               {
-                square([(L+wallThickness)-(oRad*2), (W+wallThickness)-(oRad*2)]
-                        , center=true);
-                circle(rad-0.03);
+                square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
+                circle(iRad);
               }
-            
-          } // extrude
-          //-- hollow inside
-          translate([0, 0, -0.5])
-          {
-            //color("green")
-            linear_extrude(H+2)
-            {
-                minkowski()
-                {
-                  square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
-                  circle(iRad);
-                }
-              
-            } // linear_extrude..
-          } // translate()
-                
-        } // difference(b)
-        
-      } //  translate(0)
+          } // linear_extrude..
+        } // translate([0, 0, -1])
+      } //  translate([0,0,(H-0.005)*-1])
     
     } //  addlidRidge()
     //-------------------------------------------------------------------
@@ -3069,18 +3050,15 @@ module lidShell()
           color(colorLid, alphaLid)
           cube([(shellLength)*2, (shellWidth)*2, shellHeight], center=false);
         } // translate
+        
+        //-- remove the ridge
+        color(colorLid, alphaLid)
+        removeLidRidge(shellInsideLength+wallThickness, 
+                    shellInsideWidth+wallThickness, 
+                    newRidge(ridgeHeight), 
+                    roundRadius);
       } //  if normal
     } // difference(d1)
-  
-    if (!hideLidWalls)
-    {
-      //-- add ridge
-      color(colorLid, alphaLid)
-      addlidRidge(shellInsideLength+wallThickness, 
-                  shellInsideWidth+wallThickness, 
-                  newRidge(ridgeHeight), 
-                  roundRadius);
-    }
   } // translate
 
   pcbPushdowns();

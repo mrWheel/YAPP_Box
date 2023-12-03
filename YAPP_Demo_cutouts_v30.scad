@@ -43,7 +43,7 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
 
 
 //-- which part(s) do you want to print?
-printBaseShell        = false;
+printBaseShell        = true;
 printLidShell         = true;
 printSwitchExtenders  = false;
 
@@ -217,6 +217,7 @@ cutoutsLid  =
 cutoutsFront = 
 [
     [20, 11, 15, 25, 3, yappRoundedRect]
+   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
    ,[40, 11, 15, 25, 10, yappCircle]
    ,[70, 4, 15, 17, 10, yappCircleWithFlats]
 ];  
@@ -224,7 +225,7 @@ cutoutsFront =
 
 cutoutsBack = 
 [
-    [30, 20, 25, 15, 3, yappRoundedRect]
+    [20, 40, 25, 15, 3, yappRoundedRect, 20]  //--> Bug!
 ];
 
 
@@ -232,7 +233,7 @@ cutoutsLeft =
 [
  //--  0,  1,  2,  3, 4, 5,6,7,n
     [ 30,  3, 25, 15, 3, yappRoundedRect]
-   ,[ 30, 30, 25, 15, 3, yappRoundedRect]
+   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
    ,[160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter]
    ,[ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
    ,[ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter]  

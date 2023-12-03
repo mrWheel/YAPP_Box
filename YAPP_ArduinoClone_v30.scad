@@ -86,10 +86,10 @@ standoffDiameter  = 5.2;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 8;        //-> from 1 to 32, Default = 8
-onLidGap            = 0;
+onLidGap            = 5;
 shiftLid            = 1;
 hideLidWalls        = false;    //-> false
 colorLid            = "yellow";   
@@ -178,12 +178,12 @@ pcbStands =
 cutoutsLid =  
 [
     [ 4, 38,   14, 14,   2,   yappRoundedRect, 20, yappCenter, yappCoordPCB]  // USB (right)
-   ,[ 4,  7.5, 14, 10,   1,   yappRoundedRect, yappCenter, yappCoordPCB]      // Power Jack
+   ,[ 3,  7.5, 15, 10,   1,   yappRoundedRect, yappCenter, yappCoordPCB]      // Power Jack
 //   ,[40,   53,  50, 10,   2,   yappRoundedRect, 10, yappCenter, yappCoordPCB]       // right headers
 //   ,[45.5, -1,  40, 10,   0,   yappRectangle, yappCenter, yappCoordPCB]     // left headers
-   ,[38,  3,   23, 10,   2,   yappRoundedRect, yappCenter, yappCoordPCB]      // left power header
-   ,[65, 27.5,  7, 10.0, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // ICSP1
-   ,[ 3, 47.5,  8,  0,   3,   yappCircle,                  yappCoordPCB]      // reset button
+   ,[38,  3,   24.5, 10,   2,   yappRoundedRect, yappCenter, yappCoordPCB]    // left power header
+   ,[65, 27.5,  9, 12,   1,   yappRoundedRect, yappCenter, yappCoordPCB]      // ICSP1
+   ,[ 4, 47.5,  8,  0,   3,   yappCircle,                  yappCoordPCB]      // reset button
    ,[26, 22.5,  3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // led 13
    ,[26, 29,    3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // TX
    ,[26, 35,    3,  3.5, 1,   yappRoundedRect, yappCenter, yappCoordPCB]      // RX
@@ -203,8 +203,8 @@ cutoutsBase =
 // (1) = posz
 cutoutsBack = 
 [
-    [38,  5, 14, 13, 0, yappRectangle, yappCenter, yappCoordPCB]  // USB
-   ,[7.5, 3, 10, 11, 6, yappRectangle, yappCenter, yappCoordPCB]  // Power Jack
+    [38,   4, 14, 11, 1, yappRoundedRect, 25, yappCenter, yappCoordPCB] // USB-A
+   ,[ 7.5, 4, 10, 11, 1, yappRoundedRect, 5, yappCenter, yappCoordPCB]  // Power Jack
 ];
 
 //-- right plane  -- origin is pcb[0,0,0]
@@ -212,14 +212,14 @@ cutoutsBack =
 // (1) = posZ
 cutoutsRight = 
 [
-    [42, 7, 50, 3,  2,  yappRoundedRect, 10, yappCenter, yappCoordPCB]          // right headers
+    [42.0, 7, 51, 3,  2,  yappRoundedRect, 10, yappCenter, yappCoordPCB] // right headers
 ];
 //-- right plane  -- origin is pcb[0,0,0]
 // (0) = posX
 // (1) = posZ
 cutoutsLeft = 
 [
-    [46.5, 7, 41, 3, 2,  yappRoundedRect, 9, yappCenter, yappCoordPCB]           // left headers
+    [46.5, 7, 42, 3, 2,  yappRoundedRect, 9, yappCenter, yappCoordPCB]   // left headers
 ];
 
 
@@ -259,12 +259,12 @@ snapJoins   =
 //   (7) = "label text"
 //-------------------------------------------------------------------
 labelsPlane = [
-               [28, 14,  0, 2, yappTop, "Arial:style=bold", 4, "Arduino CLONE" ]
-             , [57, 25, 90, 2, yappTop, "Liberation Mono:style=bold", 5, "YAPP" ]
-             , [33, 23,  0, 2, yappTop, "Liberation Mono:style=bold", 4, "L13" ]
-             , [33, 30,  0, 2, yappTop, "Liberation Mono:style=bold", 4, "TX" ]
-             , [33, 36,  0, 2, yappTop, "Liberation Mono:style=bold", 4, "RX" ]
-             , [33, 43,  0, 2, yappTop, "Liberation Mono:style=bold", 4, "PWR" ]
+               [28, 14,  0, 0.8, yappTop, "Arial:style=bold", 4, "Arduino CLONE" ]
+             , [57, 25, 90, 0.8, yappTop, "Liberation Mono:style=bold", 5, "YAPP" ]
+             , [33, 23,  0, 0.8, yappTop, "Liberation Mono:style=bold", 4, "L13" ]
+             , [33, 30,  0, 0.8, yappTop, "Liberation Mono:style=bold", 4, "TX" ]
+             , [33, 36,  0, 0.8, yappTop, "Liberation Mono:style=bold", 4, "RX" ]
+             , [33, 43,  0, 0.8, yappTop, "Liberation Mono:style=bold", 4, "PWR" ]
             ];
 
 

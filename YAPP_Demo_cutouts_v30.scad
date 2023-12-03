@@ -43,7 +43,7 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
 
 
 //-- which part(s) do you want to print?
-printBaseShell        = true;
+printBaseShell        = false;
 printLidShell         = true;
 printSwitchExtenders  = false;
 
@@ -88,7 +88,7 @@ standoffDiameter    = 8;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 6;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
@@ -185,9 +185,9 @@ cutoutsBase =
     [120, 40, 30, 30, 10, yappPolygon, shape6ptStar]
    ,[ 60, 55, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter]
 //-- Test
-   ,[115, 95, 20, 30, 10, yappCircle, 10]       //--> OK!
-   ,[140, 90, 20, 30,  1, yappRectangle, 10]    //--> OK!
-   ,[165, 90, 20, 30,  3, yappRoundedRect, 10]  //--> OK!
+   ,[115, 95, 20, 30, 10, yappCircle, 10]       //--> [D(b)] OK!
+   ,[140, 90, 20, 30,  1, yappRectangle, 10]    //--> [E(b)] OK!
+   ,[165, 90, 20, 30,  3, yappRoundedRect, 10]  //--> [F(b)] OK!
 ];
 
 cutoutsLid  = 
@@ -209,9 +209,9 @@ cutoutsLid  =
          ], yappCenter]
    ,[160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter]
 //-- buggy
-   ,[115, 95, 20, 30, 10, yappCircle, 10]     //--> BUG!
-   ,[140, 90, 20, 30, 1, yappRectangle, 10]   //--> BUG!
-   ,[165, 90, 20, 30, 3, yappRoundedRect, 10] //--> BUG!
+   ,[165, 90, 20, 30,  3, yappRoundedRect, 10] //--> [G(L)] BUG!
+   ,[140, 90, 20, 30,  1, yappRectangle, 10]   //--> [H(L)] BUG!
+   ,[115, 95, 20, 30, 10, yappCircle, 10]      //--> [J(L)] BUG!
 ];
 
 cutoutsFront = 
@@ -241,12 +241,12 @@ cutoutsLeft =
 cutoutsRight = 
 [
     [90,  5, 20, 15,  4, yappRoundedRect]   
-   ,[15, 40, 20, 15, 10, yappCircle, 15]      //--> OK
-   ,[40, 40, 20, 15,  5, yappRoundedRect, 15] //--> OK
-   ,[65, 40, 20, 15,  0, yappRectangle, 15]   //--> OK
-   ,[15, -5, 20, 15, 10, yappCircle, 15]      //--> OK
-   ,[40, -5, 20, 15,  5, yappRoundedRect, 15] //--> OK
-   ,[65, -5, 20, 15,  0, yappRectangle, 15]   //--> OK
+   ,[15, -5, 20, 15, 10, yappCircle, 15]      //--> [A(r)] OK
+   ,[40, -5, 20, 15,  5, yappRoundedRect, 15] //--> [B(r)]OK
+   ,[65, -5, 20, 15,  0, yappRectangle, 15]   //--> [C(r)] OK
+   ,[65, 40, 20, 15,  0, yappRectangle, 15]   //--> [K(b)] OK
+   ,[40, 40, 20, 15,  5, yappRoundedRect, 15] //--> [M(b)] OK
+   ,[15, 40, 20, 15, 10, yappCircle, 15]      //--> [N(b)] OK
 ];
 
 

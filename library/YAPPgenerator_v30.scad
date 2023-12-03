@@ -2233,11 +2233,11 @@ module processCutoutList(face, cutoutList, type)
     rot_X = 0;      // Y
     rot_Y = -90;    // X
     rot_Z = 0;      // Z
-    offset_x = wallThickness *2; 
+    offset_x = wallThickness; 
     offset_y = 0;
     offset_z = (type=="lid") ? -shellHeight : 0;
     wallDepth = wallThickness;
-    processCutoutList_Face(face, cutoutList, false, true, false, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+    processCutoutList_Face(face, cutoutList, false, true, true, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
   }
   else if (face == yappTop) 
   {
@@ -2248,9 +2248,9 @@ module processCutoutList(face, cutoutList, type)
     offset_x = 0;
     offset_y = 0;
    // offset_z = (-lidPlaneThickness*2)-0.05;  //Not sure why lid is shifted 0.05
-    offset_z = (-lidPlaneThickness*2);
+    offset_z = (-lidPlaneThickness);
     wallDepth = lidPlaneThickness;
-    processCutoutList_Face(face, cutoutList, true, false, false, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
+    processCutoutList_Face(face, cutoutList, true, false, true, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
   }
   else if (face == yappBottom) 
   {

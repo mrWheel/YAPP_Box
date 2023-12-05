@@ -207,6 +207,8 @@ yappMaskDef             = -30900;
 yappPolygonDef          = -30901;
 
 
+minkowskiErrorCorrection = $preview ? 1.0125 : 1;
+
 //-------------------------------------------------------------------
 // Misc internal values
 
@@ -1455,7 +1457,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     minkowski()
     {
       cube([L+(wall*2)-(rad*2), W+(wall*2)-(rad*2), (H*2)+(plane*2)-(rad*2)], center=true);
-      sphere(rad*1.0125); // Compensate for minkowski error
+      sphere(rad*minkowskiErrorCorrection); // Compensate for minkowski error
     }
 
   }
@@ -1465,7 +1467,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     minkowski()
     {
       cube([L+(wall)-(rad*2), W+(wall)-(rad*2), (H*2)+(plane)-(rad*2)], center=true);
-      sphere(rad*1.0125);
+      sphere(rad*minkowskiErrorCorrection);
     }
 
   }
@@ -1475,7 +1477,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     minkowski()
     {
       cube([L-((iRad*2)), W-((iRad*2)), (H*2)-((iRad*2))], center=true);
-      sphere(iRad*1.0125); // Compensate for minkowski error
+      sphere(iRad*minkowskiErrorCorrection); // Compensate for minkowski error
     }
   }
   //--------------------------------------------------------
@@ -2147,7 +2149,12 @@ module processRidgeExtList(subtract, ridgeExt, casePart, rot_X, rot_Y, rot_Z, of
       {
         translate([pos_X, pos_Y, 0]) 
         {
-          color("teal")
+          color((subtract) 
+          ? "teal" 
+          : (casePart == yappLid) ? colorLid : colorBase,
+          (subtract) 
+          ? 1
+          : (casePart == yappLid) ? alphaLid : alphaBase)
             translate([drawOffset,0,((invertZ) ? wallDepth-base_depth : wallDepth) + ((subtract) ? -0.02 : 0)])
               cube([drawWidth+0.02,base_height,base_depth + ((subtract) ? 0.04 : 0)]);  
         } //translate
@@ -2173,7 +2180,12 @@ module processRidgeExtList(subtract, ridgeExt, casePart, rot_X, rot_Y, rot_Z, of
       {
         translate([pos_X, pos_Y, 0]) 
         {
-          color("teal")
+          color((subtract) 
+          ? "teal" 
+          : (casePart == yappLid) ? colorLid : colorBase,
+          (subtract) 
+          ? 1
+          : (casePart == yappLid) ? alphaLid : alphaBase)
             translate([drawOffset,0,((invertZ) ? wallDepth-base_depth : wallDepth) + ((subtract) ? -0.02 : 0)])
               cube([drawWidth+0.02,base_height,base_depth + ((subtract) ? 0.04 : 0)]);  
         } //translate
@@ -2978,7 +2990,7 @@ module baseShell()
             minkowski()
             {
             square([(L-ridgeSlack)-((iRad*2)), (W-ridgeSlack)-((iRad*2))], center=true);  // 14-01-2023
-                circle(iRad*1.0125);
+                circle(iRad*minkowskiErrorCorrection);
             }
           } // linear_extrude..
         } // translate()
@@ -2992,6 +3004,7 @@ module baseShell()
   //echo("base:", posZ00=posZ00);
   translate([(shellLength/2), shellWidth/2, posZ00])
   {
+ //qqqqq
     difference()  //(b) Remove the yappLid from the base
     {
       // Create the shell and add the Mounts and Hooks
@@ -3063,7 +3076,7 @@ module lidShell()
               minkowski()
               {
                 square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
-                circle(iRad*1.0125);
+                circle(iRad*minkowskiErrorCorrection);
               }
           } // linear_extrude..
         } // translate([0, 0, -1])

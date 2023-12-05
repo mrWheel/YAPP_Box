@@ -93,7 +93,7 @@ standoffDiameter    = 4.0;
 showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 12;       //-> from 1 to 32, Default = 8
-onLidGap            = 30;
+onLidGap            = 10;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
 alphaLid            = 1;//0.25;   
@@ -238,7 +238,7 @@ baseMounts =
 cutoutsBase = 
 [
   // Vent
-  [shellLength/2,shellWidth/2 ,55,55, 5, yappPolygon, shapeHexagon, [maskBars,1,1.5], yappCenter]
+//  [shellLength/2,shellWidth/2 ,55,55, 5, yappPolygon, shapeHexagon, [maskBars,1,1.5], yappCenter]
 ];
 
 cutoutsLid  = 

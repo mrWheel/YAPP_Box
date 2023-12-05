@@ -91,10 +91,10 @@ standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 8;        //-> from 1 to 32, Default = 8
-onLidGap            = 20;
+onLidGap            = 12;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
 alphaLid            = 1;
@@ -260,24 +260,11 @@ cutoutsRight =
 //-------------------------------------------------------------------
 ridgeExtFront =
 [
-  // Make a ridge extension 6mm wide 10mm below the top of the ridge
-  [85, 6, ridgeHeight]
-  
-  // Make a ridge extension 6mm wide 10mm below the top of the ridge
- ,[85, 6, ridgeHeight]
-  
-  // Make a ridge extension 6mm wide 10mm below the top of the ridge
- ,[85, 6, ridgeHeight]
+ [85, 6, ridgeHeight]
   
   // Make a ridge extension 6mm wide in the middle of the ridge 
- ,[95, 6, -ridgeHeight/2]
-  
-  // Make a ridge extension 6mm wide in the middle of the ridge 
- ,[05, 5, -2]
-  
-  // Make a ridge extension 6mm wide in the middle of the ridge 
- ,[15, 5, -4]
-  
+ ,[95, 6, 5]
+   
   // Make a ridge extension 6mm wide 10mm below the top of the ridge
  ,[25, 6, 10]
   

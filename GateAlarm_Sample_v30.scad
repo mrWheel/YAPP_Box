@@ -90,7 +90,7 @@ standoffDiameter    = 4.0;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 12;       //-> from 1 to 32, Default = 8
 onLidGap            = 10;
@@ -230,7 +230,7 @@ baseMounts =
 //    (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
 //    (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
 //    (n) = { [yappMaskDef, hOffset, vOffset, rotations] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. THis can be used to fine tune the mask placement in the opening.
-//    (n) = { <yappCoordBox> | yappCoordPCB }
+//    (n) = { yappCoordBox | <yappCoordPCB> }
 //    (n) = { <yappOrigin>, yappCenter }
 //  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
 //-------------------------------------------------------------------
@@ -244,7 +244,7 @@ cutoutsBase =
 cutoutsLid  = 
 [
   // Cutout for piezo buzzer
-  [25,shellWidth/2 ,0,0, 29.8/2, yappCircle ,yappCenter] 
+  [25,shellWidth/2 ,0,0, 29.8/2, yappCircle ,yappCenter, yappCoordBox] 
 ];
 
 cutoutsFront =  
@@ -256,7 +256,7 @@ cutoutsFront =
 cutoutsBack = 
 [
   // Cutout for USB
- [pcbWidth/2, -5 -pcbThickness ,12.5,7.0, 2, yappRoundedRect , yappCenter, yappCoordPCB]
+ [pcbWidth/2, -5 -pcbThickness ,12.5,7.0, 2, yappRoundedRect , yappCenter]
 ];
 
 cutoutsLeft =   
@@ -269,7 +269,7 @@ cutoutsRight =
   //Cutout for cable
 //  [35,6 ,0,0, 3.25, yappCircle,yappCenter]
   // Make the hole thru the end of the ridge extansion
-  [35+3.25,ridgeExtTop-8, 0,  0,  3.25, yappCircle, yappCenter]
+  [35+3.25,6, 0,  0,  3.25, yappCircle, yappCenter, yappCoordBox]
 
 ];
 
@@ -327,37 +327,42 @@ lightTubes =
     1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
+    undef,undef,1
   ]
  ,[pcbLength-(8.820+(2.54*3)),(pcbWidth/2)-1.27 - (2.54*1), // Pos
     6, 6,                 // W,L
     1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
-//    ,0,undef,0.5    //
+    undef,undef,1
   ]
  ,[pcbLength-(8.820+(2.54*6)),(pcbWidth/2)-3.810, // Pos
     6, 6,                 // W,L
     1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
+    undef,undef,1
   ]
  ,[pcbLength-(8.820+(2.54*9)),(pcbWidth/2)-3.810, // Pos
     6, 6,                 // W,L
     1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
+    undef,undef,1
   ]
  ,[pcbLength-(8.820),(pcbWidth/2)+3.810, // Pos
     6, 6,                 // W,L
     1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
+    undef,undef,1
   ]
  ,[pcbLength-(8.820+(2.54*3)),(pcbWidth/2)+3.810, // Pos
     6, 6,                 // W,L
     1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
+    undef,undef,1
   ]
 ];
 
@@ -393,7 +398,7 @@ pushButtons =
     3.5, // Pole Diameter
     undef, // Height to top of PCB
     yappCircle, // Shape
-    0.01
+    0
     ]
 ];
     
@@ -408,9 +413,11 @@ pushButtons =
 //   Required:
 //    (0) = pos
 //    (1) = width
-//    (2) = height : Distance below the ridge : Negative to move into lid
+//    (2) = height : Where to relocate the seam : yappCoordPCB = Above (positive) the PCB
+//                                                yappCoordBox = Above (positive) the bottom of the shell (outside)
 //   Optional:
 //    (n) = { <yappOrigin>, yappCenter } 
+//    (n) = { yappCoordBox, <yappCoordPCB> }
 //    (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 
 // Note: use ridgeExtTop to reference the top of the extension for cutouts.
@@ -434,7 +441,7 @@ ridgeExtLeft =
 ridgeExtRight =
 [
   // Make a ridge extension 6mm wide 10mm below the top of the ridge
-  [35, 6.5, 8]
+  [35, 6.5, 6, yappCoordBox]
  ];
 
     

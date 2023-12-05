@@ -55,15 +55,15 @@ pcbWidth            = 52.1; // Side to side
 pcbThickness        = 1.7;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 23;
+paddingFront        = 3;
 paddingBack         = 3;
 paddingRight        = 3;
 paddingLeft         = 3;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 2.0;
-lidPlaneThickness   = 2.0;
+basePlaneThickness  = 1.5;
+lidPlaneThickness   = 1.5;
 
 //-- Total height of box = lidPlaneThickness 
 //                       + lidWallHeight 
@@ -72,13 +72,13 @@ lidPlaneThickness   = 2.0;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 12;
-lidWallHeight       = 8;
+lidWallHeight       = 10;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
 ridgeHeight         = 5.0;
 ridgeSlack          = 0.3;
-roundRadius         = 2.0;
+roundRadius         = 3.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
@@ -90,10 +90,10 @@ standoffDiameter    = 4.0;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 12;       //-> from 1 to 32, Default = 8
-onLidGap            = 0;
+onLidGap            = 10;
 shiftLid            = 5;
 colorLid            = "YellowGreen";   
 alphaLid            = 1;//0.25;   
@@ -238,25 +238,13 @@ baseMounts =
 cutoutsBase = 
 [
   // Vent
-  //[shellLength/2,shellWidth/2 ,55,55, 5, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter]
+//  [shellLength/2,shellWidth/2 ,55,55, 5, yappPolygon, shapeHexagon, [maskBars,1,1.5], yappCenter]
 ];
 
 cutoutsLid  = 
 [
   // Cutout for piezo buzzer
   [25,shellWidth/2 ,0,0, 29.8/2, yappCircle ,yappCenter] 
-  // Cutout for Mute button
- ,[shellLength - 15,shellWidth/2 ,0,0, 6.5, yappCircle ,yappCenter]
-
-//Center test
-//  [shellLength/2,shellWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter]
-// ,[pcbLength/2,pcbWidth/2 ,1,1, 5 ,20 ,45, yappRectangle,yappCenter, yappCoordPCB]
-//Edge tests
-// ,[shellLength/2,0,             2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
-// ,[shellLength/2,shellWidth,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
-// ,[0,            shellWidth/2,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
-// ,[shellLength,  shellWidth/2,    2, 2, 5 ,20 ,45, yappRectangle,yappCenter]
-/**/
 ];
 
 cutoutsFront =  
@@ -279,7 +267,10 @@ cutoutsLeft =
 cutoutsRight =  
 [
   //Cutout for cable
-  [40,6 ,0,0, 3.25, yappCircle,yappCenter]
+//  [35,6 ,0,0, 3.25, yappCircle,yappCenter]
+  // Make the hole thru the end of the ridge extansion
+  [35+3.25,ridgeExtTop-8, 0,  0,  3.25, yappCircle, yappCenter]
+
 ];
 
 
@@ -301,9 +292,9 @@ cutoutsRight =
 
 snapJoins =   
 [
-  [(shellWidth/2),     10, yappFront,yappBack, yappCenter, yappRectangle]
+  [(shellWidth/2),     10, yappFront,yappBack, yappCenter]
  //,[25,  10, yappBack, yappBack, yappSymmetric, yappCenter]
- ,[(shellLength/2),    10, yappLeft, yappRight, yappCenter, yappRectangle]
+ ,[(shellLength/2),    10, yappLeft, yappRight, yappCenter]
 ];
 
 //===================================================================
@@ -333,39 +324,40 @@ lightTubes =
   
   [pcbLength-(8.820),(pcbWidth/2)-3.810, // Pos
     6, 6,                 // W,L
-    1.2,                      // wall thickness
+    1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
-    yappCenter            //
   ]
- ,[pcbLength-(8.820+10.16),(pcbWidth/2)-3.810, // Pos
+ ,[pcbLength-(8.820+(2.54*3)),(pcbWidth/2)-1.27 - (2.54*1), // Pos
     6, 6,                 // W,L
-    1.2,                      // wall thickness
+    1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
-    yappCenter            //
+//    ,0,undef,0.5    //
   ]
- ,[pcbLength-(8.820+10.16+10.16),(pcbWidth/2)-3.810, // Pos
+ ,[pcbLength-(8.820+(2.54*6)),(pcbWidth/2)-3.810, // Pos
     6, 6,                 // W,L
-    1.2,                      // wall thickness
+    1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
-    yappCenter            //
   ]
- ,[pcbLength-(8.820),(pcbWidth/2)+3.810+5.08, // Pos
+ ,[pcbLength-(8.820+(2.54*9)),(pcbWidth/2)-3.810, // Pos
     6, 6,                 // W,L
-    1.2,                      // wall thickness
+    1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
-    yappCenter            //
   ]
- ,[pcbLength-(8.820+10.16),(pcbWidth/2)+3.810+5.08, // Pos
+ ,[pcbLength-(8.820),(pcbWidth/2)+3.810, // Pos
     6, 6,                 // W,L
-    1.2,                      // wall thickness
+    1.0,                      // wall thickness
     2,                      // Gap above PCB
     yappCircle,          // tubeType (Shape)
-    0,                    // lensThickness
-    yappCenter            //
+  ]
+ ,[pcbLength-(8.820+(2.54*3)),(pcbWidth/2)+3.810, // Pos
+    6, 6,                 // W,L
+    1.0,                      // wall thickness
+    2,                      // Gap above PCB
+    yappCircle,          // tubeType (Shape)
   ]
 ];
 
@@ -392,9 +384,60 @@ lightTubes =
 
 pushButtons = 
 [
+    [pcbLength-(8.820+(2.54*8.5)),(pcbWidth/2)+3.810+(2.54*2), 
+    8, // cap Diameter
+    0, // Unused
+    1, // Cap above Lid
+    3, // Switch Height
+    1, // Switch travel
+    3.5, // Pole Diameter
+    undef, // Height to top of PCB
+    yappCircle, // Shape
+    0.01
+    ]
+];
+    
+
+//===================================================================
+//  *** Ridge Extension ***
+//    Extension from the lid into the case for adding split opening at various heights
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    (0) = pos
+//    (1) = width
+//    (2) = height : Distance below the ridge : Negative to move into lid
+//   Optional:
+//    (n) = { <yappOrigin>, yappCenter } 
+//    (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+
+// Note: use ridgeExtTop to reference the top of the extension for cutouts.
+// Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
+//-------------------------------------------------------------------
+ridgeExtFront =
+[
 
 ];
-             
+
+ridgeExtBack =
+[
+
+];
+
+ridgeExtLeft =
+[
+
+];
+
+ridgeExtRight =
+[
+  // Make a ridge extension 6mm wide 10mm below the top of the ridge
+  [35, 6.5, 8]
+ ];
+
+    
 //===================================================================
 //  *** Labels ***
 //-------------------------------------------------------------------
@@ -415,12 +458,13 @@ labelsPlane =
 [
     [5, 18, -90, 1, yappTop, "Liberation Mono:style=bold", 5, "DMR" ]
 
-    ,[83.5, 22, -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Front" ]
-    ,[83.5-10.16, 22, -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Drive" ]
-    ,[83.5-10.16-10.16, 22, -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Rear" ]
-    ,[83.5, 60, -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Alarm" ]
-    ,[83.5-10.16, 59.8, -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Muted" ]
-    ,[shellLength-17, 57, -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Mute" ]
+    ,[83.5,           22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Front" ]
+    ,[83.5-(2.54*3),  22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Drive" ]
+    ,[83.5-(2.54*6),  22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Rear" ]
+    ,[83.5-(2.54*9),  22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Pool" ]
+    ,[83.5,           57,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Alarm" ]
+    ,[83.5-(2.54*3),  57,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Muted" ]
+    ,[83.5-(2.54*12), 47,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Mute" ]
 ];
 
 

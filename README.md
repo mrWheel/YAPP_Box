@@ -35,6 +35,9 @@ Fillets
 	Fillet radius can also be changed from default (same as connected wall thickness) with the filletRadius 
 	parameter.
 
+Ridge Extension
+  Extension from the lid into the case for adding split opening at various heights
+
 //========= HOOK dummy functions ============================
   
 // Hook functions allow you to add 3d objects to the case.
@@ -72,8 +75,8 @@ module hookBaseOutside()
 ** Refinements **
 	Updated definition standards:
 	Parameters:
-		(0) = Parentheses with a number indicates a required parameter.
-		(n) = Parentheses with a 'n' indicates an optional parameter must be after the required parameters.
+		p(0,1 ...) = Parentheses with a number indicates a positional parameter.
+		n(a,b ...) = Parentheses with a 'n' indicates an optional parameter must be after the required parameters.
 		{ Optional parameter }
 		&lt;Default value&gt;
 		| means one or more values from the list are allowed
@@ -91,19 +94,19 @@ Default origin =  yappCoordPCB : pcb[0,0,0]
 
 Parameters:
  Required:
-  (0) = posx
-  (1) = posy
+  p(0) = posx
+  p(1) = posy
  Optional:
-  (2) = Height to bottom of PCB : Default = defaultStandoffHeight
-  (3) = standoffDiameter    = defaultStandoffDiameter;
-  (4) = standoffPinDiameter = defaultStandoffPinDiameter;
-  (5) = standoffHoleSlack   = defaultStandoffHoleSlack;
-  (6) = filletRadius (0 = auto size)
-  (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-  (n) = { yappHole, <yappPin> } // Baseplate support treatment
-  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  (n) = { yappCoordBox, <yappCoordPCB> }  
-  (n) = { yappNoFillet }
+  p(2) = Height to bottom of PCB : Default = defaultStandoffHeight
+  p(3) = standoffDiameter    = defaultStandoffDiameter;
+  p(4) = standoffPinDiameter = defaultStandoffPinDiameter;
+  p(5) = standoffHoleSlack   = defaultStandoffHoleSlack;
+  p(6) = filletRadius (0 = auto size)
+  n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
+  n(b) = { yappHole, <yappPin> } // Baseplate support treatment
+  n(c) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  n(d) = { yappCoordBox, <yappCoordPCB> }  
+  n(e) = { yappNoFillet }
 */</pre>
 
 <pre>
@@ -115,18 +118,18 @@ Default origin = yappCoordBox: box[0,0,0]
   
 Parameters:
  Required:
-  (0) = posx
-  (1) = posy
-  (2) = pcbStandHeight
-  (3) = screwDiameter
-  (4) = screwHeadDiameter (don't forget to add extra for the fillet)
-  (5) = insertDiameter
-  (6) = outsideDiameter
+  p(0) = posx
+  p(1) = posy
+  p(2) = pcbStandHeight
+  p(3) = screwDiameter
+  p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
+  p(5) = insertDiameter
+  p(6) = outsideDiameter
  Optional:
-  (7) = filletRadius : Default = 0/Auto(0 = auto size)
-  (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-  (n) = { <yappCoordBox>, yappCoordPCB }
-  (n) = { yappNoFillet }
+  p(7) = filletRadius : Default = 0/Auto(0 = auto size)
+  n(a) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+  n(b) = { <yappCoordBox>, yappCoordPCB }
+  n(c) = { yappNoFillet }
   
 */
 </pre>
@@ -140,14 +143,14 @@ Default origin = yappCoordBox: box[0,0,0]
 
 Parameters:
  Required:
-  (0) = pos
-  (1) = screwDiameter
-  (2) = width
-  (3) = height
+  p(0) = pos
+  p(1) = screwDiameter
+  p(2) = width
+  p(3) = height
  Optional:
-  (4) = filletRadius : Default = 0/Auto(0 = auto size)
-  (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-  (n) = { yappNoFillet }
+  p(4) = filletRadius : Default = 0/Auto(0 = auto size)
+  n(a) = yappLeft / yappRight / yappFront / yappBack (one or more)
+  n(b) = { yappNoFillet }
 */
 </pre>
 
@@ -171,20 +174,20 @@ yappPolygon         | width, length         | radius        | yappPolygonDef obj
 
 Parameters:
  Required:
-  (0) = from Back
-  (1) = from Left
-  (2) = width
-  (3) = length
-  (4) = radius
-  (5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
+  p(0) = from Back
+  p(1) = from Left
+  p(2) = width
+  p(3) = length
+  p(4) = radius
+  p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
  Optional:
-  (6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
-  (7) = angle : Default = 0
-  (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
-  (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
-  (n) = { <yappCoordBox> | yappCoordPCB }
-  (n) = { <yappOrigin>, yappCenter }
-  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
+  p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
+  p(7) = angle : Default = 0
+  n(a) = { yappPolygonDef } : Required if shape = yappPolygon specified -
+  n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
+  n(c) = { <yappCoordBox> | yappCoordPCB }
+  n(d) = { <yappOrigin>, yappCenter }
+  n(e) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
 */
 </pre>
 
@@ -196,13 +199,13 @@ Default origin = yappCoordBox: box[0,0,0]
 
 Parameters:
  Required:
-  (0) = posx | posy
-  (1) = width
-  (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+  p(0) = posx | posy
+  p(1) = width
+  p(2) = yappLeft / yappRight / yappFront / yappBack (one or more)
  Optional:
-  (n) = { <yappOrigin> | yappCenter }
-  (n) = { yappSymmetric }
-  (n) = { yappRectangle } == Make a diamond shape snap
+  n(a) = { <yappOrigin> | yappCenter }
+  n(b) = { yappSymmetric }
+  n(c) = { yappRectangle } == Make a diamond shape snap
 */
 </pre>
 
@@ -214,19 +217,19 @@ Default origin = yappCoordPCB: PCB[0,0,0]
 
 Parameters:
  Required:
-  (0) = posx
-  (1) = posy
-  (2) = tubeLength
-  (3) = tubeWidth
-  (4) = tubeWall
-  (5) = gapAbovePcb
-  (6) = tubeType    {yappCircle|yappRectangle}
+  p(0) = posx
+  p(1) = posy
+  p(2) = tubeLength
+  p(3) = tubeWidth
+  p(4) = tubeWall
+  p(5) = gapAbovePcb
+  p(6) = tubeType    {yappCircle|yappRectangle}
  Optional:
-  (7) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole : Default = 0/Open
-  (8) = Height to top of PCB : Default = defaultStandoffHeight+pcbThickness
-  (9) = filletRadius : Default = 0/Auto 
-  (n) = { yappCoordBox, <yappCoordPCB> }
-  (n) = { yappNoFillet }
+  p(7) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole : Default = 0/Open
+  p(8) = Height to top of PCB : Default = defaultStandoffHeight+pcbThickness
+  p(9) = filletRadius : Default = 0/Auto 
+  n(a) = { yappCoordBox, <yappCoordPCB> }
+  n(b) = { yappNoFillet }
 */
 </pre>
 
@@ -238,18 +241,18 @@ Default origin = yappCoordPCB: PCB[0,0,0]
 
 Parameters:
  Required:
-  (0) = posx
-  (1) = posy
-  (2) = capLength for yappRectangle, capDiameter for yappCircle
-  (3) = capWidth for yappRectangle, not used for yappCircle
-  (4) = capAboveLid
-  (5) = switchHeight
-  (6) = switchTravel
-  (7) = poleDiameter
+  p(0) = posx
+  p(1) = posy
+  p(2) = capLength for yappRectangle, capDiameter for yappCircle
+  p(3) = capWidth for yappRectangle, not used for yappCircle
+  p(4) = capAboveLid
+  p(5) = switchHeight
+  p(6) = switchTravel
+  p(7) = poleDiameter
  Optional:
-  (8) = Height to top of PCB : Default = defaultStandoffHeight + pcbThickness
-  (9) = buttonType  {yappCircle|<yappRectangle>} : Default = yappRectangle
-  (10) = filletRadius : Default = 0/Auto 
+  p(8) = Height to top of PCB : Default = defaultStandoffHeight + pcbThickness
+  p(9) = buttonType  {yappCircle|<yappRectangle>} : Default = yappRectangle
+  p(10) = filletRadius : Default = 0/Auto 
 */
 </pre>
 

@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (04-12-2023)
+//  Version 3.0 (05-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -90,7 +90,7 @@ standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
 //-- C O N T R O L -------------//-> Default ---------------------------
-showSideBySide      = false;     //-> true
+showSideBySide      = true;     //-> true
 previewQuality      = 5;        // Value between 1 and 32, Default = 5
 renderQuality       = 5;        // Value between 1 and 32, Default = 8
 onLidGap            = 1;
@@ -113,7 +113,6 @@ inspectZ            = 0;        //-> 0=none (>0 from Base)
 inspectXfromBack    = true;     //-> View from the inspection cut foreward
 inspectYfromLeft    = true;     //-> View from the inspection cut to the right
 inspectZfromTop     = true;     //-> View from the inspection cut down
-
 //-- C O N T R O L -----------------------------------------------------
 
 //-------------------------------------------------------------------
@@ -133,10 +132,11 @@ inspectZfromTop     = true;     //-> View from the inspection cut down
 //      maskHoneycomb, maskHexCircles, maskBars, maskOffsetBars
 //
 //------------------------------------------------------------------
-// Shapes should be defined to fit into a 1x1 box (+/-0.5 in X and Y) - they will be scaled as needed.
+// Shapes should be defined to fit into a 1x1 box (+/-0.5 in X and Y) - they will 
+// be scaled as needed.
 // defined as a vector of [x,y] vertices pairs.(min 3 vertices)
 // for example a triangle could be [yappPolygonDef,[[-0.5,-0.5],[0,0.5],[0.5,-0.5]]];
-//  To see how to add your own shapes and mask see the YAPPgenerator program
+// To see how to add your own shapes and mask see the YAPPgenerator program
 //------------------------------------------------------------------
 
 
@@ -168,8 +168,11 @@ inspectZfromTop     = true;     //-> View from the inspection cut down
 //-------------------------------------------------------------------
 pcbStands = 
 [
-  [5, 5] // Add stands 5mm from each corner of the PCB
-//  [25, 25, 10, 10, 3.3, 0.9, 5, yappCoordBox] // Add posts 25mm from the corners of the box, with a custon height,diameter, Pin Size, hol slack and filler radius.
+//- Add stands 5mm from each corner of the PCB
+    [5, 5]
+//-   Add posts 25mm from the corners of the box, with a custon height,diameter, Pin Size, hole
+//-   slack and filler radius.
+//  [25, 25, 10, 10, 3.3, 0.9, 5, yappCoordBox] 
 ];
 
 
@@ -212,13 +215,15 @@ connectors   =
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //                        Required                Not Used        Note
-//                      +-----------------------+---------------+------------------------------------
+//----------------------+-----------------------+---------------+------------------------------------
 //  yappRectangle       | width, length         | radius        |
 //  yappCircle          | radius                | width, length |
 //  yappRoundedRect     | width, length, radius |               |     
 //  yappCircleWithFlats | width, radius         | length        | length=distance between flats
 //  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
-//  yappPolygon         | width, length         | radius        | yappPolygonDef object must be provided
+//  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
+//                      |                       |               | provided
+//----------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:
 //   Required:
@@ -227,13 +232,18 @@ connectors   =
 //    p(2) = width
 //    p(3) = length
 //    p(4) = radius
-//    p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
+//    p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                                  | yappCircleWithFlats | yappCircleWithKey}
 //  Optional:
 //    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
 //    p(7) = angle : Default = 0
 //    n(a) = { yappPolygonDef } : Required if shape = yappPolygon specified -
-//    n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
-//    n(c) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
+//    n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for 
+//                             the cutout.
+//    n(c) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it 
+//                            will be used as a mask for the cutout. With the Rotation and 
+//                            offsets applied. This can be used to fine tune the mask 
+//                            placement within the opening.
 //    n(d) = { <yappCoordBox> | yappCoordPCB }
 //    n(e) = { <yappOrigin>, yappCenter }
 //    n(f) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
@@ -264,23 +274,19 @@ cutoutsLid  =
 
 cutoutsFront =  
 [
-
 ];
 
 
 cutoutsBack = 
 [
-
 ];
 
 cutoutsLeft =   
 [
-
 ];
 
 cutoutsRight =  
 [
-
 ];
 
 
@@ -300,11 +306,12 @@ cutoutsRight =
 //    n(b) = { yappSymmetric }
 //    n(c) = { yappRectangle } == Make a diamond shape snap
 //-------------------------------------------------------------------
-snapJoins   =   [
-                  [15, 10, yappFront, yappCenter,    yappRectangle, yappSymmetric]
-                , [25, 10, yappBack,  yappSymmetric, yappCenter]
-                , [30, 10, yappLeft,  yappRight,     yappCenter,    yappSymmetric]
-                ];
+snapJoins   =   
+[
+    [15, 10, yappFront, yappCenter,    yappRectangle, yappSymmetric]
+   ,[25, 10, yappBack,  yappSymmetric, yappCenter]
+   ,[30, 10, yappLeft,  yappRight,     yappCenter,    yappSymmetric]
+];
 
 //===================================================================
 //  *** Base Mounts ***
@@ -344,7 +351,8 @@ baseMounts =
 //    p(5) = gapAbovePcb
 //    p(6) = tubeType    {yappCircle|yappRectangle}
 //   Optional:
-//    p(7) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole : Default = 0/Open
+//    p(7) = lensThickness (how much to leave on the top of the lid for the light to shine 
+//           through 0 for open hole : Default = 0/Open
 //    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    p(9) = filletRadius : Default = 0/Auto 
 //    n(a) = { yappCoordBox, <yappCoordPCB> }

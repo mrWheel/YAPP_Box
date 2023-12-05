@@ -1,7 +1,7 @@
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <../YAPP_BOX/library/YAPPgenerator_v16.scad>
+include <../YAPP_BOX/library/YAPPgenerator_v30.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -30,7 +30,7 @@ include <../YAPP_BOX/library/YAPPgenerator_v16.scad>
 
 //-- which half do you want to print?
 printLidShell       = true;
-printBaseShell      = true;
+printBaseShell      = false;
 
 //-- Edit these parameters for your own board dimensions
 wallThickness       = 1.8;
@@ -57,7 +57,7 @@ pcbThickness        = 1.5;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 5.0;
+standoffHeight      = 4.0;
 pinDiameter         = 1.0;
 pinHoleSlack        = 0.5;
 standoffDiameter    = 4;
@@ -78,7 +78,7 @@ shiftLid            = 1;
 hideLidWalls        = false;       //-> false
 colorLid            = "yellow";   
 hideBaseWalls       = false;       //-> false
-colorBase           = "white";
+colorBase           = "lightgray";
 showPCB             = false;      //-> false
 showMarkers         = false;      //-> false
 inspectX            = 0;  //-> 0=none (>0 from front, <0 from back)
@@ -86,44 +86,135 @@ inspectY            = 0;
 //-- D E B U G ----------------------------
 
 
-//-- pcb_standoffs  -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = { yappBoth | yappLidOnly | yappBaseOnly }
-// (3) = { yappHole, YappPin }
-pcbStands = [
-                [pcbLength-7,5,yappBoth,yappPin]
-             ];
+//===================================================================
+// *** PCB Supports ***
+// Pin and Socket standoffs 
+//-------------------------------------------------------------------
+//  Default origin =  yappCoordPCB : pcb[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    p(0) = posx
+//    p(1) = posy
+//   Optional:
+//    p(2) = Height to bottom of PCB : Default = standoffHeight
+//    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
+//    p(4) = standoffDiameter    Default = standoffDiameter;
+//    p(5) = standoffPinDiameter Default = standoffPinDiameter;
+//    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
+//    p(7) = filletRadius (0 = auto size)
+//    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
+//    n(b) = { yappHole, <yappPin> } // Baseplate support treatment
+//    n(c) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+//    n(d) = { yappCoordBox, <yappCoordPCB> }  
+//    n(e) = { yappNoFillet }
+//-------------------------------------------------------------------
+pcbStands = 
+[
+               // [pcbLength-7,5,yappBoth,yappPin]
+];
 
-//-- Lid plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
-cutoutsLid =  [ 
-                    [10, 10, 10, 15, 30, yappRectangle]
-                  , [10, 10, 5, 0, 0, yappCircle]
-                  , [pcbLength/2, pcbWidth/2, 10, 15, 45, yappRectangle, yappCenter]
-                  , [pcbLength/2, pcbWidth/2, 5, 0, 0, yappCircle]
-              ];
+//===================================================================
+//  *** Connectors ***
+//  Standoffs with hole through base and socket in lid for screw type connections.
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//  
+//  Parameters:
+//   Required:
+//    p(0) = posx
+//    p(1) = posy
+//    p(2) = pcbStandHeight
+//    p(3) = screwDiameter
+//    p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
+//    p(5) = insertDiameter
+//    p(6) = outsideDiameter
+//   Optional:
+//    p(7) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
+//    p(8) = filletRadius : Default = 0/Auto(0 = auto size)
+//    n(a) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+//    n(b) = { <yappCoordBox>, yappCoordPCB }
+//    n(c) = { yappNoFillet }
+//-------------------------------------------------------------------
+connectors = 
+[
+];
 
-//-- base plane    -- origin is pcb[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = width
-// (3) = length
-// (4) = angle
-// (5) = { yappRectangle | yappCircle }
-// (6) = { yappCenter }
-cutoutsBase = [
-                    [10, 10, 10, 15, 30, yappRectangle]
-                  , [10, 10, 5, 0, 0, yappCircle]
-                  , [pcbLength/2, pcbWidth/2, 10, 15, 45, yappRectangle, yappCenter]
-                  , [pcbLength/2, pcbWidth/2, 5, 0, 0, yappCircle]
-              ];
+
+//===================================================================
+//  *** Cutouts ***
+//    There are 6 cutouts one for each surface:
+//      cutoutsBase (Bottom), cutoutsLid (Top), cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//                        Required                Not Used        Note
+//                      +-----------------------+---------------+------------------------------------
+//  yappRectangle       | width, length         | radius        |
+//  yappCircle          | radius                | width, length |
+//  yappRoundedRect     | width, length, radius |               |     
+//  yappCircleWithFlats | width, radius         | length        | length=distance between flats
+//  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
+//  yappPolygon         | width, length         | radius        | yappPolygonDef object must be provided
+//
+//  Parameters:
+//   Required:
+//    p(0) = posX
+//    p(1) = posY
+//    p(2) = width
+//    p(3) = length
+//    p(4) = radius
+//    p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
+//  Optional:
+//    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
+//    p(7) = angle : Default = 0
+//    n(a) = { yappPolygonDef } : Required if shape = yappPolygon specified -
+//    n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
+//    n(c) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
+//    n(d) = { <yappCoordBox> | yappCoordPCB }
+//    n(e) = { <yappOrigin>, yappCenter }
+//    n(f) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//-------------------------------------------------------------------
+cutoutsLid =  
+[ 
+    [10, 10, 10, 15, 0, yappRectangle]                                //-- A
+   ,[25, 15, 10, 15, 0, yappRectangle, undef, -30]                    //-- B
+   ,[45, 10, 10, 15, 2, yappRoundedRect]                              //-- C
+   ,[66, 15, 10, 15, 2, yappRoundedRect, undef, 30]                   //-- D
+   ,[10, 40, 8, 0, 6, yappCircleWithFlats]                            //-- E
+   ,[25, 40, 4, 3, 6, yappCircleWithKey]                              //-- F
+   ,[45, 40, 8, 0, 6, yappCircleWithFlats, undef, undef, yappCenter]  //-- G
+   ,[60, 40, 4, 3, 6, yappCircleWithKey, undef, undef, yappCenter]    //-- H
+];
+
+//  Parameters:
+//   Required:
+//    p(0) = posX
+//    p(1) = posY
+//    p(2) = width
+//    p(3) = length
+//    p(4) = radius
+//    p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
+//  Optional:
+//    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
+//    p(7) = angle : Default = 0
+//    n(a) = { yappPolygonDef } : Required if shape = yappPolygon specified -
+//    n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
+//    n(c) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
+//    n(d) = { <yappCoordBox> | yappCoordPCB }
+//    n(e) = { <yappOrigin>, yappCenter }
+//    n(f) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//-------------------------------------------------------------------
+cutoutsBase = 
+[
+    [10, 10, 10, 15, 0, yappRectangle]
+   ,[25, 15, 10, 15, 0, yappRectangle, undef, -30]
+   ,[45, 10, 10, 15, 2, yappRoundedRect]
+   ,[60, 15, 10, 15, 2, yappRoundedRect, undef, -30]
+   ,[50, 40, 5, 0, 6, yappCircle]
+   ,[20, 40, 10, 15, 0, yappRectangle, undef, undef, yappCenter]
+   ,[35, 40, 10, 15, 0, yappRectangle, undef, -30, yappCenter]
+];
 
 //-- front plane  -- origin is pcb[0,0,0]
 // (0) = posy
@@ -133,12 +224,9 @@ cutoutsBase = [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsFront =  [
-                     [10, 10, 12, 15, 10, yappRectangle]
-                   , [10, 10, 5, 0, 0, yappCircle]
-                   , [40, 10, 10, 8, 0, yappRectangle, yappCenter]
-                   , [40, 10, 5, 0, 0, yappCircle]
-                ];
+cutoutsFront =  
+[
+];
 
 //-- back plane  -- origin is pcb[0,0,0]
 // (0) = posy
@@ -148,12 +236,9 @@ cutoutsFront =  [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsBack = [
-                     [10, 10, 12, 15, 10, yappRectangle]
-                   , [10, 10, 5, 0, 0, yappCircle]
-                   , [40, 10, 10, 8, 0, yappRectangle, yappCenter]
-                   , [40, 10, 5, 0, 0, yappCircle]
-              ];
+cutoutsBack = 
+[
+];
 
 //-- left plane   -- origin is pcb[0,0,0]
 // (0) = posx
@@ -163,12 +248,9 @@ cutoutsBack = [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsLeft = [
-                  [10, 10, 12, 15, 10, yappRectangle]
-                , [10, 10, 5, 0, 0, yappCircle]
-                , [50, 10, 10, 8, 20, yappRectangle, yappCenter]
-                , [50, 10, 5, 0, 0, yappCircle]
-              ];
+cutoutsLeft = 
+[
+];
 
 //-- right plane   -- origin is pcb[0,0,0]
 // (0) = posx
@@ -178,27 +260,9 @@ cutoutsLeft = [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsRight = [
-                  [10, 10, 12, 15, 10, yappRectangle]
-                , [10, 10, 5, 0, 0, yappCircle]
-                , [50, 10, 10, 8, 20, yappRectangle, yappCenter]
-                , [50, 10, 5, 0, 0, yappCircle]
-               ];
-
-//-- connectors -- origen = box[0,0,0]
-// (0) = posx
-// (1) = posy
-// (2) = screwDiameter
-// (3) = insertDiameter
-// (4) = outsideDiameter
-// (5) = { yappAllCorners }
-connectors   = [
-                //   [10, 10, 2, 3, 2, yappAllCorners]
-                //   , [50, 10, 4, 6, 9]
-                //   , [4, 3, 34, 3, yappFront]
-                //   , [25, 3, 3, 3, yappBack]
-               ];
-
+cutoutsRight = 
+[
+];
 
 //-- base mounts -- origen = box[x0,y0]
 // (0) = posx | posy

@@ -17,25 +17,25 @@ or at the
 <pre>
 Cutout Shapes
 	Cutouts now support more shapes.
-		yappRectangle		      : Rectangle with size 'width' x 'length' 
-		yappCircle		        : Circle with radius of 'radius'
-		yappRoundedRect		    : Rectangle with size 'width' x 'length' and corner 
-                            radius of 'radius'
-		yappPolygon		        : User defined polygon. Three standard shapes are 
-                            included for use/reference - 'shapeIsoTriangle', 
-                            'shapeHexagon', 'shape6ptStar' 
-		yappCircleWithFlats	  : Circle with radius of 'radius' with the sides 
-                            clipped to width (length is not used)
-    		yappCircleWithKey	: Circle with radius of 'radius' with a rectangular 
-                            key of width x length (length is key depth)
+		yappRectangle	    : Rectangle with size 'width' x 'length' 
+		yappCircle	    : Circle with radius of 'radius'
+		yappRoundedRect	    : Rectangle with size 'width' x 'length' and corner 
+                                      radius of 'radius'
+		yappPolygon	    : User defined polygon. Three standard shapes are 
+                                      included for use/reference - 'shapeIsoTriangle', 
+                                      'shapeHexagon', 'shape6ptStar' 
+		yappCircleWithFlats : Circle with radius of 'radius' with the sides 
+                                      clipped to width (length is not used)
+    		yappCircleWithKey   : Circle with radius of 'radius' with a rectangular 
+                                      key of width x length (length is key depth)
 
 Cutout Masks
 
 Fillets
 	Fillets are automatically added to all appropriate items.  
 	This can be overridden with the yappNoFillet option.  
-	Fillet radius can also be changed from default (same as connected wall thickness) with 
-  the filletRadius parameter.
+	Fillet radius can also be changed from default (same as connected wall thickness) 
+	with the filletRadius parameter.
 
 Ridge Extension
   Extension from the lid into the case for adding split opening at various heights
@@ -77,10 +77,11 @@ module hookBaseOutside()
 ** Refinements **
 	Updated definition standards:
 	Parameters:
-		p(0,1 ...) = a 'p' with a number between parentheses indicates a 'positional'
-                 parameter.
-		n(a,b ...) = a 'n' with a letter between parentheses indicates an optional, 
-                 'non-positional' parameter must be after the required parameters.
+		p(0,1 ...) = a 'p' with a number between parentheses indicates a 
+	                     'positional' parameter.
+		n(a,b ...) = a 'n' with a letter between parentheses indicates an 
+	                     optional, 'non-positional' parameter must be after 
+	                     the required parameters.
 		{ yappParameter }
 		&lt;Default value&gt;
 		| means one or more values from the list are allowed
@@ -108,7 +109,7 @@ Parameters:
   p(5) = standoffHoleSlack   = defaultStandoffHoleSlack;
   p(6) = filletRadius (0 = auto size)
   n(a) = { &lt;yappBoth&gt; | yappLidOnly | yappBaseOnly }
-  n(b) = { &lt;yappPin&gt;, yappHole } // Baseplate support treatment
+  n(b) = { &lt;yappPin&gt;, yappHole } : Baseplate support treatment
   n(c) = { &lt;yappAllCorners&gt; | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
   n(d) = { &lt;yappCoordPCB&gt;, yappCoordBox }  
   n(e) = { yappNoFillet }
@@ -127,7 +128,7 @@ Parameters:
   p(1) = posy
   p(2) = pcbStandHeight
   p(3) = screwDiameter
-  p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
+  p(4) = screwHeadDiameter : (don't forget to add extra for the fillet)
   p(5) = insertDiameter
   p(6) = outsideDiameter
  Optional:
@@ -152,7 +153,7 @@ Parameters:
   p(3) = height
  Optional:
   p(4) = filletRadius : Default = 0/Auto(0 = auto size)
-  n(a) = { yappLeft | yappRight | yappFront | yappBack } (one or more)
+  n(a) = { yappLeft | yappRight | yappFront | yappBack } : (one or more)
   n(b) = { yappNoFillet }
 </pre>
 
@@ -165,14 +166,14 @@ Parameters:
 Default origin = yappCoordBox: box[0,0,0]
 
                       Required                Not Used        Note
-                    +-----------------------+---------------+------------------------------------
+--------------------+-----------------------+---------------+------------------------------------
 yappRectangle       | width, length         | radius        |
 yappCircle          | radius                | width, length |
 yappRoundedRect     | width, length, radius |               |     
 yappCircleWithFlats | width, radius         | length        | length=distance between flats
 yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
 yappPolygon         | width, length         | radius        | yappPolygonDef object must be provided
-
+--------------------+-----------------------+---------------+------------------------------------
 
 Parameters:
  Required:
@@ -181,7 +182,8 @@ Parameters:
   p(2) = width
   p(3) = length
   p(4) = radius
-  p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
+  p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+	         | yappCircleWithFlats | yappCircleWithKey}
  Optional:
   p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
   p(7) = angle : Default = 0
@@ -189,7 +191,7 @@ Parameters:
   n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
   n(c) = { &lt;yappCoordBox&gt;, yappCoordPCB }
   n(d) = { &lt;yappOrigin&gt;, yappCenter }
-  n(e) = { yappLeftOrigin, &lt;yappGlobalOrigin&gt; } // Only affects Top, Back and Right Faces
+  n(e) = { &lt;yappGlobalOrigin&gt;, yappLeftOrigin } : Only affects Top, Back and Right Faces
 </pre>
 
 <pre>
@@ -202,7 +204,7 @@ Parameters:
  Required:
   p(0) = posx | posy
   p(1) = width
-  p(2) = { yappLeft | yappRight | yappFront | yappBack } (one or more)
+  p(2) = { yappLeft | yappRight | yappFront | yappBack } : (one or more)
  Optional:
   n(a) = { &lt;yappOrigin&gt;, yappCenter }
   n(b) = { yappSymmetric }
@@ -223,9 +225,10 @@ Parameters:
   p(3) = tubeWidth
   p(4) = tubeWall
   p(5) = gapAbovePcb
-  p(6) = tubeType    {yappCircle|yappRectangle}
+  p(6) = { yappCircle|yappRectangle } : tubeType
  Optional:
-  p(7) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole : Default = 0/Open
+  p(7) = lensThickness : (how much to leave on the top of the lid for the light 
+	 to shine through 0 for open hole, Default = 0/Open
   p(8) = Height to top of PCB : Default = defaultStandoffHeight+pcbThickness
   p(9) = filletRadius : Default = 0/Auto 
   n(a) = { &lt;yappCoordPCB&gt;, yappCoordBox }
@@ -250,7 +253,7 @@ Parameters:
   p(7) = poleDiameter
  Optional:
   p(8) = Height to top of PCB : Default = defaultStandoffHeight + pcbThickness
-  p(9) = buttonType  {&lt;yappRectangle&gt;, yappCircle} : Default = yappRectangle
+  p(9) = { &lt;yappRectangle&gt;, yappCircle } : buttonType, Default = yappRectangle
   p(10) = filletRadius : Default = 0/Auto 
 </pre>
 

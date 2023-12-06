@@ -72,7 +72,7 @@ lidPlaneThickness   = 1.5;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 12;
-lidWallHeight       = 10;
+lidWallHeight       = 11;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -463,15 +463,15 @@ ridgeExtRight =
 
 labelsPlane =
 [
-    [5, 18, -90, 1, yappTop, "Liberation Mono:style=bold", 5, "DMR" ]
+    [5, 18, -90, 1, yappLid, "Liberation Mono:style=bold", 6, "DMR" ]
 
-    ,[83.5,           22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Front" ]
-    ,[83.5-(2.54*3),  22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Drive" ]
-    ,[83.5-(2.54*6),  22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Rear" ]
-    ,[83.5-(2.54*9),  22,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Pool" ]
-    ,[83.5,           57,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Alarm" ]
-    ,[83.5-(2.54*3),  57,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Muted" ]
-    ,[83.5-(2.54*12), 47,   -90, 1, yappTop, "Liberation Mono:style=bold", 4, "Mute" ]
+    ,[83.5,           22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Front" ]
+    ,[83.5-(2.54*3),  22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Drive" ]
+    ,[83.5-(2.54*6),  22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Rear" ]
+    ,[83.5-(2.54*9),  22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Pool" ]
+    ,[83.5,           57,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Alarm" ]
+    ,[83.5-(2.54*3),  57,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Muted" ]
+    ,[83.5-(2.54*12), 47,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Mute" ]
 ];
 
 

@@ -196,7 +196,7 @@ cutoutsBack =
   [28,8, 0,  0,  3, yappCircle, yappCenter, yappCoordBox]
 
   // Make the hole thru the end of the ridge extansion
- ,[28,8, 6,  6,  0, yappPolygon, shape6ptStar, yappLeftOrigin, yappCenter, yappCoordBox]
+ ,[25,8, 6,  6,  0, yappPolygon, shape6ptStar, yappLeftOrigin, yappCenter, yappCoordBox]
 
   // Make the rounded rect thru the end of the ridge extansion
  ,[55,13, 20, 6,  3, yappRoundedRect, yappCenter, yappCoordBox]
@@ -281,7 +281,7 @@ ridgeExtBack =
   [25, 6, 8, yappCoordBox]
   
   // Make a ridge extension 6mm wide 8mm from the bottom of the box from the left edge
- ,[25, 6, 8, yappLeftOrigin, yappCoordBox]
+ ,[25, 6, 8, yappLeftOrigin, yappCoordBox, yappCenter]
   
   // Make a ridge extension 20mm wide 13mm from the bottom of the box
  ,[45, 20, 13, yappCoordBox]
@@ -336,40 +336,40 @@ ridgeExtRight =
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //  Parameters:
-//   (0) = posx
-//   (1) = posy/z
-//   (2) = rotation degrees CCW
-//   (3) = depth : positive values go into case (Remove) negative valies are raised (Add)
-//   (4) = plane {yappLeft | yappRight | yappFront | yappBack | yappTop | yappBottom}
-//   (5) = font
-//   (6) = size
-//   (7) = "label text"
+//   p(0) = posx
+//   p(1) = posy/z
+//   p(2) = rotation degrees CCW
+//   p(3) = depth : positive values go into case (Remove) negative valies are raised (Add)
+//   p(4) = plane {yappLeft | yappRight | yappFront | yappBack | yappLid | yappBase}
+//   p(5) = font
+//   p(6) = size
+//   p(7) = "label text"
 //-------------------------------------------------------------------
 labelsPlane =
 [
-//  [5, 5, 0, 3, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
-// ,[5, 5, 0, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  [5, 5, 0, 3, yappLid, "Liberation Mono:style=bold", 5, "YAPP Lid" ]
+// ,[5, 5, 0, 3, yappBase, "Liberation Mono:style=bold", 5, "YAPP Base" ]
 // ,[5, 5, 0, 3, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
 // ,[5, 5, 0, 3, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
 // ,[5, 5, 0, 3, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
 //  ,[5, 5, 0, 3, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
  
-//  ,[10, 15, 45, 3, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
-//  ,[10, 15, 45, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  ,[10, 15, 45, 3, yappLid,    "Liberation Mono:style=bold", 5, "YAPP Lid" ]
+//  ,[10, 15, 45, 3, yappBase, "Liberation Mono:style=bold", 5, "YAPP Base" ]
 //  ,[10, 15, 45, 3, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
 //  ,[10, 15, 45, 3, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
 //  ,[10, 15, 45, 3, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
 //  ,[10, 15, 45, 3, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
 
-//  ,[35, 5, 0, -2, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
-//  ,[35, 5, 0, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  ,[35, 5, 0, -2, yappLid, "Liberation Mono:style=bold", 5, "YAPP Lid" ]
+//  ,[35, 5, 0, -2, yappBase, "Liberation Mono:style=bold", 5, "YAPP Base" ]
 //  ,[35, 5, 0, -2, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
 //  ,[35, 5, 0, -2, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
 //  ,[35, 5, 0, -2, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
 //  ,[35, 5, 0, -2, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
  
-//  ,[30, 15, 45, -2, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
-//  ,[30, 15, 45, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
+//  ,[30, 15, 45, -2, yappLid,    "Liberation Mono:style=bold", 5, "YAPP Lid" ]
+//  ,[30, 15, 45, -2, yappBase, "Liberation Mono:style=bold", 5, "YAPP Base" ]
 //  ,[30, 15, 45, -2, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
 //  ,[30, 15, 45, -2, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
 //  ,[30, 15, 45, -2, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]

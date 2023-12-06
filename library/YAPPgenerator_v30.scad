@@ -168,8 +168,6 @@ yappLeft                = -30300;
 yappRight               = -30301;
 yappFront               = -30302;
 yappBack                = -30303;
-yappTop                 = -30304;
-yappBottom              = -30305;
 
 yappLid                 = -30304;
 yappBase                = -30305;

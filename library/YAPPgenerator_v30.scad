@@ -3830,11 +3830,13 @@ module YAPPgenerate()
           minkowskiBox(yappPartBase, shellInsideLength, shellInsideWidth, baseWallHeight, roundRadius, basePlaneThickness, wallThickness, false);
         }
         
-        drawButtonExtenders();
         
         if (showOrientation) showOrientation();
 
       } // if printBaseShell ..
+      
+      // Moved out of printBaseShell so you can print only the button extenters if needed
+      drawButtonExtenders();
             
       if (printLidShell)
       {

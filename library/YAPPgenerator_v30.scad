@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.0 (05-12-2023)";
+Version="v3.0.0 (08-12-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -106,31 +106,32 @@ standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
-//-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
-previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 8;        //-> from 1 to 32, Default = 8
-onLidGap            = 3;
-shiftLid            = 5;
-colorLid            = "YellowGreen";   
-alphaLid            = 1;
-colorBase           = "BurlyWood";
-alphaBase           = 1;
-hideLidWalls        = false;    //-> false
-hideBaseWalls       = false;    //-> false
-showOrientation     = true;
-showPCB             = true;
-showSwitches        = false;
-showPCBmarkers      = false;
-showShellZero       = false;
-showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from Back)
-inspectY            = 0;        //-> 0=none (>0 from Right)
-inspectZ            = 0;        //-> 0=none (>0 from Bottom)
-inspectXfromBack    = true;     //-> View from the inspection cut foreward
-inspectYfromLeft    = true;     //-> View from the inspection cut to the right
-inspectZfromTop     = false;    //-> View from the inspection cut down
-//-- C O N T R O L ---------------------------------------
+//-- C O N T R O L ---------------//-> Default -----------------------------
+showSideBySide        = true;     //-> true
+previewQuality        = 5;        //-> from 1 to 32, Default = 5
+renderQuality         = 8;        //-> from 1 to 32, Default = 8
+onLidGap              = 3;
+shiftLid              = 5;
+colorLid              = "YellowGreen";   
+alphaLid              = 1;
+colorBase             = "BurlyWood";
+alphaBase             = 1;
+hideLidWalls          = false;    //-> false
+hideBaseWalls         = false;    //-> false
+showOrientation       = true;
+showPCB               = true;
+showSwitches          = false;
+showMarkersBoxOutside = false;
+showMarkersBoxInside  = false;
+showMarkersPCB        = false;
+showMarkersCenter     = false;
+inspectX              = 0;        //-> 0=none (>0 from Back)
+inspectY              = 0;        //-> 0=none (>0 from Right)
+inspectZ              = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack      = true;     //-> View from the inspection cut foreward
+inspectYfromLeft      = true;     //-> View from the inspection cut to the right
+inspectZfromTop       = false;    //-> View from the inspection cut down
+//-- C O N T R O L -----------------------------------------------------------
 
 // ******************************
 //  REMOVE BELOW FROM TEMPLATE
@@ -363,7 +364,7 @@ maskOffsetBars = [yappMaskDef,[
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
 //    n(b) = { yappHole, <yappPin> } // Baseplate support treatment
 //    n(c) = { <yappAllCorners>, yappFrontLeft / yappFrontRight / yappBackLeft / yappBackRight }
-//    n(d) = { yappCoordBox | yappCoordBoxInside | <yappCoordPCB> }
+//    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { yappNoFillet }
 //-------------------------------------------------------------------
 pcbStands = 
@@ -391,7 +392,7 @@ pcbStands =
 //    p(7) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
 //    p(8) = filletRadius : Default = 0/Auto(0 = auto size)
 //    n(a) = { <yappAllCorners>, yappFrontLeft / yappFrontRight / yappBackLeft / yappBackRight }
-//    n(b) = { yappCoordBox | yappCoordBoxInside | <yappCoordPCB> }
+//    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 connectors   =
@@ -437,38 +438,32 @@ connectors   =
 //                              it will be used as a mask for the cutout. With the Rotation 
 //                              and offsets applied. This can be used to fine tune the mask
 //                              placement within the opening.
-//    n(d) = { yappCoordBox, yappCoordBoxInside, <yappCoordPCB> }
+//    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
 //    n(f) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 //-------------------------------------------------------------------
 cutoutsBase = 
 [
-
 ];
 
 cutoutsLid  = 
 [
-
 ];
 
 cutoutsFront =  
 [
-
 ];
 
 cutoutsBack = 
 [
-
 ];
 
 cutoutsLeft =   
 [
-
 ];
 
 cutoutsRight =  
 [
-
 ];
 
 
@@ -491,7 +486,6 @@ cutoutsRight =
 //-------------------------------------------------------------------
 baseMounts =
 [
-
 ];
 
 //===================================================================
@@ -511,7 +505,6 @@ baseMounts =
 //-------------------------------------------------------------------
 snapJoins   =   
 [
-
 ];
 
 //===================================================================
@@ -533,13 +526,12 @@ snapJoins   =
 //           light to shine through 0 for open hole : Default = 0/Open
 //    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    p(9) = filletRadius : Default = 0/Auto 
-//    n(a) = { yappCoordBox, yappCoordBoxInside, <yappCoordPCB> } 
+//    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 lightTubes =
 [
-
 ];
 
 //===================================================================
@@ -561,55 +553,14 @@ lightTubes =
 //    p(8) = Height to top of PCB : Default = standoffHeight + pcbThickness
 //    p(9) = buttonType  {yappCircle|<yappRectangle>} : Default = yappRectangle
 //    p(10) = filletRadius : Default = 0/Auto 
-//    n(a) = { yappCoordBox, yappCoordBoxInside, <yappCoordPCB> } 
+//    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
 
 //-------------------------------------------------------------------
 pushButtons = 
 [
-
 ];
-  
-
-//===================================================================
-//  *** Ridge Extension ***
-//    Extension from the lid into the case for adding split opening at various heights
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    p(0) = pos
-//    p(1) = width
-//    p(2) = height : Where to relocate the seam : yappCoordPCB = Above (positive) the PCB
-//                                                yappCoordBox = Above (positive) the bottom of the shell (outside)
-//   Optional:
-//    n(a) = { <yappOrigin>, yappCenter } 
-//    n(b) = { yappCoordBox, yappCoordBoxInside, <yappCoordPCB> }
-//    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
-//
-// Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
-//-------------------------------------------------------------------
-ridgeExtLeft =
-[
-
-];
-
-ridgeExtRight =
-[
-
-];
-
-ridgeExtFront =
-[
-
-];
-
-ridgeExtBack =
-[
-
-];
-  
+    
   
 //===================================================================
 //  *** Labels ***
@@ -628,7 +579,42 @@ ridgeExtBack =
 //-------------------------------------------------------------------
 labelsPlane =
 [
+];
 
+
+//===================================================================
+//  *** Ridge Extension ***
+//    Extension from the lid into the case for adding split opening at various heights
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    p(0) = pos
+//    p(1) = width
+//    p(2) = height : Where to relocate the seam : yappCoordPCB = Above (positive) the PCB
+//                                                yappCoordBox = Above (positive) the bottom of the shell (outside)
+//   Optional:
+//    n(a) = { <yappOrigin>, yappCenter } 
+//    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
+//    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//
+// Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
+//-------------------------------------------------------------------
+ridgeExtLeft =
+[
+];
+
+ridgeExtRight =
+[
+];
+
+ridgeExtFront =
+[
+];
+
+ridgeExtBack =
+[
 ];
 
 
@@ -644,6 +630,7 @@ labelsPlane =
 module hookLidInsidePre()
 {
   //if (printMessages) echo("hookLidInsidePre() ..");
+  
 } // hookLidInsidePre()
 
 //===========================================================
@@ -651,6 +638,7 @@ module hookLidInsidePre()
 module hookLidInside()
 {
   //if (printMessages) echo("hookLidInside() ..");
+  
 } // hookLidInside()
   
 //===========================================================
@@ -659,6 +647,7 @@ module hookLidInside()
 module hookLidOutsidePre()
 {
   //if (printMessages) echo("hookLidOutsidePre() ..");
+  
 } // hookLidOutsidePre()
 
 //===========================================================
@@ -666,6 +655,7 @@ module hookLidOutsidePre()
 module hookLidOutside()
 {
   //if (printMessages) echo("hookLidOutside() ..");
+  
 } // hookLidOutside()
 
 //===========================================================
@@ -674,6 +664,7 @@ module hookLidOutside()
 module hookBaseInsidePre()
 {
   //if (printMessages) echo("hookBaseInsidePre() ..");
+  
 } // hookBaseInsidePre()
 
 //===========================================================
@@ -681,6 +672,7 @@ module hookBaseInsidePre()
 module hookBaseInside()
 {
   //if (printMessages) echo("hookBaseInside() ..");
+  
 } // hookBaseInside()
 
 //===========================================================
@@ -689,6 +681,7 @@ module hookBaseInside()
 module hookBaseOutsidePre()
 {
   //if (printMessages) echo("hookBaseOutsidePre() ..");
+  
 } // hookBaseOutsidePre()
 
 //===========================================================
@@ -696,6 +689,7 @@ module hookBaseOutsidePre()
 module hookBaseOutside()
 {
   //if (printMessages) echo("hookBaseOutside() ..");
+  
 } // hookBaseOutside()
 
 //===========================================================
@@ -861,7 +855,7 @@ module printBaseMounts()
                 (shellWidth/2)*-1,
                 (baseWallHeight+basePlaneThickness)*-1])
     {
-      if (showPCBmarkers)
+      if (showMarkersPCB)
       {
         color("Red") translate([0,0,((shellHeight+onLidGap)/2)]) %cylinder(r=1,h=shellHeight+onLidGap+20, center=true);
       }
@@ -1557,11 +1551,11 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
 
 
 //===========================================================
-module showPCBmarkers(posX, posY, posZ)
+module showMarkersPCB(posX, posY, posZ)
 {
   translate([posX, posY, posZ]) // (t1)
   {
-      if (showPCBmarkers)
+      if (showMarkersPCB)
       {
         markerHeight=shellHeight+onLidGap+10;
         //echo("Markers:", markerHeight=markerHeight);
@@ -1612,7 +1606,7 @@ module showPCBmarkers(posX, posY, posZ)
       } // show_markers
   }
       
-} //  showPCBmarkers()
+} //  showMarkersPCB()
 
 
 //===========================================================
@@ -1626,7 +1620,7 @@ module printPCB(posX, posY, posZ)
         color("red")
           cube([pcbLength, pcbWidth, pcbThickness]);
       }
-      showPCBmarkers(posX, posY, posZ);
+      showMarkersPCB(posX, posY, posZ);
       
     } // translate(t1)
   } // difference(d0) 
@@ -3758,12 +3752,44 @@ module YAPPgenerate()
   {
     union()
     {
-      if (showShellZero)
+      if (showMarkersBoxOutside)
       {
         ZmarkerHeight = shellHeight+onLidGap;
         //-- box[0,0] marker --
         translate([0, 0, (ZmarkerHeight/2)])
           color("red")
+            %cylinder(
+                    r = .5,
+                    h = ZmarkerHeight+5,
+                    center = true);
+
+        XmarkerHeight = shellLength;
+        //-- box[0,0] marker --
+        rotate([0,90,0])
+        translate([0, 0, (XmarkerHeight/2)])
+          color("red")
+            %cylinder(
+                    r = .5,
+                    h = XmarkerHeight+5,
+                    center = true);
+
+        YmarkerHeight = shellWidth;
+        //-- box[0,0] marker --
+        rotate([-90,0,0])
+        translate([0, 0, (YmarkerHeight/2)])
+          color("red")
+            %cylinder(
+                    r = .5,
+                    h = YmarkerHeight+5,
+                    center = true);
+
+      } //  showMarkersBoxOutside
+      if (showMarkersBoxInside)
+      {
+        ZmarkerHeight = shellHeight+onLidGap;
+        //-- box[0,0] marker --
+        translate([wallThickness+0.5, wallThickness+0.5, (ZmarkerHeight/2)-5])
+          color("blue")
             %cylinder(
                     r = .5,
                     h = ZmarkerHeight,
@@ -3772,35 +3798,35 @@ module YAPPgenerate()
         XmarkerHeight = shellLength;
         //-- box[0,0] marker --
         rotate([0,90,0])
-        translate([0, 0, (XmarkerHeight/2)])
-          color("green")
+        translate([(wallThickness+0.5)*-1, (wallThickness+0.5), (XmarkerHeight/2)])
+          color("blue")
             %cylinder(
                     r = .5,
-                    h = XmarkerHeight,
+                    h = XmarkerHeight+10,
                     center = true);
 
         YmarkerHeight = shellWidth;
         //-- box[0,0] marker --
         rotate([-90,0,0])
-        translate([0, 0, (YmarkerHeight/2)])
+        translate([(wallThickness+0.5)*1, (wallThickness+0.5)*-1, (YmarkerHeight/2)])
           color("blue")
             %cylinder(
                     r = .5,
-                    h = YmarkerHeight,
+                    h = YmarkerHeight+10,
                     center = true);
 
-      } //  showShellZero
+      } //  showMarkersBoxInside
 
       if (printBaseShell) 
       {        
         if ($preview && showPCB)
         {
           printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
-          showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
+          showMarkersPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
         }
-        else if ($preview && showPCBmarkers) 
+        else if ($preview && showMarkersPCB) 
         {
-          showPCBmarkers(pcbX, pcbY, basePlaneThickness+standoffHeight);
+          showMarkersPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
         }
         
         if (printMessages) echo ("* Print base *");
@@ -4092,7 +4118,7 @@ module drawButtonExtenders()
     } //-- rotate
   } //-- postProcess
 
-  if (showCenterMarkers)
+  if (showMarkersCenter)
   {
     translate([shellLength/2, shellWidth/2,-1]) 
     color("blue") %cube([1,shellWidth+20,1], true);

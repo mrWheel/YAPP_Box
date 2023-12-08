@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (05-12-2023)
+//  Version 3.0 (08-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -89,31 +89,32 @@ standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
-//-- C O N T R O L -------------//-> Default ---------------------------
-showSideBySide      = true;     //-> true
-previewQuality      = 5;        // Value between 1 and 32, Default = 5
-renderQuality       = 5;        // Value between 1 and 32, Default = 8
-onLidGap            = 1;
-shiftLid            = 5;
-colorLid            = "YellowGreen";   
-alphaLid            = 0.8;
-colorBase           = "BurlyWood";
-alphaBase           = 0.8;
-hideLidWalls        = false;    //-> false
-hideBaseWalls       = false;    //-> false
-showOrientation     = true;
-showPCB             = true;
-showSwitches        = false;
-showPCBmarkers      = false;
-showShellZero       = false;
-showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from Back)
-inspectY            = 0;        //-> 0=none (>0 from Right)
-inspectZ            = 0;        //-> 0=none (>0 from Base)
-inspectXfromBack    = true;     //-> View from the inspection cut foreward
-inspectYfromLeft    = true;     //-> View from the inspection cut to the right
-inspectZfromTop     = true;     //-> View from the inspection cut down
-//-- C O N T R O L -----------------------------------------------------
+//-- C O N T R O L ---------------//-> Default -----------------------------
+showSideBySide        = true;     //-> true
+previewQuality        = 5;        //-> from 1 to 32, Default = 5
+renderQuality         = 6;        //-> from 1 to 32, Default = 8
+onLidGap              = 3;
+shiftLid              = 5;
+colorLid              = "YellowGreen";   
+alphaLid              = 1;
+colorBase             = "BurlyWood";
+alphaBase             = 1;
+hideLidWalls          = false;    //-> false
+hideBaseWalls         = false;    //-> false
+showOrientation       = true;
+showPCB               = false;
+showSwitches          = false;
+showMarkersBoxOutside = false;
+showMarkersBoxInside  = false;
+showMarkersPCB        = false;
+showMarkersCenter     = false;
+inspectX              = 0;        //-> 0=none (>0 from Back)
+inspectY              = 0;        //-> 0=none (>0 from Right)
+inspectZ              = 0;        //-> 0=none (>0 from Bottom)
+inspectXfromBack      = true;     //-> View from the inspection cut foreward
+inspectYfromLeft      = true;     //-> View from the inspection cut to the right
+inspectZfromTop       = false;    //-> View from the inspection cut down
+//-- C O N T R O L -----------------------------------------------------------
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
@@ -163,7 +164,7 @@ inspectZfromTop     = true;     //-> View from the inspection cut down
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
 //    n(b) = { yappHole, <yappPin> } // Baseplate support treatment
 //    n(c) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-//    n(d) = { yappCoordBox, <yappCoordPCB> }  
+//    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }  
 //    n(e) = { yappNoFillet }
 //-------------------------------------------------------------------
 pcbStands = 
@@ -195,7 +196,7 @@ pcbStands =
 //    p(7) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
 //    p(8) = filletRadius : Default = 0/Auto(0 = auto size)
 //    n(a) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-//    n(b) = { <yappCoordBox>, yappCoordPCB }
+//    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 connectors   =
@@ -244,7 +245,7 @@ connectors   =
 //                            will be used as a mask for the cutout. With the Rotation and 
 //                            offsets applied. This can be used to fine tune the mask 
 //                            placement within the opening.
-//    n(d) = { <yappCoordBox> | yappCoordPCB }
+//    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
 //    n(f) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 //-------------------------------------------------------------------
@@ -355,7 +356,7 @@ baseMounts =
 //           through 0 for open hole : Default = 0/Open
 //    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    p(9) = filletRadius : Default = 0/Auto 
-//    n(a) = { yappCoordBox, <yappCoordPCB> }
+//    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(b) = { yappNoFillet }
 //-------------------------------------------------------------------
 lightTubes =
@@ -418,16 +419,51 @@ pushButtons =
 //   p(1) = posy/z
 //   p(2) = rotation degrees CCW
 //   p(3) = depth : positive values go into case (Remove) negative valies are raised (Add)
-//   p(4) = plane {yappLeft | yappRight | yappFront | yappBack | yappTop | yappBottom}
+//   p(4) = plane {yappLeft | yappRight | yappFront | yappBack | yappLid | yappBaseyappLid}
 //   p(5) = font
 //   p(6) = size
 //   p(7) = "label text"
 //-------------------------------------------------------------------
 labelsPlane =
 [
-    [5, 5, 0, 1, yappTop, "Liberation Mono:style=bold", 5, "YAPP" ]
+    [5, 5, 0, 1, yappLid, "Liberation Mono:style=bold", 5, "YAPP" ]
 ];
 
+
+//===================================================================
+//  *** Ridge Extension ***
+//    Extension from the lid into the case for adding split opening at various heights
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    p(0) = pos
+//    p(1) = width
+//    p(2) = height : Where to relocate the seam : yappCoordPCB = Above (positive) the PCB
+//                                                yappCoordBox = Above (positive) the bottom of the shell (outside)
+//   Optional:
+//    n(a) = { <yappOrigin>, yappCenter } 
+//    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
+//    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//
+// Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
+//-------------------------------------------------------------------
+ridgeExtLeft =
+[
+];
+
+ridgeExtRight =
+[
+];
+
+ridgeExtFront =
+[
+];
+
+ridgeExtBack =
+[
+];
 
 
 //========= HOOK functions ============================
@@ -437,64 +473,40 @@ labelsPlane =
 // Inside/Outside = Join the object from the midpoint of the shell to the inside/outside.
 // Pre = Attach the object Pre before doing Cutouts/Stands/Connectors. 
 
-//===========================================================
-// origin = box(0,0,0)
-module hookLidInsidePre()
-{
-  if (printMessages) echo("hookLidInsidePre() ..");
-} // hookLidInsidePre()
 
 //===========================================================
 // origin = box(0,0,0)
 module hookLidInside()
 {
-  if (printMessages) echo("hookLidInside() ..");
+  //if (printMessages) echo("hookLidInside() ..");
+  
 } // hookLidInside()
   
-//===========================================================
-//===========================================================
-// origin = box(0,0,shellHeight)
-module hookLidOutsidePre()
-{
-  if (printMessages) echo("hookLidOutsidePre() ..");
-} // hookLidOutsidePre()
 
 //===========================================================
 // origin = box(0,0,shellHeight)
 module hookLidOutside()
 {
-  if (printMessages) echo("hookLidOutside() ..");
+  //if (printMessages) echo("hookLidOutside() ..");
+  
 } // hookLidOutside()
 
 //===========================================================
 //===========================================================
 // origin = box(0,0,0)
-module hookBaseInsidePre()
-{
-  if (printMessages) echo("hookBaseInsidePre() ..");
-} // hookBaseInsidePre()
-
-//===========================================================
-// origin = box(0,0,0)
 module hookBaseInside()
 {
-  if (printMessages) echo("hookBaseInside() ..");
+  //if (printMessages) echo("hookBaseInside() ..");
+  
 } // hookBaseInside()
-
-//===========================================================
-//===========================================================
-// origin = box(0,0,0)
-module hookBaseOutsidePre()
-{
-  if (printMessages) echo("hookBaseOutsidePre() ..");
-} // hookBaseOutsidePre()
 
 //===========================================================
 // origin = box(0,0,0)
 module hookBaseOutside()
 {
-  if (printMessages) echo("hookBaseOutside() ..");
-} // hookBaseOutside()
+  //if (printMessages) echo("hookBaseOutside() ..");
+  
+} // hookBaseInside()
 
 // **********************************************************
 // **********************************************************

@@ -474,7 +474,7 @@ cutoutsRight =
 //
 //  Parameters:
 //   Required:
-//    p(0) = pos
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset
 //    p(1) = screwDiameter
 //    p(2) = width
 //    p(3) = height
@@ -487,7 +487,7 @@ cutoutsRight =
 baseMounts =
 [
 //  [shellLength/2, 3, 10, 3, 2, yappLeft, yappRight, yappCenter]//, yappCenter]
-// ,[shellLength/2, 3, 10, 3, 2, yappLeft, yappRight, yappCenter, yappLid]//, yappCenter]
+// ,[[shellLength/2,2], 3, 10, 3, 2, yappLeft, yappRight, yappCenter, yappLid]//, yappCenter]
 
 ];
 
@@ -789,7 +789,10 @@ module printBaseMounts()
       {
         isCenter = isTrue(yappCenter, bm);
         
-        mountPos = bm[0];                // = posx | posy
+        //mountPos = bm[0];                // = posx | posy
+        mountPos = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
+        
+        
         mountOpeningDiameter = bm[1];    // = screwDiameter
         mountWidth = bm[2];              // = width
         mountHeight = bm[3];             // = Height
@@ -806,8 +809,12 @@ module printBaseMounts()
         outRadius = mountOpeningDiameter;  // rad := diameter (r=6 := d=6)
         bmX1pos   = scrwX1pos-mountOpeningDiameter - mountPos;
         bmX2pos   = scrwX2pos-outRadius - mountPos;
-        bmYpos    = (mountOpeningDiameter*-2);
-        bmLen     = (mountOpeningDiameter*4)+bmYpos;
+        
+        bmYpos    = is_list(bm[0]) 
+        ? (mountOpeningDiameter*-2) - bm[0][1] 
+        : (mountOpeningDiameter*-2);       
+        
+        bmLen     = -bmYpos;
       
        // Get where to connect the mount defaulting to base
         mountToPart = (isTrue(yappLid, bm)) ? yappLid : yappBase; 
@@ -827,8 +834,7 @@ module printBaseMounts()
                     color("red")
                     roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,mountHeight], outRadius);
                 }
-                
-                translate([0, (mountOpeningDiameter*-1), -1])
+                translate([0, (bmYpos + mountOpeningDiameter), -1])
                 {
                   color("blue")
                   hull() 
@@ -885,9 +891,13 @@ module printBaseMounts()
       
       for (bm = baseMounts)
       {    
+        
+        mountPos = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
+        mountHeight = bm[3];
+
         if (isTrue(yappLeft, bm))
         {
-          translate([bm[0],0, bm[3]])
+          translate([mountPos,0, mountHeight])
           rotate([0,180,0])
           {
             oneMount(bm, shellLength);
@@ -900,7 +910,7 @@ module printBaseMounts()
           {
             mirror([1,0,0])
             {
-              translate([shellLength - bm[0],(shellWidth*-1), bm[3]])
+              translate([shellLength - mountPos,(shellWidth*-1), mountHeight])
               rotate([0,180,0])
               {
                 oneMount(bm, shellLength);
@@ -910,7 +920,7 @@ module printBaseMounts()
         } //  if yappRight
         if (isTrue(yappFront, bm))
         {
-          translate([shellLength,bm[0], -(bm[3]*-1)])
+          translate([shellLength,mountPos, -(mountHeight*-1)])
           rotate([0,180,90])
           {
             oneMount(bm, shellLength);
@@ -919,7 +929,7 @@ module printBaseMounts()
         
         if (isTrue(yappBack, bm))
         {
-          translate([0,bm[0], -(bm[3]*-1)])
+          translate([0,mountPos, -(mountHeight*-1)])
           rotate([0,180,-90])
           {
             oneMount(bm, shellLength);

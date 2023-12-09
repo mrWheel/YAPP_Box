@@ -87,14 +87,14 @@ lidPlaneThickness   = 1.5;
 //                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 25;
-lidWallHeight       = 20;
+baseWallHeight      = 16;
+lidWallHeight       = 14;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight 
 //     or 2.5x wallThickness if using snaps
-ridgeHeight         = 10.0;
-ridgeSlack          = 0.2;
+ridgeHeight         = 5.0;
+ridgeSlack          = 0.3;
 
 //-- Radius of the shell corners
 roundRadius         = 5;
@@ -110,7 +110,7 @@ standoffHoleSlack   = 0.4;
 showSideBySide        = true;     //-> true
 previewQuality        = 5;        //-> from 1 to 32, Default = 5
 renderQuality         = 8;        //-> from 1 to 32, Default = 8
-onLidGap              = 3;
+onLidGap              = 0;
 shiftLid              = 5;
 colorLid              = "YellowGreen";   
 alphaLid              = 1;
@@ -120,7 +120,7 @@ hideLidWalls          = false;    //-> false
 hideBaseWalls         = false;    //-> false
 showOrientation       = true;
 showPCB               = true;
-showSwitches          = false;
+showSwitches          = true;
 showMarkersBoxOutside = false;
 showMarkersBoxInside  = false;
 showMarkersPCB        = false;
@@ -128,7 +128,7 @@ showMarkersCenter     = false;
 inspectX              = 0;        //-> 0=none (>0 from Back)
 inspectY              = 0;        //-> 0=none (>0 from Right)
 inspectZ              = 0;        //-> 0=none (>0 from Bottom)
-inspectXfromBack      = true;     //-> View from the inspection cut foreward
+inspectXfromBack      = false;     //-> View from the inspection cut foreward
 inspectYfromLeft      = true;     //-> View from the inspection cut to the right
 inspectZfromTop       = false;    //-> View from the inspection cut down
 //-- C O N T R O L -----------------------------------------------------------
@@ -141,7 +141,6 @@ facetCount = $preview ? previewQuality*4 : renderQuality*4;
 
 //-- better leave these ----------
 buttonWall          = 2.0;
-buttonCupDepth      = 3.0;
 buttonPlateThickness= 2.5;
 buttonSlack         = 0.25;
 
@@ -552,10 +551,12 @@ lightTubes =
 //   Optional:
 //    p(8) = Height to top of PCB : Default = standoffHeight + pcbThickness
 //    p(9) = buttonType  {yappCircle|<yappRectangle>} : Default = yappRectangle
-//    p(10) = filletRadius : Default = 0/Auto 
+//    p(10) = filletRadius          : Default = 0/Auto 
+//    p(11) = buttonWall            : Default = 2.0;
+//    p(12) = buttonPlateThickness  : Default= 2.5;
+//    p(13) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
-
 //-------------------------------------------------------------------
 pushButtons = 
 [
@@ -1656,8 +1657,6 @@ module pcbHolders()
     
     allCorners = ((!isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand)) || (isTrue(yappAllCorners, stand)) ) ? true : false;
 
-echo("%%%%%%%%%%%%%%%%%%%%%%%");
-
     if (!isTrue(yappLidOnly, stand))
     {
       if (allCorners || isTrue(yappBackLeft, stand))
@@ -1690,7 +1689,6 @@ module pcbPushdowns()
     //-- stands in lid are alway's holes!
     posx    = pushdown[0];
     posy    = pushdown[1];
-    //filletRad = pushdown[3];
   
     // Calculate based on the Coordinate system
     usePCBCoord = isTrue(yappCoordBox, pushdown) ? false : true;
@@ -2419,7 +2417,7 @@ module buildLightTubes()
 
 //===========================================================
 // Create the cut through the lid
-module makeButtons()
+module buttonCutout()
 {
   for(button=pushButtons)
   {
@@ -2431,7 +2429,8 @@ module makeButtons()
     cLength   = button[2];
     cWidth    = button[3];    
     shape     = getShapeWithDefault(button[9],yappRectangle);
-      
+    thebuttonSlack = getParamWithDefault(button[14],buttonSlack); 
+     
     tmpArray = [[xPos, 
                   yPos, 
                   cWidth + buttonSlack, 
@@ -2439,17 +2438,17 @@ module makeButtons()
                   (cLength + buttonSlack)/2, 
                   shape, 
                   0, 0 , yappCenter,
-                  yappCoordBox
+                  yappCoordBox // Coordinates are already translated to yappCoordBox
                   ]];
     
     processFaceList(yappLid, tmpArray, yappPartLid, "cutout", true);
   } //-- for buttons
-} //  makeButtons()
+} //  buttonCutout()
 
 
 //===========================================================
 // Create the cavity for the button
-module buildButtons()
+module buildButtons(preCuts)
 {
   if (printMessages) echo("buildButtons(): process ", len(pushButtons)," buttons");
 
@@ -2461,37 +2460,48 @@ module buildButtons()
       button=pushButtons[i];
       // Get the desired coordinate system    
       theCoordSystem = getCoordSystem(button, yappCoordPCB);    
+
+      // Enable overriding the defaults
+      thebuttonWall = getParamWithDefault(button[11],buttonWall);
+      thebuttonPlateThickness = getParamWithDefault(button[12],buttonPlateThickness);
+      thebuttonSlack = getParamWithDefault(button[13],buttonSlack);
      
       xPos = translate2Box_X (button[0], yappLid, theCoordSystem);
       yPos = translate2Box_Y (button[1], yappLid, theCoordSystem);
       cLength     = button[2];
       cWidth      = button[3];
-      cAbvLid     = button[4]+buttonCupDepth;
+      aboveLid    = button[4];
       swHeight    = button[5];
-      swTrafel    = button[6];
+      swTravel    = max(button[6],0.5);
       pDiam       = button[7];
       toTopOfPCB  = getParamWithDefault(button[8], standoffHeight+pcbThickness);
       shape       = getShapeWithDefault(button[9],yappRectangle);
       filletRad   = getParamWithDefault(button[10],0);
 
+
               //
-              //            <--cLength-->
-              //    --------             ----------------------------------------------------
-              //                                         # lidPlaneThickness              ^
-              //    ----+--+             +--+---------------------------------------      |
-              //        |  |             |  |   ^                    ^                    |
-              //        |  |             |  |   |-- buttonCupDepth   |                    |
-              //        |  |             |  |   v                    |                    |
-              //        |  |             |  |   ^                    |-- cupDepth         |
-              //        |  |             |  |   |-- switchTrafel     |                    |
-              //        |  |             |  |   v                    v                    |
-              //        |  +---+     +---+  |                                             |
-              //        +----+ |     | +----+                          poleHolderLength --|
-              //             | |     | | >--<-- buttonWall                                |
-              //             | |     | |                                                  v
-              //             +-+     +-+                                            -----------
+              //        -->|             |<-- LxW or Diameter
               //
-              //               |<--->|------poleDiam
+              //            +-----------+                                                     -----    
+              //    -------+|           |+------------------------------------------    -----   ^
+              //           ||           ||               # lidPlaneThickness              ^     Button Thickness
+              //    ----+  ||           ||  +---------------------------------------      |     v
+              //        |  |+---+   +---+|  |   ^                    ^                    |   -----
+              //        |  |    |   |    |  |   |-- buttonCupDepth   |                    |
+              //        |  |    |   |    |  |   v                    |                    |
+              //        |  |    |   |    |  |   ^                    |-- cupDepth         |
+              //        |  |    |   |    |  |   |-- switchTravel     |                    |
+              //        |  |    |   |    |  |   v                    v                    |
+              //        |  +---+|   |+---+  |  ---                  ---                   |
+              //        |      ||   ||      |                                             |
+              //        +---+  ||   ||  +---+                          poleHolderLength --|
+              //            |  ||   ||  |                                                 |
+              //            |  ||   ||  |  >--<-- buttonWall                              v
+              //            +--+|   |+--+                                         -----------
+              //                |   |
+              //                +---+
+              //         -->|  |<-- buttonWall
+              //            -->|     |<-- poleDiam
               //        
               //   +------------------------------------ topPcb 
               //   +-+--+-------------------------------
@@ -2499,139 +2509,153 @@ module buildButtons()
               //-----+  +-------------------------------------
               //              # basePlaneThickness
               //---------------------------------------------
-              
+      buttonCapNetThickness = 0.5;        
       pcbTop2Lid        = (baseWallHeight+lidWallHeight)-(toTopOfPCB);
-      cupDepth          = buttonCupDepth+swTrafel+lidPlaneThickness;
-      poleHolderLength  = pcbTop2Lid-(swHeight+swTrafel+(buttonPlateThickness));
       
-      translate([xPos, yPos, (pcbTop2Lid*-1)])
+      buttonTopThickness  = thebuttonPlateThickness + ((aboveLid > 0) ? aboveLid : 0) ;//- thebuttonSlack;
+      buttonCupDepth      = thebuttonWall + thebuttonSlack + swTravel + ((aboveLid < 0) ? -aboveLid : 0);
+      buttonTop2Lid       = pcbTop2Lid-swHeight;
+      
+      holderLength        = buttonTop2Lid -buttonCupDepth  -thebuttonPlateThickness - thebuttonSlack;
+      
+     // check if there is enough room for the button
+      assert(holderLength>=0, str("Processing pushButtons[", i, "] Not enough space to add button number ", i, " increase case height above the PCB by ", -holderLength));
+      
+      // Create the Holder on the lid
+      if (preCuts)
       {
-        if (shape==yappCircle)
+        color("blue") 
+        translate([xPos, yPos, -lidPlaneThickness])
         {
-          //-debug-echo("insideButton(circle):",cupDepth=cupDepth);
           difference()
           {
             union()
             {
-              //--------- outside circle
-              translate([(cLength+buttonSlack+buttonWall)/-2,
-                (cLength+buttonSlack+buttonWall)/-2,
-                pcbTop2Lid-cupDepth]) 
+              //--------- outside of cup 
+              if (shape==yappCircle)
               {
-                color("red") 
-                  translate([(cLength+buttonSlack+buttonWall)/2,(cLength+buttonSlack+buttonWall)/2, 0])
+                assert(cLength-pDiam >=2, str("Processing pushButtons[", i, "] Button Diameter can't be less than Pole Diameter + 2"));
+                
+                translate([0, 0, -buttonCupDepth]) 
+                {
+                  color("red") 
+                    {
+                      cylinder(h=buttonCupDepth, d=cLength+thebuttonSlack+thebuttonWall);
+                    }
+                    
+                  if (!isTrue(yappNoFillet, button))
                   {
-                    cylinder(h=cupDepth, d=cLength+buttonSlack+buttonWall);
-                  }
-                  
-                if (!isTrue(yappNoFillet, button))
-                {
-                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-                  filletRadiusTrimmed = (filletRadius > cupDepth) ? cupDepth : filletRadius;
-                  translate([(cLength+buttonSlack+buttonWall)/2,
-                    (cLength+buttonSlack+buttonWall)/2,
-                    cupDepth-lidPlaneThickness])
-                  color("violet") pinFillet(-(cLength+buttonSlack+buttonWall)/2,filletRadiusTrimmed);
-                } // ifFillet
+                    filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                    filletRadiusTrimmed = (filletRadius > buttonCupDepth) ? buttonCupDepth : filletRadius;
+                    translate([0, 0, buttonCupDepth])
+                    {
+                      color("violet") pinFillet(-(cLength+thebuttonSlack+thebuttonWall)/2,filletRadiusTrimmed);
+                    }
+                  } // ifFillet
+                }
               }
-              //-------- outside pole holder
-              translate([0, 0, (pcbTop2Lid-poleHolderLength-1)])
+              else 
               {
-                color("gray") cylinder(h=poleHolderLength, d=pDiam+buttonSlack+buttonWall);
+                assert(cLength-pDiam >=2, str("Processing pushButtons[", i, "] Length can't be less than Pole Diameter + 2"));
+                assert(cWidth-pDiam >=2, str("Processing pushButtons[", i, "] Width can't be less than Pole Diameter + 2"));
+                
+                //-- outside rectangle
+                translate([(cLength+thebuttonSlack+thebuttonWall)/-2, (cWidth+thebuttonSlack+thebuttonWall)/-2,-buttonCupDepth]) 
+                {
+                  color("red") 
+                    cube([(cLength+thebuttonSlack+thebuttonWall), (cWidth+thebuttonSlack+thebuttonWall), buttonCupDepth]);
+                  if (!isTrue(yappNoFillet, button))
+                  {
+                    filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                    translate([(cLength+thebuttonSlack+thebuttonWall)/2, (cWidth+thebuttonSlack+thebuttonWall)/2,filletRadius + buttonCupDepth - lidPlaneThickness])
+                      color("violet") rectangleFillet((cLength+thebuttonSlack+thebuttonWall), (cWidth+thebuttonSlack+thebuttonWall), filletRadius, 1);
+                    
+                  } // ifFillet
+                }
+              }
+              
+              //-------- outside pole holder -- Always a cylinder
+              translate([0, 0, -holderLength-buttonCupDepth])
+              {
+                color("gray") cylinder(h=holderLength, d=pDiam+thebuttonSlack+thebuttonWall);
                 if (!isTrue(yappNoFillet, button))
                 {
-                  holderHeight = poleHolderLength - cupDepth + buttonWall/2;
                   filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad;
-                  // Limit the fillet to the height of the pole 
-                  filletRadiusTrimmed = (filletRadius > holderHeight) ? (holderHeight > 0) ? holderHeight : 0 : filletRadius;
-                  translate([0, 0, holderHeight])
-                  color("violet") pinFillet(-(pDiam+buttonSlack+buttonWall)/2,filletRadiusTrimmed);
+                  // Limit the fillet to the height of the pole or the width of the shelf 
+                  maxFillet = min(holderLength, (cLength - pDiam)/2, filletRadius);                   
+                  translate([0, 0, holderLength])
+                  color("violet") pinFillet(-(pDiam+thebuttonSlack+thebuttonWall)/2,maxFillet);
                 } // ifFillet
               }
             } //-- union()
+            
+            // Hollow out the inside
+            
             //-------- inside Cap 
-            translate([((pDiam+buttonSlack)/-2),((pDiam+buttonSlack)/-2),pcbTop2Lid-(cupDepth-buttonWall)])
+            translate([0, 0, -((buttonCupDepth-0.02)-(thebuttonWall/2))])
             {
-              translate([(pDiam+buttonSlack)/2, (pDiam+buttonSlack)/2, (buttonWall)*-0.5])
-              {
-                //-- uitsparing voor CAP
-                color("blue") cylinder(h=cupDepth, d=cLength+buttonSlack);
-              }
+              color("blue") 
+                cylinder(h=buttonCupDepth+0.02, d=cLength+thebuttonSlack);
             }
-            //-- extenderPole geleider --
-            translate([0, 0, pcbTop2Lid/2]) 
+            
+            //-- inside pole holder - extenderPole geleider --
+            translate([0, 0,  -(holderLength-0.02)/2-buttonCupDepth]) 
             {
-              color("orange") cylinder(h=pcbTop2Lid, d=pDiam+buttonSlack, center=true);
+              color("orange") 
+                cylinder(h=holderLength+thebuttonWall+0.04, d=pDiam+thebuttonSlack, center=true);
             }
           } // difference()
-        }
-        else  //-- rectangle (square)
-        {
-          //-debug-echo("insideButton(rectangle):",cupDepth=cupDepth);
-          difference()
-          {
-            union()
-            {
-              //-- outside rectangle
-              translate([(cLength+buttonSlack+buttonWall)/-2, (cWidth+buttonSlack+buttonWall)/-2,pcbTop2Lid-cupDepth]) 
-              {
-                color("red") 
-                  cube([(cLength+buttonSlack+buttonWall), (cWidth+buttonSlack+buttonWall), cupDepth]);
-                if (!isTrue(yappNoFillet, button))
-                {
-                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-                  translate([(cLength+buttonSlack+buttonWall)/2, (cWidth+buttonSlack+buttonWall)/2,filletRadius + cupDepth - lidPlaneThickness])
-                    color("violet") rectangleFillet((cLength+buttonSlack+buttonWall), (cWidth+buttonSlack+buttonWall), filletRadius, 1);
-                  
-                } // ifFillet
-              }
-              //-------- outside pole holder
-              translate([0, 0, (pcbTop2Lid-poleHolderLength-1)])
-              {
-                color("gray") cylinder(h=poleHolderLength, d=pDiam+buttonWall+buttonSlack);
-                 if (!isTrue(yappNoFillet, button))
-                {
-                  filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-                  translate([0, 0, poleHolderLength - cupDepth + buttonWall/2])
-                  color("violet") pinFillet(-(pDiam+buttonSlack+buttonWall)/2,filletRadius);
-                } // ifFillet
-             }
-            } //-- union()
-  
-            //-------- inside Cap 
-            translate([((cLength+buttonSlack)/-2),((cWidth+buttonSlack)/-2),pcbTop2Lid-(cupDepth-buttonWall+1)])
-            {
-              color("blue") cube([cLength+buttonSlack, cWidth+buttonSlack, cupDepth]);
-            }
-            //-- extenderPole geleider --
-            translate([0, 0, pcbTop2Lid/2]) 
-            {
-              color("orange") cylinder(d=pDiam+buttonSlack, h=pcbTop2Lid+10, center=true);
-            }
-          } //-- difference()          
-        } //--  if .. else
-      } //-- translate()
-      
-      boxHeight = baseWallHeight+lidWallHeight;
-      extHeight = boxHeight-(toTopOfPCB)-swHeight-(buttonPlateThickness-0.5);
-      xOff      = max(cLength, cWidth);
-
-      //-debug-echo("buildButtons()", i=i, extHeight=extHeight, xOff=xOff);
-      if (printSwitchExtenders && (showSideBySide || !$preview))
+        } //-- translate()
+      } 
+      else // Post Cuts
       {
-        if (printMessages) echo ("Printing the switch extenders");
-        if (isTrue(yappCircle, button))
+        // Create the button extension
+        if (printSwitchExtenders || $preview)  // only add to render if they are turned on
         {
-          printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                              , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
-        }
-        else
-        {
-          printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                              , (baseWallHeight+lidWallHeight), -10, (pcbLength*1)+(i*(10+cLength)));
-        }
-        printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
-      }
+          // possible location of the SwitchExtender and plate
+          // In lid (true)
+          //    If preview and lidOnBox
+          // In row next to lid (false)
+          //    anything else
+          externderPos = ($preview) ? (showSideBySide) ? false : true : false; 
+           
+          extHeight = buttonTop2Lid + lidPlaneThickness - thebuttonPlateThickness -buttonCapNetThickness -((aboveLid < 0) ? -aboveLid : 0);
+          
+          xOff = max(cLength, cWidth);
+          
+          // Determine where to show them for Lid on case or off
+          extPosX = (externderPos) ? xPos : -10 ;
+          extPosY = (externderPos) ? yPos : shellWidth*2 - (i* 10);
+          extPosZ = (externderPos) ? aboveLid : 0 ;
+          extRot  = (externderPos) ? 0 : 0 ;
+
+          platePosX = (externderPos) ? xPos : -20 ;
+          platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 10);
+          platePosZ = (externderPos) ? 
+          + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid 
+          : -thebuttonPlateThickness/2 ;
+          
+          plateRot  = (externderPos) ? 180 : 0 ;
+          
+          echo(extPosZ=extPosZ, platePosZ=platePosZ);
+          color("red")
+          translate ([extPosX,extPosY,extPosZ]) 
+          {
+            rotate ([extRot,0,0])
+            {
+              makeSwitchExtender(isTrue(yappCircle, button) ? yappCircle : yappRectangle,  cLength, cWidth, buttonTopThickness, pDiam, extHeight, aboveLid);
+            }
+          } // translate extender
+          color("green")
+          translate ([platePosX,platePosY,platePosZ]) 
+          {
+            rotate ([plateRot,0,0])
+            {
+              makeSwitchPlate(pDiam, thebuttonPlateThickness);
+            } 
+          } // translate plate
+        } // printSwitchExtenders
+      } // Post Cuts
     } //-- for buttons ..
   } //-- len(pushButtons) > 0
 } //  buildButtons()
@@ -2640,10 +2664,8 @@ module buildButtons()
 //===========================================================
 module drawLabels(casePart, subtract)
 {
-  
   for ( label = labelsPlane )
-  {
-    
+  {    
     // If we are adding to the lid  we need to shift it because we are drawing before the lid is positioned
     shiftX = (!subtract) ? -shellLength/2 : 0 ;
     shiftY = (!subtract) ? -shellWidth/2 : 0 ;
@@ -2664,7 +2686,6 @@ module drawLabels(casePart, subtract)
       if ((casePart== yappPartLid) && (label[4]==yappLid))
       {
         if (printMessages) echo ("Draw text on Lid (top)");
-        //theDepth = (subtract) ? label[3] : -label[3];
         offset_depth = (subtract) ?  0.01 : theDepth -0.01;
         
         translate([label[0], label[1], offset_depth - theDepth]) 
@@ -2977,7 +2998,7 @@ module lidShell()
   pcbPushdowns();
   shellConnectors(yappPartLid);
   buildLightTubes();
-  buildButtons();
+  buildButtons(true);
 } //  lidShell()
 
         
@@ -3641,7 +3662,7 @@ module drawLid() {
         
     // Remove parts of it
     lightTubeCutout();
-    makeButtons();
+    buttonCutout();
         
     // Do all of the face cuts
     makeCutouts(yappPartLid);
@@ -3654,7 +3675,12 @@ module drawLid() {
     
   } //  difference(t1)
   
-  // Do the post cutout hook
+  // Post cutouts operations
+  
+//  // Add button extenders
+//  buildButtons(false);
+  
+  // post cutout hook
   posZ00 = lidWallHeight+lidPlaneThickness;
   translate([(shellLength/2), (shellWidth/2), (posZ00*-1)])
   {
@@ -3696,7 +3722,6 @@ module YAPPgenerate()
   echo("YAPP:", buttonWall=buttonWall);
   echo("YAPP:", buttonPlateThickness=buttonPlateThickness);
   echo("YAPP:", buttonSlack=buttonSlack);
-  echo("YAPP:", buttonCupDepth=buttonCupDepth);
 
   echo("YAPP==========================================");
   echo("YAPP:", baseWallHeight=baseWallHeight);
@@ -3814,7 +3839,6 @@ module YAPPgenerate()
                     r = .5,
                     h = YmarkerHeight+10,
                     center = true);
-
       } //  showMarkersBoxInside
 
       if (printBaseShell) 
@@ -3823,6 +3847,10 @@ module YAPPgenerate()
         {
           printPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
           showMarkersPCB(pcbX, pcbY, basePlaneThickness+standoffHeight);
+          if (showSwitches)
+          {
+            drawSwitchOnPCB();
+          }
         }
         else if ($preview && showMarkersPCB) 
         {
@@ -3855,115 +3883,118 @@ module YAPPgenerate()
         {
           minkowskiBox(yappPartBase, shellInsideLength, shellInsideWidth, baseWallHeight, roundRadius, basePlaneThickness, wallThickness, false);
         }
-        
-        
-        if (showOrientation) showOrientation();
-
-      } // if printBaseShell ..
-      
-      // Moved out of printBaseShell so you can print only the button extenters if needed
-      drawButtonExtenders();
-            
-      if (printLidShell)
-      {
-       if (printMessages) echo ("* Print lid *");
-       if (showSideBySide || !$preview)
+        if (showOrientation) 
         {
-          if (printMessages) echo ("***  Side by side  ***");
-          //-- lid side-by-side
-          mirror([0,0,1])
+          showOrientation();
+        }
+      } // if printBaseShell ..
+                  
+     if (printMessages) echo ("* Print lid *");
+     if (showSideBySide || !$preview)
+      {
+        if (printMessages) echo ("***  Side by side  ***");
+        //-- lid side-by-side
+        mirror([0,0,1])
+        {
+          mirror([0,1,0])
           {
-            mirror([0,1,0])
+            translate([0, (5 + shellWidth+(shiftLid/2))*-2, 0])
             {
-              translate([0, (5 + shellWidth+(shiftLid/2))*-2, 0])
+              if (printLidShell)
               {
                 drawLid();
-              } // translate
-            } //  mirror  
+              } // printLidShell()
+              // Add button extenders
+              buildButtons(false);
+            } // translate
           } //  mirror  
-        }
-        else  // lid on base
+        } //  mirror  
+      }
+      else  // lid on base
+      {
+        if (printMessages) echo ("***  Print lid on base  ***");
+        translate([0, 0, (baseWallHeight+basePlaneThickness+
+                          lidWallHeight+lidPlaneThickness+onLidGap)])
         {
-          if (printMessages) echo ("***  Print lid on base  ***");
-          translate([0, 0, (baseWallHeight+basePlaneThickness+
-                            lidWallHeight+lidPlaneThickness+onLidGap)])
+          if (printLidShell)
           {
             drawLid();
-          } //  translate ..
-        } // lid on top off Base  
-      } // printLidShell()
-      
-      if (printBaseShell && showSwitches)
-      {
-        %printSwitch();
-      }
+            // Add button extenders
+            buildButtons(false);
+          } // printLidShell()
+        } //  translate ..
+      } // lid on top off Base  
     } //union
       
-    //--- show inspection cut
-    if (inspectX != 0)
+    if ($preview) 
     {
-      maskLength = shellLength * 3;
-      maskWidth = shellWidth * 3;
-      maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
-      color("Salmon",0.1)
-      if (!inspectXfromBack)
+      //--- show inspection cut
+      if (inspectX != 0)
       {
-        translate([inspectX, -shellWidth/2,-maskHeight/4])
-        cube([maskLength, maskWidth, maskHeight]);
-      }
-      else
+        maskLength = shellLength * 3;
+        maskWidth = shellWidth * 3;
+        maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
+        color("Salmon",1)
+        if (!inspectXfromBack)
+        {
+          translate([inspectX, -shellWidth/2,-maskHeight/4])
+          cube([maskLength, maskWidth, maskHeight]);
+        }
+        else
+        {
+          translate([-maskLength + inspectX, -shellWidth/2,-maskHeight/4])
+          cube([maskLength, maskWidth, maskHeight]);
+        }
+      } //inspectX
+     
+      //--- show inspection cut
+      if (inspectY != 0)
       {
-        translate([-maskLength + inspectX, -shellWidth/2,-maskHeight/4])
-        cube([maskLength, maskWidth, maskHeight]);
-      }
-    } //inspectX
-   
-    //--- show inspection cut
-    if (inspectY != 0)
-    {
-      maskLength = shellLength * 3;
-      maskWidth = shellWidth * 3;
-      maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
-      color("Salmon",0.1)
-      if (!inspectYfromLeft)
-      {
-        translate([-shellLength/2, inspectY, -maskHeight/4])
-        cube([maskLength, maskWidth, maskHeight]);
-      }
-      else
-      {
-        translate([-shellLength/2,-maskWidth + inspectY,-maskHeight/4])
-        cube([maskLength, maskWidth, maskHeight]);
-      }
-    } //inspectY
+        maskLength = shellLength * 3;
+        maskWidth = shellWidth * 3;
+        maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
+        color("Salmon",1)
+        if (!inspectYfromLeft)
+        {
+          translate([-shellLength/2, inspectY, -maskHeight/4])
+          cube([maskLength, maskWidth, maskHeight]);
+        }
+        else
+        {
+          translate([-shellLength/2,-maskWidth + inspectY,-maskHeight/4])
+          cube([maskLength, maskWidth, maskHeight]);
+        }
+      } //inspectY
 
-    //--- show inspection cut
-    if (inspectZ != 0)
-    {
-      maskLength = shellLength * 3;
-      maskWidth = shellWidth * 3;
-      maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
-      
-      color("Salmon",0.1)
-      if (!inspectZfromTop)
+      //--- show inspection cut
+      if (inspectZ != 0)
       {
-        translate([-shellLength/2, -shellWidth/2, inspectZ])
-        cube([maskLength, maskWidth, maskHeight]);
-      }
-      else
-      {
-        translate([-shellLength/2,-shellWidth/2,-maskHeight + inspectZ])
-        cube([maskLength, maskWidth, maskHeight]);
-      }
-    } //inspectZ
+        maskLength = shellLength * 3;
+        maskWidth = shellWidth * 3;
+        maskHeight = (baseWallHeight + lidWallHeight+ ridgeHeight) *2;
+        
+        color("Salmon",1)
+        if (!inspectZfromTop)
+        {
+          translate([-shellLength/2, -shellWidth/2, inspectZ])
+          cube([maskLength, maskWidth, maskHeight]);
+        }
+        else
+        {
+          translate([-shellLength/2,-shellWidth/2,-maskHeight + inspectZ])
+          cube([maskLength, maskWidth, maskHeight]);
+        }
+      } //inspectZ
+    } // $preview
   }// Inspection cuts
 } //  YAPPgenerate()
 
-
+/*
 //-- switch extender -----------
 module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, extHeight
                                   , buttonPlateThickness, baseHeight, xPos, yPos)
 {
+  
   //-debug-echo("pse()", isRound=isRound, capLength=capLength, capWidth=capWidth, capAboveLid=capAboveLid
   //-debug-                , poleDiam=poleDiam, extHeight=extHeight
   //-debug-                , buttonPlateThickness=buttonPlateThickness, baseHeight=baseHeight
@@ -3975,7 +4006,8 @@ module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, 
     translate([xPos, yPos, 0])
     {
       //--- button cap
-      translate([0,0,(capAboveLid/-2)+0.5]) color("red")
+      translate([0,0,(capAboveLid/-2)+0.5])
+        color("red")
           cylinder(h=capAboveLid-1, d1=capLength-(buttonSlack*2), d2=capLength-buttonSlack, center=true);
       //--- pole
       translate([0, 0, ((extHeight+buttonCupDepth+capAboveLid)/-2)+1]) 
@@ -3989,7 +4021,8 @@ module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, 
     translate([xPos, yPos, 0])
     {
       //--- button cap
-      translate([0,0,(capAboveLid/-2)+0.5]) color("red")
+      translate([0,0,(capAboveLid/-2)+0.5])
+        color("red")
           cube([capLength-buttonSlack, capWidth-buttonSlack, capAboveLid-1], center=true);
       //--- pole
       translate([0, 0, (extHeight+buttonCupDepth+capAboveLid-0.5)/-2]) 
@@ -3997,6 +4030,7 @@ module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, 
           cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
     }
   }
+  
 } // printSwitchExtender()
 
 
@@ -4025,134 +4059,106 @@ module printSwitchPlate(poleDiam, capLength, buttonPlateThickness, yPos)
   }
     
 } // printSwitchPlate
+*/
 
-
-//===============================================================================
-module drawButtonExtenders()
+//-- switch extender -----------
+module makeSwitchExtender(shape, capLength, capWidth, thickness, poleDiam, extHeight, aboveLid)
 {
-  //-- post processing switchExtenders ..
-  if (!printBaseShell && !printLidShell && printSwitchExtenders)
+  
+  //   -->|            |<-- shape=circle : Diameter=capWidth shape=square : capLength x capWidth
+  //
+  //      +------------+        - 
+  //      |            |        ^ 
+  //      |            |        | [-- thickness
+  //      |            |        v 
+  //      +---+    +---+     ----
+  //          |    |         ^
+  //          |    |         |
+  //          |    |         |
+  //          |    |         |
+  //          |    |         |  [-- extHeight
+  //          |    |         |
+  //          |    |         |
+  //          |    |         |
+  //          |    |         v
+  //          +----+         -
+  //
+  //       -->|    |<-- poleDiam
+   
+  if (shape==yappCircle)
   {
-    yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
-    rotate([0,180,180])
-    {
-      translate([0,yOffset*-1,0])
-      {
-        for(i=[0:len(pushButtons)-1])  
-        {
-          button=pushButtons[i];
-
-          xPos      = button[0];
-          yPos      = button[1];
-          cLength   = button[2];
-          cWidth    = button[3];
-          cAbvLid   = button[4]+buttonCupDepth;
-          swHeight  = button[5];
-          swTrafel  = button[6];
-          pDiam     = button[7];
-      //    bType     = button[8];
-          
-          pcbTop2Lid= (baseWallHeight+lidWallHeight)-(standoffHeight+pcbThickness);
-          boxHeight = baseWallHeight+lidWallHeight;
-          extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
-          xOff      = max(cLength, cWidth);
-
-          if (printMessages) echo("postProcess(A):", extHeight=extHeight, xOff=xOff);
-
-          if (isTrue(yappCircle, button))
-                printSwitchExtender(true,  cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                        , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
-          else  printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                        , boxHeight, -10, (pcbLength*1)+(i*(10+cLength)));
-          
-          printSwitchPlate(pDiam, xOff, buttonPlateThickness, (pcbLength*1)+(i*(10+cLength)));
-
-        } //-- for ...
-      } //-- translate
-    } //-- rotate
-  } //-- postProcess
-
-  //-- post processing switchExtenders ..
-  //-- place switchExtendes in button ---
-  if (!(showSideBySide || !$preview) && printLidShell && printSwitchExtenders && (len(pushButtons) > 0) )
-  {
-    yOffset = ((pcbWidth*2)+shiftLid+paddingLeft+paddingRight+(wallThickness*3)+15);
-
-    {
-      for(i=[0:len(pushButtons)-1])  
-      {
-        button=pushButtons[i];
-        xPos      = button[0];
-        yPos      = button[1];
-        cLength   = button[2];
-        cWidth    = button[3];
-        cAbvLid   = button[4]+buttonCupDepth;
-        swHeight  = button[5];
-        swTrafel  = button[6];
-        pDiam     = button[7];
-     
-        pcbTop2Lid= (baseWallHeight+lidWallHeight)-(standoffHeight+pcbThickness);
-        boxHeight = baseWallHeight+lidWallHeight;
-        extHeight = boxHeight-(standoffHeight+pcbThickness)-swHeight-(buttonPlateThickness-0.5);
-        
-        posX=xPos+wallThickness+paddingBack;
-        posY=(yPos+wallThickness+paddingLeft);
-        posZ=(baseWallHeight+basePlaneThickness)+(lidWallHeight+lidPlaneThickness)+button[4];
-        xOff      = max(cLength, cWidth);
-
-        //-debug-echo("BB:", xPos=xPos, wallThickness=wallThickness,paddingFront=paddingFront, paddingBack=paddingBack, posX=posX);
-        if (printMessages) echo("postProcess(B):", extHeight=extHeight, xOff=xOff);
-
-        translate([posX, posY, posZ + onLidGap]) // Shift up by onLidGap
-        {
-        if (isTrue(yappCircle, button))
-            color("purple")
-              printSwitchExtender(true, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                      , boxHeight, 0, 0);
-        else  
-            color("purple")
-              printSwitchExtender(false, cLength, cWidth, cAbvLid, pDiam, extHeight, buttonPlateThickness
-                                       , boxHeight, 0, 0);
-        }
-      } //-- for ..
-    } //-- rotate
-  } //-- postProcess
-
-  if (showMarkersCenter)
-  {
-    translate([shellLength/2, shellWidth/2,-1]) 
-    color("blue") %cube([1,shellWidth+20,1], true);
-    translate([shellLength/2, shellWidth/2,-1]) 
-    color("blue") %cube([shellLength+20,1,1], true);
+    //-- switch extender [yappCircle] button
+    //--- button cap
+    translate([0,0,(thickness/-2)])
+      color("red")
+        cylinder(h=thickness, d1=capLength-(buttonSlack*2), d2=capLength-buttonSlack, center=true);
+    //--- pole
+    translate([0, 0, (extHeight/-2)-thickness]) 
+      color("orange")
+        cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
   }
-} //drawButtonExtenders
+  else
+  {
+    //-- switch extender [yappRectangle] button
+    //--- button cap
+    translate([0,0,(thickness/-2)])
+      color("red")
+        cube([capLength-buttonSlack, capWidth-buttonSlack, thickness], center=true);
+    //--- pole
+    translate([0, 0, (extHeight/-2)-thickness]) 
+      color("orange")
+        cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
+  }
+} // makeSwitchExtender()
 
 
-//-------- test -- test -- test -- test -- test --------
-module printSwitch()
+//-- switch Plate -----------
+module makeSwitchPlate(poleDiam, thickness)
+{               
+                //      <---(7mm)----> 
+                //      +---+    +---+  ^
+                //      |   |    |   |  | 
+                //      |   |____|   |  |>-- thickness
+                //      |            |  | 
+                //      +------------+  v 
+                //          >----<------- poleDiam
+                //       
+  
+  difference()
+  {
+    color("green")
+      cylinder(h=thickness, d=poleDiam+3, center=true);
+    translate([0,0,-0.5])
+      color("blue")
+        cylinder(h=thickness, d=poleDiam+0.2-(buttonSlack/2), center=true);
+  }    
+} // makeSwitchPlate
+
+
+module drawSwitchOnPCB()
 {
   if (len(pushButtons) > 0)
   {
     for(i=[0:len(pushButtons)-1])  
     {
       b=pushButtons[i];
-      //-debug-echo("printSwitch(",i,"): swHeight=", b[5], "swTrafel=", b[6], buttonPlateThickness=buttonPlateThickness);
       posX=(b[0]+pcbX);
       posY=(b[1]+pcbY);
      
-      posZ=standoffHeight+pcbThickness+basePlaneThickness+(b[5]/2);
-      //-- tacktile Switch base
-      translate([posX, posY, posZ])
-        color("black") cube([5, 5, b[5]], center=true);
-      //-- switchTrafel
-      translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)]) 
-        color("white") cylinder(h=b[6], d=4, center=true);
-      //-- buttonPlateThickness
-      translate([posX, posY, posZ+(b[5]/2)+(b[6]/2)+((buttonPlateThickness+0.5)/2)]) 
-        color("orange") cylinder(h=buttonPlateThickness, d=5, center=true);
+      btnHeight = b[5];
+      btnTravel = max(b[6],0.5);
+      
+      posZb=standoffHeight+pcbThickness+basePlaneThickness + ((btnHeight-btnTravel)/2);
+      posZt=standoffHeight+pcbThickness+basePlaneThickness + btnHeight -(btnTravel/2);//+b[5]/2;
+      //-- Switch base - as a cube
+      translate([posX, posY, posZb])
+        color("black") cube([5, 5, btnHeight-btnTravel], center=true);
+      //-- switchTravel indicator
+      translate([posX, posY, posZt]) 
+        color("white") cylinder(h=btnTravel, d=4, center=true);
     }
   }
-} //printSwitch
+} //drawSwitchOnPCB
 
 
 // ----- Global Functions ----- 

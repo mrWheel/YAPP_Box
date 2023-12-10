@@ -67,14 +67,14 @@ printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
 pcbLength           = 150; // Front to back
-pcbWidth            = 100; // Side to side
+pcbWidth            = 30; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 5;
-paddingBack         = 10;
-paddingRight        = 15;
-paddingLeft         = 20;
+paddingFront        = 1;
+paddingBack         = 1;
+paddingRight        = 1;
+paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
@@ -88,7 +88,7 @@ lidPlaneThickness   = 1.5;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 16;
-lidWallHeight       = 14;
+lidWallHeight       = 10;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight 
@@ -105,6 +105,9 @@ standoffHeight      = 10.0;  //-- used for PCB Supports, Push Button and showPCB
 standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
+
+// Set the layer height of your printer
+printerLayerHeight  = 0.2;
 
 //-- C O N T R O L ---------------//-> Default -----------------------------
 showSideBySide        = true;     //-> true
@@ -250,8 +253,25 @@ pcbZlid           = (baseWallHeight+lidWallHeight+lidPlaneThickness)-(standoffHe
 
 // Pre-defined shapes
 shapeIsoTriangle = [yappPolygonDef,[[-0.5,-sqrt(3)/4],[0,sqrt(3)/4],[0.5,-sqrt(3)/4]]];
+shapeIsoTriangle2 = [yappPolygonDef,[[-2/3,0],[+1/3,+0.577349],[+1/3,-0.577349]]];
 shapeHexagon = [yappPolygonDef,[[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]]];
 shape6ptStar = [yappPolygonDef,[[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]]];
+shapeTriangle = [yappPolygonDef,[[-0.5,-0.33],[0,0.66],[0.5,-0.33]]];
+shapeTriangle2 = [yappPolygonDef,[[-0.5,-0.5],[0,0.5],[0.5,-0.5]]];
+
+shapeArrow = [yappPolygonDef,[[-1/3,+0.5],[0.166667,+0.5],[+2/3,0],[0.166667,-0.5],[-1/3,-0.5]]];
+shapeArrow2 = [yappPolygonDef,[[+2/3,0],[-1/3,+0.5],[-1/3,-0.5]]];
+
+preDefinedShapes=[
+  ["shapeIsoTriangle", shapeIsoTriangle], 
+  ["shapeIsoTriangle2", shapeIsoTriangle2], 
+  ["shapeHexagon", shapeHexagon],
+  ["shape6ptStar", shape6ptStar],
+  ["shapeTriangle", shapeTriangle],
+  ["shapeTriangle2",shapeTriangle2], 
+  ["shapeArrow", shapeArrow],
+  ["shapeArrow2", shapeArrow2]
+  ];
 
 
 //==================================================================
@@ -368,7 +388,6 @@ maskOffsetBars = [yappMaskDef,[
 //-------------------------------------------------------------------
 pcbStands = 
 [
-
 ];
 
 
@@ -396,7 +415,6 @@ pcbStands =
 //-------------------------------------------------------------------
 connectors   =
 [
-
 ];
 
 
@@ -546,19 +564,22 @@ lightTubes =
 //   Required:
 //    p(0) = posx
 //    p(1) = posy
-//    p(2) = capLength for yappRectangle, capDiameter for yappCircle
-//    p(3) = capWidth for yappRectangle, not used for yappCircle
-//    p(4) = capAboveLid
-//    p(5) = switchHeight
-//    p(6) = switchTravel
-//    p(7) = poleDiameter
+//    p(2) = capLength 
+//    p(3) = capWidth 
+//    p(4) = capRadius 
+//    p(5) = capAboveLid
+//    p(6) = switchHeight
+//    p(7) = switchTravel
+//    p(8) = poleDiameter
 //   Optional:
-//    p(8) = Height to top of PCB : Default = standoffHeight + pcbThickness
-//    p(9) = buttonType  {yappCircle|<yappRectangle>} : Default = yappRectangle
-//    p(10) = filletRadius          : Default = 0/Auto 
-//    p(11) = buttonWall            : Default = 2.0;
-//    p(12) = buttonPlateThickness  : Default= 2.5;
-//    p(13) = buttonSlack           : Default= 0.25;
+//    p(9) = Height to top of PCB : Default = standoffHeight + pcbThickness
+//    p(10) = Shape  {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                    | yappCircleWithFlats | yappCircleWithKey} : Default = yappRectangle
+//    p(11) = angle : Default = 0
+//    p(12) = filletRadius          : Default = 0/Auto 
+//    p(13) = buttonWall            : Default = 2.0;
+//    p(14) = buttonPlateThickness  : Default= 2.5;
+//    p(15) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
 //-------------------------------------------------------------------
@@ -2420,22 +2441,28 @@ module buttonCutout()
    
     xPos = translate2Box_X (button[0], yappLid, theCoordSystem);
     yPos = translate2Box_Y (button[1], yappLid, theCoordSystem);
-    cLength   = button[2];
-    cWidth    = button[3];    
-    shape     = getShapeWithDefault(button[9],yappRectangle);
-    thebuttonSlack = getParamWithDefault(button[14],buttonSlack); 
+    cWidth    = button[2];    
+    cLength   = button[3];
+    cRadius   = button[4];    
+    shape     = getShapeWithDefault(button[10],yappRectangle);
+    angle     = getParamWithDefault(button[11],0);
+    buttonSlack = getParamWithDefault(button[15],buttonSlack); 
+     
+    thePolygon = getVectorBase(yappPolygonDef, button);
      
     tmpArray = [[xPos, 
                   yPos, 
-                  cWidth + buttonSlack, 
-                  cLength + buttonSlack,
-                  (cLength + buttonSlack)/2, 
+                  cWidth + buttonSlack*2, 
+                  cLength + buttonSlack*2,
+                  cRadius + buttonSlack, 
                   shape, 
-                  0, 0 , yappCenter,
-                  yappCoordBox // Coordinates are already translated to yappCoordBox
-                  ]];
-    
-    processFaceList(yappLid, tmpArray, yappPartLid, "cutout", true);
+                  0, 
+                  angle , 
+                  yappCenter,
+                  yappCoordBox, // Coordinates are already translated to yappCoordBox
+                  thePolygon// Polygon
+                ]];
+     processFaceList(yappLid, tmpArray, yappPartLid, "cutout", true);
   } //-- for buttons
 } //  buttonCutout()
 
@@ -2452,27 +2479,32 @@ module buildButtons(preCuts)
     for(i=[0:len(pushButtons)-1])  
     {
       button=pushButtons[i];
+
+      echo(button);
       // Get the desired coordinate system    
       theCoordSystem = getCoordSystem(button, yappCoordPCB);    
 
-      // Enable overriding the defaults
-      thebuttonWall = getParamWithDefault(button[11],buttonWall);
-      thebuttonPlateThickness = getParamWithDefault(button[12],buttonPlateThickness);
-      thebuttonSlack = getParamWithDefault(button[13],buttonSlack);
-     
+      // Get all of the parameters
       xPos = translate2Box_X (button[0], yappLid, theCoordSystem);
       yPos = translate2Box_Y (button[1], yappLid, theCoordSystem);
       cLength     = button[2];
       cWidth      = button[3];
-      aboveLid    = button[4];
-      swHeight    = button[5];
-      swTravel    = max(button[6],0.5);
-      pDiam       = button[7];
-      toTopOfPCB  = getParamWithDefault(button[8], standoffHeight+pcbThickness);
-      shape       = getShapeWithDefault(button[9],yappRectangle);
-      filletRad   = getParamWithDefault(button[10],0);
-
-
+      cRadius     = button[4];  // New
+      aboveLid    = button[5];
+      swHeight    = button[6];
+      swTravel    = max(button[7],0.5);
+      pDiam       = button[8];
+      toTopOfPCB  = getParamWithDefault(button[9], standoffHeight+pcbThickness);
+      shape       = getShapeWithDefault(button[10],yappRectangle);
+      angle       = getParamWithDefault(button[11],0);  // New
+      filletRad   = getParamWithDefault(button[12],0);
+      // Enable overriding the defaults
+      thebuttonWall = getParamWithDefault(button[13],buttonWall);
+      thebuttonPlateThickness = getParamWithDefault(button[14],buttonPlateThickness);
+      thebuttonSlack = getParamWithDefault(button[15],buttonSlack);
+     
+      thePolygon = getVector(yappPolygonDef, button); // New
+  
               //
               //        -->|             |<-- LxW or Diameter
               //
@@ -2506,11 +2538,20 @@ module buildButtons(preCuts)
       buttonCapNetThickness = 0.5;        
       pcbTop2Lid        = (baseWallHeight+lidWallHeight)-(toTopOfPCB);
       
-      buttonTopThickness  = thebuttonPlateThickness + ((aboveLid > 0) ? aboveLid : 0) ;//- thebuttonSlack;
-      buttonCupDepth      = thebuttonWall + thebuttonSlack + swTravel + ((aboveLid < 0) ? -aboveLid : 0);
+      buttonTopOffset     = ((aboveLid > 0) ? aboveLid : 0);
+      cupExtraDepth       = ((aboveLid < 0) ? -aboveLid : 0);
+      buttonTopThickness  = lidPlaneThickness + buttonTopOffset;
+
+      buttonCupDepth      = cupExtraDepth + swTravel + thebuttonSlack;
+
       buttonTop2Lid       = pcbTop2Lid-swHeight;
-      
-      holderLength        = buttonTop2Lid -buttonCupDepth  -thebuttonPlateThickness - thebuttonSlack;
+      holderLength        = 
+        buttonTop2Lid 
+        - buttonCupDepth 
+        - thebuttonWall 
+        - thebuttonPlateThickness 
+        - thebuttonSlack
+        ;
       
      // check if there is enough room for the button
       assert(holderLength>=0, str("Processing pushButtons[", i, "] Not enough space to add button number ", i, " increase case height above the PCB by ", -holderLength));
@@ -2525,75 +2566,48 @@ module buildButtons(preCuts)
           {
             union()
             {
-              //--------- outside of cup 
-              if (shape==yappCircle)
+              // Outside of CUP
+              // Other shapes don't get a base fillet (for now)
+              //module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotation, Polygon)
+              translate([0, 0, -(buttonCupDepth + thebuttonWall)])
               {
-                assert(cLength-pDiam >=2, str("Processing pushButtons[", i, "] Button Diameter can't be less than Pole Diameter + 2"));
-                
-                translate([0, 0, -buttonCupDepth]) 
-                {
-                  color("red") 
-                    {
-                      cylinder(h=buttonCupDepth, d=cLength+thebuttonSlack+thebuttonWall);
-                    }
-                    
-                  if (!isTrue(yappNoFillet, button))
-                  {
-                    filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-                    filletRadiusTrimmed = (filletRadius > buttonCupDepth) ? buttonCupDepth : filletRadius;
-                    translate([0, 0, buttonCupDepth])
-                    {
-                      color("violet") pinFillet(-(cLength+thebuttonSlack+thebuttonWall)/2,filletRadiusTrimmed);
-                    }
-                  } // ifFillet
-                }
-              }
-              else 
-              {
-                assert(cLength-pDiam >=2, str("Processing pushButtons[", i, "] Length can't be less than Pole Diameter + 2"));
-                assert(cWidth-pDiam >=2, str("Processing pushButtons[", i, "] Width can't be less than Pole Diameter + 2"));
-                
-                //-- outside rectangle
-                translate([(cLength+thebuttonSlack+thebuttonWall)/-2, (cWidth+thebuttonSlack+thebuttonWall)/-2,-buttonCupDepth]) 
-                {
-                  color("red") 
-                    cube([(cLength+thebuttonSlack+thebuttonWall), (cWidth+thebuttonSlack+thebuttonWall), buttonCupDepth]);
-                  if (!isTrue(yappNoFillet, button))
-                  {
-                    filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-                    translate([(cLength+thebuttonSlack+thebuttonWall)/2, (cWidth+thebuttonSlack+thebuttonWall)/2,filletRadius + buttonCupDepth - lidPlaneThickness])
-                      color("violet") rectangleFillet((cLength+thebuttonSlack+thebuttonWall), (cWidth+thebuttonSlack+thebuttonWall), filletRadius, 1);
-                    
-                  } // ifFillet
-                }
-              }
+                filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
+                color("green")
+//                generateShapeFillet (shape, true, cLength, cWidth, buttonCupDepth, filletRadius, 0, cRadius + (thebuttonSlack/2), angle, thePolygon, thebuttonWall);
+
+
+               generateShapeFillet (shape, true, cLength, cWidth, buttonCupDepth + thebuttonWall, filletRadius, 0, cRadius, angle, thePolygon, thebuttonWall);
+
+
+              } //translate
               
               //-------- outside pole holder -- Always a cylinder
-              translate([0, 0, -holderLength-buttonCupDepth])
+           //   translate([0, 0, -holderLength-buttonCupDepth])
+              translate([0, 0,  -thebuttonWall-buttonCupDepth-holderLength])
               {
                 color("gray") cylinder(h=holderLength, d=pDiam+thebuttonSlack+thebuttonWall);
                 if (!isTrue(yappNoFillet, button))
                 {
                   filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad;
                   // Limit the fillet to the height of the pole or the width of the shelf 
-                  maxFillet = min(holderLength, (cLength - pDiam)/2, filletRadius);                   
+                  maxFillet = min(holderLength, filletRadius);                   
                   translate([0, 0, holderLength])
                   color("violet") pinFillet(-(pDiam+thebuttonSlack+thebuttonWall)/2,maxFillet);
                 } // ifFillet
-              }
+              } // translate
             } //-- union()
             
             // Hollow out the inside
             
             //-------- inside Cap 
-            translate([0, 0, -((buttonCupDepth-0.02)-(thebuttonWall/2))])
+            translate([0, 0, -(buttonCupDepth-0.02)])
             {
-              color("blue") 
-                cylinder(h=buttonCupDepth+0.02, d=cLength+thebuttonSlack);
+              color("blue")                       
+                generateShape (shape, true, cLength+thebuttonSlack*2, cWidth+thebuttonSlack*2, buttonCupDepth+ 0.02, (cRadius+thebuttonSlack), angle, thePolygon);
             }
-            
+
             //-- inside pole holder - extenderPole geleider --
-            translate([0, 0,  -(holderLength-0.02)/2-buttonCupDepth]) 
+            translate([0, 0,  -(holderLength/2) - buttonCupDepth -(thebuttonWall/2) + 0.01]) 
             {
               color("orange") 
                 cylinder(h=holderLength+thebuttonWall+0.04, d=pDiam+thebuttonSlack, center=true);
@@ -2613,21 +2627,22 @@ module buildButtons(preCuts)
           //    anything else
           externderPos = ($preview) ? (showSideBySide) ? false : true : false; 
            
-          extHeight = buttonTop2Lid + lidPlaneThickness - thebuttonPlateThickness -buttonCapNetThickness -((aboveLid < 0) ? -aboveLid : 0);
+//          extHeight = buttonTop2Lid + lidPlaneThickness - thebuttonPlateThickness -buttonCapNetThickness -((aboveLid < 0) ? -aboveLid : 0);
+          extHeight = buttonTop2Lid -buttonCapNetThickness -cupExtraDepth;
           
           xOff = max(cLength, cWidth);
           
           // Determine where to show them for Lid on case or off
-          extPosX = (externderPos) ? xPos : -30 ;
+          extPosX = (externderPos) ? xPos : -40 ;
           extPosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           extPosZ = (externderPos) ? aboveLid : 0 ;
-          extRot  = (externderPos) ? 0 : 0 ;
+          extRot  = (externderPos) ? angle : 0 ;
 
-          platePosX = (externderPos) ? xPos : -10 ;
+          platePosX = (externderPos) ? xPos : -20 ;
           platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           platePosZ = (externderPos) ? 
-          + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid 
-          : -thebuttonPlateThickness/2 ;
+          + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid
+          : +thebuttonPlateThickness/2;
           
           plateRot  = (externderPos) ? 180 : 0 ;
           
@@ -2635,9 +2650,9 @@ module buildButtons(preCuts)
           color("red")
           translate ([extPosX,extPosY,extPosZ]) 
           {
-            rotate ([extRot,0,0])
+            rotate ([0,0,extRot])
             {
-              makeSwitchExtender(isTrue(yappCircle, button) ? yappCircle : yappRectangle,  cLength, cWidth, buttonTopThickness, pDiam, extHeight, aboveLid);
+              makeSwitchExtender(shape, cLength-thebuttonSlack, cWidth-thebuttonSlack, cRadius, buttonTopThickness, pDiam, extHeight, aboveLid, thePolygon);
             }
           } // translate extender
           color("green")
@@ -2865,7 +2880,7 @@ module baseShell()
   posZ00 = (baseWallHeight) + basePlaneThickness;
   
   //echo("base:", posZ00=posZ00);
-  translate([(shellLength/2), shellWidth/2, posZ00])
+   translate([(shellLength/2), shellWidth/2, posZ00])
   {
     difference()  //(b) Remove the yappPartLid from the base
     {
@@ -3485,6 +3500,78 @@ module roundedRectangle2D(width,length,radius)
 } //roundedRectangle2D
 
 
+module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, filletBorrom, Radius, Rotation, Polygon=undef, expand=0)
+// Creates a shape centered at 0,0 in the XY and from 0-thickness in the Z with a fillet on the top and bottom (optional)
+{ 
+//  echo (Shape=Shape, Center=Center, Width=Width, Length=Length, Thickness=Thickness, Radius=Radius, Rotation=Rotation, Polygon=Polygon);
+  Thickness = Depth;
+  filletRadiusTop = filletTop; 
+  filletRadiusBottom = filletBorrom; 
+  
+  rotate([0,0,Rotation])
+  {
+    extrudeWithRadius(Thickness,filletRadiusBottom,-filletRadiusTop,Thickness/printerLayerHeight)  
+  //  linear_extrude(height = Thickness)
+    {
+      offset(expand)
+      { 
+        if (Shape == yappCircle)
+        {
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+          circle(r=Radius);
+        } 
+        else if (Shape == yappRectangle)
+        {
+          translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+          {
+            square([Width,Length], center=true); 
+          }
+        } 
+        else if (Shape == yappRoundedRect)
+        {
+          {
+            translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+            roundedRectangle2D(Width,Length,Radius);
+          }
+        }
+        else if (Shape == yappPolygon)
+        {
+          translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+          scale([Width,Length,0]){
+            polygon(Polygon);
+          }
+        }
+        else if (Shape == yappCircleWithFlats)
+        {
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+          {
+            intersection()
+            { 
+              circle(r=Radius);    
+              square([Width, Radius*2], center=true);
+            }
+          }
+        }
+        else if (Shape == yappCircleWithKey)
+        {
+          if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+          {
+            difference()
+            {
+            circle(r=Radius); 
+            translate ([Radius - (Width/2),0,0]) 
+              square([Width, Length ], center=true);
+            }
+          }
+        }
+      }
+    }
+  }
+} //generateShape
+
+
+
 module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotation, Polygon)
 // Creates a shape centered at 0,0 in the XY and from 0-thickness in the Z
 { 
@@ -3764,6 +3851,7 @@ module YAPPgenerate()
   sanityCheckList(cutoutsBase, "cutoutsRight", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey]);
   sanityCheckList(snapJoins, "snapJoins", 3, 2, [yappLeft, yappRight, yappFront, yappBack]);
   sanityCheckList(lightTubes, "lightTubes", 7, 6, [yappCircle, yappRectangle]);
+  sanityCheckList(lightTubes, "pushButtons", 9);
   sanityCheckList(baseMounts, "baseMounts", 5);
   sanityCheckList(labelsPlane, "labelsPlane", 8, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
 
@@ -3983,80 +4071,9 @@ module YAPPgenerate()
   }// Inspection cuts
 } //  YAPPgenerate()
 
-/*
-//-- switch extender -----------
-module printSwitchExtender(isRound, capLength, capWidth, capAboveLid, poleDiam, extHeight
-                                  , buttonPlateThickness, baseHeight, xPos, yPos)
-{
-  
-  //-debug-echo("pse()", isRound=isRound, capLength=capLength, capWidth=capWidth, capAboveLid=capAboveLid
-  //-debug-                , poleDiam=poleDiam, extHeight=extHeight
-  //-debug-                , buttonPlateThickness=buttonPlateThickness, baseHeight=baseHeight
-  //-debug-                , xPos=xPos, yPos=yPos);
-  
-  if (isRound)
-  {
-    //-- switch extender [yappCircle] button
-    translate([xPos, yPos, 0])
-    {
-      //--- button cap
-      translate([0,0,(capAboveLid/-2)+0.5])
-        color("red")
-          cylinder(h=capAboveLid-1, d1=capLength-(buttonSlack*2), d2=capLength-buttonSlack, center=true);
-      //--- pole
-      translate([0, 0, ((extHeight+buttonCupDepth+capAboveLid)/-2)+1]) 
-        color("orange")
-          cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
-    }
-  }
-  else
-  {
-    //-- switch extender [yappRectangle] button
-    translate([xPos, yPos, 0])
-    {
-      //--- button cap
-      translate([0,0,(capAboveLid/-2)+0.5])
-        color("red")
-          cube([capLength-buttonSlack, capWidth-buttonSlack, capAboveLid-1], center=true);
-      //--- pole
-      translate([0, 0, (extHeight+buttonCupDepth+capAboveLid-0.5)/-2]) 
-        color("purple")
-          cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
-    }
-  }
-  
-} // printSwitchExtender()
 
-
-//-- switch Plate -----------
-module printSwitchPlate(poleDiam, capLength, buttonPlateThickness, yPos)
-{               
-                //      <---(7mm)----> 
-                //      +---+    +---+  ^
-                //      |   |    |   |  | 
-                //      |   |____|   |  |>-- buttonPlateThickness
-                //      |            |  | 
-                //      +------------+  v 
-                //          >----<------- poleDiam
-                //       
-  
-  translate([(11+capLength)*-1,yPos, (buttonPlateThickness/-2)])
-  {
-    difference()
-    {
-      color("green")
-        cylinder(h=buttonPlateThickness, d=poleDiam+3, center=true);
-      translate([0,0,-0.5])
-        color("blue")
-          cylinder(h=buttonPlateThickness, d=poleDiam+0.2-(buttonSlack/2), center=true);
-    }
-  }
-    
-} // printSwitchPlate
-*/
-
-//-- switch extender -----------
-module makeSwitchExtender(shape, capLength, capWidth, thickness, poleDiam, extHeight, aboveLid)
+//module makeSwitchExtender(shape, capLength, capWidth, thickness, poleDiam, extHeight, aboveLid, thePolygon)
+module makeSwitchExtender(shape, capLength, capWidth, capRadius, thickness, poleDiam, extHeight, aboveLid, thePolygon)
 {
   
   //   -->|            |<-- shape=circle : Diameter=capWidth shape=square : capLength x capWidth
@@ -4078,31 +4095,16 @@ module makeSwitchExtender(shape, capLength, capWidth, thickness, poleDiam, extHe
   //          +----+         -
   //
   //       -->|    |<-- poleDiam
-   
-  if (shape==yappCircle)
-  {
-    //-- switch extender [yappCircle] button
-    //--- button cap
-    translate([0,0,(thickness/-2)])
+
+    //translate([0,0,(thickness/-2)])
+    translate([0,0,-thickness])
       color("red")
-        cylinder(h=thickness, d1=capLength-(buttonSlack*2), d2=capLength-buttonSlack, center=true);
+        generateShape (shape, true, capLength, capWidth, thickness, capRadius, 0, thePolygon);
+      
     //--- pole
     translate([0, 0, (extHeight/-2)-thickness]) 
       color("orange")
         cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
-  }
-  else
-  {
-    //-- switch extender [yappRectangle] button
-    //--- button cap
-    translate([0,0,(thickness/-2)])
-      color("red")
-        cube([capLength-buttonSlack, capWidth-buttonSlack, thickness], center=true);
-    //--- pole
-    translate([0, 0, (extHeight/-2)-thickness]) 
-      color("orange")
-        cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
-  }
 } // makeSwitchExtender()
 
 
@@ -4139,8 +4141,8 @@ module drawSwitchOnPCB()
       posX=(b[0]+pcbX);
       posY=(b[1]+pcbY);
      
-      btnHeight = b[5];
-      btnTravel = max(b[6],0.5);
+      btnHeight = b[6];
+      btnTravel = min(b[7],0.5);
       
       posZb=standoffHeight+pcbThickness+basePlaneThickness + ((btnHeight-btnTravel)/2);
       posZt=standoffHeight+pcbThickness+basePlaneThickness + btnHeight -(btnTravel/2);//+b[5]/2;
@@ -4159,7 +4161,7 @@ module drawSwitchOnPCB()
 function getParamWithDefault (theParam, theDefault) =
 (
   (theParam==undef) ? theDefault :
-  (is_list(theParam)) ? 0 :
+  (is_list(theParam)) ? theDefault :
   (theParam<= -30000) ? theDefault :
     theParam
 );
@@ -4168,7 +4170,7 @@ function getParamWithDefault (theParam, theDefault) =
 function getShapeWithDefault (theParam, theDefault) =
 (
   (theParam==undef) ? theDefault :
-  (is_list(theParam)) ? 0 :
+  (is_list(theParam)) ? theDefault :
   (theParam<= -30100) ? theDefault :
     theParam
 );
@@ -4184,6 +4186,31 @@ function getPartName(face) =
   (face==yappLid) ? "yappLid" :
   (face==yappBase) ? "yappBase" : "";
 
+  
+// Return vector that starts with Identifier
+function getVectorBase(identifier, setArray) = 
+  ( setArray[0][0] == identifier) ? setArray[0] : 
+  ( setArray[1][0] == identifier) ? setArray[1] : 
+  ( setArray[2][0] == identifier) ? setArray[2] : 
+  ( setArray[3][0] == identifier) ? setArray[3] : 
+  ( setArray[4][0] == identifier) ? setArray[4] : 
+  ( setArray[5][0] == identifier) ? setArray[5] : 
+  ( setArray[6][0] == identifier) ? setArray[6] : 
+  ( setArray[7][0] == identifier) ? setArray[7] : 
+  ( setArray[8][0] == identifier) ? setArray[8] : 
+  ( setArray[9][0] == identifier) ? setArray[9] : 
+  ( setArray[10][0] == identifier) ? setArray[10] : 
+  ( setArray[11][0] == identifier) ? setArray[11] : 
+  ( setArray[12][0] == identifier) ? setArray[12] : 
+  ( setArray[13][0] == identifier) ? setArray[13] : 
+  ( setArray[14][0] == identifier) ? setArray[14] : 
+  ( setArray[15][0] == identifier) ? setArray[15] : 
+  ( setArray[16][0] == identifier) ? setArray[16] : 
+  ( setArray[17][0] == identifier) ? setArray[17] : 
+  ( setArray[18][0] == identifier) ? setArray[18] : 
+  ( setArray[19][0] == identifier) ? setArray[19] : false ;
+  
+  
   
 // Return vector that starts with Identifier
 function getVector(identifier, setArray) = 
@@ -4451,3 +4478,50 @@ if (debug) YAPPgenerate();
 * 
 ****************************************************************************
 */
+
+
+
+
+
+// Other Libraries used
+
+/*
+round-anything
+
+Copyright 2020 Kurt Hutten
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+// Only part of round-anything is used
+function sq(x)=x*x;
+
+module extrudeWithRadius(length,r1=0,r2=0,fn=30){
+  n1=sign(r1);n2=sign(r2);
+  r1=abs(r1);r2=abs(r2);
+  translate([0,0,r1]){
+    linear_extrude(length-r1-r2){
+      children();
+    }
+  }
+  for(i=[0:fn]){
+    translate([0,0,i/fn*r1]){
+      linear_extrude(r1/fn+0.01){
+        offset(n1*sqrt(sq(r1)-sq(r1-i/fn*r1))-n1*r1){
+          children();
+        }
+      }
+    }
+    translate([0,0,length-r2+i/fn*r2]){
+      linear_extrude(r2/fn+0.01){
+        offset(n2*sqrt(sq(r2)-sq(i/fn*r2))-n2*r2){
+          children();
+        }
+      }
+    }
+  }
+}

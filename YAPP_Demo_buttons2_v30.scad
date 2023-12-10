@@ -59,8 +59,8 @@ printLidShell         = true;
 printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 30;
-pcbWidth            = 40;
+pcbLength           = 100;
+pcbWidth            = 100;
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
@@ -147,9 +147,7 @@ inspectZfromTop     = true;     //-> View from the inspection cut down
 //-------------------------------------------------------------------
 pcbStands =
 [
-    //-- 0, 1,
-        [5, 5, yappBaseOnly, yappFrontLeft, yappBackRight] 
-      , [5, 5, yappBoth, yappBackLeft, yappFrontRight]
+  [5, 5]
 ];
 
 
@@ -188,9 +186,6 @@ pcbStands =
 //-------------------------------------------------------------------
 cutoutsBase =   
 [
-    [shellLength/2,shellWidth/2 ,25,25, 5, yappPolygon ,0 ,30, yappCenter, shapeHexagon, [maskHexCircles,0,5]]
- // [shellLength/2,shellWidth/2 ,25,25, 5, yappPolygon ,0 ,30, yappCenter, shape6ptStar, maskHexCircles]
- // [shellLength/2,shellWidth/2 ,15,15, 5, yappPolygon ,0 ,0, yappCenter, shapeIsoTriangle, maskBars, yappCoordBox]
 ];
 
 // (0) = posy
@@ -232,8 +227,6 @@ cutoutsLeft =
 //-------------------------------------------------------------------
 snapJoins   =   
 [
-    [(shellLength/2)-10, 4, yappLeft, yappCenter, yappSymmetric]
-   ,[(shellLength/2)-12, 4, yappRight, yappCenter, yappRectangle, yappSymmetric]
 ];
 
 
@@ -257,7 +250,6 @@ snapJoins   =
 //-------------------------------------------------------------------
 baseMounts   =  
 [
-    [(shellWidth/2)-5, 3, 6, 2.5, yappLeft, yappRight]
 ];
                                 
 
@@ -291,11 +283,83 @@ baseMounts   =
 //-------------------------------------------------------------------
 pushButtons = 
 [
- //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-    [15, 30, 0, 0, 4, 0, 3,   1, 3.5, undef, yappCircle]
-   ,[15, 10, 8, 6, 0, 3, 5.5, 1, 3.5, undef, yappRectangle]
-];     
-             
+   [20,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappCircle, // Shape
+  ]
+  ,[20,pcbWidth/2-20, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappCircle, // Shape
+    0,    
+    undef,
+    2.0, //buttonWall
+    2.5, // button plate thickness
+    0.5 // button slack
+  ]
+  ,[40,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappPolygon, // Shape
+    shapeArrow
+  ]
+  ,[40,pcbWidth/2-20, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappPolygon, // Shape
+    90,    
+    shapeArrow
+  ]
+  ,[60,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    2, // Radius
+    -1, // Cap above Lid
+    6, // Switch Height
+    1, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappRoundedRect // Shape
+  ]
+  ,[80,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    0, // Radius
+    1, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappRectangle,  // Shape
+    0
+  ]
+
+];
 
 
 //========= MAIN CALL's ===========================================================

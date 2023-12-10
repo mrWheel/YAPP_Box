@@ -474,7 +474,7 @@ cutoutsRight =
 //
 //  Parameters:
 //   Required:
-//    p(0) = pos
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset
 //    p(1) = screwDiameter
 //    p(2) = width
 //    p(3) = height
@@ -482,9 +482,13 @@ cutoutsRight =
 //    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
 //    n(a) = yappLeft / yappRight / yappFront / yappBack (one or more)
 //    n(b) = { yappNoFillet }
+//    n(c) = { <yappBase>, yappLid }
 //-------------------------------------------------------------------
 baseMounts =
 [
+//  [shellLength/2, 3, 10, 3, 2, yappLeft, yappRight, yappCenter]//, yappCenter]
+// ,[[shellLength/2,2], 3, 10, 3, 2, yappLeft, yappRight, yappCenter, yappLid]//, yappCenter]
+
 ];
 
 //===================================================================
@@ -777,66 +781,90 @@ module printBaseMounts()
                 circle(r=radius);
             }
           } // extrude..
-        } //  translate
-      
+        } //  translate      
       } // roundRect()
       //-------------------------------------------------------------------
   
-      module oneMount(bm, scrwX1pos, scrwX2pos)
+      module oneMount(bm, maxLength)
       {
-        mountPos = bm[0];                // = posx | posy
+        isCenter = isTrue(yappCenter, bm);
+        
+        //mountPos = bm[0];                // = posx | posy
+        mountPos = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
+        
+        
         mountOpeningDiameter = bm[1];    // = screwDiameter
         mountWidth = bm[2];              // = width
         mountHeight = bm[3];             // = Height
+        filletRad = getParamWithDefault(bm[4],0); // fillet radius
         
-        filletRad = getParamWithDefault(bm[4],0);
+        newWidth  = maxWidth(mountWidth, mountOpeningDiameter, maxLength);
+        tmpPos    = calcScrwPos(mountPos, newWidth, maxLength, isCenter);
+        tmpMinPos = minPos(tmpPos, mountOpeningDiameter);
+        scrwX1pos = maxPos(tmpMinPos, newWidth, mountOpeningDiameter, maxLength);
+        scrwX2pos = scrwX1pos + newWidth;
+    
         filletRadius = (filletRad==0) ? mountHeight/4 : filletRad;
         
         outRadius = mountOpeningDiameter;  // rad := diameter (r=6 := d=6)
         bmX1pos   = scrwX1pos-mountOpeningDiameter - mountPos;
         bmX2pos   = scrwX2pos-outRadius - mountPos;
-        bmYpos    = (mountOpeningDiameter*-2);
-        bmLen     = (mountOpeningDiameter*4)+bmYpos;
-
         
-        translate([mountOpeningDiameter - ((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2))/2, 0, 0])
+        bmYpos    = is_list(bm[0]) 
+        ? (mountOpeningDiameter*-2) - bm[0][1] 
+        : (mountOpeningDiameter*-2);       
+        
+        bmLen     = -bmYpos;
+      
+       // Get where to connect the mount defaulting to base
+        mountToPart = (isTrue(yappLid, bm)) ? yappLid : yappBase; 
+        
+        mountOffsetZ = (mountToPart==yappBase) ? 0 : -shellHeight + (mountHeight*2);
+        mountFlipZ = (mountToPart==yappBase) ? 0 : 1;
+        
+        translate([0,0,mountOffsetZ])
         {
-          difference()
+          mirror([0,0,mountFlipZ])
           {
+            translate([mountOpeningDiameter - ((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2))/2, 0, 0])
             {
-                color("red")
-                roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,mountHeight], outRadius);
-            }
-            
-            translate([0, (mountOpeningDiameter*-1), -1])
-            {
-              color("blue")
-              hull() 
+              difference()
               {
-                linear_extrude(mountHeight*2)
                 {
-                  translate([scrwX1pos - mountPos,0, 0]) 
-                    color("blue")
+                    color("red")
+                    roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,mountHeight], outRadius);
+                }
+                translate([0, (bmYpos + mountOpeningDiameter), -1])
+                {
+                  color("blue")
+                  hull() 
+                  {
+                    linear_extrude(mountHeight*2)
                     {
-                      circle(mountOpeningDiameter/2);
-                    }
-                  translate([scrwX2pos - mountPos, 0, 0]) 
-                    color("blue")
-                      circle(mountOpeningDiameter/2);
-                } //  extrude
-              } // hull
-            } //  translate
-          
-          } // difference..
-          
-          // add fillet
-          if (!isTrue(yappNoFillet, bm))
-          {
-            color ("Red")
-            translate([scrwX1pos -mountOpeningDiameter - mountPos,0,0])  // x, Y, Z
-            linearFillet((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), filletRadius, 180);
-          }
-        }
+                      translate([scrwX1pos - mountPos,0, 0]) 
+                        color("blue")
+                        {
+                          circle(mountOpeningDiameter/2);
+                        }
+                      translate([scrwX2pos - mountPos, 0, 0]) 
+                        color("blue")
+                          circle(mountOpeningDiameter/2);
+                    } //  extrude
+                  } // hull
+                } //  translate
+              
+              } // difference..
+              
+              // add fillet
+              if (!isTrue(yappNoFillet, bm))
+              {
+                color ("Red")
+                translate([scrwX1pos -mountOpeningDiameter - mountPos,0,0])  // x, Y, Z
+                linearFillet((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), filletRadius, 180);
+              }
+            }
+          } //mirror
+        } // translate
       } //  oneMount()
       
     //--------------------------------------------------------------------
@@ -859,98 +887,54 @@ module printBaseMounts()
       if (showMarkersPCB)
       {
         color("Red") translate([0,0,((shellHeight+onLidGap)/2)]) %cylinder(r=1,h=shellHeight+onLidGap+20, center=true);
-      }
+      } //showMarkersPCB
       
       for (bm = baseMounts)
-      {
-        c = isTrue(yappCenter, bm);
+      {    
         
-        // (0) = posx | posy
-        // (1) = screwDiameter
-        // (2) = width
-        // (3) = Height
-        // (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
+        mountPos = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
+        mountHeight = bm[3];
+
         if (isTrue(yappLeft, bm))
         {
-          translate([bm[0],0, bm[3]])
+          translate([mountPos,0, mountHeight])
           rotate([0,180,0])
           {
-            newWidth  = maxWidth(bm[2], bm[1], shellLength);
-            tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
-            tmpMinPos = minPos(tmpPos, bm[1]);
-            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
-            scrwX2pos = scrwX1pos + newWidth;
-            oneMount(bm, scrwX1pos, scrwX2pos);
+            oneMount(bm, shellLength);
           }
         } //  if yappLeft
         
-        // (0) = posx | posy
-        // (1) = screwDiameter
-        // (2) = width
-        // (3) = Height
-        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappRight, bm))
         {
           rotate([0,0,180])
           {
             mirror([1,0,0])
             {
-              translate([shellLength - bm[0],(shellWidth*-1), bm[3]])
+              translate([shellLength - mountPos,(shellWidth*-1), mountHeight])
               rotate([0,180,0])
               {
-                newWidth  = maxWidth(bm[2], bm[1], shellLength);
-                tmpPos    = calcScrwPos(bm[0], newWidth, shellLength, c);
-                tmpMinPos = minPos(tmpPos, bm[1]);
-                scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellLength);
-                scrwX2pos = scrwX1pos + newWidth;
-                oneMount(bm, scrwX1pos, scrwX2pos);
+                oneMount(bm, shellLength);
               }
             } // mirror()
-          } // rotate
-          
+          } // rotate          
         } //  if yappRight
-        
-        // (0) = posx | posy
-        // (1) = screwDiameter
-        // (2) = width
-        // (3) = Height
-        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappFront, bm))
         {
-          //echo("baseMountOffset",bm[0]);
-          
-          translate([shellLength,bm[0], -(bm[3]*-1)])
+          translate([shellLength,mountPos, -(mountHeight*-1)])
           rotate([0,180,90])
           {
-            newWidth  = maxWidth(bm[2], bm[1], shellWidth);
-            tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
-            tmpMinPos = minPos(tmpPos, bm[1]);
-            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
-            scrwX2pos = scrwX1pos + newWidth;
-            oneMount(bm, scrwX1pos, scrwX2pos);
+            oneMount(bm, shellLength);
           }
         } //  if yappFront
         
-        // (0) = posx | posy
-        // (1) = screwDiameter
-        // (2) = width
-        // (3) = Height
-        // (4..7) = yappLeft / yappRight / yappFront / yappBack (one or more)
         if (isTrue(yappBack, bm))
         {
-          //echo("printBaseMount: BACK!!");
-          translate([0,bm[0], -(bm[3]*-1)])
+          translate([0,mountPos, -(mountHeight*-1)])
           rotate([0,180,-90])
           {
-            newWidth  = maxWidth(bm[2], bm[1], shellWidth);
-            tmpPos    = calcScrwPos(bm[0], newWidth, shellWidth, c);
-            tmpMinPos = minPos(tmpPos, bm[1]);
-            scrwX1pos = maxPos(tmpMinPos, newWidth, bm[1], shellWidth);
-            scrwX2pos = scrwX1pos + newWidth;
-            oneMount(bm, scrwX1pos, scrwX2pos);
+            oneMount(bm, shellLength);
           }
         } //  if yappFront
-        
       } // for ..
       
   } //  translate to [0,0,0]
@@ -1468,6 +1452,16 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     else
     {
       //Lid
+      if (len(baseMounts) > 0)
+      {
+        difference()
+        {
+          printBaseMounts();
+          minkowskiCutBox(L, W, H, iRad, plane, wall);
+        } // difference()
+      } // if (len(baseMounts) > 0)
+
+
       color("Red")
       difference()
       {
@@ -2624,13 +2618,13 @@ module buildButtons(preCuts)
           xOff = max(cLength, cWidth);
           
           // Determine where to show them for Lid on case or off
-          extPosX = (externderPos) ? xPos : -10 ;
-          extPosY = (externderPos) ? yPos : shellWidth*2 - (i* 10);
+          extPosX = (externderPos) ? xPos : -30 ;
+          extPosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           extPosZ = (externderPos) ? aboveLid : 0 ;
           extRot  = (externderPos) ? 0 : 0 ;
 
-          platePosX = (externderPos) ? xPos : -20 ;
-          platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 10);
+          platePosX = (externderPos) ? xPos : -10 ;
+          platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           platePosZ = (externderPos) ? 
           + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid 
           : -thebuttonPlateThickness/2 ;

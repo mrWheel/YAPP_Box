@@ -100,7 +100,7 @@ showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 5;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
-shiftLid            = 1;
+shiftLid            = 10;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 colorBase           = "yellow";
@@ -210,48 +210,6 @@ cutoutsLeft =
 ];
 
 
-//===================================================================
-//  *** Snap Joins ***
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx | posy
-//    (1) = width
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//   Optional:
-//    (n) = { <yappOrigin> | yappCenter }
-//    (n) = { yappSymmetric }
-//    (n) = { yappRectangle } == Make a diamond shape snap
-//-------------------------------------------------------------------
-snapJoins   =   
-[
-];
-
-
-//===================================================================
-//  *** Base Mounts ***
-//    Mounting tabs on the outside of the box
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = pos
-//    (1) = screwDiameter
-//    (2) = width
-//    (3) = height
-//   Optional:
-//    (4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//    (n) = { yappNoFillet }
-//-------------------------------------------------------------------
-//-------------------------------------------------------------------
-baseMounts   =  
-[
-];
-                                
 
 //===================================================================
 //  *** Push Buttons ***
@@ -293,6 +251,7 @@ pushButtons =
     3, // Pole Diameter
     undef, // Height to top of PCB
     yappCircle, // Shape
+    yappNoFillet
   ]
   ,[20,pcbWidth/2-20, 
     8, // Width

@@ -391,7 +391,7 @@ preDefinedMasks=[
 //    p(7) = filletRadius (0 = auto size)
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
 //    n(b) = { <yappPin>, yappHole } // Baseplate support treatment
-//    n(c) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+//    n(c) = { yappAllCorners, yappFrontLeft | yappFrontRight | <yappBackLeft> | yappBackRight }
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { yappNoFillet }
 //-------------------------------------------------------------------
@@ -1697,11 +1697,12 @@ module pcbHolders()
               : coordSystem[0]==yappCoordBoxInside ? shellInsideWidth 
               : undef;
     
-    allCorners = ((!isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand)) || (isTrue(yappAllCorners, stand)) ) ? true : false;
+    allCorners = (isTrue(yappAllCorners, stand)) ? true : false;
+    primeOrigin = (!isTrue(yappBackLeft, stand) && !isTrue(yappFrontLeft, stand) && !isTrue(yappFrontRight, stand) && !isTrue(yappBackRight, stand) && !isTrue(yappAllCorners, stand) ) ? true : false;
 
     if (!isTrue(yappLidOnly, stand))
     {
-      if (allCorners || isTrue(yappBackLeft, stand))
+      if (primeOrigin || allCorners || isTrue(yappBackLeft, stand))
          translate([offsetX+connX, offsetY + connY, basePlaneThickness])
           pcbStandoff(yappPartBase, pcbStandHeight, filletRad, standType, "green", !isTrue(yappNoFillet, stand),stand);
 
@@ -1759,11 +1760,12 @@ module pcbPushdowns()
     lengthX   = usePCBCoord ? pcbLength : shellLength;
     lengthY   = usePCBCoord ? pcbWidth : shellWidth;
 
-    allCorners = ((!isTrue(yappBackLeft, pushdown) && !isTrue(yappFrontLeft, pushdown) && !isTrue(yappFrontRight, pushdown) && !isTrue(yappBackRight, pushdown)) || (isTrue(yappAllCorners, pushdown)) ) ? true : false;
+    allCorners = (isTrue(yappAllCorners, pushdown)) ? true : false;
+    primeOrigin = (!isTrue(yappBackLeft, pushdown) && !isTrue(yappFrontLeft, pushdown) && !isTrue(yappFrontRight, pushdown) && !isTrue(yappBackRight, pushdown) && !isTrue(yappAllCorners, pushdown) ) ? true : false;
 
     if (!isTrue(yappBaseOnly, pushdown))
     {
-      if (allCorners || isTrue(yappBackLeft, pushdown))
+      if (primeOrigin || allCorners || isTrue(yappBackLeft, pushdown))
       {
         translate([offsetX + connX, offsetY + connY, pcbZlid*-1])
           pcbStandoff(yappPartLid, pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
@@ -2684,7 +2686,7 @@ module buildButtons(preCuts)
           platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           platePosZ = (externderPos) ? 
           + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid
-          : +thebuttonPlateThickness/2;
+          : -thebuttonPlateThickness/2;
           
           plateRot  = (externderPos) ? 180 : 0 ;
           

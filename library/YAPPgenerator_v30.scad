@@ -2686,7 +2686,7 @@ module buildButtons(preCuts)
           platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           platePosZ = (externderPos) ? 
           + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid
-          : +thebuttonPlateThickness/2;
+          : -thebuttonPlateThickness/2;
           
           plateRot  = (externderPos) ? 180 : 0 ;
           

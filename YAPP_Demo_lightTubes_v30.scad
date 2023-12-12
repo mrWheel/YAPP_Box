@@ -194,14 +194,14 @@ cutoutsBase =
 cutoutsFront =  
 [
   // 0, 1,      2,            3,      4, 5
-    [5, 2, shellWidth-10, shellHeight-4, 2, yappRoundedRect]
+    [5, 2, shellWidth-10, shellHeight-4, 2, yappRoundedRect, yappCoordBox]
 ];
 
 // (0) = posy
 // (1) = posz
 cutoutsBack =   
 [
-    [3, 2, shellWidth-6, shellHeight-4, 3, yappRoundedRect]
+    [3, 2, shellWidth-6, shellHeight-4, 3, yappRoundedRect, yappCoordBox]
 ];
 
 
@@ -228,25 +228,31 @@ snapJoins   =
 
 
 //===================================================================
-//  *** Base Mounts ***
+//  *** Box Mounts ***
 //    Mounting tabs on the outside of the box
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //  Parameters:
 //   Required:
-//    (0) = pos
-//    (1) = screwDiameter
-//    (2) = width
-//    (3) = height
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X.
+//                    Position is to center of mounting screw in leftmost position in slot
+//    p(1) = screwDiameter
+//    p(2) = width of opening in addition to screw diameter 
+//                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
+//    p(3) = height
 //   Optional:
-//    (4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//    (n) = { yappNoFillet }
+//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
+//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
+//    n(b) = { yappNoFillet }
+//    n(c) = { <yappBase>, yappLid }
+//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
+//                            the left of the opening
+//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
 //-------------------------------------------------------------------
-baseMounts   =  
+boxMounts   =  
 [
-    [(shellWidth/2)-5, 3, 6, 2.5, yappLeft, yappRight]
+    [(shellLength/2), 3, 6, 2.5, yappLeft, yappRight, yappCenter]
 ];
 
                
@@ -257,19 +263,21 @@ baseMounts   =
 //
 //  Parameters:
 //   Required:
-//    (0) = posx
-//    (1) = posy
-//    (2) = tubeLength
-//    (3) = tubeWidth
-//    (4) = tubeWall
-//    (5) = gapAbovePcb
-//    (6) = tubeType    {yappCircle|yappRectangle}
+//    p(0) = posx
+//    p(1) = posy
+//    p(2) = tubeLength
+//    p(3) = tubeWidth
+//    p(4) = tubeWall
+//    p(5) = gapAbovePcb
+//    p(6) = tubeType    {yappCircle|yappRectangle}
 //   Optional:
-//    (7) = lensThickness (how much to leave on the top of the lid for the light to shine through 0 for open hole : Default = 0/Open
-//    (8) = Height to top of PCB : Default = defaultStandoffHeight+pcbThickness
-//    (9) = filletRadius : Default = 0/Auto 
-//    (n) = { yappCoordBox, <yappCoordPCB> }
-//    (n) = { yappNoFillet }
+//    p(7) = lensThickness (how much to leave on the top of the lid for the 
+//           light to shine through 0 for open hole : Default = 0/Open
+//    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
+//    p(9) = filletRadius : Default = 0/Auto 
+//    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
+//    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
+//    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 lightTubes = 
 [

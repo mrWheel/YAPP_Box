@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for <template>
+//  This is a box for Ridge Edge Demo
 //
-//  Version 3.0 (01-12-2023)
+//  Version 3.0 (12-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -158,7 +158,6 @@ inspectZfromTop     = false;    //-> View from the inspection cut down
 
 cutoutsBase = 
 [
-
 ];
 
 cutoutsLid  = 
@@ -167,29 +166,30 @@ cutoutsLid  =
 
 cutoutsFront =  
 [
+//  1,                         2,  3,  4,  5, 6..
   // This can only have a cable put through it after the case is assembled
   // This could be used as a locking pin
-  [75,ridgeExtTop-(ridgeHeight/2), 0,  0,  1, yappCircle, yappCenter]
+  [75,ridgeExtTop-(ridgeHeight/2), 0,  0,  1, yappCircle, yappCenter, yappCoordBox]
   
   // Make the hole thru the end of the ridge extansion
- ,[85,ridgeExtTop-ridgeHeight-3, 0,  0,  3, yappCircle]
+ ,[85,ridgeExtTop-ridgeHeight-3, 0,  0,  3, yappCircle, yappCoordBox]
  
   // In the Middle of the Ridge
- ,[95+3,ridgeExtTop-(ridgeHeight/2), 0,  0,  2.5, yappCircle, yappCenter]
+ ,[95+3,ridgeExtTop-(ridgeHeight/2), 0,  0,  2.5, yappCircle, yappCenter, yappCoordBox]
 
   // Make the hole thru the end of the ridge extansion
- ,[25,ridgeExtTop-10-3, 0,  0,  3, yappCircle]
+ ,[25,ridgeExtTop-10-3, 0,  0,  3, yappCircle, yappCoordBox]
 
   // Make the rounded rect thru the end of the ridge extansion
- ,[45,ridgeExtTop - 15-3, 20, 6,  3, yappRoundedRect]
+ ,[45,ridgeExtTop - 15-3, 20, 6,  3, yappRoundedRect, yappCoordBox]
 
   // Make the hexagonal thru the end of the ridge extansion
- ,[38,ridgeExtTop - 15, 6, 6,  0, yappPolygon, 0, 30, shapeHexagon, yappCenter]
+ ,[38,ridgeExtTop - 15, 6, 6,  0, yappPolygon, 0, 30, shapeHexagon, yappCenter, yappCoordBox]
 
 
 ];
 
-
+/***
 cutoutsBack = 
 [
   // Make the hole thru the end of the ridge extansion
@@ -239,6 +239,7 @@ cutoutsRight =
 
 ];
 
+***/
 
 //===================================================================
 //  *** Ridge Extension ***
@@ -253,7 +254,7 @@ cutoutsRight =
 //    (2) = height : Distance below the ridge : Negative to move into lid
 //   Optional:
 //    (n) = { <yappOrigin>, yappCenter } 
-//    (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    (n) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
 
 // Note: use ridgeExtTop to reference the top of the extension for cutouts.
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
@@ -349,33 +350,6 @@ ridgeExtRight =
 //-------------------------------------------------------------------
 labelsPlane =
 [
-//  [5, 5, 0, 3, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
-// ,[5, 5, 0, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
-// ,[5, 5, 0, 3, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
-// ,[5, 5, 0, 3, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
-// ,[5, 5, 0, 3, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
-//  ,[5, 5, 0, 3, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
- 
-//  ,[10, 15, 45, 3, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
-//  ,[10, 15, 45, 3, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
-//  ,[10, 15, 45, 3, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
-//  ,[10, 15, 45, 3, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
-//  ,[10, 15, 45, 3, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
-//  ,[10, 15, 45, 3, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
-
-//  ,[35, 5, 0, -2, yappTop, "Liberation Mono:style=bold", 5, "YAPP Top" ]
-//  ,[35, 5, 0, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
-//  ,[35, 5, 0, -2, yappLeft, "Liberation Mono:style=bold", 5, "YAPP Left" ]
-//  ,[35, 5, 0, -2, yappRight, "Liberation Mono:style=bold", 5, "YAPP Right" ]
-//  ,[35, 5, 0, -2, yappFront, "Liberation Mono:style=bold", 5, "YAPP Front" ]
-//  ,[35, 5, 0, -2, yappBack, "Liberation Mono:style=bold", 5, "YAPP Back" ]
- 
-//  ,[30, 15, 45, -2, yappTop,    "Liberation Mono:style=bold", 5, "YAPP Top" ]
-//  ,[30, 15, 45, -2, yappBottom, "Liberation Mono:style=bold", 5, "YAPP Bottom" ]
-//  ,[30, 15, 45, -2, yappLeft,   "Liberation Mono:style=bold", 5, "YAPP Left" ]
-//  ,[30, 15, 45, -2, yappRight,  "Liberation Mono:style=bold", 5, "YAPP Right" ]
-//  ,[30, 15, 45, -2, yappFront,  "Liberation Mono:style=bold", 5, "YAPP Front" ]
-//  ,[30, 15, 45, -2, yappBack,   "Liberation Mono:style=bold", 5, "YAPP Back" ]
 ];
 
 

@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.0 (08-12-2023)";
+Version="v3.0.0 (12-12-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -390,8 +390,8 @@ preDefinedMasks=[
 //    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
 //    p(7) = filletRadius (0 = auto size)
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    n(b) = { yappHole, <yappPin> } // Baseplate support treatment
-//    n(c) = { <yappAllCorners>, yappFrontLeft / yappFrontRight / yappBackLeft / yappBackRight }
+//    n(b) = { <yappPin>, yappHole } // Baseplate support treatment
+//    n(c) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { yappNoFillet }
 //-------------------------------------------------------------------
@@ -418,7 +418,7 @@ pcbStands =
 //   Optional:
 //    p(7) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
 //    p(8) = filletRadius : Default = 0/Auto(0 = auto size)
-//    n(a) = { <yappAllCorners>, yappFrontLeft / yappFrontRight / yappBackLeft / yappBackRight }
+//    n(a) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
@@ -466,7 +466,7 @@ connectors   =
 //                              placement within the opening.
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
-//    n(f) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
 //-------------------------------------------------------------------
 cutoutsBase = 
 [
@@ -494,30 +494,6 @@ cutoutsRight =
 
 
 //===================================================================
-//  *** Box Mounts ***
-//    Mounting tabs on the outside of the box
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X. Position is to center of mounting screw in leftmost position in slot
-//    p(1) = screwDiameter
-//    p(2) = width of opening in addition to screw diameter (0=Circular hole screwWidth = hole twice as wide as it is tall)
-//    p(3) = height
-//   Optional:
-//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    n(a) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//    n(b) = { yappNoFillet }
-//    n(c) = { <yappBase>, yappLid }
-//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of the left of the opening
-//    n(e) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Back and Right Faces
-//-------------------------------------------------------------------
-boxMounts =
-[
-];
-
-//===================================================================
 //  *** Snap Joins ***
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
@@ -526,13 +502,40 @@ boxMounts =
 //   Required:
 //    p(0) = posx | posy
 //    p(1) = width
-//    p(2) = yappLeft / yappRight / yappFront / yappBack (one or more)
+//    p(2) = { yappLeft | yappRight | yappFront | yappBack } : one or more
 //   Optional:
 //    n(a) = { <yappOrigin>, yappCenter }
 //    n(b) = { yappSymmetric }
 //    n(c) = { yappRectangle } == Make a diamond shape snap
 //-------------------------------------------------------------------
 snapJoins   =   
+[
+];
+
+//===================================================================
+//  *** Box Mounts ***
+//    Mounting tabs on the outside of the box
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X.
+//                    Position is to center of mounting screw in leftmost position in slot
+//    p(1) = screwDiameter
+//    p(2) = width of opening in addition to screw diameter 
+//                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
+//    p(3) = height
+//   Optional:
+//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
+//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
+//    n(b) = { yappNoFillet }
+//    n(c) = { <yappBase>, yappLid }
+//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
+//                            the left of the opening
+//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
+//-------------------------------------------------------------------
+boxMounts =
 [
 ];
 
@@ -556,7 +559,7 @@ snapJoins   =
 //    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    p(9) = filletRadius : Default = 0/Auto 
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
+//    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 lightTubes =
@@ -589,7 +592,7 @@ lightTubes =
 //    p(14) = buttonPlateThickness  : Default= 2.5;
 //    p(15) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
+//    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 pushButtons = 
@@ -824,8 +827,8 @@ module printBoxMounts()
         mountHeight = bm[3];                              // = Height
         filletRad = getParamWithDefault(bm[4],0);         // fillet radius
         bmYpos    = is_list(bm[0]) 
-        ? (mountOpeningDiameter*-2) - bm[0][1] 
-        : (mountOpeningDiameter*-2);   
+                  ? (mountOpeningDiameter*-2) - bm[0][1] 
+                  : (mountOpeningDiameter*-2);   
         
         slotOrientation = mountWidthRaw<0 ? false : true;
         mountWidth = slotOrientation ? mountWidthRaw : 0;
@@ -1784,6 +1787,7 @@ module pcbPushdowns()
   }  
 } // pcbPushdowns()
 
+//===========================================================
 module sanityCheckList(theList, theListName, minCount, shapeParam=undef, validShapes = []) 
   {
   //  theList = pcbStands;
@@ -1859,6 +1863,7 @@ module makeCutouts(type)
 } //makeCutouts()
 
 
+//===========================================================
 module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ)
 {
   // Check if there is a mask
@@ -1953,7 +1958,8 @@ module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, 
   } //translate
   
   if (printMessages) echo ("------------------------------");
-} //processCutoutList_Shape
+    
+} //  processCutoutList_Shape()
 
 
 //===========================================================
@@ -2048,6 +2054,7 @@ module processRidgeExtList_Face(face, ridgeExtList, casePart, swapXY, swapWH, in
     
     processRidgeExtList(subtract, ridgeExt, casePart, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth, base_pos_H, base_pos_V, adjustedHeight, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
    } //for ( ridgeExt = ridgeExtList )
+   
 } //processRidgeExtList_Face
 
 
@@ -2119,6 +2126,7 @@ module processRidgeExtList(subtract, ridgeExt, casePart, rot_X, rot_Y, rot_Z, of
       }// rotate
     } //translate
   }
+  
 } //processRidgeExtList
 
 
@@ -2258,6 +2266,7 @@ module processFaceList(face, list, casePart, listType, subtract)
       processCutoutList_Face(face, list, casePart, true, false, false, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth);
     } // listType=="cutout"
   }
+  
 } // processFaceList()
 
 
@@ -2317,6 +2326,7 @@ module cutoutsForScrewHoles(type)
       }
     }     
   } // for conn ..  
+  
 } // cutoutsForScrewHoles()
 
 
@@ -2423,7 +2433,7 @@ module buildLightTubes()
         {
           filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
           translate([0,0,(pcbTop2Lid/2)])
-          color("red") pinFillet(-(tWidth+(tWall*2))/2,filletRadius);
+          color("red") pinFillet(-(tWidth+(tWall*2))/2, filletRadius);
         } // ifFillet
       }
       else
@@ -2451,6 +2461,7 @@ module buildLightTubes()
       }
     }
   } //--for(..)
+  
 } //  buildLightTubes()
 
 
@@ -2488,6 +2499,7 @@ module buttonCutout()
                 ]];
      processFaceList(yappLid, tmpArray, yappPartLid, "cutout", true);
   } //-- for buttons
+  
 } //  buttonCutout()
 
 
@@ -2612,7 +2624,7 @@ module buildButtons(preCuts)
               } //translate
               
               //-------- outside pole holder -- Always a cylinder
-           //   translate([0, 0, -holderLength-buttonCupDepth])
+              //-- translate([0, 0, -holderLength-buttonCupDepth])
               translate([0, 0,  -thebuttonWall-buttonCupDepth-holderLength])
               {
                 color("gray") cylinder(h=holderLength, d=pDiam+thebuttonSlack+thebuttonWall);
@@ -2697,6 +2709,7 @@ module buildButtons(preCuts)
       } // Post Cuts
     } //-- for buttons ..
   } //-- len(pushButtons) > 0
+  
 } //  buildButtons()
 
 
@@ -2863,6 +2876,7 @@ module drawLabels(casePart, subtract)
     } // Valid check
     } // Translate
   } // for labels
+  
 } //  drawLabels()
 
 
@@ -3355,11 +3369,12 @@ module showOrientation()
 } // showOrientation()
 
 
-///===========================================================
-// negative pinRadius flips the fillet in the Z 
-// negative filletRadius makes it an internal fillet
-module pinFillet (pinRadius, filletRadius) {
-  // Error checking for internal fillet bigger than the hole
+//===========================================================
+//-- negative pinRadius flips the fillet in the Z 
+//-- negative filletRadius makes it an internal fillet
+module pinFillet(pinRadius, filletRadius) 
+{
+  //-- Error checking for internal fillet bigger than the hole
   filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius) : filletRadius;
   fr = abs(filletRad);
   voffset = (pinRadius < 0) ? -fr : fr;
@@ -3368,7 +3383,7 @@ module pinFillet (pinRadius, filletRadius) {
   xoffset = (filletRad < 0) ? -fr : 0;
   voffset3 = (filletRad < 0) ? (fr*2) : 0;
   pr = (pinRadius < 0) ? -pinRadius : pinRadius;
-  // Change to simplier fillet calculation
+  //-- Change to simplier fillet calculation
   translate([0,0, voffset])
     rotate_extrude()
       translate([-fr-pr+voffset3, 0, 0])
@@ -3381,7 +3396,8 @@ module pinFillet (pinRadius, filletRadius) {
 
 
 //===========================================================
-module boxFillet (boxSize, filletRadius) {
+module boxFillet (boxSize, filletRadius) 
+{
   fr = filletRadius;
   voffset = (boxSize < 0) ? 0 : fr;
   voffset2 = (boxSize < 0) ? -fr : 0;
@@ -3404,7 +3420,8 @@ module boxFillet (boxSize, filletRadius) {
 
 
 //===========================================================
-module boxFillet (boxSize, filletRadius) {
+module boxFillet (boxSize, filletRadius) 
+{
   fr = filletRadius;
   voffset = (boxSize < 0) ? 0 : fr;
   voffset2 = (boxSize < 0) ? -fr : 0;
@@ -3518,10 +3535,12 @@ module rectangleFillet (boxWidth, boxLength, filletRadius, orientation=0)
 
 module roundedRectangle2D(width,length,radius)
 {
-  if (radius > width/2 || radius > length/2) {
+  if (radius > width/2 || radius > length/2) 
+  {
       echo("Warning radius too large");
   }
-  hull() {
+  hull() 
+  {
     translate ([(-width/2) + radius, (-length/2) + radius,0]) circle(r=radius);
     translate ([(+width/2) - radius, (-length/2) + radius,0]) circle(r=radius);
     translate ([(-width/2) + radius, (+length/2) - radius,0]) circle(r=radius);
@@ -3567,7 +3586,8 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
         else if (Shape == yappPolygon)
         {
           translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
-          scale([Width,Length,0]){
+          scale([Width,Length,0])
+          {
             polygon(Polygon);
           }
         }
@@ -3669,8 +3689,8 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
 } //generateShape
 
 
-module genMaskfromParam(params, width, height, depth, hOffset, vOffset, addRot) {
-  
+module genMaskfromParam(params, width, height, depth, hOffset, vOffset, addRot) 
+{  
   if (printMessages) echo("Mask");
   //get the Polygon if listed
   thePolygon = getVector(yappPolygonDef, params);
@@ -3765,26 +3785,27 @@ module genMask(pattern, width, height, hOffset, vOffset, thickness, hRepeat, vRe
 } // genMask
 
 
-module drawLid() {
-  // Draw objects not cut by the lid
-// Comment out difference() to see objects instead of cutting them from the lid 
-// xxxxx        
+module drawLid() 
+{
+//-- Draw objects not cut by the lid
+//-- Comment out difference() to see objects instead of cutting them from the lid 
+//-- xxxxx        
   difference()  // (t1) 
   {
-    // Draw the lid
+    //-- Draw the lid
     lidShell();
         
-    // Remove parts of it
+    //-- Remove parts of it
     lightTubeCutout();
     buttonCutout();
         
-    // Do all of the face cuts
+    //-- Do all of the face cuts
     makeCutouts(yappPartLid);
     makeRidgeExt(yappPartLid,true);
           
     printSnapJoins(yappPartLid);
 
-    // Draw the labels that are carved into the case
+    //-- Draw the labels that are carved into the case
     color("Red") drawLabels(yappPartLid, true);
     
   } //  difference(t1)
@@ -3890,7 +3911,8 @@ module YAPPgenerate()
   sanityCheckList(cutoutsBase, "cutoutsRight", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey]);
   sanityCheckList(snapJoins, "snapJoins", 3, 2, [yappLeft, yappRight, yappFront, yappBack]);
   sanityCheckList(lightTubes, "lightTubes", 7, 6, [yappCircle, yappRectangle]);
-  sanityCheckList(lightTubes, "pushButtons", 9);
+//-aaw-sanityCheckList(lightTubes, "pushButtons", 9);
+  sanityCheckList(pushButtons, "pushButtons", 9);
   sanityCheckList(boxMounts, "boxMounts", 5);
   sanityCheckList(labelsPlane, "labelsPlane", 8, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
 

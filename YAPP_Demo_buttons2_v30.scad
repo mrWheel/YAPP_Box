@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a YAPP_Test_buttons_v30 test box
+//  This is a YAPP_Test_buttons2_v30 test box
 //
 //    Rendering takes ~ 11 minutes (renderQuality 10)
 //    Rendering takes ~  5 minutes (renderQuality 5)
 //
-//  Version 3.0 (01-12-2023)
+//  Version 3.0 (12-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //

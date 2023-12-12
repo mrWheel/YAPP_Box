@@ -238,26 +238,32 @@ snapJoins   =
 
 
 //===================================================================
-//  *** Base Mounts ***
+//  *** Box Mounts ***
 //    Mounting tabs on the outside of the box
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //  Parameters:
 //   Required:
-//    (0) = pos
-//    (1) = screwDiameter
-//    (2) = width
-//    (3) = height
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X.
+//                    Position is to center of mounting screw in leftmost position in slot
+//    p(1) = screwDiameter
+//    p(2) = width of opening in addition to screw diameter 
+//                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
+//    p(3) = height
 //   Optional:
-//    (4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//    (n) = { yappNoFillet }
+//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
+//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
+//    n(b) = { yappNoFillet }
+//    n(c) = { <yappBase>, yappLid }
+//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
+//                            the left of the opening
+//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
 //-------------------------------------------------------------------
-//-------------------------------------------------------------------
-baseMounts   =  
+boxMounts   =  
 [
-    [(shellWidth/2)-5, 3, 6, 2.5, yappLeft, yappRight]
+ // [(shellLength/2)-0, 3, 6, 2.5, yappLeft, yappRight, yappCenter]
+ //,[(shellLength/2)-0, 3, -2, 2.5, yappLeft, yappRight, yappLid, yappCenter]
 ];
                                 
 
@@ -287,7 +293,8 @@ baseMounts   =
 //    p(14) = buttonPlateThickness  : Default= 2.5;
 //    p(15) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
+//    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
+//    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 pushButtons = 
 [

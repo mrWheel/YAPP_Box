@@ -67,7 +67,7 @@ printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
 pcbLength           = 150; // Front to back
-pcbWidth            = 30; // Side to side
+pcbWidth            = 60; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
@@ -97,7 +97,7 @@ ridgeHeight         = 5.0;
 ridgeSlack          = 0.3;
 
 //-- Radius of the shell corners
-roundRadius         = 5;
+roundRadius         = 8;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
@@ -114,7 +114,7 @@ showSideBySide        = true;     //-> true
 previewQuality        = 5;        //-> from 1 to 32, Default = 5
 renderQuality         = 8;        //-> from 1 to 32, Default = 8
 onLidGap              = 0;
-shiftLid              = 5;
+shiftLid              = 10;
 colorLid              = "YellowGreen";   
 alphaLid              = 1;
 colorBase             = "BurlyWood";
@@ -122,8 +122,8 @@ alphaBase             = 1;
 hideLidWalls          = false;    //-> false
 hideBaseWalls         = false;    //-> false
 showOrientation       = true;
-showPCB               = true;
-showSwitches          = true;
+showPCB               = false;
+showSwitches          = false;
 showMarkersBoxOutside = false;
 showMarkersBoxInside  = false;
 showMarkersPCB        = false;
@@ -179,8 +179,8 @@ yappPartBase            = -30306;
 yappPartLid             = -30307;
 
 // Placement Options
-yappCenter              = -30400;  // Cutouts, baseMounts, lightTubes, Buttons,pcbStands, Connectors]
-yappOrigin              = -30401;  // Cutouts, baseMounts, lightTubes, Buttons,pcbStands, Connectors]
+yappCenter              = -30400;  // Cutouts, boxMounts, lightTubes, Buttons,pcbStands, Connectors]
+yappOrigin              = -30401;  // Cutouts, boxMounts, lightTubes, Buttons,pcbStands, Connectors]
 
 yappSymmetric           = -30402;  // Cutouts, snapJoins 
 yappAllCorners          = -30403;  // pcbStands, Connectors, 
@@ -270,7 +270,7 @@ preDefinedShapes=[
   ["shapeTriangle", shapeTriangle],
   ["shapeTriangle2",shapeTriangle2], 
   ["shapeArrow", shapeArrow],
-  ["shapeArrow2", shapeArrow2]
+  ["shapeArrow2", shapeArrow2],
   ];
 
 
@@ -358,6 +358,15 @@ maskOffsetBars = [yappMaskDef,[
   30                    // openingRotation
   ]
 ];
+
+preDefinedMasks=[
+  ["maskHoneycomb", maskHoneycomb], 
+  ["maskHexCircles", maskHexCircles], 
+  ["maskCircles", maskCircles],
+  ["maskBars", maskBars],
+  ["maskOffsetBars", maskOffsetBars],
+  ];
+
 
 
 // Show sample of a Mask.in the negative X,Y quadrant
@@ -485,28 +494,27 @@ cutoutsRight =
 
 
 //===================================================================
-//  *** Base Mounts ***
+//  *** Box Mounts ***
 //    Mounting tabs on the outside of the box
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //  Parameters:
 //   Required:
-//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X. Position is to center of mounting screw in leftmost position in slot
 //    p(1) = screwDiameter
-//    p(2) = width
+//    p(2) = width of opening in addition to screw diameter (0=Circular hole screwWidth = hole twice as wide as it is tall)
 //    p(3) = height
 //   Optional:
 //    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
 //    n(a) = yappLeft / yappRight / yappFront / yappBack (one or more)
 //    n(b) = { yappNoFillet }
 //    n(c) = { <yappBase>, yappLid }
+//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of the left of the opening
+//    n(e) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Back and Right Faces
 //-------------------------------------------------------------------
-baseMounts =
+boxMounts =
 [
-//  [shellLength/2, 3, 10, 3, 2, yappLeft, yappRight, yappCenter]//, yappCenter]
-// ,[[shellLength/2,2], 3, 10, 3, 2, yappLeft, yappRight, yappCenter, yappLid]//, yappCenter]
-
 ];
 
 //===================================================================
@@ -582,6 +590,7 @@ lightTubes =
 //    p(15) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
+//    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 pushButtons = 
 [
@@ -768,9 +777,9 @@ function minOutside(ins, outs) = ((((ins*1.5)+0.2)>=outs) ? (ins*1.5)+0.2 : outs
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T==yappPartBase)) ? t+standoffHeight : h;
 
 //===========================================================
-module printBaseMounts()
+module printBoxMounts()
 {
-  //echo("printBaseMounts()");
+  //echo("printBoxMounts()");
  
       //-------------------------------------------------------------------
       module roundedRect(size, radius)
@@ -806,38 +815,49 @@ module printBaseMounts()
       } // roundRect()
       //-------------------------------------------------------------------
   
-      module oneMount(bm, maxLength)
+      module oneMount(bm, maxLength, originLLOpt, invertX)
       {
         isCenter = isTrue(yappCenter, bm);
+        mountPosRaw1 = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
+        mountOpeningDiameter = bm[1];                     // = screwDiameter
+        mountWidthRaw = bm[2];                            // = width
+        mountHeight = bm[3];                              // = Height
+        filletRad = getParamWithDefault(bm[4],0);         // fillet radius
+        bmYpos    = is_list(bm[0]) 
+        ? (mountOpeningDiameter*-2) - bm[0][1] 
+        : (mountOpeningDiameter*-2);   
         
-        //mountPos = bm[0];                // = posx | posy
-        mountPos = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
+        slotOrientation = mountWidthRaw<0 ? false : true;
+        mountWidth = slotOrientation ? mountWidthRaw : 0;
+        mountLength = slotOrientation ? 0 : mountWidthRaw;
         
-        
-        mountOpeningDiameter = bm[1];    // = screwDiameter
-        mountWidth = bm[2];              // = width
-        mountHeight = bm[3];             // = Height
-        filletRad = getParamWithDefault(bm[4],0); // fillet radius
-        
+        // Adjust for centered mounts
+        mountPosRaw2 = (isCenter) ? mountPosRaw1 - (mountWidth/2) : mountPosRaw1;
+        // Adjust for inverted axis
+        mountPosRaw = invertX ? mountPosRaw2 : -mountPosRaw2;
+        // Adjust for LowerLeft Origin
+        mountPos = originLLOpt ? maxLength - mountPosRaw - mountWidth : mountPosRaw;
+     
+        totalmountWidth = mountWidth+mountOpeningDiameter*2;
+            
         newWidth  = maxWidth(mountWidth, mountOpeningDiameter, maxLength);
-        tmpPos    = calcScrwPos(mountPos, newWidth, maxLength, isCenter);
-        tmpMinPos = minPos(tmpPos, mountOpeningDiameter);
-        scrwX1pos = maxPos(tmpMinPos, newWidth, mountOpeningDiameter, maxLength);
+        scrwX1pos = mountPos;
         scrwX2pos = scrwX1pos + newWidth;
+
+        newLength  = maxWidth(mountLength, mountOpeningDiameter, maxLength);
+        scrwY1pos = 0;
+        scrwY2pos = scrwY1pos + newLength;
     
         filletRadius = (filletRad==0) ? mountHeight/4 : filletRad;
         
         outRadius = mountOpeningDiameter;  // rad := diameter (r=6 := d=6)
-        bmX1pos   = scrwX1pos-mountOpeningDiameter - mountPos;
-        bmX2pos   = scrwX2pos-outRadius - mountPos;
-        
-        bmYpos    = is_list(bm[0]) 
-        ? (mountOpeningDiameter*-2) - bm[0][1] 
-        : (mountOpeningDiameter*-2);       
-        
-        bmLen     = -bmYpos;
-      
-       // Get where to connect the mount defaulting to base
+        bmX1pos   = scrwX1pos-mountOpeningDiameter;
+        bmX2pos   = scrwX2pos-outRadius;
+            
+        bmYpos1   = (slotOrientation) ? bmYpos : bmYpos + newLength;
+        bmLen     = -bmYpos1+roundRadius;
+            
+        // Get where to connect the mount defaulting to base
         mountToPart = (isTrue(yappLid, bm)) ? yappLid : yappBase; 
         
         mountOffsetZ = (mountToPart==yappBase) ? 0 : -shellHeight + (mountHeight*2);
@@ -847,52 +867,58 @@ module printBaseMounts()
         {
           mirror([0,0,mountFlipZ])
           {
-            translate([mountOpeningDiameter - ((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2))/2, 0, 0])
+            difference()
             {
-              difference()
+              // Mounting tab
+              color("red")
+              roundedRect([bmX1pos,bmX2pos,bmYpos1,bmLen,mountHeight], outRadius);
+              translate([0, (bmYpos + mountOpeningDiameter), -1])
               {
+                // Slot
+                color("blue")
+                hull() 
                 {
-                    color("red")
-                    roundedRect([bmX1pos,bmX2pos,bmYpos,bmLen,mountHeight], outRadius);
-                }
-                translate([0, (bmYpos + mountOpeningDiameter), -1])
-                {
-                  color("blue")
-                  hull() 
+                  linear_extrude(mountHeight*2)
                   {
-                    linear_extrude(mountHeight*2)
-                    {
-                      translate([scrwX1pos - mountPos,0, 0]) 
-                        color("blue")
-                        {
-                          circle(mountOpeningDiameter/2);
-                        }
-                      translate([scrwX2pos - mountPos, 0, 0]) 
-                        color("blue")
-                          circle(mountOpeningDiameter/2);
-                    } //  extrude
-                  } // hull
-                } //  translate
-              
-              } // difference..
-              
-              // add fillet
-              if (!isTrue(yappNoFillet, bm))
+                  //  translate([scrwX1pos - mountPos,0, 0]) 
+                    translate([scrwX1pos,scrwY1pos, 0]) 
+                      color("blue")
+                      {
+                        circle(mountOpeningDiameter/2);
+                      }
+                  //  translate([scrwX2pos - mountPos, 0, 0]) 
+                    translate([scrwX2pos, scrwY2pos, 0]) 
+                      color("blue")
+                        circle(mountOpeningDiameter/2);
+                  } //  extrude
+                } // hull
+              } //  translate
+            
+            } // difference..
+            
+            // add fillet
+            if (!isTrue(yappNoFillet, bm))
+            {
+              filletRad = min(filletRadius, -bmYpos/4);
+              color ("red")
+              union()
               {
-                color ("Red")
-                translate([scrwX1pos -mountOpeningDiameter - mountPos,0,0])  // x, Y, Z
-                linearFillet((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), filletRadius, 180);
+              translate([scrwX1pos -mountOpeningDiameter,0,0])  // x, Y, Z
+              {
+                linearFillet((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), filletRad, 180);
+              }
+              translate([scrwX1pos -mountOpeningDiameter,0,-(roundRadius-mountHeight)])  // x, Y, Z
+              {
+                cube([(scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), roundRadius,roundRadius-mountHeight]);
               }
             }
-          } //mirror
-        } // translate
+            } // Fillet
+          } // difference
+        } //mirror
       } //  oneMount()
       
     //--------------------------------------------------------------------
-    function calcScrwPos(p, l, ax, c) = (c==1)        ? (ax/2)-(l/2) : p;
     function maxWidth(w, r, l) = (w>(l-(r*4)))        ? l-(r*4)      : w;
-    function minPos(p, r) = (p<(r*2))                 ? r*2          : p;
-    function maxPos(p, w, r, mL) = ((p+w)>(mL-(r*2))) ? mL-(w+(r*2)) : p;
     //--------------------------------------------------------------------
 
     //--------------------------------------------------------
@@ -910,57 +936,55 @@ module printBaseMounts()
         color("Red") translate([0,0,((shellHeight+onLidGap)/2)]) %cylinder(r=1,h=shellHeight+onLidGap+20, center=true);
       } //showMarkersPCB
       
-      for (bm = baseMounts)
+      for (bm = boxMounts)
       {    
-        
         mountPos = is_list(bm[0]) ? bm[0][0] : bm[0]; // = posx
         mountHeight = bm[3];
+        mountLength = bm[2]<0 ? 0 : bm[2];
+        
+        
+        originLLOpt = isTrue(yappLeftOrigin, bm);
 
         if (isTrue(yappLeft, bm))
         {
-          translate([mountPos,0, mountHeight])
+          translate([mountLength,0, mountHeight])
           rotate([0,180,0])
           {
-            oneMount(bm, shellLength);
+            oneMount(bm, shellLength, false, false);
           }
         } //  if yappLeft
         
         if (isTrue(yappRight, bm))
         {
-          rotate([0,0,180])
+          translate([0,shellWidth, mountHeight])
+          rotate([0,180,180])
           {
-            mirror([1,0,0])
-            {
-              translate([shellLength - mountPos,(shellWidth*-1), mountHeight])
-              rotate([0,180,0])
-              {
-                oneMount(bm, shellLength);
-              }
-            } // mirror()
-          } // rotate          
+            oneMount(bm, shellLength, originLLOpt, true);
+          }
         } //  if yappRight
+        
         if (isTrue(yappFront, bm))
         {
-          translate([shellLength,mountPos, -(mountHeight*-1)])
+          translate([shellLength,mountLength, mountHeight])
           rotate([0,180,90])
           {
-            oneMount(bm, shellLength);
+            oneMount(bm, shellWidth, false, false);
           }
         } //  if yappFront
         
         if (isTrue(yappBack, bm))
         {
-          translate([0,mountPos, -(mountHeight*-1)])
+          translate([0,0, mountHeight])
           rotate([0,180,-90])
           {
-            oneMount(bm, shellLength);
+            oneMount(bm, shellWidth, originLLOpt, true);
           }
-        } //  if yappFront
+        } //  if yappBack
       } // for ..
       
   } //  translate to [0,0,0]
     
-} //  printBaseMounts()
+} //  printBoxMounts()
 
 
 //===========================================================
@@ -1196,7 +1220,7 @@ module printSnapJoins(casePart)
   {
     if (len(snapJoins) > 0) 
     {
-      echo (ridgeHeight=ridgeHeight,wallThickness=wallThickness);
+      //echo (ridgeHeight=ridgeHeight,wallThickness=wallThickness);
       assert ((ridgeHeight >= (wallThickness*1.8)), "ridgeHeight < 1.8 times wallThickness: no SnapJoins possible");
     }
     
@@ -1300,7 +1324,7 @@ module printSnapJoins(casePart)
       else
       // Use the Diamond Shape
       {
-        echo ("making Diamond shaped snaps");
+        if (printMessages) echo ("making Diamond shaped snaps");
         if (isTrue(yappLeft, snj))
         {
           translate([snapApos-(snapWidth/2)-0.5, (wallThickness/2)+0.04, snapZpos])
@@ -1429,14 +1453,14 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
   {
     if (shell==yappPartBase)
     {
-      if (len(baseMounts) > 0)
+      if (len(boxMounts) > 0)
       {
         difference()
         {
-          printBaseMounts();
+          printBoxMounts();
           minkowskiCutBox(L, W, H, iRad, plane, wall);
         } // difference()
-      } // if (len(baseMounts) > 0)
+      } // if (len(boxMounts) > 0)
      
       // Objects to be cut to outside the box       
       color("Orange")
@@ -1473,14 +1497,14 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     else
     {
       //Lid
-      if (len(baseMounts) > 0)
+      if (len(boxMounts) > 0)
       {
         difference()
         {
-          printBaseMounts();
+          printBoxMounts();
           minkowskiCutBox(L, W, H, iRad, plane, wall);
         } // difference()
-      } // if (len(baseMounts) > 0)
+      } // if (len(boxMounts) > 0)
 
 
       color("Red")
@@ -1711,7 +1735,7 @@ module pcbPushdowns()
     pcbGapTmp = getParamWithDefault(pushdown[3],-1);
     pcbGap = (pcbGapTmp == -1 ) ? (usePCBCoord) ? pcbThickness : 0 : pcbGapTmp;
 
-  echo ("pcbPushdowns", pcbGap=pcbGap);
+    //if (printMessages) echo ("pcbPushdowns", pcbGap=pcbGap);
     
     filletRad = getParamWithDefault(pushdown[7],0);
     
@@ -1856,7 +1880,7 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
       //shape
       processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
         
-      echo(rot_X=rot_X, rot_Y=rot_Y, rot_Z=rot_Z, offset_x=offset_x, offset_y=offset_y, offset_z=offset_z, wallDepth=wallDepth,base_pos_H=base_pos_H, base_pos_V=base_pos_V, base_width=base_width, base_height=base_height, base_depth=base_depth, base_angle=base_angle, pos_X=pos_X, pos_Y=pos_Y, invertZ=invertZ);
+      //echo(rot_X=rot_X, rot_Y=rot_Y, rot_Z=rot_Z, offset_x=offset_x, offset_y=offset_y, offset_z=offset_z, wallDepth=wallDepth,base_pos_H=base_pos_H, base_pos_V=base_pos_V, base_width=base_width, base_height=base_height, base_depth=base_depth, base_angle=base_angle, pos_X=pos_X, pos_Y=pos_Y, invertZ=invertZ);
       
       centeroffsetH = (isTrue(yappCenter, cutOut)) ? 0 : base_width / 2;
       centeroffsetV = (isTrue(yappCenter, cutOut)) ? 0 : base_height / 2;
@@ -2480,7 +2504,7 @@ module buildButtons(preCuts)
     {
       button=pushButtons[i];
 
-      echo(button);
+      //if (printMessages) echo(button);
       // Get the desired coordinate system    
       theCoordSystem = getCoordSystem(button, yappCoordPCB);    
 
@@ -2498,6 +2522,7 @@ module buildButtons(preCuts)
       shape       = getShapeWithDefault(button[10],yappRectangle);
       angle       = getParamWithDefault(button[11],0);  // New
       filletRad   = getParamWithDefault(button[12],0);
+      
       // Enable overriding the defaults
       thebuttonWall = getParamWithDefault(button[13],buttonWall);
       thebuttonPlateThickness = getParamWithDefault(button[14],buttonPlateThickness);
@@ -2575,9 +2600,14 @@ module buildButtons(preCuts)
                 color("green")
 //                generateShapeFillet (shape, true, cLength, cWidth, buttonCupDepth, filletRadius, 0, cRadius + (thebuttonSlack/2), angle, thePolygon, thebuttonWall);
 
-
-               generateShapeFillet (shape, true, cLength, cWidth, buttonCupDepth + thebuttonWall, filletRadius, 0, cRadius, angle, thePolygon, thebuttonWall);
-
+                if (!isTrue(yappNoFillet, button))
+                {
+                  generateShapeFillet (shape, true, cLength, cWidth, buttonCupDepth + thebuttonWall, filletRadius, 0, cRadius, angle, thePolygon, thebuttonWall);
+                }
+                else
+                {
+                  generateShape (shape, true, cLength, cWidth, buttonCupDepth + thebuttonWall, cRadius, angle, thePolygon, thebuttonWall);
+                } // fillet
 
               } //translate
               
@@ -2646,7 +2676,7 @@ module buildButtons(preCuts)
           
           plateRot  = (externderPos) ? 180 : 0 ;
           
-          echo(extPosZ=extPosZ, platePosZ=platePosZ);
+          //if (printMessages) echo(extPosZ=extPosZ, platePosZ=platePosZ);
           color("red")
           translate ([extPosX,extPosY,extPosZ]) 
           {
@@ -3126,7 +3156,7 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
  
   pcbGap = (pcbGapTmp == -1 ) ? (theCoordSystem[0]==yappCoordPCB) ? pcbThickness : 0 : pcbGapTmp;
   
-  echo("connectorNew", pcbGap=pcbGap);
+  if (printMessages) echo("connectorNew", pcbGap=pcbGap);
    
   if (shellPart==yappPartBase)
   {
@@ -3572,7 +3602,7 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
 
 
 
-module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotation, Polygon)
+module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotation, Polygon, expand=0)
 // Creates a shape centered at 0,0 in the XY and from 0-thickness in the Z
 { 
 //  echo (Shape=Shape, Center=Center, Width=Width, Length=Length, Thickness=Thickness, Radius=Radius, Rotation=Rotation, Polygon=Polygon);
@@ -3581,64 +3611,67 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
   {
     linear_extrude(height = Thickness)
     { 
-      if (Shape == yappCircle)
-      {
-        translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-        circle(r=Radius);
-      } 
-      else if (Shape == yappRectangle)
-      {
-        translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+      offset(expand)
+      { 
+        if (Shape == yappCircle)
         {
-          square([Width,Length], center=true); 
-        }
-      } 
-      else if (Shape == yappRoundedRect)
-      {
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+          circle(r=Radius);
+        } 
+        else if (Shape == yappRectangle)
         {
           translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
-          roundedRectangle2D(Width,Length,Radius);
-        }
-      }
-      else if (Shape == yappPolygon)
-      {
-        translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
-        scale([Width,Length,0]){
-          polygon(Polygon);
-        }
-      }
-      else if (Shape == yappCircleWithFlats)
-      {
-        translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-        {
-          intersection()
-          { 
-            circle(r=Radius);    
-            square([Width, Radius*2], center=true);
-          }
-        }
-      }
-      else if (Shape == yappCircleWithKey)
-      {
-        if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
-        translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-        {
-          difference()
           {
-          circle(r=Radius); 
-          translate ([Radius - (Width/2),0,0]) 
-            square([Width, Length ], center=true);
+            square([Width,Length], center=true); 
+          }
+        } 
+        else if (Shape == yappRoundedRect)
+        {
+          {
+            translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+            roundedRectangle2D(Width,Length,Radius);
           }
         }
-      }
-    }
-  }
+        else if (Shape == yappPolygon)
+        {
+          translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+          scale([Width,Length,0]){
+            polygon(Polygon);
+          }
+        }
+        else if (Shape == yappCircleWithFlats)
+        {
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+          {
+            intersection()
+            { 
+              circle(r=Radius);    
+              square([Width, Radius*2], center=true);
+            }
+          }
+        }
+        else if (Shape == yappCircleWithKey)
+        {
+          if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+          {
+            difference()
+            {
+            circle(r=Radius); 
+            translate ([Radius - (Width/2),0,0]) 
+              square([Width, Length ], center=true);
+            }
+          }
+        } 
+      } // offset
+    } // extrude
+  } // Rotate
 } //generateShape
 
 
 module genMaskfromParam(params, width, height, depth, hOffset, vOffset, addRot) {
   
-  echo("Mask");
+  if (printMessages) echo("Mask");
   //get the Polygon if listed
   thePolygon = getVector(yappPolygonDef, params);
   genMask(
@@ -3815,24 +3848,30 @@ module YAPPgenerate()
   echo("YAPP:", shellWidth=shellWidth);
   echo("YAPP:", shellInsideWidth=shellInsideWidth);
   echo("YAPP:", shellHeight=shellHeight);
-//  echo("YAPP:", shellpcbTop2Lid=shellpcbTop2Lid);
   echo("YAPP==========================================");
   echo("YAPP:", pcbX=pcbX);
   echo("YAPP:", pcbY=pcbY);
   echo("YAPP:", pcbZ=pcbZ);
   echo("YAPP:", pcbZlid=pcbZlid);
-//  echo("YAPP:", ridgeExtTop=ridgeExtTop);
   echo("YAPP==========================================");
   echo("YAPP:", shiftLid=shiftLid);
   echo("YAPP:", onLidGap=onLidGap);
   echo("YAPP==========================================");
-  echo("YAPP:", Version=Version);
+  echo(str("YAPP: Version:", Version));
   echo("YAPP:   copyright by Willem Aandewiel");
   echo("YAPP==========================================");
-  echo("YAPP:  Predefined Shapes");
-  echo("YAPP:   shapeIsoTriangle, shapeHexagon, shape6ptStar");
-  echo("YAPP:  Predefined Masks");
-  echo("YAPP:   maskHoneycomb, maskHexCircles, maskCircles, maskBars, maskOffsetBars");
+  echo("YAPP:  Predefined Shapes:");
+  
+  for (shape=preDefinedShapes)
+  {
+     echo(str("YAPP:    ",shape[0]));
+  }
+  echo("YAPP:  Predefined Masks:");
+  
+  for (mask=preDefinedMasks)
+  {
+     echo(str("YAPP:    ",mask[0]));
+  }
   echo("YAPP==========================================");
 
 
@@ -3842,7 +3881,7 @@ module YAPPgenerate()
   // Perform sanity checks
   sanityCheckList(pcbStands, "pcbStands", 2);
   sanityCheckList(connectors, "connectors", 7);
-  sanityCheckList(baseMounts, "baseMounts", 4);
+  sanityCheckList(boxMounts, "boxMounts", 4);
   sanityCheckList(cutoutsBase, "cutoutsBase", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey]);
   sanityCheckList(cutoutsBase, "cutoutsLid", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey]);
   sanityCheckList(cutoutsBase, "cutoutsFront", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey]);
@@ -3852,7 +3891,7 @@ module YAPPgenerate()
   sanityCheckList(snapJoins, "snapJoins", 3, 2, [yappLeft, yappRight, yappFront, yappBack]);
   sanityCheckList(lightTubes, "lightTubes", 7, 6, [yappCircle, yappRectangle]);
   sanityCheckList(lightTubes, "pushButtons", 9);
-  sanityCheckList(baseMounts, "baseMounts", 5);
+  sanityCheckList(boxMounts, "boxMounts", 5);
   sanityCheckList(labelsPlane, "labelsPlane", 8, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
 
   difference() // Inspection cuts
@@ -4350,7 +4389,8 @@ function getHeight(sourceSystem) =
   (sourceSystem == yappCoordBox) ? shellHeight :
   undef;
 
-
+//=============================
+// Beginning of test modules 
   
 module TestCoordTranslations()
 {
@@ -4409,21 +4449,6 @@ module TestCoordTranslations()
   TestPCB2Box(0,0,0, yappLid, [yappCoordBox, yappLeftOrigin]);
   TestPCB2Box(0,0,0, yappBase, [yappCoordBox, yappLeftOrigin]);
 } //TestCoordTranslations
-  
-module genMaskfromList(theList, width, height, depth)
-{
-  if (debug)
-  {
-    theMask = getVector(yappMaskDef, theList);
-    echo("Mask from ",theList,theMask=theMask);
-    if (theMask) genMaskfromParam(theMask, width, height, depth, 0, 0, 0);
-    
-    theMaskVector = getVectorInVector(yappMaskDef, theList);
-    echo("Vector Mask from ",theList,theMaskVector=theMaskVector);
-    if (theMaskVector) genMaskfromParam(theMaskVector[0][1], width, height, depth, 
-      getParamWithDefault(theMaskVector[1],0), getParamWithDefault(theMaskVector[2],0), getParamWithDefault(theMaskVector[3],0));   
-  }
-} //genMaskfromList
 
 
 // Test module for making masks
@@ -4449,7 +4474,7 @@ module SamplePolygon(thePolygon)
 //TestCoordTranslations();
 
 // End of test modules 
-  
+//=============================  
 
 //---- This is where the magic happens ----
 if (debug) YAPPgenerate();
@@ -4478,10 +4503,6 @@ if (debug) YAPPgenerate();
 * 
 ****************************************************************************
 */
-
-
-
-
 
 // Other Libraries used
 

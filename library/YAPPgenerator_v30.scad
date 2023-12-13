@@ -87,17 +87,17 @@ lidPlaneThickness   = 1.5;
 //                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 16;
-lidWallHeight       = 10;
+baseWallHeight      = 12;
+lidWallHeight       = 12;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight 
 //     or 2.5x wallThickness if using snaps
-ridgeHeight         = 5.0;
+ridgeHeight         = 3.0;
 ridgeSlack          = 0.3;
 
 //-- Radius of the shell corners
-roundRadius         = 8;
+roundRadius         = wallThickness + 1;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
@@ -124,6 +124,7 @@ hideBaseWalls         = false;    //-> false
 showOrientation       = true;
 showPCB               = false;
 showSwitches          = false;
+showButtonsDepressed  = true;     // Should the buttons in the Lid On view be in the pressed position
 showMarkersBoxOutside = false;
 showMarkersBoxInside  = false;
 showMarkersPCB        = false;
@@ -134,8 +135,6 @@ inspectZ              = 0;        //-> 0=none (>0 from Bottom)
 inspectXfromBack      = false;     //-> View from the inspection cut foreward
 inspectYfromLeft      = true;     //-> View from the inspection cut to the right
 inspectZfromTop       = false;    //-> View from the inspection cut down
-
-showButtonsDepressed  = true;     // Should the buttons in the Lid On view be in the pressed position
 //-- C O N T R O L -----------------------------------------------------------
 
 // ******************************
@@ -151,6 +150,11 @@ buttonSlack         = 0.25;
 
 //-- constants, do not change (shifted to large negative values so another element in the 
 //-- array won't match
+
+// Define some alternates to undef
+yappDefault             = undef;
+default                 = undef;
+
 // Shapes
 yappRectangle           = -30000;
 yappCircle              = -30001;
@@ -541,6 +545,7 @@ boxMounts =
 [
 ];
 
+   
 //===================================================================
 //  *** Light Tubes ***
 //-------------------------------------------------------------------
@@ -914,9 +919,9 @@ module printBoxMounts()
               {
                 linearFillet((scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), filletRad, 180);
               }
-              translate([scrwX1pos -mountOpeningDiameter,0,-(roundRadius-mountHeight)])  // x, Y, Z
+              translate([scrwX1pos -mountOpeningDiameter,0,-(roundRadius-mountHeight+filletRadius)])  // x, Y, Z
               {
-                cube([(scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), roundRadius,roundRadius-mountHeight]);
+                cube([(scrwX2pos-scrwX1pos)+(mountOpeningDiameter*2), roundRadius,roundRadius-mountHeight+filletRadius]);
               }
             }
             } // Fillet
@@ -1420,8 +1425,10 @@ module printSnapJoins(casePart)
 //===========================================================
 module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
 {
+  //echo("minkowskiBox", shell=shell, L=L, W=W, H=H, rad=rad, plane=plane, wall=wall, preCutouts=preCutouts);
   iRad = getMinRad(rad, wall);
-
+  cRad = (rad + iRad)/2;
+  
   //--------------------------------------------------------
   module minkowskiOuterBox(L, W, H, rad, plane, wall)
   {
@@ -1465,7 +1472,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         difference()
         {
           printBoxMounts();
-          minkowskiCutBox(L, W, H, iRad, plane, wall);
+          minkowskiCutBox(L, W, H, cRad, plane, wall);
         } // difference()
       } // if (len(boxMounts) > 0)
      
@@ -1476,14 +1483,14 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         // move it to the origin of the base
         translate ([-L/2, -W/2, -H]) // -baseWallHeight])
           hookBaseOutsidePre();    
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
       } // difference()
     
       //draw stuff inside the box
       color("LightBlue")
       intersection()
       {
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
         translate ([-L/2, -W/2, -H]) //-baseWallHeight])
           hookBaseInsidePre();
       } // intersection()
@@ -1509,7 +1516,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         difference()
         {
           printBoxMounts();
-          minkowskiCutBox(L, W, H, iRad, plane, wall);
+          minkowskiCutBox(L, W, H, cRad, plane, wall);
         } // difference()
       } // if (len(boxMounts) > 0)
 
@@ -1521,14 +1528,14 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         // move it to the origin of the base
         translate ([-L/2, -W/2, H]) //lidWallHeight])
         hookLidOutsidePre();
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
       } // difference()
       
       //draw stuff inside the box
       color("LightGreen")
       intersection()
       {
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
         translate ([-L/2, -W/2, H]) // lidWallHeight])
           hookLidInsidePre();
       } //intersection()
@@ -1559,14 +1566,14 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         // move it to the origin of the base
         translate ([-L/2, -W/2, -H]) 
           hookBaseOutside();
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
       } // difference()
 
       //draw stuff inside the box
       color("LightBlue")
       intersection()
       {
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
         translate ([-L/2, -W/2, -H])
           hookBaseInside();
       } // intersection()
@@ -1581,7 +1588,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         // move it to the origin of the base
         translate ([-L/2, -W/2, H])
         hookLidOutside();
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
       } // difference()
 
       //draw stuff inside the box
@@ -1590,7 +1597,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       {
         translate ([-L/2, -W/2, H])
           hookLidInside();
-        minkowskiCutBox(L, W, H, rad, plane, wall);
+        minkowskiCutBox(L, W, H, cRad, plane, wall);
       }
     }
   } //preCutouts
@@ -2918,14 +2925,15 @@ module baseShell()
           //-- outside of ridge
           // Extent it by an extra case size in all directions so it will remove any raised text.  
           translate([-L ,-W, 0]) {
-            cube([L*3, W*3, shellHeight*3]);
+            cube([L*2, W*2, shellHeight]);
           }
         }
         
         //-- hollow inside
         translate([0, 0, posZ])
         {
-          linear_extrude(H+1)
+          linear_extrude(shellHeight+1)
+          //linear_extrude(H+1)
           {
             minkowski()
             {
@@ -2952,30 +2960,33 @@ module baseShell()
       if (hideBaseWalls)
       {
         //--- wall's
-        translate([-1,-1,shellHeight/2])
+        translate([0,0,shellHeight/2])
         {
           color(colorBase, alphaBase)
-          cube([shellLength+3, shellWidth+3, 
+          cube([shellLength*2, shellWidth*2, 
                 shellHeight+((baseWallHeight*2)-(basePlaneThickness+roundRadius))], 
                 center=true);
         } // translate
-      }
+      } // hideBaseWalls=true
       else  //-- normal
       {
-        //--- only cutoff upper half
-        translate([-1,-1,shellHeight/2])
-        {
-          color(colorBase, alphaBase)
-          cube([shellLength+3, shellWidth+3, shellHeight], center=true);
-        } // translate
-      
-        //-- build ridge
         color(colorBase, alphaBase)
-        subtrbaseRidge(shellInsideLength+wallThickness, 
-                        shellInsideWidth+wallThickness, 
-                        ridgeHeight, 
-                        (ridgeHeight*-1), roundRadius);
-      }
+        union()
+        {
+          //--- only cutoff upper half
+          translate([0,0,shellHeight/2])
+          {
+            cube([shellLength*2, shellWidth*2, shellHeight], center=true);
+          } // translate
+          
+          //-- Create ridge
+          subtrbaseRidge(shellInsideLength+wallThickness, 
+                          shellInsideWidth+wallThickness, 
+                          ridgeHeight, 
+                          (ridgeHeight*-1), roundRadius);
+     
+        } //union
+      } // hideBaseWalls=false
     } // difference(b)  
   } // translate
   
@@ -3000,28 +3011,22 @@ module lidShell()
       wall = (wallThickness/2);
       oRad = rad;
       iRad = getMinRad(oRad, wall);
-    
-      //echo("Ridge:", L=L, W=W, H=H, rad=rad, wallThickness=wallThickness);
-      //echo("Ridge:", L2=L-(rad*2), W2=W-(rad*2), H2=H, oRad=oRad, iRad=iRad);
+       
+      //echo(wall=wall, oRad=oRad, iRad=iRad, ridgeSlack=ridgeSlack);
 
-      translate([0,0,(H-0.005)*-1])
+      //-- hollow inside
+      translate([0,0,-H-shellHeight])
       {
-        //-- hollow inside
-        translate([0, 0, -1])
+        linear_extrude(H+shellHeight)
         {
-          //color("green")
-          linear_extrude(H+1)
-          {
-              minkowski()
-              {
-                square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
-                circle(iRad*minkowskiErrorCorrection);
-              }
-          } // linear_extrude..
-        } // translate([0, 0, -1])
-      } //  translate([0,0,(H-0.005)*-1])
-    
-    } //  addlidRidge()
+            minkowski()
+            {
+              square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
+              circle(iRad*minkowskiErrorCorrection);
+            }
+        } // linear_extrude
+      } //  translate  
+    } //  removeLidRidge()
     //-------------------------------------------------------------------
 
   posZ00 = lidWallHeight+lidPlaneThickness;
@@ -3031,8 +3036,7 @@ module lidShell()
   {
     difference()  //  d1
     {
-      minkowskiBox(yappPartLid, shellInsideLength,shellInsideWidth, lidWallHeight, 
-                   roundRadius, lidPlaneThickness, wallThickness, true);
+      minkowskiBox(yappPartLid, shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, true);
       if (hideLidWalls)
       {
         //--- cutoff wall
@@ -3046,20 +3050,22 @@ module lidShell()
       }
       else  //-- normal
       {
-        //--- cutoff lower half
-        // Leave the Ridge height so we can trim out the part we don't want
-        translate([-shellLength,-shellWidth,-shellHeight -  newRidge(ridgeHeight)])
-        {
-          color(colorLid, alphaLid)
-          cube([(shellLength)*2, (shellWidth)*2, shellHeight], center=false);
-        } // translate
-        
-        //-- remove the ridge
         color(colorLid, alphaLid)
-        removeLidRidge(shellInsideLength+wallThickness, 
-                    shellInsideWidth+wallThickness, 
-                    newRidge(ridgeHeight), 
-                    roundRadius);
+        union()
+        {
+          //--- cutoff lower half
+          // Leave the Ridge height so we can trim out the part we don't want
+          translate([-shellLength,-shellWidth,-shellHeight - newRidge(ridgeHeight)])
+          {
+            cube([(shellLength)*2, (shellWidth)*2, shellHeight], center=false);
+          } // translate
+          
+          //-- remove the ridge
+          removeLidRidge(shellInsideLength+wallThickness, 
+                      shellInsideWidth+wallThickness, 
+                      newRidge(ridgeHeight), 
+                      roundRadius);
+        }
       } //  if normal
     } // difference(d1)
   } // translate
@@ -4038,12 +4044,13 @@ module YAPPgenerate()
 
         } //  difference(a)
         
-       // Draw the post base hooks
+        // Draw the post base hooks
         posZ00 = (baseWallHeight) + basePlaneThickness;
         translate([(shellLength/2), shellWidth/2, posZ00])
         {
           minkowskiBox(yappPartBase, shellInsideLength, shellInsideWidth, baseWallHeight, roundRadius, basePlaneThickness, wallThickness, false);
         }
+        
         if (showOrientation) 
         {
           showOrientation();

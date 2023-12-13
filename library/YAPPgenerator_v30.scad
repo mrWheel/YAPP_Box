@@ -134,6 +134,8 @@ inspectZ              = 0;        //-> 0=none (>0 from Bottom)
 inspectXfromBack      = false;     //-> View from the inspection cut foreward
 inspectYfromLeft      = true;     //-> View from the inspection cut to the right
 inspectZfromTop       = false;    //-> View from the inspection cut down
+
+showButtonsDepressed  = true;     // Should the buttons in the Lid On view be in the pressed position
 //-- C O N T R O L -----------------------------------------------------------
 
 // ******************************
@@ -614,6 +616,8 @@ pushButtons =
 //   p(5) = font
 //   p(6) = size
 //   p(7) = "label text"
+//   Optional:
+//   p(8) = Expand : Default = 0 : mm to expand text by (making it bolder) 
 //-------------------------------------------------------------------
 labelsPlane =
 [
@@ -2581,7 +2585,7 @@ module buildButtons(preCuts)
       cupExtraDepth       = ((aboveLid < 0) ? -aboveLid : 0);
       buttonTopThickness  = lidPlaneThickness + buttonTopOffset;
 
-      buttonCupDepth      = cupExtraDepth + swTravel + thebuttonSlack;
+      buttonCupDepth      = cupExtraDepth + swTravel + thebuttonSlack*2;
 
       buttonTop2Lid       = pcbTop2Lid-swHeight;
       holderLength        = 
@@ -2654,7 +2658,7 @@ module buildButtons(preCuts)
             translate([0, 0,  -(holderLength/2) - buttonCupDepth -(thebuttonWall/2) + 0.01]) 
             {
               color("orange") 
-                cylinder(h=holderLength+thebuttonWall+0.04, d=pDiam+thebuttonSlack, center=true);
+                cylinder(h=holderLength+thebuttonWall+0.04, d=pDiam+thebuttonSlack*2, center=true);
             }
           } // difference()
         } //-- translate()
@@ -2679,13 +2683,13 @@ module buildButtons(preCuts)
           // Determine where to show them for Lid on case or off
           extPosX = (externderPos) ? xPos : -40 ;
           extPosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
-          extPosZ = (externderPos) ? aboveLid : 0 ;
+          extPosZ = (externderPos) ? aboveLid - (showButtonsDepressed ? swTravel :0) : 0 ;
           extRot  = (externderPos) ? angle : 0 ;
 
           platePosX = (externderPos) ? xPos : -20 ;
           platePosY = (externderPos) ? yPos : shellWidth*2 - (i* 20);
           platePosZ = (externderPos) ? 
-          + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid
+          + thebuttonPlateThickness/2 - lidPlaneThickness - buttonTop2Lid  - (showButtonsDepressed ? swTravel :0)
           : -thebuttonPlateThickness/2;
           
           plateRot  = (externderPos) ? 180 : 0 ;
@@ -2730,6 +2734,12 @@ module drawLabels(casePart, subtract)
         : -baseWallHeight - basePlaneThickness
       : 0 ;
         
+    
+    //   Optional:
+    expandBy = getParamWithDefault(label[8],0);
+      
+
+
     translate([shiftX, shiftY, shiftZ])
     {
     // Check if the label is valid for the for subtract value 
@@ -2748,6 +2758,7 @@ module drawLabels(casePart, subtract)
           { 
             linear_extrude(theDepth) 
             {
+              offset(r=expandBy)
               text(label[7]
                     , font=label[5]
                     , size=label[6]
@@ -2772,6 +2783,7 @@ module drawLabels(casePart, subtract)
             linear_extrude(theDepth) 
             {
               {
+                offset(r=expandBy)
                 text(label[7]
                       , font=label[5]
                       , size=label[6]
@@ -2796,6 +2808,7 @@ module drawLabels(casePart, subtract)
           {
             linear_extrude(theDepth) 
             {
+              offset(r=expandBy)
               text(label[7]
                       , font=label[5]
                       , size=label[6]
@@ -2819,6 +2832,7 @@ module drawLabels(casePart, subtract)
           {
             linear_extrude(theDepth) 
             {
+              offset(r=expandBy)
               text(label[7]
                       , font=label[5]
                       , size=label[6]
@@ -2841,6 +2855,7 @@ module drawLabels(casePart, subtract)
           {
             linear_extrude(theDepth) 
             {
+              offset(r=expandBy)
               text(label[7]
                     , font=label[5]
                     , size=label[6]
@@ -2865,6 +2880,7 @@ module drawLabels(casePart, subtract)
             mirror([1,0,0])
             linear_extrude(theDepth) 
             {
+              offset(r=expandBy)
               text(label[7]
                     , font=label[5]
                     , size=label[6]
@@ -4167,7 +4183,7 @@ module makeSwitchExtender(shape, capLength, capWidth, capRadius, thickness, pole
     //--- pole
     translate([0, 0, (extHeight/-2)-thickness]) 
       color("orange")
-        cylinder(d=(poleDiam-(buttonSlack/2)), h=extHeight, center=true);
+        cylinder(d=(poleDiam-(buttonSlack)), h=extHeight, center=true);
 } // makeSwitchExtender()
 
 
@@ -4189,7 +4205,7 @@ module makeSwitchPlate(poleDiam, thickness)
       cylinder(h=thickness, d=poleDiam+3, center=true);
     translate([0,0,-0.5])
       color("blue")
-        cylinder(h=thickness, d=poleDiam+0.2-(buttonSlack/2), center=true);
+        cylinder(h=thickness, d=poleDiam-(buttonSlack)+0.2, center=true);
   }    
 } // makeSwitchPlate
 

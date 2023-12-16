@@ -76,21 +76,20 @@ module hookBaseOutside()
 
 //===========================================================
 //===========================================================
+</pre>
 
-
-**Refinements**
-	Updated definition standards:
-	Parameters:
-		p(0,1 ...) = a 'p' with a number between parentheses indicates a 
-	                     'positional' parameter.
-		n(a,b ...) = a 'n' with a letter between parentheses indicates an 
-	                     optional, 'non-positional' parameter must be after 
-	                     the required parameters.
-		{ yappParameter }
-		&lt;Default value&gt;
-		| means one or more values from the list are allowed
-		, means only one value from the list is allowed
-
+**Updated definition standards:**
+<pre>
+     Parameters:
+	p(0,1 ...) = a 'p' with a number between parentheses indicates a 
+	                    'positional' parameter.
+	n(a,b ...) = a 'n' with a letter between parentheses indicates an 
+	                    optional, 'non-positional' parameter must be after 
+	                    the required parameters.
+	{ yappParameter }
+	&lt;Default value&gt;
+	| means one or more values from the list are allowed
+	, means only one value from the list is allowed
 </pre>
 
 **This version breaks with the API for the following objects:**

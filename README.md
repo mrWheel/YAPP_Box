@@ -13,6 +13,10 @@ or at the
 
 ## Rev. 3.0  (01-12-2023)
 
+Main Developer for v3.0: <a href="https://github.com/rosenhauer">Dave Rosenhauer</a>
+Dave added new functionality, fixed many bugs, is the creator of the v3.0 API and did a lot of code cleanup.
+He made more than 20 merge requests in three weeks.
+
 **New functionality**
 <pre>
 Cutout Shapes
@@ -74,7 +78,7 @@ module hookBaseOutside()
 //===========================================================
 
 
-** Refinements **
+**Refinements**
 	Updated definition standards:
 	Parameters:
 		p(0,1 ...) = a 'p' with a number between parentheses indicates a 
@@ -89,7 +93,7 @@ module hookBaseOutside()
 
 </pre>
 
-**This version breaks with the API for the following array's:**
+**This version breaks with the API for the following objects:**
 
 <pre>
 ===================================================================

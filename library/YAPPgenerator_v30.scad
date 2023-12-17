@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.0 (12-12-2023)";
+Version="v3.0.0 (16-12-2023)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -117,24 +117,24 @@ renderQuality             = 8;          //-> from 1 to 32, Default = 8
 
 // --Preview --
 previewQuality            = 5;          //-> from 1 to 32, Default = 5
-showSideBySide            = false;       //-> Default = true
+showSideBySide            = true;       //-> Default = true
 onLidGap                  = 0;  // tip don't override to animate the lid opening
 //onLidGap                  = ((ridgeHeight) - (ridgeHeight * abs(($t-0.5)*2)))*2;  // tip don't override to animate the lid opening/closing
 colorLid                  = "YellowGreen";   
 alphaLid                  = 1;
 colorBase                 = "BurlyWood";
 alphaBase                 = 1;
-hideLidWalls              = false;      // Remove the walls from the lid : only if preview and showSideBySide=true 
-hideBaseWalls             = false;      // Remove the walls from the base : only if preview and showSideBySide=true  
-showOrientation           = true;       // Show the Front/Back/Left/Right labels : only in preview
-showPCB                   = false;      // Show the PCB in red : only in preview 
-showSwitches              = false;      // Show the switches (for pushbuttons) : only in preview 
-showButtonsDepressed      = false;       // Should the buttons in the Lid On view be in the pressed position
-showOriginCoordBox        = false;      // Shows red bars representing the origin for yappCoordBox : only in preview 
-showOriginCoordBoxInside  = false;      // Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
-showOriginCoordPCB        = false;      // Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
-showMarkersPCB            = false;      // Shows black bars corners of the PCB : only in preview 
-showMarkersCenter         = false;      // Shows magenta bars along the centers of all faces  
+hideLidWalls              = false;      //-> Remove the walls from the lid : only if preview and showSideBySide=true 
+hideBaseWalls             = false;      //-> Remove the walls from the base : only if preview and showSideBySide=true  
+showOrientation           = true;       //-> Show the Front/Back/Left/Right labels : only in preview
+showPCB                   = false;      //-> Show the PCB in red : only in preview 
+showSwitches              = false;      //-> Show the switches (for pushbuttons) : only in preview 
+showButtonsDepressed      = false;      //-> Should the buttons in the Lid On view be in the pressed position
+showOriginCoordBox        = false;      //-> Shows red bars representing the origin for yappCoordBox : only in preview 
+showOriginCoordBoxInside  = false;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
+showOriginCoordPCB        = false;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
+showMarkersPCB            = false;      //-> Shows black bars corners of the PCB : only in preview 
+showMarkersCenter         = false;      //-> Shows magenta bars along the centers of all faces  
 inspectX                  = 0;          //-> 0=none (>0 from Back)
 inspectY                  = 0;          //-> 0=none (>0 from Right)
 inspectZ                  = 0;          //-> 0=none (>0 from Bottom)
@@ -235,7 +235,6 @@ minkowskiErrorCorrection = $preview ? 1.0125 : 1;
 shellInsideWidth  = pcbWidth+paddingLeft+paddingRight;
 shellInsideLength = pcbLength+paddingFront+paddingBack;
 shellInsideHeight = baseWallHeight+lidWallHeight;
-//shellpcbTop2Lid   = baseWallHeight+lidWallHeight;
 shellWidth        = shellInsideWidth+(wallThickness*2);
 shellLength       = pcbLength+(wallThickness*2)+paddingFront+paddingBack;
 shellHeight       = basePlaneThickness+shellInsideHeight+lidPlaneThickness;
@@ -467,8 +466,8 @@ connectors   =
 //    p(2) = width
 //    p(3) = length
 //    p(4) = radius
-//    p(5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey}
+//    p(5) = shape : { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                    | yappCircleWithFlats | yappCircleWithKey }
 //  Optional:
 //    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
 //    p(7) = angle : Default = 0
@@ -529,7 +528,7 @@ snapJoins   =
 
 //===================================================================
 //  *** Box Mounts ***
-//    Mounting tabs on the outside of the box
+//  Mounting tabs on the outside of the box
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
@@ -568,7 +567,7 @@ boxMounts =
 //    p(3) = tubeWidth
 //    p(4) = tubeWall
 //    p(5) = gapAbovePcb
-//    p(6) = tubeType    {yappCircle|yappRectangle}
+//    p(6) = { yappCircle | yappRectangle } : tubeType
 //   Optional:
 //    p(7) = lensThickness (how much to leave on the top of the lid for the 
 //           light to shine through 0 for open hole : Default = 0/Open
@@ -600,8 +599,8 @@ lightTubes =
 //    p(8) = poleDiameter
 //   Optional:
 //    p(9) = Height to top of PCB : Default = standoffHeight + pcbThickness
-//    p(10) = Shape  {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey} : Default = yappRectangle
+//    p(10) = { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                    | yappCircleWithFlats | yappCircleWithKey } : Shape, Default = yappRectangle
 //    p(11) = angle : Default = 0
 //    p(12) = filletRadius          : Default = 0/Auto 
 //    p(13) = buttonWall            : Default = 2.0;
@@ -626,11 +625,11 @@ pushButtons =
 //   p(1) = posy/z
 //   p(2) = rotation degrees CCW
 //   p(3) = depth : positive values go into case (Remove) negative values are raised (Add)
-//   p(4) = plane {yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase}
+//   p(4) = { yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase } : plane
 //   p(5) = font
 //   p(6) = size
 //   p(7) = "label text"
-//   Optional:
+//  Optional:
 //   p(8) = Expand : Default = 0 : mm to expand text by (making it bolder) 
 //-------------------------------------------------------------------
 labelsPlane =
@@ -653,7 +652,7 @@ labelsPlane =
 //   Optional:
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    n(c) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
 //
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
 //-------------------------------------------------------------------

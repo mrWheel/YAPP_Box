@@ -13,6 +13,10 @@ or at the
 
 ## Rev. 3.0  (01-12-2023)
 
+Main Developer for v3.0: <a href="https://github.com/rosenhauer">Dave Rosenhauer</a>
+Dave added new functionality, fixed many bugs, is the creator of the v3.0 API and did a lot of code cleanup.
+He made more than 20 merge requests in three weeks.
+
 **New functionality**
 <pre>
 Cutout Shapes
@@ -72,24 +76,23 @@ module hookBaseOutside()
 
 //===========================================================
 //===========================================================
-
-
-** Refinements **
-	Updated definition standards:
-	Parameters:
-		p(0,1 ...) = a 'p' with a number between parentheses indicates a 
-	                     'positional' parameter.
-		n(a,b ...) = a 'n' with a letter between parentheses indicates an 
-	                     optional, 'non-positional' parameter must be after 
-	                     the required parameters.
-		{ yappParameter }
-		&lt;Default value&gt;
-		| means one or more values from the list are allowed
-		, means only one value from the list is allowed
-
 </pre>
 
-**This version breaks with the API for the following array's:**
+**Updated definition standards:**
+<pre>
+     Parameters:
+	p(0,1 ...) = a 'p' with a number between parentheses indicates a 
+	                    'positional' parameter.
+	n(a,b ...) = a 'n' with a letter between parentheses indicates an 
+	                    optional, 'non-positional' parameter must be after 
+	                    the required parameters.
+	{ yappParameter }
+	&lt;Default value&gt;
+	| means one or more values from the list are allowed
+	, means only one value from the list is allowed
+</pre>
+
+**This version breaks with the API for the following objects:**
 
 <pre>
 ===================================================================

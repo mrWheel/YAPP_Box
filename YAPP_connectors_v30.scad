@@ -71,7 +71,7 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //  *** Connectors ***
 //  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
+//  Default origin = yappCoordPCB: pcb[0,0,0]
 //  
 //  Parameters:
 //   Required:
@@ -92,11 +92,11 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //-------------------------------------------------------------------
 connectors   =
 [
-  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners, yappCoordPCB] // All of the corners of the PCB inset 10,10
- ,[ 8, 8, 4, 3, 5, 4, 7] //Defaults to yappBackLeft of yappCoordBox
+  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners] // All of the corners of the PCB inset 10,10
+ ,[ 8, 8, 4, 3, 5, 4, 7, yappCoordBox] //Defaults to yappBackLeft of yappCoordBox
  ,[ 8-wallThickness, 28, 4, 3, 5, 4, 7, 5, 1.6, yappBackLeft, yappCoordBoxInside] // Shifted so that they all aligh for inspection cut
- ,[ 8-pcbX, 48, 4, 3, 5, 4, 7, 16, yappBackLeft, yappCoordPCB] // Shifted so that they all aligh for inspection cut
- ,[ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft] // Shifted so that they all aligh for inspection cut
+ ,[ 8-pcbX, 48, 4, 3, 5, 4, 7, 16, yappBackLeft] // Shifted so that they all aligh for inspection cut
+ ,[ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox] // Shifted so that they all aligh for inspection cut
 ];
 
 //---- This is where the magic happens ----

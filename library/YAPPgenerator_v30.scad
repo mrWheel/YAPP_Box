@@ -418,7 +418,7 @@ pcbStands =
 //  *** Connectors ***
 //  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
+//  Default origin =  yappCoordPCB : pcb[0,0,0]
 //  
 //  Parameters:
 //   Required:
@@ -434,7 +434,7 @@ pcbStands =
 //    p(8) = PCB Gap : Default if yappCoordPCB then pcbThickness else 0
 //    p(9) = filletRadius : Default = 0/Auto(0 = auto size)
 //    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
-//    n(b) = { yappCoordPCB | <yappCoordBox> | yappCoordBoxInside }
+//    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
 connectors   =
@@ -447,7 +447,7 @@ connectors   =
 //    There are 6 cutouts one for each surface:
 //      cutoutsBase (Bottom), cutoutsLid (Top), cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
 //-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
+//  Default origin =  yappCoordPCB : pcb[0,0,0]
 //
 //                        Required                Not Used        Note
 //----------------------+-----------------------+---------------+------------------------------------
@@ -2278,7 +2278,7 @@ module cutoutsForScrewHoles(type)
     primeOrigin = (!isTrue(yappBackLeft, conn) && !isTrue(yappFrontLeft, conn) && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn) && !isTrue(yappAllCorners, conn) ) ? true : false;
         
     // Get the desired coordinate system    
-    theCoordSystem = getCoordSystem(conn, yappCoordBox);    
+    theCoordSystem = getCoordSystem(conn, yappCoordPCB);    
     face = (type==yappPartBase) ? yappBase : undef ;
  
     theLength = getLength(theCoordSystem);
@@ -3329,7 +3329,7 @@ module shellConnectors(shellPart)
     primeOrigin = (!isTrue(yappBackLeft, conn) && !isTrue(yappFrontLeft, conn) && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn) && !isTrue(yappAllCorners, conn) ) ? true : false;
     
     // Get the desired coordinate system    
-    theCoordSystem = getCoordSystem(conn, yappCoordBox);    
+    theCoordSystem = getCoordSystem(conn, yappCoordPCB);    
     face = (shellPart==yappPartBase) ? yappBase : yappLid ;
  
     theLength = getLength(theCoordSystem);

@@ -4161,12 +4161,12 @@ module YAPPgenerate()
   {
     genOriginBars("red", "darkRed", yappCoordBox);
   } // showOriginCoordBox
-  if (showOriginCoordBoxInside)
+  if ($preview && showOriginCoordBoxInside)
   {
     genOriginBars("green", "darkgreen", yappCoordBoxInside);
   } // showOriginCoordBoxInside
   
-  if (showOriginCoordPCB)
+  if ($preview && showOriginCoordPCB)
   {
     genOriginBars("blue", "darkblue", yappCoordPCB);
   } // showOriginCoordPCB

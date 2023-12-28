@@ -2767,7 +2767,7 @@ module drawLabels(casePart, subtract)
         if (printMessages) echo ("Draw text on Base (bottom)");
         offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
         
-        translate([label[0], shellWidth-label[0], offset_depth]) 
+        translate([label[0], shellWidth-label[1], offset_depth]) 
         {
           rotate([0,0,180-label[2]])
           {

@@ -13,7 +13,7 @@ or at the
 
 ## Rev. 3.0  (01-12-2023)
 
-Main Developer for v3.0: <a href="https://github.com/rosenhauer">Dave Rosenhauer</a>
+Lead Developer for v3.0: <a href="https://github.com/rosenhauer">Dave Rosenhauer</a>
 Dave added new functionality, fixed many bugs, is the creator of the v3.0 API and did a lot of code cleanup.
 He made more than 20 merge requests in three weeks.
 

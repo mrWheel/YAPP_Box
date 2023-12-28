@@ -1892,8 +1892,7 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
       
       centeroffsetH = (isTrue(yappCenter, cutOut)) ? 0 : base_width / 2;
       centeroffsetV = (isTrue(yappCenter, cutOut)) ? 0 : base_height / 2;
-      
-      translate([offset_x, offset_y, offset_z + ((invertZ) ? -base_depth : 0)]) 
+      translate([offset_x, offset_y, offset_z]) 
       {
         rotate([rot_X, rot_Y, rot_Z])
         {
@@ -2242,7 +2241,7 @@ module processFaceList(face, list, casePart, listType, subtract)
     rot_Z = 0;
     offset_x = 0;
     offset_y = 0;
-    offset_z = (-lidPlaneThickness);
+    offset_z = -lidPlaneThickness;
     wallDepth = lidPlaneThickness;
     if (listType=="cutout") 
     {
@@ -3802,6 +3801,7 @@ module genMaskfromParam(params, width, height, depth, hOffset, vOffset, addRot)
     hOffset, //    params[1], //hoffset, 
     vOffset, //    params[2], //voffset, 
     depth+0.08, //    params[3], //thickness, 
+//    depth, //    params[3], //thickness, 
     (params[1]==0) ? width : params[1], //hRepeat, 
     (params[2]==0) ? height : params[2], //vRepeat, 
     params[3]+addRot, //rotation, 

@@ -3801,7 +3801,6 @@ module genMaskfromParam(params, width, height, depth, hOffset, vOffset, addRot)
     hOffset, //    params[1], //hoffset, 
     vOffset, //    params[2], //voffset, 
     depth+0.08, //    params[3], //thickness, 
-//    depth, //    params[3], //thickness, 
     (params[1]==0) ? width : params[1], //hRepeat, 
     (params[2]==0) ? height : params[2], //vRepeat, 
     params[3]+addRot, //rotation, 

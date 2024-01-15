@@ -205,13 +205,13 @@ yappFrontLeft           = -30404;  // pcbStands, Connectors
 yappFrontRight          = -30405;  // pcbStands, Connectors 
 yappBackLeft            = -30406;  // pcbStands, Connectors 
 yappBackRight           = -30407;  // pcbStands, Connectors 
-yappCountersink         = -30408;  // connectors
 
 // Lightube options
 yappThroughLid          = -30500;  // lightTubes
 
 // Misc Options
 yappNoFillet            = -30600;  // pcbStands, Connectors, lightTubes, pushButtons
+yappCountersink         = -30601;  // connectors
 
 // Coordinate options
 yappCoordPCB            = -30700;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
@@ -2309,7 +2309,7 @@ module cutoutsForScrewHoles(type)
     if ((primeOrigin) || (allCorners) || isTrue(yappBackLeft, conn))
     {
       translate([posX, posY, -0.02])
-        screwHeadHole (conn);
+        screwHeadHole(conn);
     }
     if ((allCorners) || isTrue(yappFrontLeft, conn))
     {
@@ -2319,7 +2319,7 @@ module cutoutsForScrewHoles(type)
     if ((allCorners) || isTrue(yappFrontRight, conn))
     {
       translate([posX2, posY2, -0.02])
-        screwheadHole (conn);
+        screwHeadHole (conn);
     }
     if ((allCorners) || isTrue(yappBackRight, conn))
     {

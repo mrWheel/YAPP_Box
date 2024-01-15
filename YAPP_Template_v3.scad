@@ -3,15 +3,15 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (16-12-2023)
+//  Version 3.0.1 (2024-01-15)
 //
 // This design is parameterized based on the size of a PCB.
 //
-//  for many or complex cutoutGrills you might need to adjust
-//  the number of elements:
+// For many/complex cutoutGrills, you might need to adjust
+//  the max number of elements in OpenSCAD:
 //
-//      Preferences->Advanced->Turn of rendering at 250000 elements
-//                                                  ^^^^^^
+//      Preferences->Advanced->Turn off rendering at 250000 elements
+//                                                   ^^^^^^
 //
 //-----------------------------------------------------------------------
 

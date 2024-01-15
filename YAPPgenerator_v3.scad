@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.0 (28-12-2023)";
+Version="v3.0.1 (2024-01-15)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -17,11 +17,11 @@ Version="v3.0.0 (28-12-2023)";
 **   - Dave Rosenhauer (fillets and a lot more)
 **
 **
-**  for many or complex cutouts you might need to adjust
-**  the number of elements:
+** For many/complex cutoutGrills, you might need to adjust
+**  the max number of elements in OpenSCAD:
 **
-**      Preferences->Advanced->Turn of rendering at 250000 elements
-**                                                  ^^^^^^
+**      Preferences->Advanced->Turn off rendering at 250000 elements
+**                                                   ^^^^^^
 **
 **  TERMS OF USE: MIT License. See base offile.
 ***************************************************************************      
@@ -35,8 +35,8 @@ printMessages = debug;
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
 // Note: length/lengte refers to X axis, 
-//       width/breedte to Y, 
-//       height/hoogte to Z
+//       width/breedte refers to Y axis,
+//       height/hoogte refers to Z axis
 
 /*
       padding-back|<------pcb length --->|<padding-front
@@ -66,8 +66,8 @@ printSwitchExtenders  = true;
 shiftLid              = 10;  // Set the distance between the lid and base when rendered or previewed side by side
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 150; // Front to back
-pcbWidth            = 60; // Side to side
+pcbLength           = 150; // front to back (X axis)
+pcbWidth            = 100; // side to side (Y axis)
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall

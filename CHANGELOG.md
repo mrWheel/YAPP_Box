@@ -1,6 +1,10 @@
 # YAPP Change Log
 
-## Rev. 3.0  (2023-12-01)
+## Rev. v3.0.1 (2024-01-15)
+* Re-organzie Git repo to maintain only the latest version in the `main` branch.
+* The core files (`YAPP_Template_v3.scad`, `YAPPgenerator_v3.scad`) now keep only a major version in their filename, and live in the root of the repo.
+
+## Rev. 3.0.0  (2023-12-01)
 
 Lead Developer for v3.0: <a href="https://github.com/rosenhauer">Dave Rosenhauer</a>
 Dave added new functionality, fixed many bugs, is the creator of the v3.0 API and did a lot of code cleanup.

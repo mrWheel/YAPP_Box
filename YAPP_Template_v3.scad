@@ -119,10 +119,10 @@ showOriginCoordBoxInside  = false;      //-> Shows blue bars representing the or
 showOriginCoordPCB        = false;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
 showMarkersPCB            = false;      //-> Shows black bars corners of the PCB : only in preview 
 showMarkersCenter         = false;      //-> Shows magenta bars along the centers of all faces  
-inspectX                  = 145;          //-> 0=none (>0 from Back)
+inspectX                  = 0;          //-> 0=none (>0 from Back)
 inspectY                  = 0;          //-> 0=none (>0 from Right)
 inspectZ                  = 0;          //-> 0=none (>0 from Bottom)
-inspectXfromBack          = false;       //-> View from the inspection cut foreward
+inspectXfromBack          = true;       //-> View from the inspection cut foreward
 inspectYfromLeft          = true;       //-> View from the inspection cut to the right
 inspectZfromBottom        = true;       //-> View from the inspection cut up
 //---------------------------

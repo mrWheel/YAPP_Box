@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 2.0 (21-05-2023)
+//  Version 2.0 (2023-05-21)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -22,7 +22,7 @@ polygonShape = [  [0,0],[20,15],[30,0],[40,15],[70,15]
                ];
 
 
-include <../YAPP_Box/library/YAPPgenerator_v20.scad>
+include <./library/YAPPgenerator_v20.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 

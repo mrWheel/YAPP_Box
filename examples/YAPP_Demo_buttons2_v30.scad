@@ -1,23 +1,31 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//    This is a box for test with lightTube
+//  This is a YAPP_Test_buttons2_v30 test box
 //
 //    Rendering takes ~ 11 minutes (renderQuality 10)
 //    Rendering takes ~  5 minutes (renderQuality 5)
 //
-//    Version 3.0 (29-11-2023)
+//  Version 3.0 (12-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
-//    You might need to adjust the number of elements:
+//  You might need to adjust the number of elements:
 //
 //      Preferences->Advanced->Turn of rendering at 250000 elements
 //                                                  ^^^^^^
+//
 //-----------------------------------------------------------------------
 
+//-- Bambu Lab X1C 0.4mm Nozzle PLA
+//insertDiam  = 3.8 + 0.4;
+//screwDiam   = 2.5 + 0.4;
+//-- Bambu Lab X1C 0.4mm Nozzle XT-Copolyester
+insertDiam  = 3.8 + 0.5;
+screwDiam   = 2.5 + 0.5;
+  
 
-include <../YAPP_Box/library/YAPPgenerator_v30.scad>
+include <../library/YAPPgenerator_v30.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -51,40 +59,40 @@ printLidShell         = true;
 printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 30;
-pcbWidth            = 40;
+pcbLength           = 100;
+pcbWidth            = 100;
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
 paddingFront        = 1;
-paddingBack         = 2;
-paddingRight        = 3;
-paddingLeft         = 4;
+paddingBack         = 1;
+paddingRight        = 1;
+paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
-wallThickness       = 2.0;
-basePlaneThickness  = 1.0;
+wallThickness       = 1.4;
+basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.0;
 
 //-- Total height of box = basePlaneThickness + lidPlaneThickness 
 //--                     + baseWallHeight + lidWallHeight
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      =  8;
-lidWallHeight       = 13;
+baseWallHeight      = 10;
+lidWallHeight       = 10;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.6;
+ridgeHeight         = 3.0;  //-> at least 1.8 * wallThickness
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 7.0;  
+standoffHeight      = 3.0;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
-standoffDiameter    = 7;
+standoffDiameter    = 6;
 
 
 //-- C O N T R O L -------------//-> Default ---------
@@ -92,32 +100,26 @@ showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 5;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
-shiftLid            = 1;
+shiftLid            = 10;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
-colorLid            = "YellowGreen";   
+colorBase           = "yellow";
+alphaBase           = 0.8;//0.2;   
+colorLid            = "silver";
 alphaLid            = 0.8;//0.2;   
-colorBase           = "BurlyWood";
-alphaBase           = 0.8;//0.2;
 showOrientation     = true;
 showPCB             = true;
-showSwitches        = false;
+showSwitches        = true;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
 inspectX            = 0;        //-> 0=none (>0 from Back)
 inspectY            = 0;        //-> 0=none (>0 from Right)
 inspectZ            = 0;        //-> 0=none (>0 from Base)
-inspectXfromBack    = true;     //-> View from the inspection cut foreward
+inspectXfromBack    = false;     //-> View from the inspection cut foreward
 inspectYfromLeft    = true;     //-> View from the inspection cut to the right
 inspectZfromTop     = true;     //-> View from the inspection cut down
 //-- C O N T R O L ---------------------------------------
-
-//-------------------------------------------------------------------
-//-------------------------------------------------------------------
-// Start of Debugging config (used if not overridden in template)
-// ------------------------------------------------------------------
-
 
 
 //===================================================================
@@ -145,9 +147,7 @@ inspectZfromTop     = true;     //-> View from the inspection cut down
 //-------------------------------------------------------------------
 pcbStands =
 [
-      // 0, 1, 
-        [5, 5, yappBaseOnly, yappFrontLeft, yappBackRight] 
-      , [5, 5, yappBoth, yappBackLeft, yappFrontRight]
+  [5, 5]
 ];
 
 
@@ -186,78 +186,33 @@ pcbStands =
 //-------------------------------------------------------------------
 cutoutsBase =   
 [
-    [shellLength/2,shellWidth/2 ,15,15, 5, yappPolygon ,0 ,30, yappCenter, shapeHexagon, maskHexCircles]
 ];
 
 // (0) = posy
 // (1) = posz
 cutoutsFront =  
 [
-  // 0, 1,      2,            3,      4, 5
-    [5, 2, shellWidth-10, shellHeight-4, 2, yappRoundedRect, yappCoordBox]
+//-- 0, 1,            2,             3, 4, 5
+    [3, 2, shellWidth-6, shellHeight-4, 2, yappRoundedRect]
 ];
 
 // (0) = posy
 // (1) = posz
 cutoutsBack =   
 [
-    [3, 2, shellWidth-6, shellHeight-4, 3, yappRoundedRect, yappCoordBox]
+//-- 0, 1,             2,             3, 4, 5
+    [5, 2, shellWidth-10, shellHeight-4, 3, yappRoundedRect]
 ];
 
 
-//===================================================================
-//  *** Snap Joins ***
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx | posy
-//    (1) = width
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//   Optional:
-//    (n) = { <yappOrigin> | yappCenter }
-//    (n) = { yappSymmetric }
-//    (n) = { yappRectangle } == Make a diamond shape snap
-//-------------------------------------------------------------------
-snapJoins   =   
+cutoutsLeft =  
 [
-    [(shellLength/2)-10, 3, yappLeft, yappCenter, yappSymmetric]
-   ,[(shellLength/2)-8,  3, yappRight, yappCenter, yappSymmetric, yappRectangle]
 ];
 
 
-//===================================================================
-//  *** Box Mounts ***
-//    Mounting tabs on the outside of the box
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X.
-//                    Position is to center of mounting screw in leftmost position in slot
-//    p(1) = screwDiameter
-//    p(2) = width of opening in addition to screw diameter 
-//                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
-//    p(3) = height
-//   Optional:
-//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
-//    n(b) = { yappNoFillet }
-//    n(c) = { <yappBase>, yappLid }
-//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
-//                            the left of the opening
-//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
-//-------------------------------------------------------------------
-boxMounts   =  
-[
-    [(shellLength/2), 3, 6, 2.5, yappLeft, yappRight, yappCenter]
-];
 
-               
 //===================================================================
-//  *** Light Tubes ***
+//  *** Push Buttons ***
 //-------------------------------------------------------------------
 //  Default origin = yappCoordPCB: PCB[0,0,0]
 //
@@ -265,28 +220,106 @@ boxMounts   =
 //   Required:
 //    p(0) = posx
 //    p(1) = posy
-//    p(2) = tubeLength
-//    p(3) = tubeWidth
-//    p(4) = tubeWall
-//    p(5) = gapAbovePcb
-//    p(6) = tubeType    {yappCircle|yappRectangle}
+//    p(2) = capLength 
+//    p(3) = capWidth 
+//    p(4) = capRadius 
+//    p(5) = capAboveLid
+//    p(6) = switchHeight
+//    p(7) = switchTravel
+//    p(8) = poleDiameter
 //   Optional:
-//    p(7) = lensThickness (how much to leave on the top of the lid for the 
-//           light to shine through 0 for open hole : Default = 0/Open
-//    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
-//    p(9) = filletRadius : Default = 0/Auto 
+//    p(9) = Height to top of PCB : Default = standoffHeight + pcbThickness
+//    p(10) = Shape  {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                    | yappCircleWithFlats | yappCircleWithKey} : Default = yappRectangle
+//    p(11) = angle : Default = 0
+//    p(12) = filletRadius          : Default = 0/Auto 
+//    p(13) = buttonWall            : Default = 2.0;
+//    p(14) = buttonPlateThickness  : Default= 2.5;
+//    p(15) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
-//    n(c) = { yappNoFillet }
+//    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
 //-------------------------------------------------------------------
-lightTubes = 
+pushButtons = 
 [
- //-- 0,  1, 2,   3, 4, 5, 6/7
-    [15, 10, 5,   6, 1, 5, yappCircle]
-   ,[15, 30, 1.5, 5, 1, 2, yappRectangle, .5]
-];     
+   [20,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappCircle, // Shape
+    yappNoFillet
+  ]
+  ,[20,pcbWidth/2-20, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappCircle, // Shape
+    0,    
+    undef,
+    2.0, //buttonWall
+    2.5, // button plate thickness
+    0.5 // button slack
+  ]
+  ,[40,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappPolygon, // Shape
+    shapeArrow
+  ]
+  ,[40,pcbWidth/2-20, 
+    8, // Width
+    8, // Length
+    4, // Radius
+    0, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappPolygon, // Shape
+    90,    
+    shapeArrow
+  ]
+  ,[60,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    2, // Radius
+    -1, // Cap above Lid
+    6, // Switch Height
+    1, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappRoundedRect // Shape
+  ]
+  ,[80,pcbWidth/2, 
+    8, // Width
+    8, // Length
+    0, // Radius
+    1, // Cap above Lid
+    5, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappRectangle,  // Shape
+    0
+  ]
 
-             
+];
+
 
 //========= MAIN CALL's ===========================================================
 

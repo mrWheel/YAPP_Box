@@ -14,8 +14,16 @@
 //                                                  ^^^^^^
 //
 //-----------------------------------------------------------------------
-
-include <../YAPP_Box/library/YAPPgenerator_v30.scad>
+pcb2X = 95;
+pcb2Y = 6;
+pcb2MountInset = 2.5;
+pcb2HoleDiameter = 3;
+pcb2Length = 26;
+pcb2Width = 50;
+pcb2Thickness = 1.7; 
+pcb2Height = 4;
+//44.8  
+include <../library/YAPPgenerator_v30.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -45,8 +53,8 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
 
 //-- which part(s) do you want to print?
 printBaseShell        = true;
-printLidShell         = true;
-printSwitchExtenders  = true;
+printLidShell         = false;
+printSwitchExtenders  = false;
 
 //-- pcb dimensions -- very important!!!
 // Electro cookie 30 row
@@ -55,10 +63,10 @@ pcbWidth            = 52.1; // Side to side
 pcbThickness        = 1.7;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 3;
+paddingFront        = 32;
 paddingBack         = 3;
 paddingRight        = 3;
-paddingLeft         = 3;
+paddingLeft         = 27;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
@@ -72,7 +80,7 @@ lidPlaneThickness   = 1.5;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 12;
-lidWallHeight       = 11;
+lidWallHeight       = 16;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -82,37 +90,48 @@ roundRadius         = 3.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 10.0;  //-- used only for pushButton and showPCB
+standoffHeight      = 4.0;  //-- used only for pushButton and showPCB
 standoffPinDiameter = 1.7;
 standoffHoleSlack   = 0.4;
 standoffDiameter    = 4.0;
 
 
 
-//-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
-previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 12;       //-> from 1 to 32, Default = 8
-onLidGap            = 10;
-shiftLid            = 5;
-colorLid            = "YellowGreen";   
-alphaLid            = 1;//0.25;   
-colorBase           = "BurlyWood";
-alphaBase           = 1;//0.25;
-hideLidWalls        = false;    //-> false
-hideBaseWalls       = false;    //-> false
-showOrientation     = true;
-showPCB             = false;
-showSwitches        = false;
-showPCBmarkers      = false;
-showShellZero       = false;
-showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from back)
-inspectY            = 0;        //-> 0=none (>0 from right)
-inspectXfromBack    = false;    // View from the inspection cut foreward
-inspectYfromLeft    = true;     // View from the inspection cut to the right
-inspectZfromTop     = true;
-//-- C O N T R O L ---------------------------------------
+//---------------------------
+//--     C O N T R O L     --
+//---------------------------
+// -- Render --
+renderQuality             = 8;          //-> from 1 to 32, Default = 8
+
+// --Preview --
+previewQuality            = 5;          //-> from 1 to 32, Default = 5
+showSideBySide            = true;       //-> Default = true
+onLidGap                  = 0;  // tip don't override to animate the lid opening
+//onLidGap                  = ((ridgeHeight) - (ridgeHeight * abs(($t-0.5)*2)))*2;  // tip don't override to animate the lid opening/closing
+colorLid                  = "YellowGreen";   
+alphaLid                  = 1;
+colorBase                 = "BurlyWood";
+alphaBase                 = 1;
+hideLidWalls              = false;      //-> Remove the walls from the lid : only if preview and showSideBySide=true 
+hideBaseWalls             = false;      //-> Remove the walls from the base : only if preview and showSideBySide=true  
+showOrientation           = true;       //-> Show the Front/Back/Left/Right labels : only in preview
+showPCB                   = true;      //-> Show the PCB in red : only in preview 
+showSwitches              = true;      //-> Show the switches (for pushbuttons) : only in preview 
+showButtonsDepressed      = false;      //-> Should the buttons in the Lid On view be in the pressed position
+showOriginCoordBox        = false;      //-> Shows red bars representing the origin for yappCoordBox : only in preview 
+showOriginCoordBoxInside  = false;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
+showOriginCoordPCB        = true;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
+showMarkersPCB            = false;      //-> Shows black bars corners of the PCB : only in preview 
+showMarkersCenter         = false;      //-> Shows magenta bars along the centers of all faces  
+inspectX                  = 0;          //-> 0=none (>0 from Back)
+inspectY                  = 0;          //-> 0=none (>0 from Right)
+inspectZ                  = 0;          //-> 0=none (>0 from Bottom)
+inspectXfromBack          = true;       //-> View from the inspection cut foreward
+inspectYfromLeft          = true;       //-> View from the inspection cut to the right
+inspectZfromBottom        = true;       //-> View from the inspection cut up
+//---------------------------
+//--     C O N T R O L     --
+//---------------------------
 
 //===================================================================
 // *** PCB Supports ***
@@ -133,14 +152,30 @@ inspectZfromTop     = true;
 //    (7) = filletRadius (0 = auto size)
 //    (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
 //    (n) = { yappHole, <yappPin> } // Baseplate support treatment
-//    (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+//    (n) = { yappAllCorners | yappFrontLeft | yappFrontRight | <yappBackLeft> | yappBackRight }
 //    (n) = { yappCoordBox, <yappCoordPCB> }  
 //    (n) = { yappNoFillet }
 //-------------------------------------------------------------------
 
+/*
+pcb2X = 90;
+pcb2Y = 6;
+pcb2Length = 26;
+pcb2Width = 50;
+pcb2MountInset = 2.5;
+pcb2HoleDiameter = 3;
+pcb2Thickness = 1.7; 
+pcb2Height = 4;
+*/
+
 pcbStands = [
   // Electro cookie 30 row
-  [5.1, 8.25]
+  [5.1, 8.25, yappAllCorners]
+  // Relay module
+ ,[pcb2X + pcb2MountInset, pcb2Y             + pcb2MountInset,  pcb2Height, pcb2Thickness, 5, 2.8, yappCoordBox]
+ ,[pcb2X + pcb2MountInset, pcb2Y + pcb2Width - pcb2MountInset,  pcb2Height, pcb2Thickness, 5, 2.8, yappCoordBox]
+ ,[pcb2X + pcb2Length - pcb2MountInset, pcb2Y             + pcb2MountInset,  pcb2Height, pcb2Thickness, 5, 2.8, yappCoordBox]
+ ,[pcb2X + pcb2Length - pcb2MountInset, pcb2Y + pcb2Width - pcb2MountInset,  pcb2Height, pcb2Thickness, 5, 2.8, yappCoordBox]
 ];
 
 
@@ -176,26 +211,31 @@ connectors   =
   ];
 
 //===================================================================
-//  *** Base Mounts ***
-//    Mounting tabs on the outside of the box
+//  *** Box Mounts ***
+//  Mounting tabs on the outside of the box
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //  Parameters:
 //   Required:
-//    (0) = pos
-//    (1) = screwDiameter
-//    (2) = width
-//    (3) = height
+//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X.
+//                    Position is to center of mounting screw in leftmost position in slot
+//    p(1) = screwDiameter
+//    p(2) = width of opening in addition to screw diameter 
+//                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
+//    p(3) = height
 //   Optional:
-//    (4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//    (n) = { yappNoFillet }
+//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
+//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
+//    n(b) = { yappNoFillet }
+//    n(c) = { <yappBase>, yappLid }
+//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
+//                            the left of the opening
+//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
 //-------------------------------------------------------------------
-
-baseMounts =
+boxMounts =
 [
-//  [shellWidth/2, 3, 10, 3, yappFront, yappBack]//, yappCenter]
+  [shellWidth/2, 3, 10, 3, yappCenter, yappFront, yappBack]//, yappCenter]
  //  [[10,10], 3, 0, 3, yappFront, yappBack]
 ];
 
@@ -243,12 +283,14 @@ cutoutsBase =
 
 cutoutsLid  = 
 [
-  // Cutout for piezo buzzer
-  [25,shellWidth/2 ,0,0, 29.8/2, yappCircle ,yappCenter, yappCoordBox] 
+// OLED Screen
+  [35,25 ,22,32, 0, yappRectangle ,yappCenter, yappCoordBox] 
+
 ];
 
 cutoutsFront =  
 [
+//  [68, 12, 14,  5,  2.5, yappRoundedRect, yappCenter, yappCoordBox]
 
 ];
 
@@ -256,11 +298,13 @@ cutoutsFront =
 cutoutsBack = 
 [
   // Cutout for USB
- [pcbWidth/2, -5 -pcbThickness ,12.5,7.0, 2, yappRoundedRect , yappCenter]
+ [pcbWidth/2, 13, 13,7.5, 2, yappRoundedRect , yappCenter]
 ];
 
 cutoutsLeft =   
 [
+ [70, 13, 0,0, 3, yappCircle , yappCenter]
+,[103, 3, 0,0, 3, yappCircle , yappCenter]
 
 ];
 
@@ -269,7 +313,8 @@ cutoutsRight =
   //Cutout for cable
 //  [35,6 ,0,0, 3.25, yappCircle,yappCenter]
   // Make the hole thru the end of the ridge extansion
-  [35+3.25,6, 0,  0,  3.25, yappCircle, yappCenter, yappCoordBox]
+  [38, 12, 14,  5,  2.5, yappRoundedRect, yappCenter, yappCoordBox]
+ ,[80, 12, 14,  4,  2,   yappRoundedRect, yappCenter, yappCoordBox]
 
 ];
 
@@ -292,9 +337,11 @@ cutoutsRight =
 
 snapJoins =   
 [
-  [(shellWidth/2),     10, yappFront,yappBack, yappCenter]
+  [(shellWidth/2),     10, yappFront, yappCenter]
+ ,[(shellWidth/2-28),     10, yappBack, yappSymmetric, yappCenter]
  //,[25,  10, yappBack, yappBack, yappSymmetric, yappCenter]
- ,[(shellLength/2),    10, yappLeft, yappRight, yappCenter]
+ ,[(shellLength/4),    10, yappLeft, yappSymmetric, yappCenter]
+ ,[(shellLength/2-5),    10, yappRight, yappCenter]
 ];
 
 //===================================================================
@@ -321,49 +368,6 @@ snapJoins =
 
 lightTubes =
 [
-  
-  [pcbLength-(8.820),(pcbWidth/2)-3.810, // Pos
-    6, 6,                 // W,L
-    1.0,                      // wall thickness
-    2,                      // Gap above PCB
-    yappCircle,          // tubeType (Shape)
-    undef,undef,1
-  ]
- ,[pcbLength-(8.820+(2.54*3)),(pcbWidth/2)-1.27 - (2.54*1), // Pos
-    6, 6,                 // W,L
-    1.0,                      // wall thickness
-    2,                      // Gap above PCB
-    yappCircle,          // tubeType (Shape)
-    undef,undef,1
-  ]
- ,[pcbLength-(8.820+(2.54*6)),(pcbWidth/2)-3.810, // Pos
-    6, 6,                 // W,L
-    1.0,                      // wall thickness
-    2,                      // Gap above PCB
-    yappCircle,          // tubeType (Shape)
-    undef,undef,1
-  ]
- ,[pcbLength-(8.820+(2.54*9)),(pcbWidth/2)-3.810, // Pos
-    6, 6,                 // W,L
-    1.0,                      // wall thickness
-    2,                      // Gap above PCB
-    yappCircle,          // tubeType (Shape)
-    undef,undef,1
-  ]
- ,[pcbLength-(8.820),(pcbWidth/2)+3.810, // Pos
-    6, 6,                 // W,L
-    1.0,                      // wall thickness
-    2,                      // Gap above PCB
-    yappCircle,          // tubeType (Shape)
-    undef,undef,1
-  ]
- ,[pcbLength-(8.820+(2.54*3)),(pcbWidth/2)+3.810, // Pos
-    6, 6,                 // W,L
-    1.0,                      // wall thickness
-    2,                      // Gap above PCB
-    yappCircle,          // tubeType (Shape)
-    undef,undef,1
-  ]
 ];
 
 //===================================================================
@@ -373,31 +377,41 @@ lightTubes =
 //
 //  Parameters:
 //   Required:
-//    (0) = posx
-//    (1) = posy
-//    (2) = capLength for yappRectangle, capDiameter for yappCircle
-//    (3) = capWidth for yappRectangle, not used for yappCircle
-//    (4) = capAboveLid
-//    (5) = switchHeight
-//    (6) = switchTravel
-//    (7) = poleDiameter
+//    p(0) = posx
+//    p(1) = posy
+//    p(2) = capLength 
+//    p(3) = capWidth 
+//    p(4) = capRadius 
+//    p(5) = capAboveLid
+//    p(6) = switchHeight
+//    p(7) = switchTravel
+//    p(8) = poleDiameter
 //   Optional:
-//    (8) = Height to top of PCB : Default = standoffHeight + pcbThickness
-//    (9) = buttonType  {yappCircle|<yappRectangle>} : Default = yappRectangle
-//    (10) = filletRadius : Default = 0/Auto 
+//    p(9) = Height to top of PCB : Default = standoffHeight + pcbThickness
+//    p(10) = Shape  {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                    | yappCircleWithFlats | yappCircleWithKey} : Default = yappRectangle
+//    p(11) = angle : Default = 0
+//    p(12) = filletRadius          : Default = 0/Auto 
+//    p(13) = buttonWall            : Default = 2.0;
+//    p(14) = buttonPlateThickness  : Default= 2.5;
+//    p(15) = buttonSlack           : Default= 0.25;
+//    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
+//    n(b) = { yappLeftOrigin, <yappGlobalOrigin> }
+//    n(c) = { yappNoFillet }
 //-------------------------------------------------------------------
-
 pushButtons = 
 [
-    [pcbLength-(8.820+(2.54*8.5)),(pcbWidth/2)+3.810+(2.54*2), 
-    8, // cap Diameter
-    0, // Unused
+  // Reset button
+    [(8.820+(2.54*1)),(pcbWidth/2)+(3.810+(2.54*1.5)), 
+    8, // Length
+    8, // Width
+    1, // Radius Diameter
     1, // Cap above Lid
-    3, // Switch Height
-    1, // Switch travel
+    14.3, // Switch Height
+    0.5, // Switch travel
     3.5, // Pole Diameter
     undef, // Height to top of PCB
-    yappCircle, // Shape
+    yappRoundedRect, // Shape
     0
     ]
 ];
@@ -425,23 +439,28 @@ pushButtons =
 //-------------------------------------------------------------------
 ridgeExtFront =
 [
+//  [68, 14, 12, yappCoordBox, yappCenter]
 
 ];
 
 ridgeExtBack =
 [
+  [pcbWidth/2, 13, 12, yappCenter]
 
 ];
 
 ridgeExtLeft =
 [
+ [75, 6, 13+5.6+1.5, yappCoordBox, yappCenter]
+,[108, 6, 3+5.6+1.5, yappCoordBox, yappCenter]
 
 ];
 
 ridgeExtRight =
 [
   // Make a ridge extension 6mm wide 10mm below the top of the ridge
-  [35, 6.5, 6, yappCoordBox]
+  [38, 14, 12, yappCoordBox, yappCenter]
+ ,[80, 14, 12, yappCoordBox, yappCenter]
  ];
 
     
@@ -463,17 +482,23 @@ ridgeExtRight =
 
 labelsPlane =
 [
-    [5, 18, -90, 1, yappLid, "Liberation Mono:style=bold", 6, "DMR" ]
+    [5, 5, 0, 1, yappLid, "Liberation Mono:style=bold", 6, "DMR" ]
 
-    ,[83.5,           22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Front" ]
-    ,[83.5-(2.54*3),  22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Drive" ]
-    ,[83.5-(2.54*6),  22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Rear" ]
-    ,[83.5-(2.54*9),  22,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Pool" ]
-    ,[83.5,           57,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Alarm" ]
-    ,[83.5-(2.54*3),  57,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Muted" ]
-    ,[83.5-(2.54*12), 47,   -90, 1, yappLid, "Liberation Mono:style=bold", 4, "Mute" ]
+//    ,[83.5,           22,   -90, 1, yappLid, "Liberation Mono", 4, "Front" ,0.15]
+//    ,[83.5-(2.54*3),  22,   -90, 1, yappLid, "Liberation Mono", 4, "Drive" ,0.15]
+//    ,[83.5-(2.54*6),  22,   -90, 1, yappLid, "Liberation Mono", 4, "Rear" ,0.15 ]
+//    ,[83.5-(2.54*9),  22,   -90, 1, yappLid, "Liberation Mono", 4, "Pool" ,0.15 ]
+//    ,[83.5,           57,   -90, 1, yappLid, "Liberation Mono", 4, "Alarm" ,0.15 ]
+//    ,[83.5-(2.54*3),  57,   -90, 1, yappLid, "Liberation Mono", 4, "Muted" ,0.15 ]
+//    ,[83.5-(2.54*12), 47,   -90, 1, yappLid, "Liberation Mono", 4, "Mute" ,0.15 ]
+
 ];
+
+
 
 
 //---- This is where the magic happens ----
 YAPPgenerate();
+translate([48,(shellWidth + shiftLid*2)+47,0])
+rotate([0,0,90])
+import("C:/Users/rosen/OneDrive/Documents/3d Models/OLED mount-hook.stl", convexity=3);

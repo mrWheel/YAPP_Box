@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0 (03-12-2023)
+//  Version 3.0 (01-12-2023)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -14,7 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-include <../YAPP_Box/library/YAPPgenerator_v30.scad>
+include <../library/YAPPgenerator_v30.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 
@@ -45,18 +45,18 @@ include <../YAPP_Box/library/YAPPgenerator_v30.scad>
 //-- which part(s) do you want to print?
 printBaseShell        = true;
 printLidShell         = true;
-printSwitchExtenders  = false;
+printSwitchExtenders  = true;
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 150; // Front to back
-pcbWidth            = 100; // Side to side
+pcbLength           = 100; // Front to back
+pcbWidth            =  80; // Side to side
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall
-paddingFront        = 41;
-paddingBack         = 1;
-paddingRight        = 1;
-paddingLeft         = 1;
+paddingFront        = 10;
+paddingBack         = 10;
+paddingRight        = 30;
+paddingLeft         = 40;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
@@ -88,14 +88,14 @@ standoffDiameter    = 8;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 6;        //-> from 1 to 32, Default = 8
+renderQuality       = 8;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
 shiftLid            = 5;
-colorLid            = "gray";   
+colorLid            = "Yellow";   
 alphaLid            = 1;//0.2;   
-colorBase           = "yellow";
+colorBase           = "silver";
 alphaBase           = 1;//0.2;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
@@ -115,39 +115,13 @@ inspectZfromTop     = false;    //-> View from the inspection cut down
 
 
 
-//===================================================================
-//   *** PCB Supports ***
-//   Pin and Socket standoffs 
-//-------------------------------------------------------------------
-//  Default origin =  yappCoordPCB : pcb[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx
-//    (1) = posy
-//   Optional:
-//    (2) = Height to bottom of PCB : Default = standoffHeight
-//    (3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
-//    (4) = standoffDiameter    Default = standoffDiameter;
-//    (5) = standoffPinDiameter Default = standoffPinDiameter;
-//    (6) = standoffHoleSlack   Default = standoffHoleSlack;
-//    (7) = filletRadius (0 = auto size)
-//    (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    (n) = { yappHole, <yappPin> } // Baseplate support treatment
-//    (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-//    (n) = { yappCoordBox, <yappCoordPCB> }  
-//    (n) = { yappNoFillet }
-//-------------------------------------------------------------------
-pcbStands = [
-  //[5, 5, yappHole]
-];
 
 
 
 //===================================================================
 //  *** Cutouts ***
 //    There are 6 cutouts one for each surface:
-//      cutoutsBase (Bottom), cutoutsLid (Top), cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
+//      cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
@@ -173,106 +147,82 @@ pcbStands = [
 //    (7) = angle : Default = 0
 //    (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
 //    (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
-//    (n) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
 //    (n) = { <yappCoordBox> | yappCoordPCB }
-//    (n) = { <yappOrigin>, yappCenter }
-//  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    (n) = { <yappOrigin> | yappCenter }
+//  (n) = { yappLeftOrigin | <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
 //-------------------------------------------------------------------
 
 cutoutsBase = 
 [
  //--  0,  1,  2,  3, 4, n
-    [120, 40, 30, 30, 10, yappPolygon, shape6ptStar]
-   ,[ 60, 55, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter]
-//-- Test
-   ,[115, 95, 20, 30, 10, yappCircle, 10]       //--> [D(b)] OK!
-   ,[140, 90, 20, 30,  1, yappRectangle, 10]    //--> [E(b)] OK!
-   ,[165, 90, 20, 30,  3, yappRoundedRect, 10]  //--> [F(b)] OK!
+  // All 4 Coordinate combinations of (yappOrigin | yappCenter) and  (yappCoordBox | yappCoordPCB)
+  [25,15, 20, 10,  2, yappRoundedRect]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
 ];
 
 cutoutsLid  = 
 [
  //--  0,  1,  2,  3, 4, n
-    [ 25, 70, 15, 25, 0, yappRectangle, undef, 30, yappCenter]
-   ,[ 25, 30, 15, 25, 0, yappRectangle, yappCenter]
-   ,[ 50, 70, 15, 25, 5, yappRoundedRect, undef, 30, yappCenter]
-   ,[ 50, 30, 15, 25, 5, yappRoundedRect, yappCenter]
-   ,[ 75, 30,  0,  0, 8, yappCircle, yappCenter]
-   ,[100, 70, 12,  0, 8, yappCircleWithFlats, undef, 30, yappCenter]
-   ,[100, 30, 12,  0, 8, yappCircleWithFlats, yappCenter]
-   ,[125, 70,  4,  5, 8, yappCircleWithKey, undef, 30, yappCenter]
-   ,[125, 30,  4,  5, 8, yappCircleWithKey, yappCenter]
-   ,[160, 30, 30, 30, 8, yappPolygon, 
-         [yappPolygonDef,[
-            [-0.50,0],[-0.25,+0.433012],[+0.45,-0.433012],[-0.25,-0.433012]]
-            
-         ], yappCenter]
-   ,[160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter]
-//-- buggy
-   ,[165, 90, 20, 30,  3, yappRoundedRect, 10] //--> [G(L)] BUG!
-   ,[140, 90, 20, 30,  1, yappRectangle, 10]   //--> [H(L)] BUG!
-   ,[115, 95, 20, 30, 10, yappCircle, 10]      //--> [J(L)] BUG!
+  // All 8 Coordinate combinations of (yappOrigin | yappCenter) and  (yappCoordBox | yappCoordPCB) and (yappLeftOrigin |yappGlobalOrigin)
+  [25,15, 20, 10,  2, yappRoundedRect, yappCenter]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
+ ,[25,15, 20, 12,  2, yappRoundedRect, yappCenter, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 12,  2, yappRoundedRect, yappCenter, yappLeftOrigin]
+ ,[25,15, 20, 14,  2, yappRoundedRect]
+ ,[25,15, 20, 14,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 16,  2, yappRoundedRect, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 16,  2, yappRoundedRect, yappLeftOrigin]
 ];
 
 cutoutsFront = 
 [
-    [20, 11, 15, 25, 3, yappRoundedRect]
-   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
-   ,[40, 11, 15, 25, 10, yappCircle]
-   ,[70, 4, 15, 17, 10, yappCircleWithFlats]
+  // All 4 Coordinate combinations of (yappOrigin | yappCenter) and  (yappCoordBox | yappCoordPCB)
+  [25,15, 20, 10,  2, yappRoundedRect]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
 ];  
 
 
 cutoutsBack = 
 [
-    [20, 40, 25, 15, 3, yappRoundedRect, 20]  //--> Bug!
+  // All 8 Coordinate combinations
+  [25,15, 20, 10,  2, yappRoundedRect, yappCenter]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappLeftOrigin]
+ ,[25,15, 20, 10,  2, yappRoundedRect]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappLeftOrigin]
 ];
 
 
 cutoutsLeft = 
 [
- //--  0,  1,  2,  3, 4, 5,6,7,n
-    [ 30,  3, 25, 15, 3, yappRoundedRect]
-   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
-   ,[160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter]
-   ,[ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
-   ,[ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
+ //--  0,  1,  2,  3, 4, n
+  // All 4 Coordinate combinations of (yappOrigin | yappCenter) and  (yappCoordBox | yappCoordPCB)
+  [25,15, 20, 10,  2, yappRoundedRect]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
 ];
 
 cutoutsRight = 
 [
-    [90,  5, 20, 15,  4, yappRoundedRect]   
-   ,[15, -5, 20, 15, 10, yappCircle, 15]      //--> [A(r)] OK
-   ,[40, -5, 20, 15,  5, yappRoundedRect, 15] //--> [B(r)]OK
-   ,[65, -5, 20, 15,  0, yappRectangle, 15]   //--> [C(r)] OK
-   ,[65, 40, 20, 15,  0, yappRectangle, 15]   //--> [K(b)] OK
-   ,[40, 40, 20, 15,  5, yappRoundedRect, 15] //--> [M(b)] OK
-   ,[15, 40, 20, 15, 10, yappCircle, 15]      //--> [N(b)] OK
+  // All 8 Coordinate combinations
+  [25,15, 20, 10,  2, yappRoundedRect, yappCenter]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCenter, yappLeftOrigin]
+ ,[25,15, 20, 10,  2, yappRoundedRect]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappCoordPCB, yappLeftOrigin]
+ ,[25,15, 20, 10,  2, yappRoundedRect, yappLeftOrigin]
 ];
 
-
-
-//===================================================================
-//  *** Snap Joins ***
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx | posy
-//    (1) = width
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//   Optional:
-//    (n) = { <yappOrigin> | yappCenter }
-//    (n) = { yappSymmetric }
-//    (n) = { yappRectangle } == Make a diamond shape snap
-//-------------------------------------------------------------------
-snapJoins   =   
-[
-    [(shellWidth/2)-40,     10, yappFront, yappCenter, yappSymmetric]
-   ,[25,  10, yappBack, yappSymmetric, yappCenter, yappRectangle]
-   ,[(shellLength/2)-60,    10, yappLeft, yappRight, yappCenter, yappRectangle, yappSymmetric]
-];
 
 
 

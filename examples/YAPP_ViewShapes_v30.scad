@@ -1,5 +1,5 @@
 
-include <../YAPP_Box/library/YAPPgenerator_v30.scad>
+include <../library/YAPPgenerator_v30.scad>
 
 
 

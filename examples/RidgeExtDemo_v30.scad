@@ -14,7 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-include <../YAPP_Box/library/YAPPgenerator_v30.scad>
+include <../library/YAPPgenerator_v30.scad>
 
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.

@@ -6,7 +6,7 @@
 //  Version 1.2 (12-12-2023)
 //
 //---------------------------------------------------------
-include <../YAPP_Box/library/YAPPgenerator_v30.scad>
+include <../library/YAPPgenerator_v30.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 

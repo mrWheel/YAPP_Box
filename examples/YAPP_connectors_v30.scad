@@ -22,7 +22,7 @@
 ***************************************************************************      
 */
 
-include <../library/YAPPgenerator_v30.scad>
+include <../YAPPgenerator_v3.scad>
 
 
 //-- pcb dimensions -- very important!!!

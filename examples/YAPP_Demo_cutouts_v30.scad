@@ -14,7 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-include <../library/YAPPgenerator_v30.scad>
+include <../YAPPgenerator_v3.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 

@@ -141,3 +141,10 @@ If you like this project or it saved you time, you can give me a cup of coffee :
       <img width="300" alt="bmc-button-75" src="https://user-images.githubusercontent.com/5585427/192536527-306e1082-7d4e-402c-b024-658d9e334356.png" alt="Coffee">
   </a>
 </p>
+
+## Versioning
+* All major releases (v1, v2, v3) are intended to be compatible with all files previously designed for v3 (e.g., the v3.1 release will not remove features or make any breaking changes, compared to v3.0).
+* The filename of the library (e.g., `YAPPgenerator_v3.scad`) will thus have only the major version in its filename.
+* When a new major version is released, a branch will be created from the `main` branch at the last commit before work is started on the next major version. This branch can be used to fix bugs and add features to the old release version, if desired. These lineage branches will not be merged to `main`, and will continue on their own path.
+* All future tagged versions will have GitHub Releases created for them, which will include the changelog for the release. The `YAPP_Template_vx.scad` and `YAPPgenerator_vx.scad` files will also be attached to the release.
+* The ISO8601 international standard date format (yyyy-mm-dd) will be used for documenting dates.

@@ -15,14 +15,14 @@
 //
 //-----------------------------------------------------------------------
 
-include <./library/YAPPgenerator_v30.scad>
+include <./YAPPgenerator_v3.scad>
 
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
 // Note: length/lengte refers to X axis, 
-//       width/breedte to Y, 
-//       height/hoogte to Z
+//       width/breedte refers to Y axis,
+//       height/hoogte refers to Z axis
 
 /*
       padding-back|<------pcb length --->|<padding-front
@@ -53,8 +53,8 @@ printSwitchExtenders  = true;
 
 
 //-- pcb dimensions -- very important!!!
-pcbLength           = 150; // Front to back
-pcbWidth            = 100; // Side to side
+pcbLength           = 150; // front to back (X axis)
+pcbWidth            = 100; // side to side (Y axis)
 pcbThickness        = 1.6;
                             
 //-- padding between pcb and inside wall

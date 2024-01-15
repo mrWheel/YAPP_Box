@@ -10,7 +10,7 @@
 //     to interferr with opposite corner
 //
 //--- copy this include to your scad script
-// include <../YAPP_Box/library/roundedCubes.scad>
+// include <./library/roundedCubes.scad>
 //
 // Set to 0.01 for higher definition curves (renders slower)
 $fs = 1.0; //0.25;

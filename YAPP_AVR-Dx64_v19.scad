@@ -8,7 +8,7 @@
 //
 // This design is parameterized based on the size of a PCB.
 //---------------------------------------------------------
-include <../YAPP_Box/library/YAPPgenerator_v19.scad>
+include <./library/YAPPgenerator_v19.scad>
 
 // Note: length/lengte refers to X axis, 
 //       width/breedte to Y, 

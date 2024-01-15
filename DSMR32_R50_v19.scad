@@ -37,9 +37,9 @@ screwDiamS  = screwDiam + holeSlack;
 
 
 
-include <../YAPP_Box/library/YAPPgenerator_v17.scad>
+include <./library/YAPPgenerator_v17.scad>
 
-include <../YAPP_Box/library/roundedCubes.scad>
+include <./library/roundedCubes.scad>
 
 
 /*

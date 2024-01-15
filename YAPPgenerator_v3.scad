@@ -106,6 +106,9 @@ standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
+//-- Cone aperture in degrees for countersunk-head screws
+countersinkAngle = 90;          //-- metric: 90
+
 // Set the layer height of your printer
 printerLayerHeight  = 0.2;
 
@@ -202,6 +205,7 @@ yappFrontLeft           = -30404;  // pcbStands, Connectors
 yappFrontRight          = -30405;  // pcbStands, Connectors 
 yappBackLeft            = -30406;  // pcbStands, Connectors 
 yappBackRight           = -30407;  // pcbStands, Connectors 
+yappCountersink         = -30408;  // connectors
 
 // Lightube options
 yappThroughLid          = -30500;  // lightTubes
@@ -435,6 +439,7 @@ pcbStands =
 //    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
+//    n(d) = { yappCountersink }
 //-------------------------------------------------------------------
 connectors   =
 [
@@ -795,6 +800,7 @@ function isTrue(constantValue, setArray) = (
    
 function minOutside(ins, outs) = ((((ins*1.5)+0.2)>=outs) ? (ins*1.5)+0.2 : outs);  
 function newHeight(T, h, z, t) = (((h+z)>t)&&(T==yappPartBase)) ? t+standoffHeight : h;
+function countersinkHeight(conn) = (conn[4] / 2) / tan (countersinkAngle / 2);
 
 //===========================================================
 module printBoxMounts()
@@ -2268,6 +2274,18 @@ module processFaceList(face, list, casePart, listType, subtract)
 
 
 //===========================================================
+module screwHeadHole(conn)
+{
+  if (isTrue(yappCountersink, conn))
+    {
+      cylinder(h=countersinkHeight(conn), d1=conn[4], d2=0);
+      cylinder(h=basePlaneThickness+0.04, d=conn[3]);
+    }
+  else
+    linear_extrude(basePlaneThickness+0.04)
+      circle(d = conn[4]);  //-- screwHeadDiam
+}
+
 module cutoutsForScrewHoles(type)
 {      
   for(conn = connectors)
@@ -2291,37 +2309,22 @@ module cutoutsForScrewHoles(type)
     if ((primeOrigin) || (allCorners) || isTrue(yappBackLeft, conn))
     {
       translate([posX, posY, -0.02])
-      {
-        linear_extrude(basePlaneThickness+0.04)
-        {
-          circle(d = conn[4]);  //-- screwHeadDiam);
-        }
-      }
+        screwHeadHole (conn);
     }
     if ((allCorners) || isTrue(yappFrontLeft, conn))
     {
       translate([posX2, posY, -0.02])
-      { 
-        linear_extrude(basePlaneThickness+0.04)
-          circle(d = conn[4]);  //-- screwHeadDiam
-            
-      }
+        screwHeadHole (conn);
     }
     if ((allCorners) || isTrue(yappFrontRight, conn))
     {
       translate([posX2, posY2, -0.02])
-      { 
-        linear_extrude(basePlaneThickness+0.04)
-          circle(d = conn[4]);  //-- screwHeadDiam
-      }
+        screwheadHole (conn);
     }
     if ((allCorners) || isTrue(yappBackRight, conn))
     {
       translate([posX, posY2, -0.02])
-      { 
-        linear_extrude(basePlaneThickness+0.04)
-          circle(d = conn[4]);  //-- screwHeadDiam
-      }
+        screwHeadHole (conn);
     }     
   } // for conn ..  
   
@@ -3238,10 +3241,14 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
           }
           
           //-- screw head Hole --
-          translate([0,0,0]) 
-            color("red") 
-              cylinder(h=screwHeadHeight, d=d2);
-                
+          color("red") 
+            if (!isTrue(yappCountersink, conn))
+              translate([0,0,0]) 
+                cylinder(h=screwHeadHeight, d=d2);
+            else
+              translate([0,0,0]) 
+                screwHeadHole(conn);
+
           //-- screwHole --
           translate([0,0,-0.02])  
             color("blue") 
@@ -3250,7 +3257,7 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
         } //  difference
         
         // Internal fillet
-        if (!isTrue(yappNoFillet, conn))
+        if (!isTrue(yappNoFillet, conn) && !isTrue(yappCountersink, conn))
         {
           filletRadius = (d2-d1)/4; // 1/2 the width if the screw flange
           

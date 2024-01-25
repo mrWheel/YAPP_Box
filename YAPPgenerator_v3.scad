@@ -243,6 +243,20 @@ yappFrontRight          = -30405;  // pcbStands, Connectors
 yappBackLeft            = -30406;  // pcbStands, Connectors 
 yappBackRight           = -30407;  // pcbStands, Connectors 
 
+yappTextLeftToRight     = -30470;
+yappTextRightToLeft     = -30471;
+yappTextTopToBottom     = -30472;
+yappTextBottomToTop     = -30473;
+
+yappTextHAlignLeft      = -30474;
+yappTextHAlignCenter    = -30475;
+yappTextHAlignRight     = -30476;
+
+yappTextVAlignTop       = -30477;
+yappTextVAlignCenter    = -30478;
+yappTextVAlignBaseLine  = -30479;
+yappTextVAlignBottom    = -30480;
+
 // Lightube options
 yappThroughLid          = -30500;  // lightTubes
 
@@ -677,6 +691,10 @@ pushButtons =
 //   p(7) = "label text"
 //  Optional:
 //   p(8) = Expand : Default = 0 : mm to expand text by (making it bolder) 
+//   p(9) = Direction : { <yappTextLeftToRight>, yappTextRightToLeft, yappTextTopToBottom, yappTextBottomToTop }
+//   p(10) = Horizontal alignment : { <yappTextHAlignLeft>, yappTextHAlignCenter, yappTextHAlignRight }
+//   p(11) = Vertical alignment : {  yappTextVAlignTop, yappTextVAlignCenter, yappTextVAlignBaseLine, <yappTextVAlignBottom> } 
+//   p(12) = Character Spacing : Default = 1 
 //-------------------------------------------------------------------
 labelsPlane =
 [
@@ -2746,6 +2764,24 @@ module buildButtons(preCuts)
 //===========================================================
 module drawLabels(casePart, subtract)
 {
+	function textDirection(code) = 
+		(code == yappTextRightToLeft) ? "rtl" :
+		(code == yappTextTopToBottom) ? "ttb" :
+		(code == yappTextBottomToTop) ? "btt" :
+		"ltr";
+		
+	function textHalign(code) = 
+		(code == yappTextHAlignCenter) ? "center" :
+		(code == yappTextHAlignRight) ? "right" :
+		"left";
+		
+	function textValign(code) = 
+		(code == yappTextVAlignTop) ? "top" :
+		(code == yappTextVAlignCenter) ? "center" :
+		(code == yappTextVAlignBaseLine) ? "baseline" :
+		"bottom";
+		
+
   for ( label = labelsPlane )
   {    
     // If we are adding to the lid  we need to shift it because we are drawing before the lid is positioned
@@ -2761,6 +2797,13 @@ module drawLabels(casePart, subtract)
     //-- Optional:
     expandBy = getParamWithDefault(label[8],0);
 
+		//-- Add additional text properties
+    theDirection = getYappValueWithDefault(label[9], yappTextLeftToRight);
+    theHalign = getYappValueWithDefault(label[10], yappTextHAlignLeft);
+    theValign = getYappValueWithDefault(label[11], yappTextVAlignBottom);
+    theSpacing = getParamWithDefault(label[12], 1);
+
+		color("red")
     translate([shiftX, shiftY, shiftZ])
     {
     //-- Check if the label is valid for the for subtract value 
@@ -2783,9 +2826,10 @@ module drawLabels(casePart, subtract)
               text(label[7]
                     , font=label[5]
                     , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
+                    , direction=textDirection(theDirection)
+                    , halign=textHalign(theHalign)
+                    , valign=textValign(theValign)
+										, spacing=theSpacing);
             } // rotate
           } // extrude
         } // translate
@@ -2800,7 +2844,7 @@ module drawLabels(casePart, subtract)
         {
           rotate([0,0,180-label[2]])
           {
-            mirror([1,0,0]) color("red")
+            mirror([1,0,0]) 
             linear_extrude(theDepth) 
             {
               {
@@ -2808,9 +2852,10 @@ module drawLabels(casePart, subtract)
                 text(label[7]
                       , font=label[5]
                       , size=label[6]
-                      , direction="ltr"
-                      , halign="left"
-                      , valign="bottom");
+											, direction=textDirection(theDirection)
+											, halign=textHalign(theHalign)
+											, valign=textValign(theValign)
+											, spacing=theSpacing);
               } // mirror..
             } // rotate
           } // extrude
@@ -2833,9 +2878,10 @@ module drawLabels(casePart, subtract)
               text(label[7]
                       , font=label[5]
                       , size=label[6]
-                      , direction="ltr"
-                      , halign="left"
-                      , valign="bottom");
+											, direction=textDirection(theDirection)
+											, halign=textHalign(theHalign)
+											, valign=textValign(theValign)
+											, spacing=theSpacing);
             } // extrude
           } // rotate
         } // translate
@@ -2857,9 +2903,10 @@ module drawLabels(casePart, subtract)
               text(label[7]
                       , font=label[5]
                       , size=label[6]
-                      , direction="ltr"
-                      , halign="left"
-                      , valign="bottom");
+											, direction=textDirection(theDirection)
+											, halign=textHalign(theHalign)
+											, valign=textValign(theValign)
+											, spacing=theSpacing);
             } // extrude
           } // rotate
         } // translate
@@ -2880,9 +2927,10 @@ module drawLabels(casePart, subtract)
               text(label[7]
                     , font=label[5]
                     , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
+										, direction=textDirection(theDirection)
+										, halign=textHalign(theHalign)
+										, valign=textValign(theValign)
+										, spacing=theSpacing);
             } // extrude
           } // rotate
         } // translate
@@ -2905,9 +2953,10 @@ module drawLabels(casePart, subtract)
               text(label[7]
                     , font=label[5]
                     , size=label[6]
-                    , direction="ltr"
-                    , halign="left"
-                    , valign="bottom");
+										, direction=textDirection(theDirection)
+										, halign=textHalign(theHalign)
+										, valign=textValign(theValign)
+										, spacing=theSpacing);
             } // extrude
           } // rotate
         } // translate
@@ -4527,6 +4576,13 @@ function getShapeWithDefault (theParam, theDefault) =
     theParam
 );
 
+function getYappValueWithDefault (theParam, theDefault) =
+(
+  (theParam==undef) ? theDefault :
+  (is_list(theParam)) ? theDefault :
+  (theParam > -30000) ? theDefault :
+    theParam
+);
 
 function getPartName(face) = 
   (face==yappPartBase) ? "yappPartBase" :

@@ -219,6 +219,7 @@ yappBaseOnly            = -30102;
 //PCB standoff typrs
 yappHole                = -30200;
 yappPin                 = -30201;
+yappTopPin              = -30202;
 
 // Faces
 yappLeft                = -30300;
@@ -456,11 +457,17 @@ preDefinedMasks=[
 //    p(5) = standoffPinDiameter Default = standoffPinDiameter;
 //    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
 //    p(7) = filletRadius (0 = auto size)
+//    p(8) = Pin Length : Default = 0 -> PCB Gap + standoff_PinDiameter
+//             Indicated length of pin without the half sphere tip. 
+//             Example : pcbThickness() only leaves the half sphere tip above the PCB
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    n(b) = { <yappPin>, yappHole } // Baseplate support treatment
+//    n(b) = { <yappPin>, yappHole, yappTopPin } 
+//             yappPin = Pin on Base and Hole on Lid 
+//             yappHole = Hole on Both
+//             yappHole = Hole on Base and Pin on Lid
 //    n(c) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(e) = { yappNoFillet }
+//    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
 //    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 pcbStands = 
@@ -694,7 +701,6 @@ pushButtons =
 //   p(9) = Direction : { <yappTextLeftToRight>, yappTextRightToLeft, yappTextTopToBottom, yappTextBottomToTop }
 //   p(10) = Horizontal alignment : { <yappTextHAlignLeft>, yappTextHAlignCenter, yappTextHAlignRight }
 //   p(11) = Vertical alignment : {  yappTextVAlignTop, yappTextVAlignCenter, yappTextVAlignBaseLine, <yappTextVAlignBottom> } 
-//   p(12) = Character Spacing : Default = 1 
 //-------------------------------------------------------------------
 labelsPlane =
 [
@@ -1468,7 +1474,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // if (len(boxMounts) > 0)
      
       //-- Objects to be cut to outside the box       
-      color("Orange")
+      //color("Orange")
       difference()
       {
         //-- move it to the origin of the base
@@ -1478,7 +1484,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // difference()
     
       //-- draw stuff inside the box
-      color("LightBlue")
+      //color("LightBlue")
       intersection()
       {
         minkowskiCutBox(L, W, H, cRad, plane, wall);
@@ -1511,7 +1517,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // if (len(boxMounts) > 0)
 
 
-      color("Red")
+      //color("Red")
       difference()
       {
         //-- Objects to be cut to outside the box 
@@ -1522,7 +1528,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // difference()
       
       //-- draw stuff inside the box
-      color("LightGreen")
+      //color("LightGreen")
       intersection()
       {
         minkowskiCutBox(L, W, H, cRad, plane, wall);
@@ -1548,7 +1554,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     //-- Only add the Post hooks
     if (shell==yappPartBase)
     {
-      color("Orange")
+      //color("Orange")
       difference()
       {
         // Objects to be cut to outside the box       
@@ -1559,7 +1565,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // difference()
 
       //draw stuff inside the box
-      color("LightBlue")
+      //color("LightBlue")
       intersection()
       {
         minkowskiCutBox(L, W, H, cRad, plane, wall);
@@ -1570,7 +1576,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
     else
     {
       //Lid      
-      color("Red")
+      //color("Red")
       difference()
       {
         //-- Objects to be cut to outside the box 
@@ -1581,7 +1587,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       } // difference()
 
       //-- draw stuff inside the box
-      color("LightGreen")
+      //color("LightGreen")
       intersection()
       {
         translate ([-L/2, -W/2, H])
@@ -1726,7 +1732,15 @@ module pcbHolders()
     standoff_Height = standoffHeight(thePCBName);
     pcbStandHeight  = getParamWithDefault(stand[2], standoff_Height);
     filletRad = getParamWithDefault(stand[7],0);
-    standType = isTrue(yappHole, stand) ? yappHole : yappPin;
+  //  standType = isTrue(yappHole, stand) ? yappHole : yappPin;
+    standType = 
+			isTrue(yappHole, stand) ? yappHole : 
+			isTrue(yappTopPin, stand) ? yappTopPin : 
+			yappPin;
+
+//    p(8) = Pin Length : Default = 0
+//    pinLength = getParamWithDefault(stand[8],0);
+    
 
     //-- Calculate based on the Coordinate system
     coordSystem = getCoordSystem(stand, yappCoordPCB);
@@ -1801,7 +1815,14 @@ module pcbPushdowns()
     pcbGap = (pcbGapTmp == -1 ) ? (usePCBCoord) ? pcb_Thickness : 0 : pcbGapTmp;
 
     filletRad = getParamWithDefault(pushdown[7],0);
-    
+     
+		//qqqqq
+		//standType = isTrue(yappHole, pushdown) ? yappHole : yappPin;
+    standType = 
+			isTrue(yappHole, pushdown) ? yappHole : 
+			isTrue(yappTopPin, pushdown) ? yappTopPin : 
+			yappPin;
+  
     pcbStandHeightTemp  = getParamWithDefault(pushdown[2], standoff_Height);
     
     pcbStandHeight=(baseWallHeight+lidWallHeight)
@@ -1823,22 +1844,22 @@ module pcbPushdowns()
       if (primeOrigin || allCorners || isTrue(yappBackLeft, pushdown))
       {
         translate([offsetX + connX, offsetY + connY, pcbZlid*-1])
-          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
+          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, standType, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
       }
       if (allCorners || isTrue(yappFrontLeft, pushdown))
       {
         translate([offsetX + lengthX - connX, offsetY + connY, pcbZlid*-1])
-          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
+          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, standType, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
       }
       if (allCorners || isTrue(yappFrontRight, pushdown))
       {
          translate([offsetX + lengthX - connX, offsetY + lengthY - connY, pcbZlid*-1])
-          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
+          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, standType, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
       }
       if (allCorners || isTrue(yappBackRight, pushdown))
       {
         translate([offsetX + connX, offsetY + lengthY - connY, pcbZlid*-1])
-          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, yappHole, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
+          pcbStandoff(yappPartLid, pcbStandHeight, filletRad, standType, "yellow", !isTrue(yappNoFillet, pushdown),pushdown);
       }
     }
   }  
@@ -3178,13 +3199,22 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
   thestandoff_PinDiameter = getParamWithDefault(configList[5],standoff_PinDiameter);
   thestandoff_HoleSlack = getParamWithDefault(configList[6],standoff_HoleSlack);
 
+  pinLengthParam = getParamWithDefault(configList[8],0);
+  
+  pinLength = (pinLengthParam == 0) 
+    ? pcbGap + pcbStandHeight + thestandoff_PinDiameter 
+    : pcbStandHeight + pinLengthParam ;
+  
+  
+
     // **********************
-    module standoff(color)
+		//-- Use boxPart to determine where to place it
+    module standoff(boxPart, color)
     {      
       color(color,1.0)
         cylinder(d = thestandoff_Diameter, h = pcbStandHeight, center = false);
       //-- flange --
-      if (plane == yappPartBase)
+      if (boxPart == yappPartBase)
       {
         if (useFillet) 
         {
@@ -3192,7 +3222,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
           color(color,1.0) pinFillet(thestandoff_Diameter/2, filletRadius);
         } // ifFillet
       }
-      if (plane == yappPartLid)
+      if (boxPart == yappPartLid)
       {
         if (useFillet) 
         {
@@ -3204,40 +3234,71 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
     } //-- standoff()
         
     // **********************
-    module standPin(color)
+    module standPin(boxPart, color, pinLength)
     {
-      color(color, 1.0)
-          union() {
-      translate([0,0,pcbGap+pcbStandHeight+thestandoff_PinDiameter]) 
-          sphere(d = thestandoff_PinDiameter);
-
-        cylinder(
-          d = thestandoff_PinDiameter,
-          h = pcbGap+pcbStandHeight+thestandoff_PinDiameter,
-          center = false); 
-          }
+			pinZOffset = (boxPart == yappPartBase)
+				? 0
+				: pcbStandHeight-pinLength;
+		
+			tipZOffset = (boxPart == yappPartBase)
+				? 0
+				: pinLength;
+				
+			translate([0,0,pinZOffset])
+			{
+				color(color, 1.0)
+					
+				union() 
+				{
+				  if (useFillet) 
+					{
+						translate([0,0,pinLength-tipZOffset]) 
+						sphere(d = thestandoff_PinDiameter);
+					} // if (useFillet)
+				cylinder(
+					d = thestandoff_PinDiameter,
+					h = pinLength,
+					center = false); 
+				} //union
+			} // translate
     } //-- standPin()
     
     // **********************
-    module standHole(color)
+		//-- Use boxPart to determine where to place it
+    module standHole(boxPart, color)
     {
       if (useFillet) 
       {
-        filletZ = (plane == yappPartBase)? pcbGap :pcbStandHeight-pcbGap;
-        holeZ = (plane == yappPartBase)? pcbGap + 0.02 : -0.02;
-        {
-          color(color, 1.0)
-          union() {
-            translate([0,0,filletZ]) 
-              sphere(d = thestandoff_PinDiameter+.2+thestandoff_HoleSlack);
-            translate([0,0,holeZ]) 
-              cylinder(
-                d = thestandoff_PinDiameter+.2+thestandoff_HoleSlack,
-                h = pcbStandHeight-pcbGap+0.02,
-                center = false);
-          }
-        }
-      }
+        filletZ = (boxPart == yappPartBase)
+					? -pcbGap :
+					pcbStandHeight-pcbGap;
+				
+				filletDiameter = (boxPart == yappPartBase)
+					? -(thestandoff_PinDiameter+.2+thestandoff_HoleSlack)/2
+					: (thestandoff_PinDiameter+.2+thestandoff_HoleSlack)/2;
+				
+        holeZ = (boxPart == yappPartBase)
+					? + 0.02 
+					: -0.02;
+
+				color(color, 1.0)
+				difference() 
+				{
+					//--The Actual Hole
+					translate([0,0,holeZ]) 
+					cylinder(
+						d = thestandoff_PinDiameter+.2+thestandoff_HoleSlack,
+						h = pcbStandHeight+0.02,
+						//h = pcbStandHeight+0.02-thestandoff_PinDiameter/2,
+						center = false);
+							
+					//-- The Fillet		
+					filletRadius = (filletRad==0) ? basePlaneThickness : filletRad; 
+					translate([0,0,filletZ+pcbGap]) 
+					color(color,1.0) 
+					pinFillet(-filletDiameter, -filletRadius);
+				} // difference
+      } //if (useFillet) 
       else
       {
         color(color, 1.0)
@@ -3249,20 +3310,72 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
       }
     } //-- standhole()
     
-    //--------------------------------------------------
-    if (type == yappPin)  //-- pin
-    {
-     standoff(color);
-     standPin(color);
-    }
-    else                  //-- hole
-    {
-      difference()
-      {
-        standoff(color);
-        standHole(color);
-      }
-    }     
+		
+	//--------------------------------------------------
+	//-- Add the Standoff to the part.
+	if (type == yappPin)  
+	{
+		//-- pin - Place Pin in Lid and Hole in Base
+		//standoff(plane, color);
+		if (plane == yappPartBase) 
+		{
+			if (printMessages) echo("yappPin - Add Pin to Base");
+			standoff(plane, color);
+			standPin(plane, color, pinLength);
+		} //yappPartBase  
+		else 
+		{
+			if (printMessages) echo("yappPin - Add Hole to Lid");
+			difference()
+			{
+				standoff(plane, color);
+				standHole(plane, color);
+			}   
+		} // yappPartLid
+	} //type == yappPin
+	
+	if (type == yappHole)                  //-- hole
+	{
+		//-- pin - Place Hole in Lid and Hole in Base	
+		if (plane == yappPartBase) 
+		{
+			if (printMessages) echo("yappHole - Add Hole to Base");
+			difference() 
+			{
+				standoff(plane, color);
+				standHole(plane, color);
+			}
+		} //yappPartBase
+		else
+		{
+			if (printMessages) echo("yappHole - Add Hole to Lid");
+			difference() 
+			{
+				standoff(plane, color);
+				standHole(plane, color);
+			}
+		} //yappPartLid
+	} // type == yappHole
+
+	if (type == yappTopPin)                  //-- TopPin
+	{
+		//-- pin - Place Hole in Lid and Pin in Base
+		if (plane == yappPartLid) 
+		{
+			if (printMessages) echo("yappTopPin - Add Pin to Lid");
+			standoff(plane, color);
+			standPin(plane, color, pinLength);
+		} // yappPartLid 
+		else 
+		{
+			if (printMessages) echo("yappTopPin - Add Hole to Base");
+			difference()
+			{
+				standoff(plane, color);
+				standHole(plane, color);
+			}   
+		} //yappPartBase
+	} // type == yappTopPin
 } //-- pcbStandoff()
 
         
@@ -4554,6 +4667,8 @@ function getPCB_Za(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVect
 function pcbLength(pcbName="Main") = (getVectorBase(pcbName, pcb))[1]; 
 function pcbWidth(pcbName="Main") = (getVectorBase(pcbName, pcb))[2]; 
 function pcbThickness(pcbName="Main") = (getVectorBase(pcbName, pcb))[5]; 
+function pcbX(pcbName="Main") = (getVectorBase(pcbName, pcb))[3]; 
+function pcbY(pcbName="Main") = (getVectorBase(pcbName, pcb))[4]; 
 function standoffHeight(pcbName="Main") = (getVectorBase(pcbName, pcb))[6]; 
 function standoffDiameter(pcbName="Main") = (getVectorBase(pcbName, pcb))[7]; 
 function standoffPinDiameter(pcbName="Main") = (getVectorBase(pcbName, pcb))[8]; 

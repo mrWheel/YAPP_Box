@@ -212,11 +212,18 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    p(5) = standoffPinDiameter Default = standoffPinDiameter;
 //    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
 //    p(7) = filletRadius (0 = auto size)
+//    p(8) = Pin Length : Default = 0 -> PCB Gap + standoff_PinDiameter
+//             Indicated length of pin without the half sphere tip. 
+//             Example : pcbThickness() only leaves the half sphere tip above the PCB
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    n(b) = { <yappPin>, yappHole } // Baseplate support treatment
-//    n(c) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+//    n(b) = { <yappPin>, yappHole, yappTopPin } 
+//             yappPin = Pin on Base and Hole on Lid 
+//             yappHole = Hole on Both
+//             yappHole = Hole on Base and Pin on Lid
+//    n(c) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(e) = { yappNoFillet }
+//    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
+//    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 pcbStands = 
 [

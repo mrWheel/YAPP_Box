@@ -4656,12 +4656,12 @@ function getPCBInfo(yappPCBName, vector) = (getVector(yappPCBName, vector) == fa
 
 function getPCBName(yappPCBName, vector) = (getVector(yappPCBName, vector) == false) ? "Main" : pcbByName(getVector(yappPCBName, vector))[0];
 
-function getPCB_X(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingFront; 
-function getPCB_Y(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingFront; 
+function getPCB_X(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
+function getPCB_Y(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
 function getPCB_Z(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + basePlaneThickness; 
 
-function getPCB_Xa(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingFront; 
-function getPCB_Ya(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingFront; 
+function getPCB_Xa(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
+function getPCB_Ya(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
 function getPCB_Za(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVectorBase(pcbName, pcb))[5] + basePlaneThickness; 
 
 function pcbLength(pcbName="Main") = (getVectorBase(pcbName, pcb))[1]; 

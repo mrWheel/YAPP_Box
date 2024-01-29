@@ -15,7 +15,7 @@
 //
 //-----------------------------------------------------------------------
 
-include <./YAPPgenerator_v3.scad>
+include <../YAPPgenerator_v3.scad>
 
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
@@ -54,12 +54,10 @@ printSwitchExtenders  = true;
 
 // ********************************************************************
 // The Following will be used as the first element in the pbc array
-
-//Defined here so you can define the "Main" PCB using these if wanted
-pcbLength           = 150; // front to back (X axis)
-pcbWidth            = 100; // side to side (Y axis)
-pcbThickness        = 1.6; 
-standoffHeight      = 1.0; //-- How much the PCB needs to be raised from the base to leave room for solderings and whatnot
+pcbLength           = 88.9; // Front to back
+pcbWidth            = 52.1; // Side to side
+pcbThickness        = 1.6;
+standoffHeight      = 3.0;  //-- How much the PCB needs to be raised from the base to leave room for solderings and whatnot
 standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
@@ -78,11 +76,11 @@ standoffHoleSlack   = 0.4;
 //    p(3) = posx
 //    p(4) = posy
 //    p(5) = Thickness
-//    p(6) = standoff_Height
-//    p(7) = standoff_Diameter
-//    p(8) = standoff_PinDiameter
+//    p(6) = standoffHeight
+//    p(7) = standoffDiameter
+//    p(8) = standoffPinDiameter
+//    p(9) = standoffHoleSlack (default to 0.4)
 //   Optional:
-//    p(9) = standoff_HoleSlack (default to 0.4)
 
 //The following can be used to get PCB values elsewhere in the script - not in pcb definition. 
 //If "PCB Name" is omitted then "Main" is used
@@ -96,21 +94,27 @@ standoffHoleSlack   = 0.4;
 
 pcb = 
 [
-  // Default Main PCB - DO NOT REMOVE the "Main" line.
-  ["Main",              pcbLength,pcbWidth,    0,0,    pcbThickness,  standoffHeight, standoffDiameter, standoffPinDiameter, standoffHoleSlack]
+  ["Main",              pcbLength,pcbWidth,    0,34,    pcbThickness,  standoffHeight, standoffDiameter, standoffPinDiameter, standoffHoleSlack]
+ ,["Voltage Detect 1",  ,71.5, 15.1,  5,0,        1.6,  3, 5, 2.5]
+ ,["Voltage Detect 2",  ,71.5, 15.1,  5,16.1,     1.6,  3, 5, 2.5]
 ];
 
-//-------------------------------------------------------------------                            
+//-------------------------------------------------------------------
+
+
+
+
+  
 //-- padding between pcb and inside wall
-paddingFront        = 2;
-paddingBack         = 2;
-paddingRight        = 2;
-paddingLeft         = 2;
+paddingFront        = 1;
+paddingBack         = 1;
+paddingRight        = 1;
+paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
-wallThickness       = 2.0;
-basePlaneThickness  = 1.5;
-lidPlaneThickness   = 1.5;
+wallThickness       = 2.4;
+basePlaneThickness  = 1.2;
+lidPlaneThickness   = 1.2;
 
 //-- Total height of box = lidPlaneThickness 
 //                       + lidWallHeight 
@@ -118,8 +122,8 @@ lidPlaneThickness   = 1.5;
 //                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 25;
-lidWallHeight       = 23;
+baseWallHeight      = 9;
+lidWallHeight       = 17;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -130,6 +134,9 @@ roundRadius         = 3.0;
 
 // Set the layer height of your printer
 printerLayerHeight  = 0.2;
+
+
+
 
 
 //---------------------------
@@ -149,8 +156,8 @@ alphaBase                 = 1;
 hideLidWalls              = false;      //-> Remove the walls from the lid : only if preview and showSideBySide=true 
 hideBaseWalls             = false;      //-> Remove the walls from the base : only if preview and showSideBySide=true  
 showOrientation           = true;       //-> Show the Front/Back/Left/Right labels : only in preview
-showPCB                   = false;      //-> Show the PCB in red : only in preview 
-showSwitches              = false;      //-> Show the switches (for pushbuttons) : only in preview 
+showPCB                   = true;      //-> Show the PCB in red : only in preview 
+showSwitches              = true;      //-> Show the switches (for pushbuttons) : only in preview 
 showButtonsDepressed      = false;      //-> Should the buttons in the Lid On view be in the pressed position
 showOriginCoordBox        = false;      //-> Shows red bars representing the origin for yappCoordBox : only in preview 
 showOriginCoordBoxInside  = false;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
@@ -206,32 +213,36 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    p(0) = posx
 //    p(1) = posy
 //   Optional:
-//    p(2) = Height to bottom of PCB : Default = standoffHeight
-//    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
-//    p(4) = standoffDiameter    Default = standoffDiameter;
-//    p(5) = standoffPinDiameter Default = standoffPinDiameter;
-//    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
+//    p(2) = Height to bottom of PCB : Default = standoff_Height
+//    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcb_Thickness, yappCoordBox=0
+//    p(4) = standoff_Diameter    Default = standoff_Diameter;
+//    p(5) = standoff_PinDiameter Default = standoff_PinDiameter;
+//    p(6) = standoff_HoleSlack   Default = standoff_HoleSlack;
 //    p(7) = filletRadius (0 = auto size)
-//    p(8) = Pin Length : Default = 0 -> PCB Gap + standoff_PinDiameter
-//             Indicated length of pin without the half sphere tip. 
-//             Example : pcbThickness() only leaves the half sphere tip above the PCB
 //    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    n(b) = { <yappPin>, yappHole, yappTopPin } 
-//             yappPin = Pin on Base and Hole on Lid 
-//             yappHole = Hole on Both
-//             yappHole = Hole on Base and Pin on Lid
+//    n(b) = { <yappPin>, yappHole } // Baseplate support treatment
 //    n(c) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
-//    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(e) = { yappNoFillet }
+//    n(f) = [yappPCBName, "XXX"] : {Specify a PCB defaults to "Main"
 //-------------------------------------------------------------------
 pcbStands = 
 [
 //- Add stands 5mm from each corner of the PCB
-    [5, 5]
+    [5, 5, yappAllCorners]
 //-   Add posts 25mm from the corners of the box, with a custon height,diameter, Pin Size, hole
 //-   slack and filler radius.
 //  [25, 25, 10, 10, 3.3, 0.9, 5, yappCoordBox] 
+//  [5,5, yappAllCorners]
+
+  // Voltage Dector boards have 2 offset pins
+ ,[15.4,  6.5, undef, undef, 5, 2.5, [yappPCBName, "Voltage Detect 1"]]
+ ,[55.7, 2.25, undef, undef, 5, 2.5, [yappPCBName, "Voltage Detect 1"]]
+
+ ,[15.4,  6.5, undef, undef, 5, 2.5, [yappPCBName, "Voltage Detect 2"]]
+ ,[55.7, 2.25, undef, undef, 5, 2.5, [yappPCBName, "Voltage Detect 2"]]
+
+
 ];
 
 
@@ -256,13 +267,11 @@ pcbStands =
 //    n(a) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 //    n(b) = { <yappCoordBox> | yappCoordPCB |  yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
+//    n(d) = [yappPCBName, "XXX"] : {XXX = the PCB name: Default "Main"}
 //-------------------------------------------------------------------
 connectors   =
 [
-    [9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, 4, yappFrontRight, yappCountersink]
-//   ,[9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, yappNoFillet, yappFrontLeft]
-//   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, yappFrontRight]
-//   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
+//  [9, 15, standoffHeight("PCB3"), 2.5, 6 + 1.25, 4.0, 9, yappAllCorners, [yappPCBName, "PCB3"]]
 ];
 
 
@@ -306,38 +315,34 @@ connectors   =
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
 //    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(g) = [yappPCBName, "XXX"] : {Specify a PCB defaults to "Main"
 //-------------------------------------------------------------------
 cutoutsBase = 
 [
-  [65,shellWidth/2 ,55,55, 5, yappPolygon ,0 ,30, yappCenter, shapeHexagon, maskHexCircles]
-// , [0, 0, 10, 10, 0, yappRectangle,maskHexCircles]
+  [pcbLength()/2,pcbWidth()/2 ,55,55, 5, yappPolygon ,0 ,0, yappCenter, shapeHexagon, [maskHoneycomb,0,1.5,0], ]
+// , [0, 0, 10, 10, 0, yappRectangle, maskHexCircles, [yappPCBName, "PCB3"]]
 // , [shellLength*2/3,shellWidth/2 ,0, 30, 20, yappCircleWithFlats, yappCenter]
 // , [shellLength/2,shellWidth/2 ,10, 5, 20, yappCircleWithKey,yappCenter]
 ];
 
 cutoutsLid  = 
 [
-//Center test
-  [shellLength/2,   shellWidth/2,  1,  1,  5, yappRectangle ,20 ,45, yappCenter]
- ,[pcbLength/2,       pcbWidth/2,  1,  1,  5, yappRectangle ,20 ,45, yappCenter, yappCoordPCB]
-//Edge tests
- ,[shellLength/2,              0,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
- ,[shellLength/2,     shellWidth,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
- ,[0,               shellWidth/2,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
- ,[shellLength,     shellWidth/2,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
-
- ,[shellLength*2/3, shellWidth/2,  0, 30, 20, yappCircleWithFlats, yappCenter]
- ,[shellLength/3,   shellWidth/2, 10,  5, 20, yappCircleWithKey,yappCenter]
-
 ];
 
 cutoutsFront =  
 [
 ];
 
-
 cutoutsBack = 
 [
+  // Cutout for USB
+ [pcbWidth()/2, 13 -pcbThickness() ,12.5,7.0, 2, yappRoundedRect , yappCenter]
+ 
+  // Cutout for AC 1
+ ,[pcbWidth("Voltage Detect 1")/2, pcbThickness("Voltage Detect 1") + 3 ,11,7.0, 2, yappRoundedRect , yappCenter, [yappPCBName, "Voltage Detect 1"]]
+  // Cutout for AC 2
+ ,[pcbWidth("Voltage Detect 2")/2, pcbThickness("Voltage Detect 2") + 3 ,11,7.0, 2, yappRoundedRect , yappCenter, [yappPCBName, "Voltage Detect 2"]]
+
 ];
 
 cutoutsLeft =   
@@ -346,6 +351,8 @@ cutoutsLeft =
 
 cutoutsRight =  
 [
+ [pcbLength()/2, pcbThickness() + 3 ,12.5,7.0, 2, yappRoundedRect , yappCenter]
+
 ];
 
 
@@ -367,9 +374,10 @@ cutoutsRight =
 //-------------------------------------------------------------------
 snapJoins   =   
 [
-    [15, 10, yappFront, yappCenter,    yappRectangle, yappSymmetric]
-   ,[25, 10, yappBack,  yappSymmetric, yappCenter]
-   ,[30, 10, yappLeft,  yappRight,     yappCenter,    yappSymmetric]
+    [30, 10, yappFront, yappCenter, yappSymmetric]
+   ,[47, 10, yappBack,  yappCenter]
+   ,[30, 10, yappRight, yappCenter, yappSymmetric]
+   ,[30, 10, yappLeft,  yappCenter, yappSymmetric]
 ];
 
 //===================================================================
@@ -397,6 +405,7 @@ snapJoins   =
 //-------------------------------------------------------------------
 boxMounts =
 [
+  [shellWidth/2,3,-3,4,yappFront, yappCenter]
 ];
 
 //===================================================================
@@ -421,28 +430,42 @@ boxMounts =
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
 //    n(c) = { yappNoFillet }
+//    n(d) = [yappPCBName, "XXX"] : {Specify a PCB defaults to "Main"
 //-------------------------------------------------------------------
 lightTubes =
 [
-  [(pcbLength/2)+10, 20,    // [0,1] Pos
-    5, 5,                   // [2,3] Length, Width
-    1,                      // [4]   wall thickness
-    standoffHeight + pcbThickness + 4, // [5] Gap above base bottom
-    yappRectangle,          // [6]   tubeType (Shape)
-    0.5,                    // [7]   lensThickness
+// ESP Power Light
+  [12.5 + 3, (pcbWidth()/2)+7.0,    // [0,1] Pos
+    3, 3,                   // [2,3] Length, Width
+    0.8,                      // [4]   wall thickness
+    standoffHeight() + pcbThickness() + 12, // [5] Gap above base bottom
+    yappCircle,          // [6]   tubeType (Shape)
+    0,                    // [7]   lensThickness
     yappCoordPCB            // [n1]
   ]
-  ,
-  [(pcbLength/2)+10, 40,    // [0,1] Pos
-    5, 10,                  // [2,3] Length, Width
-    1,                      // [4]   wall thickness
-    standoffHeight + pcbThickness + 4, // [5] Gap above base bottom
-    yappCircle,             // [6]   tubeType (Shape)
-    undef,                  // [7]
-    undef,                  // [8]
-    5,                      // [9]   filletRadius
+  
+// Voltage Detect 1 power indicator
+ ,[30,pcbWidth("Voltage Detect 1")/2,     // [0,1] Pos
+    6, 6,                   // [2,3] Length, Width
+    0.8,                      // [4]   wall thickness
+    5, // [5] gapAbovePcb
+    yappCircle,          // [6]   tubeType (Shape)
+    0,                    // [7]   lensThickness
     yappCoordPCB            // [n1]
+    ,[yappPCBName, "Voltage Detect 1"]
   ]
+  
+// Voltage Detect 2 power indicator
+ ,[30,pcbWidth("Voltage Detect 2")/2,     // [0,1] Pos
+    6, 6,                   // [2,3] Length, Width
+    0.8,                      // [4]   wall thickness
+    5, // [5] Gap above base bottom
+    yappCircle,          // [6]   tubeType (Shape)
+    0,                    // [7]   lensThickness
+    yappCoordPCB            // [n1]
+    ,[yappPCBName, "Voltage Detect 2"]
+  ]
+  
 ];
 
 //===================================================================
@@ -473,12 +496,23 @@ lightTubes =
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
 //    n(c) = { yappNoFillet }
+//    n(d) = [yappPCBName, "XXX"] : {Specify a PCB defaults to "Main"
 //-------------------------------------------------------------------
 pushButtons = 
 [
-//-               0,   1,  2,  3, 4, 5,   6, 7, 8
-   [(pcbLength/2)+10, 65, 15, 10, 0, 3,   5, 1, 3]
-  ,[(pcbLength/2)+10, 85, 10, 10, 4, 2.0, 4, 1, 4, standoffHeight, yappCircle]
+  // ESP Reset Button
+  [2.54 + 3, (pcbWidth()/2)+7.0, 
+    8, // Width
+    8, // Length
+    2, // Radius
+    0, // Cap above Lid
+    15, // Switch Height
+    0.5, // Switch travel
+    3, // Pole Diameter
+    undef, // Height to top of PCB
+    yappRoundedRect // Shape
+   ]  
+//  ,[ 5, 5, 10, 10, 4, 2.0, 4, 1, 4, standoffHeight(), yappCircle, [yappPCBName, "Voltage Detect 1"]]
 ];
              
 //===================================================================
@@ -497,10 +531,18 @@ pushButtons =
 //   p(7) = "label text"
 //  Optional:
 //   p(8) = Expand : Default = 0 : mm to expand text by (making it bolder) 
+//   p(9) = Direction : { <yappTextLeftToRight>, yappTextRightToLeft, yappTextTopToBottom, yappTextBottomToTop }
+//   p(10) = Horizontal alignment : { <yappTextHAlignLeft>, yappTextHAlignCenter, yappTextHAlignRight }
+//   p(11) = Vertical alignment : {  yappTextVAlignTop, yappTextVAlignCenter, yappTextVAlignBaseLine, 
+//   p(12) = Character Spacing : Default = 1 
 //-------------------------------------------------------------------
 labelsPlane =
 [
-    [5, 5, 0, 1, yappLid, "Liberation Mono:style=bold", 5, "YAPP" ]
+    [6.5, shellWidth-28, -90, 1, yappLid, "Liberation Mono", 5, "RESET" , 0.15]
+   ,[16.5, shellWidth-28, -90, 1, yappLid, "Liberation Mono", 5, "POWER" ,0.15 ]
+   ,[43, shellWidth-56, -90, 1, yappLid, "Liberation Mono", 5, "Elements" ,0.15 ]
+   ,[34, shellWidth-65.5, -90, 1, yappLid, "Liberation Mono", 5, "UPPER" ,0.15, yappTextTopToBottom, undef, undef, 1.1]
+   ,[34, shellWidth-82, -90, 1, yappLid, "Liberation Mono", 5, "LOWER" ,0.15, yappTextTopToBottom, undef, undef, 1.1]
 ];
 
 
@@ -520,6 +562,7 @@ labelsPlane =
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    n(d) = [yappPCBName, "XXX"] : {Specify a PCB defaults to "Main"
 //
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
 //-------------------------------------------------------------------
@@ -529,6 +572,8 @@ ridgeExtLeft =
 
 ridgeExtRight =
 [
+  [pcbLength()/2, 12.5, pcbThickness() + 3 , yappCenter]
+
 ];
 
 ridgeExtFront =
@@ -537,7 +582,11 @@ ridgeExtFront =
 
 ridgeExtBack =
 [
+  [pcbWidth()/2, 12.5, 13,yappCoordPCB, yappCenter]
+ ,[pcbWidth("Voltage Detect 1")/2, 11, pcbThickness("Voltage Detect 1") + 3, [yappPCBName, "Voltage Detect 1"], yappCenter]
+ ,[pcbWidth("Voltage Detect 2")/2, 11, pcbThickness("Voltage Detect 2") + 3, [yappPCBName, "Voltage Detect 2"], yappCenter]
 ];
+
 
 
 //========= HOOK functions ============================
@@ -571,6 +620,9 @@ module hookLidOutside()
 module hookBaseInside()
 {
   //if (printMessages) echo("hookBaseInside() ..");
+  color("Red")
+  translate([(shellLength-1)/2,33,0])
+  cube([shellLength-1,1,5], center=true);
   
 } // hookBaseInside()
 

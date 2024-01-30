@@ -256,6 +256,8 @@ pcbStands =
 //    n(a) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
 //    n(b) = { <yappCoordBox> | yappCoordPCB |  yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
+//    n(d) = { yappCountersink }
+//    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 connectors   =
 [
@@ -306,6 +308,8 @@ connectors   =
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
 //    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(g) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(h) = { yappFromInside } Make the cut from the inside towards the outside
 //-------------------------------------------------------------------
 cutoutsBase = 
 [
@@ -421,6 +425,7 @@ boxMounts =
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
 //    n(c) = { yappNoFillet }
+//    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 lightTubes =
 [
@@ -473,6 +478,7 @@ lightTubes =
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
 //    n(c) = { yappNoFillet }
+//    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 pushButtons = 
 [
@@ -520,6 +526,7 @@ labelsPlane =
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
 //-------------------------------------------------------------------

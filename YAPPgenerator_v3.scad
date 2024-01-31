@@ -244,6 +244,8 @@ yappFrontRight          = -30405;  // pcbStands, Connectors
 yappBackLeft            = -30406;  // pcbStands, Connectors 
 yappBackRight           = -30407;  // pcbStands, Connectors 
 
+yappFromInside          = -30410;  // Cutouts 
+
 yappTextLeftToRight     = -30470;
 yappTextRightToLeft     = -30471;
 yappTextTopToBottom     = -30472;
@@ -546,6 +548,7 @@ connectors   =
 //    n(e) = { <yappOrigin>, yappCenter }
 //    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(g) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(h) = { yappFromInside } Make the cut from the inside towards the outside
 //-------------------------------------------------------------------
 cutoutsBase = 
 [
@@ -723,7 +726,7 @@ labelsPlane =
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
-//    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
 //-------------------------------------------------------------------
@@ -1816,8 +1819,6 @@ module pcbPushdowns()
 
     filletRad = getParamWithDefault(pushdown[7],0);
      
-		//qqqqq
-		//standType = isTrue(yappHole, pushdown) ? yappHole : yappPin;
     standType = 
 			isTrue(yappHole, pushdown) ? yappHole : 
 			isTrue(yappTopPin, pushdown) ? yappTopPin : 
@@ -1938,14 +1939,14 @@ module makeCutouts(type)
 
 
 //===========================================================
-module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ)
+module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ, zAdjustForCutFromInside)
 {
   //-- Check if there is a mask
   theMask = getVector(yappMaskDef, cutOut);    
   theMaskVector = getVectorInVector(yappMaskDef, cutOut);
   useMask = ((!theMask==false) || (!theMaskVector==false));
  
-  if (printMessages) echo("processCutoutList_Mask",base_depth=base_depth);
+  if (printMessages) echo("processCutoutList_Mask",base_depth=base_depth, zAdjustForCutFromInside=zAdjustForCutFromInside);
 
   if (useMask) 
   {
@@ -1957,16 +1958,18 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
     intersection()
     {
       //shape
-      processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+      processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ, zAdjustForCutFromInside);
       
       centeroffsetH = (isTrue(yappCenter, cutOut)) ? 0 : base_width / 2;
       centeroffsetV = (isTrue(yappCenter, cutOut)) ? 0 : base_height / 2;
+			
       translate([offset_x, offset_y, offset_z]) 
       {
         rotate([rot_X, rot_Y, rot_Z])
         {
-          translate([base_pos_H + centeroffsetH, base_pos_V+centeroffsetV, 0])
+					translate([base_pos_H + centeroffsetH, base_pos_V+centeroffsetV, 0])
           translate([0, 0,((invertZ) ? wallDepth-base_depth : wallDepth) - 0.02])
+          translate([0, 0, zAdjustForCutFromInside])
           color("Fuchsia")
           genMaskfromParam(maskDef, base_width, base_height, base_depth, maskhOffset, maskvOffset, maskRotation);
         }// rotate
@@ -1975,13 +1978,13 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
   } // Use Mask
   else
   {
-    processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+    processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ, zAdjustForCutFromInside);
   }
 } //-- processCutoutList_Mask()
 
 //===========================================================
 //-- Process the list passeed in
-module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ)
+module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth,base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ, zAdjustForCutFromInside)
 {
   theRadius = cutOut[4];
   theShape = cutOut[5];
@@ -2017,7 +2020,7 @@ module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, 
   {
     rotate([rot_X, rot_Y, rot_Z])
     {
-      translate([pos_X, pos_Y, 0]) 
+      translate([pos_X, pos_Y, zAdjustForCutFromInside]) 
       {
         if (printMessages) echo("Drawing cutout shape");
         // Draw the shape
@@ -2066,15 +2069,20 @@ module processCutoutList_Face(face, cutoutList, casePart, swapXY, swapWH, invert
     base_pos_H  = ((!swapXY) ? theY : theX);
     base_pos_V  = ((!swapXY) ? theX : theY);
   
+		
     //-- Add 0.04 to the depth - we will shift by 0.02 later to center it on the wall
-    base_depth  = (theDepth == 0) ? wallDepth + 0.04 : theDepth + 0.04;
+    base_depth  = (theDepth == 0) ? wallDepth + 0.04 : abs(theDepth) + 0.04;
     base_angle  = theAngle;
+
+		//--Check for negative depth
+		zAdjustForCutFromInside = !isTrue(yappFromInside, cutOut) ? 0 : wallDepth - base_depth;
 
     if (printMessages) echo ("---Box---");
     pos_X = base_pos_H;
     pos_Y = base_pos_V;
     
-    processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth, base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ);
+		processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, offset_z, wallDepth, base_pos_H, base_pos_V, base_width, base_height, base_depth, base_angle, pos_X, pos_Y, invertZ, zAdjustForCutFromInside);
+		
   } //for ( cutOut = cutoutList )
 } //-- processCutoutList_Face()
 

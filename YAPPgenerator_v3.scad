@@ -143,11 +143,19 @@ ridgeSlack          = 0.3;
 //-- Radius of the shell corners
 roundRadius         = wallThickness + 1;
 
+//---------------------------
+//--     MISC Options     --
+//---------------------------
+
 //-- Cone aperture in degrees for countersunk-head screws
 countersinkAngle = 90;          //-- metric: 90
 
 // Set the layer height of your printer
 printerLayerHeight  = 0.2;
+
+// Set the ratio between the wall thickness and the ridge height. 
+//    Recommended to be left at 1.8 but for strong snaps.
+wallToRidgeRatio = 1.8;
 
 //---------------------------
 //--     C O N T R O L     --
@@ -1038,7 +1046,7 @@ module printSnapJoins(casePart)
     //--   The snap itself
     if (len(snapJoins) > 0) 
     {
-      assert ((ridgeHeight >= (wallThickness*1.8)), "ridgeHeight < 1.8 times wallThickness: no SnapJoins possible");
+      assert ((ridgeHeight >= (wallThickness*wallToRidgeRatio)), str("ridgeHeight < ", wallToRidgeRatio, " times wallThickness: no SnapJoins possible"));
     }
 
     for (snj = snapJoins)
@@ -1255,7 +1263,7 @@ module printSnapJoins(casePart)
     //-- The cutout/reciever 
     if (len(snapJoins) > 0) 
     {
-      assert ((ridgeHeight >= (wallThickness*1.8)), "ridgeHeight < 1.8 times wallThickness: no SnapJoins possible");
+      assert ((ridgeHeight >= (wallThickness*wallToRidgeRatio)), str("ridgeHeight < ", wallToRidgeRatio, " times wallThickness: no SnapJoins possible"));
     }
     
     for (snj = snapJoins)
@@ -3282,8 +3290,8 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 					pcbStandHeight-pcbGap;
 				
 				filletDiameter = (boxPart == yappPartBase)
-					? -(thestandoff_PinDiameter+.2+thestandoff_HoleSlack)/2
-					: (thestandoff_PinDiameter+.2+thestandoff_HoleSlack)/2;
+					? -(thestandoff_PinDiameter+thestandoff_HoleSlack)/2
+					: (thestandoff_PinDiameter+thestandoff_HoleSlack)/2;
 				
         holeZ = (boxPart == yappPartBase)
 					? + 0.02 
@@ -3295,7 +3303,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 					//--The Actual Hole
 					translate([0,0,holeZ]) 
 					cylinder(
-						d = thestandoff_PinDiameter+.2+thestandoff_HoleSlack,
+						d = thestandoff_PinDiameter+thestandoff_HoleSlack,
 						h = pcbStandHeight+0.02,
 						//h = pcbStandHeight+0.02-thestandoff_PinDiameter/2,
 						center = false);
@@ -3312,7 +3320,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
         color(color, 1.0)
         translate([0,0,-0.01])
         cylinder(
-          d = thestandoff_PinDiameter+.2+thestandoff_HoleSlack,
+          d = thestandoff_PinDiameter+thestandoff_HoleSlack,
           h = (pcbGap*2)+pcbStandHeight+0.02,
           center = false);
       }

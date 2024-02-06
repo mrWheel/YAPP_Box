@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.1 (2024-01-17)";
+Version="v3.0.2 (2024-02-06)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -331,14 +331,12 @@ shellHeight       = basePlaneThickness+shellInsideHeight+lidPlaneThickness;
 
 // Pre-defined shapes
 shapeIsoTriangle = [yappPolygonDef,[[-0.5,-sqrt(3)/4],[0,sqrt(3)/4],[0.5,-sqrt(3)/4]]];
-shapeIsoTriangle2 = [yappPolygonDef,[[-2/3,0],[+1/3,+0.577349],[+1/3,-0.577349]]];
+shapeIsoTriangle2 = [yappPolygonDef,[[0,+sqrt(1/3)],[+0.5,-sqrt(1/12)],[-0.5,-sqrt(1/12)]]];
 shapeHexagon = [yappPolygonDef,[[-0.50,0],[-0.25,+0.433012],[+0.25,+0.433012],[+0.50 ,0],[+0.25,-0.433012],[-0.25,-0.433012]]];
 shape6ptStar = [yappPolygonDef,[[-0.50,0],[-0.25,+0.144338],[-0.25,+0.433012],[0,+0.288675],[+0.25,+0.433012],[+0.25,+0.144338],[+0.50 ,0],[+0.25,-0.144338],[+0.25,-0.433012],[0,-0.288675],[-0.25,-0.433012],[-0.25,-0.144338]]];
-shapeTriangle = [yappPolygonDef,[[-0.5,-0.33],[0,0.66],[0.5,-0.33]]];
+shapeTriangle = [yappPolygonDef,[[-0.5,-1/3],[0,+2/3],[+0.5,-1/3]]];
 shapeTriangle2 = [yappPolygonDef,[[-0.5,-0.5],[0,0.5],[0.5,-0.5]]];
-
 shapeArrow = [yappPolygonDef,[[-1/3,+0.5],[0.166667,+0.5],[+2/3,0],[0.166667,-0.5],[-1/3,-0.5]]];
-shapeArrow2 = [yappPolygonDef,[[+2/3,0],[-1/3,+0.5],[-1/3,-0.5]]];
 
 preDefinedShapes=[
   ["shapeIsoTriangle", shapeIsoTriangle], 
@@ -348,7 +346,6 @@ preDefinedShapes=[
   ["shapeTriangle", shapeTriangle],
   ["shapeTriangle2",shapeTriangle2], 
   ["shapeArrow", shapeArrow],
-  ["shapeArrow2", shapeArrow2],
   ];
 
 
@@ -657,7 +654,6 @@ boxMounts =
 lightTubes =
 [
 ];
-
 //===================================================================
 //  *** Push Buttons ***
 //-------------------------------------------------------------------
@@ -683,6 +679,7 @@ lightTubes =
 //    p(13) = buttonWall            : Default = 2.0;
 //    p(14) = buttonPlateThickness  : Default= 2.5;
 //    p(15) = buttonSlack           : Default= 0.25;
+//    p(16) = snapSlack             : Default= 0.20;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
 //    n(c) = { yappNoFillet }
@@ -2620,16 +2617,16 @@ module buildButtons(preCuts)
       pDiam       = button[8];
       toTopOfPCB  = getParamWithDefault(button[9], (standoff_Height+pcb_Thickness));
       shape       = getShapeWithDefault(button[10],yappRectangle);
-      angle       = getParamWithDefault(button[11],0);  // New
+      angle       = getParamWithDefault(button[11],0);
       filletRad   = getParamWithDefault(button[12],0);
       
       // Enable overriding the defaults
       thebuttonWall = getParamWithDefault(button[13],buttonWall);
       thebuttonPlateThickness = getParamWithDefault(button[14],buttonPlateThickness);
       thebuttonSlack = getParamWithDefault(button[15],buttonSlack);
-     
-      thePolygon = getVector(yappPolygonDef, button); // New
-  
+      theSnapSlack = getParamWithDefault(button[16],0.20);
+      thePolygon = getVector(yappPolygonDef, button); 
+
               //
               //        -->|             |<-- LxW or Diameter
               //
@@ -2780,7 +2777,7 @@ module buildButtons(preCuts)
           {
             rotate ([0,0,extRot])
             {
-              makeSwitchExtender(shape, cLength-thebuttonSlack, cWidth-thebuttonSlack, cRadius, buttonTopThickness, pDiam, extHeight, aboveLid, thePolygon);
+              makeSwitchExtender(shape, cLength-thebuttonSlack, cWidth-thebuttonSlack, cRadius, buttonTopThickness, pDiam, extHeight, aboveLid, thePolygon, thebuttonSlack);
             }
           } // translate extender
           color("green")
@@ -2788,7 +2785,7 @@ module buildButtons(preCuts)
           {
             rotate ([plateRot,0,0])
             {
-              makeSwitchPlate(pDiam, thebuttonPlateThickness);
+              makeSwitchPlate(pDiam, thebuttonPlateThickness, thebuttonSlack, theSnapSlack);
             } 
           } // translate plate
         } // printSwitchExtenders
@@ -4530,7 +4527,7 @@ module YAPPgenerate()
 
 
 //===========================================================
-module makeSwitchExtender(shape, capLength, capWidth, capRadius, thickness, poleDiam, extHeight, aboveLid, thePolygon)
+module makeSwitchExtender(shape, capLength, capWidth, capRadius, thickness, poleDiam, extHeight, aboveLid, thePolygon, buttonSlack)
 {
   
   //   -->|            |<-- shape=circle : Diameter=capWidth shape=square : capLength x capWidth
@@ -4553,7 +4550,6 @@ module makeSwitchExtender(shape, capLength, capWidth, capRadius, thickness, pole
   //
   //       -->|    |<-- poleDiam
 
-    //translate([0,0,(thickness/-2)])
     translate([0,0,-thickness])
       color("red")
         generateShape (shape, true, capLength, capWidth, thickness, capRadius, 0, thePolygon);
@@ -4567,7 +4563,7 @@ module makeSwitchExtender(shape, capLength, capWidth, capRadius, thickness, pole
 
 //===========================================================
 //-- switch Plate -----------
-module makeSwitchPlate(poleDiam, thickness)
+module makeSwitchPlate(poleDiam, thickness, buttonSlack, snapSlack)
 {               
                 //      <---(7mm)----> 
                 //      +---+    +---+  ^
@@ -4584,7 +4580,7 @@ module makeSwitchPlate(poleDiam, thickness)
       cylinder(h=thickness, d=poleDiam+3, center=true);
     translate([0,0,-0.5])
       color("blue")
-        cylinder(h=thickness, d=poleDiam-(buttonSlack)+0.2, center=true);
+        cylinder(h=thickness, d=poleDiam-buttonSlack+snapSlack, center=true);
   }    
 } //-- makeSwitchPlate
 

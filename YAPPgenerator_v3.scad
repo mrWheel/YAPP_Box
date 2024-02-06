@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.1 (2024-01-17)";
+Version="v3.0.2 (2024-02-06)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel

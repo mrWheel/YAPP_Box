@@ -408,6 +408,20 @@ yappPatternSquareGrid,  // pattern
   ]
 ];
 
+
+maskSquares = [yappMaskDef,[
+yappPatternSquareGrid,  // pattern
+  4,                    // hRepeat
+  4,                    // vRepeat
+  0,                    // rotation
+  yappRectangle,           // openingShape
+  2,                    // openingWidth, 
+  2,                    // openingLength, 
+  0,                    // openingRadius
+  0                     // openingRotation
+  ]
+];
+
 maskBars = [yappMaskDef,[
   yappPatternSquareGrid, // pattern
   0,                     // hRepeat 0= Default to opening width - no repeat
@@ -438,6 +452,7 @@ preDefinedMasks=[
   ["maskHoneycomb", maskHoneycomb], 
   ["maskHexCircles", maskHexCircles], 
   ["maskCircles", maskCircles],
+  ["maskSquares", maskSquares],
   ["maskBars", maskBars],
   ["maskOffsetBars", maskOffsetBars],
   ];

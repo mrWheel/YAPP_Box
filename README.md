@@ -5,7 +5,7 @@ This OpenSCAD project can be used to create extremely comprehensive and customiz
 
 The [complete and official documentation gitbook](https://mrwheel-docs.gitbook.io/yappgenerator_en/) explains the entire API.
 
-If you have questions, please place them in a comment at one of the following blog posts:
+You can open Issues here, but please also place them in a comment at one of the following blog posts:
 * "<a href="https://willem.aandewiel.nl/index.php/2022/01/02/yet-another-parametric-projectbox-generator/">Yet Another Parametric Projectbox generator blog post</a>" (English)
 * "<a href="https://willem.aandewiel.nl/index.php/2022/01/01/nog-een-geparameteriseerde-projectbox-generator/">Nog een geparametriseerde projectbox generator</a>" (Dutch).
 

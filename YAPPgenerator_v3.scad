@@ -218,6 +218,7 @@ yappPolygon             = -30002;
 yappRoundedRect         = -30003;
 yappCircleWithFlats     = -30004;
 yappCircleWithKey       = -30005;
+yappRing                = -30006;
 
 //Shell options
 yappBoth                = -30100;
@@ -3891,6 +3892,17 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
           translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
           circle(r=Radius);
         } 
+        else if (Shape == yappRing)
+        {
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+            difference() {
+                difference() {
+                    circle(r=Radius);
+                    circle(r=Length);
+                }
+                square([Width, Radius*2], center=true);
+            }
+        } 
         else if (Shape == yappRectangle)
         {
           translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
@@ -3959,6 +3971,17 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
         {
           translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
           circle(r=Radius);
+        } 
+        else if (Shape == yappRing)
+        {
+          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+            difference() {
+                difference() {
+                    circle(r=Radius);
+                    circle(r=Length);
+                }
+                square([Width, Radius*2], center=true);
+            }
         } 
         else if (Shape == yappRectangle)
         {

@@ -17,13 +17,6 @@
 //
 //-----------------------------------------------------------------------
 
-//-- Bambu Lab X1C 0.4mm Nozzle PLA
-//insertDiam  = 3.8 + 0.4;
-//screwDiam   = 2.5 + 0.4;
-//-- Bambu Lab X1C 0.4mm Nozzle XT-Copolyester
-insertDiam  = 3.8 + 0.5;
-screwDiam   = 2.5 + 0.5;
-  
 
 include <../YAPPgenerator_v3.scad>
 
@@ -70,9 +63,9 @@ paddingRight        = 1;
 paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
-wallThickness       = 1.4;
-basePlaneThickness  = 1.5;
-lidPlaneThickness   = 1.0;
+wallThickness       = 2.4;
+basePlaneThickness  = 1.6;
+lidPlaneThickness   = 1.6;
 
 //-- Total height of box = basePlaneThickness + lidPlaneThickness 
 //--                     + baseWallHeight + lidWallHeight
@@ -83,7 +76,7 @@ lidWallHeight       = 10;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.0;  //-> at least 1.8 * wallThickness
+ridgeHeight         = 5.0;  //-> at least 1.8 * wallThickness
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
@@ -113,7 +106,7 @@ showSwitches        = true;
 showPCBmarkers      = false;
 showShellZero       = false;
 showCenterMarkers   = false;
-inspectX            = 0;        //-> 0=none (>0 from Back)
+inspectX            = 18;        //-> 0=none (>0 from Back)
 inspectY            = 0;        //-> 0=none (>0 from Right)
 inspectZ            = 0;        //-> 0=none (>0 from Base)
 inspectXfromBack    = false;     //-> View from the inspection cut foreward
@@ -147,125 +140,9 @@ inspectZfromTop     = true;     //-> View from the inspection cut down
 //-------------------------------------------------------------------
 pcbStands =
 [
-    //-- 0, 1,
-        [5, 5, yappBaseOnly, yappFrontLeft, yappBackRight] 
-      , [5, 5, yappBoth, yappBackLeft, yappFrontRight]
+        [5, 5, yappAllCorners] 
 ];
-
-
-//===================================================================
-//  *** Cutouts ***
-//    There are 6 cutouts one for each surface:
-//      cutoutsBase, cutoutsLid, cutoutsFront, cutoutsBack, cutoutsLeft, cutoutsRight
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//                        Required                Not Used        Note
-//                      +-----------------------+---------------+------------------------------------
-//  yappRectangle       | width, length         | radius        |
-//  yappCircle          | radius                | width, length |
-//  yappRoundedRect     | width, length, radius |               |     
-//  yappCircleWithFlats | width, radius         | length        | length=distance between flats
-//  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
-//  yappPolygon         | width, length         | radius        | yappPolygonDef object must be provided
-//
-//  Parameters:
-//   Required:
-//    (0) = from Back
-//    (1) = from Left
-//    (2) = width
-//    (3) = length
-//    (4) = radius
-//    (5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
-//  Optional:
-//    (6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
-//    (7) = angle : Default = 0
-//    (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
-//    (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
-//    (n) = { <yappCoordBox> | yappCoordPCB }
-//    (n) = { <yappOrigin>, yappCenter }
-//  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top, Back and Right Faces
-//-------------------------------------------------------------------
-cutoutsBase =   
-[
-    [shellLength/2,shellWidth/2 ,25,25, 5, yappPolygon ,0 ,30, yappCenter, shapeHexagon, [maskHexCircles,0,5]]
- // [shellLength/2,shellWidth/2 ,25,25, 5, yappPolygon ,0 ,30, yappCenter, shape6ptStar, maskHexCircles]
- // [shellLength/2,shellWidth/2 ,15,15, 5, yappPolygon ,0 ,0, yappCenter, shapeIsoTriangle, maskBars, yappCoordBox]
-];
-
-// (0) = posy
-// (1) = posz
-cutoutsFront =  
-[
-//-- 0, 1,            2,             3, 4, 5
-    [3, 2, shellWidth-6, shellHeight-4, 2, yappRoundedRect]
-];
-
-// (0) = posy
-// (1) = posz
-cutoutsBack =   
-[
-//-- 0, 1,             2,             3, 4, 5
-    [5, 2, shellWidth-10, shellHeight-4, 3, yappRoundedRect]
-];
-
-
-cutoutsLeft =  
-[
-];
-
-
-//===================================================================
-//  *** Snap Joins ***
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    (0) = posx | posy
-//    (1) = width
-//    (n) = yappLeft / yappRight / yappFront / yappBack (one or more)
-//   Optional:
-//    (n) = { <yappOrigin> | yappCenter }
-//    (n) = { yappSymmetric }
-//    (n) = { yappRectangle } == Make a diamond shape snap
-//-------------------------------------------------------------------
-snapJoins   =   
-[
-    [(shellLength/2)-10, 4, yappLeft, yappCenter, yappSymmetric]
-   ,[(shellLength/2)-12, 4, yappRight, yappCenter, yappRectangle, yappSymmetric]
-];
-
-
-//===================================================================
-//  *** Box Mounts ***
-//    Mounting tabs on the outside of the box
-//-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
-//
-//  Parameters:
-//   Required:
-//    p(0) = pos : position along the wall : [pos,offset] : vector for position and offset X.
-//                    Position is to center of mounting screw in leftmost position in slot
-//    p(1) = screwDiameter
-//    p(2) = width of opening in addition to screw diameter 
-//                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
-//    p(3) = height
-//   Optional:
-//    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
-//    n(b) = { yappNoFillet }
-//    n(c) = { <yappBase>, yappLid }
-//    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
-//                            the left of the opening
-//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
-//-------------------------------------------------------------------
-boxMounts   =  
-[
- // [(shellLength/2)-0, 3, 6, 2.5, yappLeft, yappRight, yappCenter]
- //,[(shellLength/2)-0, 3, -2, 2.5, yappLeft, yappRight, yappLid, yappCenter]
-];
-                                
+                       
 
 //===================================================================
 //  *** Push Buttons ***
@@ -285,22 +162,24 @@ boxMounts   =
 //    p(8) = poleDiameter
 //   Optional:
 //    p(9) = Height to top of PCB : Default = standoffHeight + pcbThickness
-//    p(10) = Shape  {yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey} : Default = yappRectangle
+//    p(10) = { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
+//                    | yappCircleWithFlats | yappCircleWithKey } : Shape, Default = yappRectangle
 //    p(11) = angle : Default = 0
 //    p(12) = filletRadius          : Default = 0/Auto 
 //    p(13) = buttonWall            : Default = 2.0;
 //    p(14) = buttonPlateThickness  : Default= 2.5;
 //    p(15) = buttonSlack           : Default= 0.25;
+//    p(16) = snapSlack             : Default= 0.10;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
 //    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
 //    n(c) = { yappNoFillet }
+//    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 pushButtons = 
 [
  //-- 0,  1, 2, 3, 4, 5,   6, 7,   8
-    [15, 30, 0, 0, 4, 0, 3,   1, 3.5, undef, yappCircle]
-   ,[15, 10, 8, 6, 0, 3, 5.5, 1, 3.5, undef, yappRectangle]
+   [15, 10, 8, 6, 0, 3, 5.5, 1, 3.5, undef, yappRectangle]
+  ,[15, 30, 0, 0, 4, 0, 3,   1, 3.5, undef, yappCircle, undef, undef, undef, undef, 0.25, .2]
 ];     
              
 
@@ -310,3 +189,10 @@ pushButtons =
 
 //---- This is where the magic happens ----
 YAPPgenerate();
+
+// Set standard view for Screen Shots
+$vpr = [80,0,104];
+$vpt = [-17, 15,8];
+$vpf = 22.5;
+$vpd = 102;
+

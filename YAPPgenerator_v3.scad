@@ -731,6 +731,26 @@ labelsPlane =
 
 
 //===================================================================
+//  *** Images ***
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   p(0) = posx
+//   p(1) = posy/z
+//   p(2) = rotation degrees CCW
+//   p(3) = depth : positive values go into case (Remove) negative values are raised (Add)
+//   p(4) = { yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase } : plane
+//   p(5) = "image filename.svg"
+//  Optional:
+//   p(6) = Scale : Default = 1 : ratio to scale image by (making it larger or smaller)
+//-------------------------------------------------------------------
+imagesPlane =
+[
+];
+
+
+//===================================================================
 //  *** Ridge Extension ***
 //    Extension from the lid into the case for adding split opening at various heights
 //-------------------------------------------------------------------
@@ -1525,6 +1545,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
    
       //-- Draw the labels that are added (raised) from the case
       color("DarkGreen") drawLabels(yappPartBase, false);
+      color("DarkGreen") drawImages(yappPartBase, false);
 
     } // if (shell==yappPartBase)
     else
@@ -1569,6 +1590,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
 
       //-- Draw the labels that are added (raised) from the case
       color("DarkGreen") drawLabels(yappPartLid, false);
+      color("DarkGreen") drawImages(yappPartLid, false);
 
     }
   }
@@ -3018,6 +3040,155 @@ module drawLabels(casePart, subtract)
 
 
 //===========================================================
+module drawImages(casePart, subtract)
+{
+  for ( image = imagesPlane )
+  {
+    // If we are adding to the lid  we need to shift it because we are drawing before the lid is positioned
+    shiftX = (!subtract) ? -shellLength/2 : 0 ;
+    shiftY = (!subtract) ? -shellWidth/2 : 0 ;
+
+    shiftZ = (!subtract)
+      ? (casePart== yappPartLid)
+        ? (lidWallHeight + lidPlaneThickness)
+        : -baseWallHeight - basePlaneThickness
+      : 0 ;
+
+
+    //   Optional:
+    scaleBy = getParamWithDefault(image[6],1.0);
+
+
+
+    translate([shiftX, shiftY, shiftZ])
+    {
+    // Check if the image is valid for the for subtract value
+    if (((image[3] > 0) && subtract) || ((image[3] < 0) && !subtract))
+    {
+      theDepth = (subtract) ? image[3] : -image[3];
+
+      if ((casePart== yappPartLid) && (image[4]==yappLid))
+      {
+        if (printMessages) echo ("Draw image on Lid (top)");
+        offset_depth = (subtract) ?  0.01 : theDepth -0.01;
+
+        translate([image[0], image[1], offset_depth - theDepth])
+        {
+          rotate([0,0,image[2]])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // rotate
+          } // extrude
+        } // translate
+      } //  if lid/lid
+
+      if ((casePart== yappPartBase) && (image[4]==yappBase))
+      {
+        if (printMessages) echo ("Draw image on Base (bottom)");
+        offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
+
+        translate([image[0], shellWidth-image[1], offset_depth])
+        {
+          rotate([0,0,180-image[2]])
+          {
+            mirror([1,0,0]) color("red")
+            linear_extrude(theDepth)
+            {
+              {
+                scale(scaleBy)
+                import(file = image[5], center = true);
+              } // mirror..
+            } // rotate
+          } // extrude
+        } // translate
+      } //  if base/base
+
+      if (image[4]==yappFront)
+      {
+        if (printMessages) echo ("Draw image on Front");
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  0.01 : theDepth - 0.01;
+
+        translate([shellLength - theDepth + offset_depth, image[0], offset_v + image[1]])
+        {
+          rotate([90,0-image[2],90])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if base/front
+      if (image[4]==yappBack)
+      {
+        if (printMessages) echo ("Draw image on Back", casePart);
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
+
+        translate([offset_depth, shellWidth-image[0], offset_v + image[1]])
+        {
+          rotate([90,0+image[2],90])
+          mirror([1,0,0])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if base/back
+
+      if (image[4]==yappLeft)
+      {
+        if (printMessages) echo ("Draw image on Left", casePart);
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
+        translate([image[0], theDepth+offset_depth, offset_v + image[1]])
+        {
+          rotate([90,-image[2],0])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if..base/left
+
+      if (image[4]==yappRight)
+      {
+        if (printMessages) echo ("Draw image on Right");
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  0.01 : theDepth - 0.01;
+        // Not sure why this is off by 1.5!!!
+        translate([shellLength-image[0], shellWidth + offset_depth, -1.5 + offset_v + image[1]])
+        {
+          rotate([90,image[2],0])
+          {
+            mirror([1,0,0])
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if..base/right
+    } // Valid check
+    } // Translate
+  } // for images
+
+} //  drawImages()
+
+
+//===========================================================
 module baseShell()
 {
     //-------------------------------------------------------------------
@@ -4132,6 +4303,7 @@ module drawLid()
 
     //-- Draw the labels that are carved into the case
     color("Red") drawLabels(yappPartLid, true);
+    color("Red") drawImages(yappPartLid, true);
     
   } //  difference(t1)
   
@@ -4377,6 +4549,7 @@ module YAPPgenerate()
   sanityCheckList(pushButtons, "pushButtons", 9);
   sanityCheckList(boxMounts, "boxMounts", 5);
   sanityCheckList(labelsPlane, "labelsPlane", 8, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
+  sanityCheckList(imagesPlane, "imagesPlane", 6, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
 
   // Show the origins as needed
   if ($preview && showOriginCoordBox)
@@ -4424,6 +4597,7 @@ module YAPPgenerate()
 
           // Draw the labels that are carved into the case
           color("Red") drawLabels(yappPartBase, true);
+          color("Red") drawImages(yappPartBase, true);
 
         } //  difference(a)
         

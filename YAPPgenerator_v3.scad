@@ -3583,11 +3583,10 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
 {
   face = (shellPart==yappPartBase) ? yappBase : yappLid ;
   connHeightRaw = translate2Box_Z (conn[2], face, theCoordSystem);
-  //-- if the Coord System is PCB we need to shift to the bottom of the PCB 
   
   pcb_Thickness = pcbThickness(theCoordSystem[2]);
   
-    connHeight = (theCoordSystem[0]==yappCoordPCB) ? connHeightRaw - pcb_Thickness : connHeightRaw;
+  connHeight =  connHeightRaw;
 
   d1 = conn[3]; //-- screw Diameter
   d2 = conn[4]; //-- screwHead Diameter

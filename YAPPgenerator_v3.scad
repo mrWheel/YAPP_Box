@@ -3378,7 +3378,7 @@ module lidShell()
 //===========================================================
 module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, configList) 
 {
-  //-- Get the PCBinfo 
+  //-- Get the PCBinfo (defaults)
   thePCB = getPCBInfo(yappPCBName, configList);
  
   pcb_Length       = pcbLength(thePCB[0]); 
@@ -3397,6 +3397,13 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
   thestandoff_Diameter = getParamWithDefault(configList[4],standoff_Diameter);
   thestandoff_PinDiameter = getParamWithDefault(configList[5],standoff_PinDiameter);
   thestandoff_HoleSlack = getParamWithDefault(configList[6],standoff_HoleSlack);
+
+  //Sanity Check the diameters
+   assert((thestandoff_PinDiameter < thestandoff_Diameter), str("Pin Diameter [", thestandoff_PinDiameter, "] is larger than PCB stand Diameter [", thestandoff_Diameter, "]" ));
+  
+   assert((thestandoff_PinDiameter+thestandoff_HoleSlack < thestandoff_Diameter), str("Pin Diameter [", thestandoff_PinDiameter, "] with Slack [", thestandoff_HoleSlack, "] is larger than PCB stand Diameter [", thestandoff_Diameter, "]" ));
+  
+  
 
   pinLengthParam = getParamWithDefault(configList[8],0);
   

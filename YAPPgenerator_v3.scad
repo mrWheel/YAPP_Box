@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.0.2 (2024-02-06)";
+Version="v3.0.5 (2024-03-26)";
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -544,6 +544,12 @@ connectors   =
 //  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
 //  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
 //                      |                       |               | provided
+//  yappRing            | width, length, radius |               | radius = outer radius, 
+//                      |                       |               | length = inner radius
+//                      |                       |               | width = connection between rings
+//                      |                       |               |   0 = No connectors
+//                      |                       |               |   positive = 2 connectors
+//                      |                       |               |   negative = 4 connectors
 //----------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:
@@ -3894,13 +3900,23 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
         } 
         else if (Shape == yappRing)
         {
+          connectorCount=(Width==0) ? 0 : (Width>0) ? 1 : 2; 
+          connectorWidth=abs(Width);
           translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
             difference() {
                 difference() {
                     circle(r=Radius);
                     circle(r=Length);
                 }
-                square([Width, Radius*2], center=true);
+                if (connectorCount>0) 
+                {
+                  square([connectorWidth, Radius*2], center=true);
+                  if (connectorCount>1) 
+                  {
+                    rotate([0,0,90])
+                    square([connectorWidth, Radius*2], center=true);
+                  }
+                }
             }
         } 
         else if (Shape == yappRectangle)
@@ -3974,13 +3990,23 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
         } 
         else if (Shape == yappRing)
         {
+          connectorCount=(Width==0) ? 0 : (Width>0) ? 1 : 2; 
+          connectorWidth=abs(Width);
           translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
             difference() {
                 difference() {
                     circle(r=Radius);
                     circle(r=Length);
                 }
-                square([Width, Radius*2], center=true);
+                if (connectorCount>0) 
+                {
+                  square([connectorWidth, Radius*2], center=true);
+                  if (connectorCount>1) 
+                  {
+                    rotate([0,0,90])
+                    square([connectorWidth, Radius*2], center=true);
+                  }
+                }
             }
         } 
         else if (Shape == yappRectangle)

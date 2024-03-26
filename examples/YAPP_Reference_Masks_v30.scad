@@ -60,8 +60,8 @@ paddingLeft         = 1;
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.0;
-basePlaneThickness  = 1.25;
-lidPlaneThickness   = 1.25;
+basePlaneThickness  = 2.0;
+lidPlaneThickness   = 2.0;
 
 //-- Total height of box = lidPlaneThickness 
 //                       + lidWallHeight 
@@ -70,7 +70,7 @@ lidPlaneThickness   = 1.25;
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
 baseWallHeight      = 25;
-lidWallHeight       = 23;
+lidWallHeight       = 25;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
@@ -80,7 +80,7 @@ roundRadius         = 2.0;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot
-standoffHeight      = 10.0;  //-- used only for pushButton and showPCB
+standoffHeight      = 1.0;  //-- used only for pushButton and showPCB
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 standoffDiameter    = 8;
@@ -88,14 +88,14 @@ standoffDiameter    = 8;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 6;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
 shiftLid            = 5;
 colorLid            = "gray";   
 alphaLid            = 1;//0.2;   
-colorBase           = "yellow";
+colorBase           = "gray";
 alphaBase           = 1;//0.2;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
@@ -152,85 +152,57 @@ inspectZfromTop     = false;    //-> View from the inspection cut down
 //                              placement within the opening.
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
-//    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(f) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Bottom(base), Back and Right Faces
 //    n(g) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(h) = { yappFromInside } Make the cut from the inside towards the outside
 //-------------------------------------------------------------------
 
 cutoutsBase = 
 [
+  [10,10,5,5,undef,yappRectangle,yappCenter] 
+ ,[10,10,undef,undef,2.5,yappCircle,yappCenter, yappAltOrigin] 
 ];
 
 cutoutsLid  = 
 [
+  [10,10,5,5,undef,yappRectangle,yappCenter] 
+ ,[10,10,undef,undef,2.5,yappCircle,yappCenter, yappAltOrigin] 
 
-//yappCenter demo
 /*
-    [10, 10, 10, 20, undef, yappRectangle]                              //(A)
-   ,[10, 50, 10, 20, undef, yappRectangle, yappCenter]                  //(B)
-
-   ,[30, 10, undef, undef, 5, yappCircle, ]                             //(C)
-   ,[30, 50, undef, undef, 5, yappCircle, yappCenter]                   //(D)
- 
-   ,[50, 10, 10, 20, 2, yappRoundedRect, ]                              //(E)
-   ,[50, 50, 10, 20, 2, yappRoundedRect, yappCenter]                    //(F)
- 
-   ,[70, 10, 15, undef, 10, yappCircleWithFlats, ]                      //(G)
-   ,[70, 50, 15, undef, 10, yappCircleWithFlats, yappCenter]            //(H)
- 
-   ,[90, 10, 5, 2, 8, yappCircleWithKey, ]                              //(I)
-   ,[90, 50, 5, 2, 8, yappCircleWithKey, yappCenter]                    //(J)
- 
-   ,[110, 10, 20, 20, undef, yappPolygon, shape6ptStar]                 //(K)
-   ,[110, 50, 20, 20, undef, yappPolygon, shape6ptStar, yappCenter]     //(L)
-   
+ [25, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter, maskHoneycomb]
+ ,[50, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter, maskHexCircles]
+ ,[75, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter, maskCircles]
+ ,[100, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter, maskBars]
+ ,[125, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter, maskOffsetBars]
+ ,[150, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter, maskSquares]
+// ,[175, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                    //(A)
 */
-
-
- // [0, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- [25, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[50, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[75, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[100, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[125, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[150, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[175, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[200, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
-
- ,[25, 40, 20, 20, undef, yappPolygon, 1.5, $t*360, shapeIsoTriangle, yappCenter, yappFromInside]
- ,[50, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeIsoTriangle2, yappCenter]
- ,[75, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeHexagon, yappCenter]
- ,[100, 40, 20, 20, undef, yappPolygon, undef, $t*360, shape6ptStar, yappCenter]
- ,[125, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeTriangle, yappCenter]
- ,[150, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeTriangle2, yappCenter]
- ,[175, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeArrow, yappCenter]
-// ,[200, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeArrow2, yappCenter]
- 
- // Mask Demo
-//   ,[ 160, 55, 50, 50, 10, yappRectangle, 1, shapeHexagon, [maskHoneycomb,0,0,0], yappCenter, yappFromInside]
-//   ,[ 160, 55, 50, 50, 10, yappRectangle, 1, shapeHexagon, [maskHoneycomb,0,0,0], yappCenter, yappFromInside]
 ];
 
 cutoutsFront = 
 [
+  [10,10,5,5,undef,yappRectangle,yappCenter] 
+ ,[10,10,undef,undef,2.5,yappCircle,yappCenter, yappAltOrigin] 
 ];  
 
 
 cutoutsBack = 
 [
+  [10,10,5,5,undef,yappRectangle,yappCenter] 
+ ,[10,10,undef,undef,2.5,yappCircle,yappCenter, yappAltOrigin] 
 ];
 
 
 cutoutsLeft = 
 [
- //--  0,  1,  2,  3, 4, 5,6,7,n
-//    [ 30,  3, 25, 15, 3, yappRoundedRect, 1]
- //  ,[ 60, 3, 25, 15, 3, yappRoundedRect, 1, yappFromInside] 
- //  ,[ 20, 1, 5, 5, 1, yappRoundedRect, 5, yappFromInside, yappCoordBox] // Cuts out into mounting tab
+  [10,10,5,5,undef,yappRectangle,yappCenter] 
+ ,[10,10,undef,undef,2.5,yappCircle,yappCenter, yappAltOrigin] 
 ];
 
 cutoutsRight = 
 [
+  [10,10,5,5,undef,yappRectangle,yappCenter] 
+ ,[10,10,undef,undef,2.5,yappCircle,yappCenter, yappAltOrigin] 
 ];
 
 
@@ -255,7 +227,7 @@ cutoutsRight =
 //    n(c) = { <yappBase>, yappLid }
 //    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
 //                            the left of the opening
-//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
+//    n(e) = { <yappGlobalOrigin>, yappAltOrigin } : Only affects Back and Right Faces
 //-------------------------------------------------------------------
 boxMounts =
 [

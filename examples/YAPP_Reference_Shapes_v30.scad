@@ -88,7 +88,7 @@ standoffDiameter    = 8;
 
 
 //-- C O N T R O L -------------//-> Default ---------
-showSideBySide      = true;     //-> true
+showSideBySide      = false;     //-> true
 previewQuality      = 5;        //-> from 1 to 32, Default = 5
 renderQuality       = 6;        //-> from 1 to 32, Default = 8
 onLidGap            = 2;
@@ -195,16 +195,16 @@ cutoutsLid  =
  ,[125, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
  ,[150, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
  ,[175, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
- ,[200, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
+ //,[200, 40, 20, 20, undef, yappRectangle, 0.2, yappCenter]                              //(A)
 
- ,[25, 40, 20, 20, undef, yappPolygon, 1.5, $t*360, shapeIsoTriangle, yappCenter, yappFromInside]
+ ,[25, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeIsoTriangle, yappCenter]
  ,[50, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeIsoTriangle2, yappCenter]
  ,[75, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeHexagon, yappCenter]
  ,[100, 40, 20, 20, undef, yappPolygon, undef, $t*360, shape6ptStar, yappCenter]
  ,[125, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeTriangle, yappCenter]
  ,[150, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeTriangle2, yappCenter]
  ,[175, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeArrow, yappCenter]
-// ,[200, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeArrow2, yappCenter]
+ //,[200, 40, 20, 20, undef, yappPolygon, undef, $t*360, shapeArrow2, yappCenter]
  
  // Mask Demo
 //   ,[ 160, 55, 50, 50, 10, yappRectangle, 1, shapeHexagon, [maskHoneycomb,0,0,0], yappCenter, yappFromInside]

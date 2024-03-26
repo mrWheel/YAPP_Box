@@ -5,6 +5,7 @@
 */
 
 Version="v3.0.5 (2024-03-26)";
+
 /*
 **
 **  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
@@ -281,7 +282,7 @@ yappCoordPCB            = -30700;  // pcbStands, connectors, Cutouts, boxMounts,
 yappCoordBox            = -30701;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
 yappCoordBoxInside      = -30702;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
 
-yappLeftOrigin          = -30710;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
+yappAltOrigin           = -30710;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
 yappGlobalOrigin        = -30711;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
 
 //yappConnWithPCB - Depreciated use yappCoordPCB 
@@ -573,7 +574,7 @@ connectors   =
 //                              placement within the opening.
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
-//    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(f) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(g) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(h) = { yappFromInside } Make the cut from the inside towards the outside
 //-------------------------------------------------------------------
@@ -642,7 +643,7 @@ snapJoins   =
 //    n(c) = { <yappBase>, yappLid }
 //    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
 //                            the left of the opening
-//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
+//    n(e) = { <yappGlobalOrigin>, yappAltOrigin } : Only affects Back and Right Faces
 //-------------------------------------------------------------------
 boxMounts =
 [
@@ -669,7 +670,7 @@ boxMounts =
 //    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    p(9) = filletRadius : Default = 0/Auto 
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
+//    n(b) = { <yappGlobalOrigin>, yappAltOrigin }
 //    n(c) = { yappNoFillet }
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
@@ -703,7 +704,7 @@ lightTubes =
 //    p(15) = buttonSlack           : Default= 0.25;
 //    p(16) = snapSlack             : Default= 0.20;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
+//    n(b) = { <yappGlobalOrigin>,  yappAltOrigin }
 //    n(c) = { yappNoFillet }
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
@@ -738,6 +739,26 @@ labelsPlane =
 
 
 //===================================================================
+//  *** Images ***
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   p(0) = posx
+//   p(1) = posy/z
+//   p(2) = rotation degrees CCW
+//   p(3) = depth : positive values go into case (Remove) negative values are raised (Add)
+//   p(4) = { yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase } : plane
+//   p(5) = "image filename.svg"
+//  Optional:
+//   p(6) = Scale : Default = 1 : ratio to scale image by (making it larger or smaller)
+//-------------------------------------------------------------------
+imagesPlane =
+[
+];
+
+
+//===================================================================
 //  *** Ridge Extension ***
 //    Extension from the lid into the case for adding split opening at various heights
 //-------------------------------------------------------------------
@@ -752,7 +773,7 @@ labelsPlane =
 //   Optional:
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(c) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(c) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
@@ -1015,7 +1036,7 @@ module printBoxMounts()
         mountLength = bm[2]<0 ? 0 : bm[2];
         
         
-        originLLOpt = isTrue(yappLeftOrigin, bm);
+        originLLOpt = isTrue(yappAltOrigin, bm);
 
         if (isTrue(yappLeft, bm))
         {
@@ -1532,6 +1553,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
    
       //-- Draw the labels that are added (raised) from the case
       color("DarkGreen") drawLabels(yappPartBase, false);
+      color("DarkGreen") drawImages(yappPartBase, false);
 
     } // if (shell==yappPartBase)
     else
@@ -1576,6 +1598,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
 
       //-- Draw the labels that are added (raised) from the case
       color("DarkGreen") drawLabels(yappPartLid, false);
+      color("DarkGreen") drawImages(yappPartLid, false);
 
     }
   }
@@ -2132,7 +2155,7 @@ module processRidgeExtList_Face(face, ridgeExtList, casePart, swapXY, swapWH, in
     theWidth = ridgeExt[1];
     theLength = translate2Box_Y (ridgeExt[2], face, theCoordSystem); //ridgeExt[2];
     
-    originLLOpt = isTrue(yappLeftOrigin, ridgeExt);
+    originLLOpt = isTrue(yappAltOrigin, ridgeExt);
     
     //-- Calc H&W if only Radius is given
     //-- add slack for the part connected to the lid
@@ -3025,6 +3048,155 @@ module drawLabels(casePart, subtract)
 
 
 //===========================================================
+module drawImages(casePart, subtract)
+{
+  for ( image = imagesPlane )
+  {
+    // If we are adding to the lid  we need to shift it because we are drawing before the lid is positioned
+    shiftX = (!subtract) ? -shellLength/2 : 0 ;
+    shiftY = (!subtract) ? -shellWidth/2 : 0 ;
+
+    shiftZ = (!subtract)
+      ? (casePart== yappPartLid)
+        ? (lidWallHeight + lidPlaneThickness)
+        : -baseWallHeight - basePlaneThickness
+      : 0 ;
+
+
+    //   Optional:
+    scaleBy = getParamWithDefault(image[6],1.0);
+
+
+
+    translate([shiftX, shiftY, shiftZ])
+    {
+    // Check if the image is valid for the for subtract value
+    if (((image[3] > 0) && subtract) || ((image[3] < 0) && !subtract))
+    {
+      theDepth = (subtract) ? image[3] : -image[3];
+
+      if ((casePart== yappPartLid) && (image[4]==yappLid))
+      {
+        if (printMessages) echo ("Draw image on Lid (top)");
+        offset_depth = (subtract) ?  0.01 : theDepth -0.01;
+
+        translate([image[0], image[1], offset_depth - theDepth])
+        {
+          rotate([0,0,image[2]])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // rotate
+          } // extrude
+        } // translate
+      } //  if lid/lid
+
+      if ((casePart== yappPartBase) && (image[4]==yappBase))
+      {
+        if (printMessages) echo ("Draw image on Base (bottom)");
+        offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
+
+        translate([image[0], shellWidth-image[1], offset_depth])
+        {
+          rotate([0,0,180-image[2]])
+          {
+            mirror([1,0,0]) color("red")
+            linear_extrude(theDepth)
+            {
+              {
+                scale(scaleBy)
+                import(file = image[5], center = true);
+              } // mirror..
+            } // rotate
+          } // extrude
+        } // translate
+      } //  if base/base
+
+      if (image[4]==yappFront)
+      {
+        if (printMessages) echo ("Draw image on Front");
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  0.01 : theDepth - 0.01;
+
+        translate([shellLength - theDepth + offset_depth, image[0], offset_v + image[1]])
+        {
+          rotate([90,0-image[2],90])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if base/front
+      if (image[4]==yappBack)
+      {
+        if (printMessages) echo ("Draw image on Back", casePart);
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
+
+        translate([offset_depth, shellWidth-image[0], offset_v + image[1]])
+        {
+          rotate([90,0+image[2],90])
+          mirror([1,0,0])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if base/back
+
+      if (image[4]==yappLeft)
+      {
+        if (printMessages) echo ("Draw image on Left", casePart);
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  -0.01 : -theDepth + 0.01;
+        translate([image[0], theDepth+offset_depth, offset_v + image[1]])
+        {
+          rotate([90,-image[2],0])
+          {
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if..base/left
+
+      if (image[4]==yappRight)
+      {
+        if (printMessages) echo ("Draw image on Right");
+        offset_v = (casePart==yappPartLid) ? -shellHeight : 0;
+        offset_depth = (subtract) ?  0.01 : theDepth - 0.01;
+        // Not sure why this is off by 1.5!!!
+        translate([shellLength-image[0], shellWidth + offset_depth, -1.5 + offset_v + image[1]])
+        {
+          rotate([90,image[2],0])
+          {
+            mirror([1,0,0])
+            linear_extrude(theDepth)
+            {
+              scale(scaleBy)
+              import(file = image[5], center = true);
+            } // extrude
+          } // rotate
+        } // translate
+      } //  if..base/right
+    } // Valid check
+    } // Translate
+  } // for images
+
+} //  drawImages()
+
+
+//===========================================================
 module baseShell()
 {
     //-------------------------------------------------------------------
@@ -3214,7 +3386,7 @@ module lidShell()
 //===========================================================
 module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, configList) 
 {
-  //-- Get the PCBinfo 
+  //-- Get the PCBinfo (defaults)
   thePCB = getPCBInfo(yappPCBName, configList);
  
   pcb_Length       = pcbLength(thePCB[0]); 
@@ -3233,6 +3405,13 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
   thestandoff_Diameter = getParamWithDefault(configList[4],standoff_Diameter);
   thestandoff_PinDiameter = getParamWithDefault(configList[5],standoff_PinDiameter);
   thestandoff_HoleSlack = getParamWithDefault(configList[6],standoff_HoleSlack);
+
+  //Sanity Check the diameters
+   assert((thestandoff_PinDiameter < thestandoff_Diameter), str("Pin Diameter [", thestandoff_PinDiameter, "] is larger than PCB stand Diameter [", thestandoff_Diameter, "]" ));
+  
+   assert((thestandoff_PinDiameter+thestandoff_HoleSlack < thestandoff_Diameter), str("Pin Diameter [", thestandoff_PinDiameter, "] with Slack [", thestandoff_HoleSlack, "] is larger than PCB stand Diameter [", thestandoff_Diameter, "]" ));
+  
+  
 
   pinLengthParam = getParamWithDefault(configList[8],0);
   
@@ -3419,11 +3598,10 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
 {
   face = (shellPart==yappPartBase) ? yappBase : yappLid ;
   connHeightRaw = translate2Box_Z (conn[2], face, theCoordSystem);
-  //-- if the Coord System is PCB we need to shift to the bottom of the PCB 
   
   pcb_Thickness = pcbThickness(theCoordSystem[2]);
   
-    connHeight = (theCoordSystem[0]==yappCoordPCB) ? connHeightRaw - pcb_Thickness : connHeightRaw;
+  connHeight =  connHeightRaw;
 
   d1 = conn[3]; //-- screw Diameter
   d2 = conn[4]; //-- screwHead Diameter
@@ -4181,6 +4359,7 @@ module drawLid()
 
     //-- Draw the labels that are carved into the case
     color("Red") drawLabels(yappPartLid, true);
+    color("Red") drawImages(yappPartLid, true);
     
   } //  difference(t1)
   
@@ -4426,6 +4605,7 @@ module YAPPgenerate()
   sanityCheckList(pushButtons, "pushButtons", 9);
   sanityCheckList(boxMounts, "boxMounts", 5);
   sanityCheckList(labelsPlane, "labelsPlane", 8, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
+  sanityCheckList(imagesPlane, "imagesPlane", 6, 4, [yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase]);
 
   // Show the origins as needed
   if ($preview && showOriginCoordBox)
@@ -4473,6 +4653,7 @@ module YAPPgenerate()
 
           // Draw the labels that are carved into the case
           color("Red") drawLabels(yappPartBase, true);
+          color("Red") drawImages(yappPartBase, true);
 
         } //  difference(a)
         
@@ -4866,7 +5047,7 @@ function getCoordSystem(list, default) =
   : isTrue(yappCoordBoxInside, list) ? yappCoordBoxInside
   : default
   ,
-  isTrue(yappLeftOrigin, list) ? yappLeftOrigin 
+  isTrue(yappAltOrigin, list) ? yappAltOrigin 
   : isTrue(yappGlobalOrigin, list) ? yappGlobalOrigin 
   : yappGlobalOrigin
   ,
@@ -4875,23 +5056,23 @@ function getCoordSystem(list, default) =
 
 // Translate from PCB coordinates to Outside Box Coordinates
 function translate2Box_X (value, face, sourceSystem) =
-  (sourceSystem[0] == yappCoordPCB) && (face==yappBase)         ? value + getPCB_X(sourceSystem[2]) :
+  (sourceSystem[0] == yappCoordPCB) && (face==yappLid)          ? value + getPCB_X(sourceSystem[2]) :
   (sourceSystem[0] == yappCoordPCB) && (face==yappLeft)         ? value + getPCB_X(sourceSystem[2]) :
   (sourceSystem[0] == yappCoordPCB) && (face==yappFront)        ? value + getPCB_Y(sourceSystem[2]) :
-  (sourceSystem[0] == yappCoordPCB) && (face==yappLid)          ? (sourceSystem[1] == yappLeftOrigin) ? shellLength - (value  + getPCB_X(thePCB)) - wallThickness - paddingFront         : value + getPCB_X(sourceSystem[2]) :
-  (sourceSystem[0] == yappCoordPCB) && (face==yappRight)        ? (sourceSystem[1] == yappLeftOrigin) ? shellLength - (value  + getPCB_X(thePCB))- value - wallThickness - paddingFront  : value + getPCB_X(sourceSystem[2]) :
-  (sourceSystem[0] == yappCoordPCB) && (face==yappBack)         ? (sourceSystem[1] == yappLeftOrigin) ? shellWidth  - (value  + getPCB_Y(thePCB)) - value - wallThickness - paddingRight : value + getPCB_Y(sourceSystem[2]) :
+  (sourceSystem[0] == yappCoordPCB) && (face==yappBase)         ? (sourceSystem[1] == yappAltOrigin) ? shellLength - (value  + getPCB_X(sourceSystem[2])) - wallThickness - paddingFront : value + getPCB_X(sourceSystem[2]) :
+  (sourceSystem[0] == yappCoordPCB) && (face==yappRight)        ? (sourceSystem[1] == yappAltOrigin) ? shellLength - (value  + getPCB_X(sourceSystem[2])) - wallThickness - paddingFront : value + getPCB_X(sourceSystem[2]) :
+  (sourceSystem[0] == yappCoordPCB) && (face==yappBack)         ? (sourceSystem[1] == yappAltOrigin) ? shellWidth  - (value  + getPCB_Y(sourceSystem[2])) - wallThickness - paddingRight : value + getPCB_Y(sourceSystem[2]) :
   
   (sourceSystem[0] == yappCoordBoxInside) && (face==yappBase)   ? value + wallThickness :
   (sourceSystem[0] == yappCoordBoxInside) && (face==yappLeft)   ? value + wallThickness :
   (sourceSystem[0] == yappCoordBoxInside) && (face==yappFront)  ? value + wallThickness :
-  (sourceSystem[0] == yappCoordBoxInside) && (face==yappLid)    ? (sourceSystem[1] == yappLeftOrigin) ? shellInsideLength - value + wallThickness : value + wallThickness :
-  (sourceSystem[0] == yappCoordBoxInside) && (face==yappRight)  ? (sourceSystem[1] == yappLeftOrigin) ? shellInsideLength - value + wallThickness : value + wallThickness :
-  (sourceSystem[0] == yappCoordBoxInside) && (face==yappBack)   ? (sourceSystem[1] == yappLeftOrigin) ? shellWidth - value - wallThickness : value + wallThickness :
+  (sourceSystem[0] == yappCoordBoxInside) && (face==yappLid)    ? (sourceSystem[1] == yappAltOrigin) ? shellInsideLength - value + wallThickness : value + wallThickness :
+  (sourceSystem[0] == yappCoordBoxInside) && (face==yappRight)  ? (sourceSystem[1] == yappAltOrigin) ? shellInsideLength - value + wallThickness : value + wallThickness :
+  (sourceSystem[0] == yappCoordBoxInside) && (face==yappBack)   ? (sourceSystem[1] == yappAltOrigin) ? shellWidth - value - wallThickness : value + wallThickness :
 
-  (sourceSystem[0] == yappCoordBox) && (face==yappLid)          ? (sourceSystem[1] == yappLeftOrigin) ? shellLength - value : value :
-  (sourceSystem[0] == yappCoordBox) && (face==yappRight)        ? (sourceSystem[1] == yappLeftOrigin) ? shellLength - value : value :
-  (sourceSystem[0] == yappCoordBox) && (face==yappBack)         ? (sourceSystem[1] == yappLeftOrigin) ? shellWidth  - value : value :
+  (sourceSystem[0] == yappCoordBox) && (face==yappLid)          ? (sourceSystem[1] == yappAltOrigin) ? shellLength - value : value :
+  (sourceSystem[0] == yappCoordBox) && (face==yappRight)        ? (sourceSystem[1] == yappAltOrigin) ? shellLength - value : value :
+  (sourceSystem[0] == yappCoordBox) && (face==yappBack)         ? (sourceSystem[1] == yappAltOrigin) ? shellWidth  - value : value :
   value;
   
 function translate2Box_Y (value, face, sourceSystem) =
@@ -4988,12 +5169,12 @@ module TestCoordTranslations()
   TestPCB2Box(0,0,0, yappBase, [yappCoordPCB, undef, "Main"]);
   
   /*
-  TestPCB2Box(0,0,0, yappLeft, [yappCoordPCB, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappRight, [yappCoordPCB, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappFront, [yappCoordPCB, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappBack, [yappCoordPCB, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappLid, [yappCoordPCB, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappBase, [yappCoordPCB, yappLeftOrigin]);
+  TestPCB2Box(0,0,0, yappLeft, [yappCoordPCB, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappRight, [yappCoordPCB, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappFront, [yappCoordPCB, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappBack, [yappCoordPCB, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappLid, [yappCoordPCB, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappBase, [yappCoordPCB, yappAltOrigin]);
     
   TestPCB2Box(0,0,0, yappLeft, [yappCoordBoxInside]);
   TestPCB2Box(0,0,0, yappRight, [yappCoordBoxInside]);
@@ -5002,12 +5183,12 @@ module TestCoordTranslations()
   TestPCB2Box(0,0,0, yappLid, [yappCoordBoxInside]);
   TestPCB2Box(0,0,0, yappBase, [yappCoordBoxInside]);
   
-  TestPCB2Box(0,0,0, yappLeft, [yappCoordBoxInside, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappRight, [yappCoordBoxInside, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappFront, [yappCoordBoxInside, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappBack, [yappCoordBoxInside, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappLid, [yappCoordBoxInside, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappBase, [yappCoordBoxInside, yappLeftOrigin]);
+  TestPCB2Box(0,0,0, yappLeft, [yappCoordBoxInside, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappRight, [yappCoordBoxInside, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappFront, [yappCoordBoxInside, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappBack, [yappCoordBoxInside, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappLid, [yappCoordBoxInside, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappBase, [yappCoordBoxInside, yappAltOrigin]);
       
   TestPCB2Box(0,0,0, yappLeft, [yappCoordBox]);
   TestPCB2Box(0,0,0, yappRight, [yappCoordBox]);
@@ -5016,12 +5197,12 @@ module TestCoordTranslations()
   TestPCB2Box(0,0,0, yappLid, [yappCoordBox]);
   TestPCB2Box(0,0,0, yappBase, [yappCoordBox]);
   
-  TestPCB2Box(0,0,0, yappLeft, [yappCoordBox, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappRight, [yappCoordBox, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappFront, [yappCoordBox, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappBack, [yappCoordBox, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappLid, [yappCoordBox, yappLeftOrigin]);
-  TestPCB2Box(0,0,0, yappBase, [yappCoordBox, yappLeftOrigin]);
+  TestPCB2Box(0,0,0, yappLeft, [yappCoordBox, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappRight, [yappCoordBox, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappFront, [yappCoordBox, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappBack, [yappCoordBox, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappLid, [yappCoordBox, yappAltOrigin]);
+  TestPCB2Box(0,0,0, yappBase, [yappCoordBox, yappAltOrigin]);
   */
 } //TestCoordTranslations
 

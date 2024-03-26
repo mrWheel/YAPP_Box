@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0.1 (2024-01-15)
+//  Version 3.0.5 (2024-03-26)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -284,6 +284,12 @@ connectors   =
 //  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
 //  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
 //                      |                       |               | provided
+//  yappRing            | width, length, radius |               | radius = outer radius, 
+//                      |                       |               | length = inner radius
+//                      |                       |               | width = connection between rings
+//                      |                       |               |   0 = No connectors
+//                      |                       |               |   positive = 2 connectors
+//                      |                       |               |   negative = 4 connectors
 //----------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:

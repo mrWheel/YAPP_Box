@@ -2567,13 +2567,12 @@ module buildLightTubes()
       {
         difference()
         {
-          tubeRib=max(tLength, tWidth);
           color("red") 
-            cube([tubeRib+(tWall*2), tubeRib+(tWall*2), pcbTop2Lid], center=true);
+            cube([tWidth+(tWall*2), tLength+(tWall*2), pcbTop2Lid], center=true);
           
           translate([0,0,tWall*-1])
             color("green") 
-              cube([tubeRib, tubeRib, pcbTop2Lid], center=true);
+              cube([tWidth, tLength, pcbTop2Lid], center=true);
           translate([0,0, +lensThickness])
             color("blue") 
               cube([tWidth, tLength, pcbTop2Lid+lensThickness], center=true);
@@ -2581,9 +2580,8 @@ module buildLightTubes()
         if ((!isTrue(yappNoFillet, tube)))
         {
           filletRadius = (filletRad==0) ? lidPlaneThickness : filletRad; 
-          tubeRib=max(tLength, tWidth);
           translate([0,0,(pcbTop2Lid/2)])
-          color("red") rectangleFillet(tubeRib+(tWall*2), tubeRib+(tWall*2),filletRadius, 1);
+          color("red") rectangleFillet(tWidth+(tWall*2), tLength+(tWall*2),filletRadius, 1);
         } // ifFillet
       }
     }

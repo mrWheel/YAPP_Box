@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.0.5 (2024-03-26)
+//  Version 3.1.0 (2024-04-04)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -50,7 +50,7 @@ include <./YAPPgenerator_v3.scad>
 printBaseShell        = true;
 printLidShell         = true;
 printSwitchExtenders  = true;
-
+printDisplayClips     = true;
 
 // ********************************************************************
 // The Following will be used as the first element in the pbc array
@@ -551,6 +551,42 @@ ridgeExtFront =
 ridgeExtBack =
 [
 ];
+
+
+//===================================================================
+//  *** Display Mounts ***
+//    add a cutout to the lid with mounting posts for a display
+//-------------------------------------------------------------------
+//  Default origin = yappCoordBox: box[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    p(0) = posx
+//    p(1) = posy
+//    p[2] : displayWidth = overall Width of the display module
+//    p[3] : displayHeight = overall Height of the display module
+//    p[4] : pinInsetH = Horizontal inset of the mounting hole
+//    p[5] : pinInsetV = Vertical inset of the mounting hole
+//    p[6] : pinDiameter,
+//    p[7] : postOverhang  = Extra distance on outside of pins for the display to sit on - pin Diameter is a good value
+//    p[8] : walltoPCBGap = Distance from the display PCB to the surface of the screen
+//    p[9] : pcbThickness  = Thickness of the display module PCB
+//    p[10] : windowWidth = opening width for the screen
+//    p[11] : windowHeight = Opening height for the screen
+//    p[12] : windowOffsetH = Horizontal offset from the center for the opening
+//    p[13] : windowOffsetV = Vertical offset from the center for the opening
+//    p[14] : bevel = Apply a 45degree bevel to the opening
+// Optionl:
+//    p[15] : rotation
+//    p[16] : snapDiameter : default = pinDiameter*2
+//    p[17] : lidThickness : default = lidPlaneThickness
+//    n(a) = { <yappOrigin>, yappCenter } 
+//    n(b) = { <yappCoordBox> | yappCoordPCB | yappCoordBoxInside }
+//    n(c) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//-------------------------------------------------------------------
+displayMounts =
+[
 
 
 //========= HOOK functions ============================

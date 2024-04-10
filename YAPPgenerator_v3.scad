@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.1.0 (2024-04-04)";
+Version="v3.1.1 (2024-04-10)";
 
 /*
 **
@@ -5133,7 +5133,7 @@ module displayMount(
 //===========================================================
 //===========================================================
 
-function getMinRad(p1, wall) = ((p1<(wall)) ? 1 : (p1 - wall));
+function getMinRad(p1, wall) = p1<wall ? 1 : (p1==wall ? p1 : p1 - wall);
 
 // Check the first 21 elements in an array (I don't think any will be over 21)
 function isTrue(constantValue, setArray) = (

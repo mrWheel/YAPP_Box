@@ -48,8 +48,8 @@ standoffHoleSlack   = 0.4;
 //                       + basePlaneThickness
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 5;
-lidWallHeight       = 1;
+baseWallHeight      = 10;
+lidWallHeight       = 5;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight

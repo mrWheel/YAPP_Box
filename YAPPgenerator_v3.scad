@@ -29,7 +29,7 @@ Version="v3.1.1 (2024-04-10)";
 */
 
 // If set to true will generate the sample box at every save
-debug = true;
+debug = false;
 printMessages = debug;
 
 //---------------------------------------------------------
@@ -3290,8 +3290,7 @@ module baseShell()
       union()
       {
         //-- Create the shell and add the Mounts and Hooks
-        translate([0,0,baseWallHeight])
-        minkowskiBox(yappPartBase, shellInsideLength, shellInsideWidth, baseWallHeight*2, roundRadius, basePlaneThickness, wallThickness, true);
+        minkowskiBox(yappPartBase, shellInsideLength, shellInsideWidth, baseWallHeight, roundRadius, basePlaneThickness, wallThickness, true);
         if ($preview) 
         {
           translate([-shellLength/2, -shellWidth/2, -baseWallHeight-basePlaneThickness])    
@@ -3315,11 +3314,9 @@ module baseShell()
         union()
         {
           //--- only cutoff upper half
-          translate([0,0,baseWallHeight*2])
-//          translate([0,0,0])
+          translate([0,0,shellHeight/2])
           {
-        //    cube([shellLength*2, shellWidth*2, shellHeight*2], center=true);
-            cube([shellLength*2, shellWidth*2, baseWallHeight*4], center=true);
+            cube([shellLength*2, shellWidth*2, shellHeight], center=true);
           } // translate
           
           //-- Create ridge
@@ -3380,8 +3377,7 @@ module lidShell()
     {
       union()
       {
-        translate([0,0,-lidWallHeight-(ridgeHeight*2)])
-        minkowskiBox(yappPartLid, shellInsideLength,shellInsideWidth, (lidWallHeight*2)+(ridgeHeight*2), roundRadius, lidPlaneThickness, wallThickness, true);
+        minkowskiBox(yappPartLid, shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, true);
         if ($preview) 
         {
           translate([-shellLength/2, -shellWidth/2, -(shellHeight-lidWallHeight-lidPlaneThickness)])
@@ -3406,9 +3402,9 @@ module lidShell()
         {
           //--- cutoff lower half
           // Leave the Ridge height so we can trim out the part we don't want
-          translate([-shellLength,-shellWidth,-shellHeight*2 - newRidge(ridgeHeight)-(ridgeHeight*4)])
+          translate([-shellLength,-shellWidth,-shellHeight - newRidge(ridgeHeight)])
           {
-            cube([(shellLength)*2, (shellWidth)*2, shellHeight*2+(ridgeHeight*4)], center=false);
+            cube([(shellLength)*2, (shellWidth)*2, shellHeight], center=false);
           } // translate
           
           //-- remove the ridge
@@ -3427,8 +3423,8 @@ module lidShell()
   shellConnectors(yappPartLid);
   buildLightTubes();
   buildButtons(true);
-  
 } //-- lidShell()
+
 
         
 //===========================================================

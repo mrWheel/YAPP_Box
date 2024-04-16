@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.1.0 (2024-04-04)
+//  Version 3.1.2 (2024-04-16)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -227,11 +227,6 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //-------------------------------------------------------------------
 pcbStands = 
 [
-//- Add stands 5mm from each corner of the PCB
-    [5, 5]
-//-   Add posts 25mm from the corners of the box, with a custon height,diameter, Pin Size, hole
-//-   slack and filler radius.
-//  [25, 25, 10, 10, 3.3, 0.9, 5, yappCoordBox] 
 ];
 
 
@@ -261,10 +256,6 @@ pcbStands =
 //-------------------------------------------------------------------
 connectors   =
 [
-    [9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, 4, yappFrontRight, yappCountersink]
-//   ,[9, 15, 10, 2.5, 6 + 1.25, 4.0, 9, yappNoFillet, yappFrontLeft]
-//   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, yappFrontRight]
-//   ,[34, 15, 10, 2.5, 6+ 1.25, 4.0, 9, 0, yappFrontLeft]
 ];
 
 
@@ -313,32 +304,16 @@ connectors   =
 //                              placement within the opening.
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { <yappOrigin>, yappCenter }
-//    n(f) = { <yappGlobalOrigin>, yappLeftOrigin } // Only affects Top(lid), Back and Right Faces
+//    n(f) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(g) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(h) = { yappFromInside } Make the cut from the inside towards the outside
 //-------------------------------------------------------------------
 cutoutsBase = 
 [
-  [65,shellWidth/2 ,55,55, 5, yappPolygon ,0 ,30, yappCenter, shapeHexagon, maskHexCircles]
-// , [0, 0, 10, 10, 0, yappRectangle,maskHexCircles]
-// , [shellLength*2/3,shellWidth/2 ,0, 30, 20, yappCircleWithFlats, yappCenter]
-// , [shellLength/2,shellWidth/2 ,10, 5, 20, yappCircleWithKey,yappCenter]
 ];
 
 cutoutsLid  = 
 [
-//Center test
-  [shellLength/2,   shellWidth/2,  1,  1,  5, yappRectangle ,20 ,45, yappCenter]
- ,[pcbLength/2,       pcbWidth/2,  1,  1,  5, yappRectangle ,20 ,45, yappCenter, yappCoordPCB]
-//Edge tests
- ,[shellLength/2,              0,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
- ,[shellLength/2,     shellWidth,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
- ,[0,               shellWidth/2,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
- ,[shellLength,     shellWidth/2,  2,  2,  5, yappRectangle ,20 ,45, yappCenter]
-
- ,[shellLength*2/3, shellWidth/2,  0, 30, 20, yappCircleWithFlats, yappCenter]
- ,[shellLength/3,   shellWidth/2, 10,  5, 20, yappCircleWithKey,yappCenter]
-
 ];
 
 cutoutsFront =  
@@ -377,14 +352,11 @@ cutoutsRight =
 //-------------------------------------------------------------------
 snapJoins   =   
 [
-    [15, 10, yappFront, yappCenter,    yappRectangle, yappSymmetric]
-   ,[25, 10, yappBack,  yappSymmetric, yappCenter]
-   ,[30, 10, yappLeft,  yappRight,     yappCenter,    yappSymmetric]
 ];
 
 //===================================================================
 //  *** Box Mounts ***
-//    Mounting tabs on the outside of the box
+//  Mounting tabs on the outside of the box
 //-------------------------------------------------------------------
 //  Default origin = yappCoordBox: box[0,0,0]
 //
@@ -396,14 +368,14 @@ snapJoins   =
 //    p(2) = width of opening in addition to screw diameter 
 //                    (0=Circular hole screwWidth = hole twice as wide as it is tall)
 //    p(3) = height
+//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
 //   Optional:
 //    p(4) = filletRadius : Default = 0/Auto(0 = auto size)
-//    n(a) = { yappLeft | yappRight | yappFront | yappBack } : one or more
 //    n(b) = { yappNoFillet }
 //    n(c) = { <yappBase>, yappLid }
 //    n(d) = { yappCenter } : shifts Position to be in the center of the opening instead of 
 //                            the left of the opening
-//    n(e) = { <yappGlobalOrigin>, yappLeftOrigin } : Only affects Back and Right Faces
+//    n(e) = { <yappGlobalOrigin>, yappAltOrigin } : Only affects Back and Right Faces
 //-------------------------------------------------------------------
 boxMounts =
 [
@@ -429,31 +401,12 @@ boxMounts =
 //    p(8) = Height to top of PCB : Default = standoffHeight+pcbThickness
 //    p(9) = filletRadius : Default = 0/Auto 
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { <yappGlobalOrigin>, yappLeftOrigin }
+//    n(b) = { <yappGlobalOrigin>, yappAltOrigin }
 //    n(c) = { yappNoFillet }
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 lightTubes =
 [
-  [(pcbLength/2)+10, 20,    // [0,1] Pos
-    5, 5,                   // [2,3] Length, Width
-    1,                      // [4]   wall thickness
-    standoffHeight + pcbThickness + 4, // [5] Gap above base bottom
-    yappRectangle,          // [6]   tubeType (Shape)
-    0.5,                    // [7]   lensThickness
-    yappCoordPCB            // [n1]
-  ]
-  ,
-  [(pcbLength/2)+10, 40,    // [0,1] Pos
-    5, 10,                  // [2,3] Length, Width
-    1,                      // [4]   wall thickness
-    standoffHeight + pcbThickness + 4, // [5] Gap above base bottom
-    yappCircle,             // [6]   tubeType (Shape)
-    undef,                  // [7]
-    undef,                  // [8]
-    5,                      // [9]   filletRadius
-    yappCoordPCB            // [n1]
-  ]
 ];
 
 //===================================================================
@@ -482,15 +435,12 @@ lightTubes =
 //    p(14) = buttonPlateThickness  : Default= 2.5;
 //    p(15) = buttonSlack           : Default= 0.25;
 //    n(a) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside } 
-//    n(b) = { <yappGlobalOrigin>,  yappLeftOrigin }
+//    n(b) = { <yappGlobalOrigin>,  yappAltOrigin }
 //    n(c) = { yappNoFillet }
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //-------------------------------------------------------------------
 pushButtons = 
 [
-//-               0,   1,  2,  3, 4, 5,   6, 7, 8
-   [(pcbLength/2)+10, 65, 15, 10, 0, 3,   5, 1, 3]
-  ,[(pcbLength/2)+10, 85, 10, 10, 4, 2.0, 4, 1, 4, standoffHeight, yappCircle]
 ];
              
 //===================================================================
@@ -512,7 +462,6 @@ pushButtons =
 //-------------------------------------------------------------------
 labelsPlane =
 [
-    [5, 5, 0, 1, yappLid, "Liberation Mono:style=bold", 5, "YAPP" ]
 ];
 
 
@@ -531,7 +480,7 @@ labelsPlane =
 //   Optional:
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(c) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
+//    n(c) = { yappAltOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //
 // Note: Snaps should not be placed on ridge extensions as they remove the ridge to place them.
@@ -587,7 +536,7 @@ ridgeExtBack =
 //-------------------------------------------------------------------
 displayMounts =
 [
-
+];
 
 //========= HOOK functions ============================
   

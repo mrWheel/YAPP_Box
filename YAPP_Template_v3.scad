@@ -56,13 +56,13 @@ printDisplayClips     = true;
 // The Following will be used as the first element in the pbc array
 
 //Defined here so you can define the "Main" PCB using these if wanted
-pcbLength           = 50.8; //front to back (X axis)
-pcbWidth            = 38.1; // side to side (Y axis)
+pcbLength           = 150; // front to back (X axis)
+pcbWidth            = 100; // side to side (Y axis)
 pcbThickness        = 1.6; 
-standoffHeight      = 2.0; //-- How much the PCB needs to be raised from the base to leave room for solderings and whatnot
+standoffHeight      = 1.0; //-- How much the PCB needs to be raised from the base to leave room for solderings and whatnot
 standoffDiameter    = 7;
-standoffPinDiameter = 2.8;
-standoffHoleSlack   = 0.2;
+standoffPinDiameter = 2.4;
+standoffHoleSlack   = 0.4;
 
 //===================================================================
 // *** PCBs ***

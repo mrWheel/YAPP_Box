@@ -3954,8 +3954,8 @@ module showOrientation()
 module pinFillet(pinRadius, filletRadius) 
 {
   //-- Error checking for internal fillet bigger than the hole
-  filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius - 0.001) : filletRadius;
-  fr = abs(filletRad);
+  filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius): filletRadius;
+  fr = abs(filletRad) - 0.001;
   voffset = (pinRadius < 0) ? -fr : fr;
   voffset2 = (pinRadius < 0) ? 0 : -fr;  
   

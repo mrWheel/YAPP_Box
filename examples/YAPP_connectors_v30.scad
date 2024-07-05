@@ -89,14 +89,16 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
+//    n(c) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //-------------------------------------------------------------------
 connectors   =
 [
-  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners] // All of the corners of the PCB inset 10,10
- ,[ 8, 8, 4, 3, 5, 4, 7, yappCoordBox] //Defaults to yappBackLeft of yappCoordBox
- ,[ 8-wallThickness, 28, 4, 3, 5, 4, 7, 5, 1.6, yappBackLeft, yappCoordBoxInside] // Shifted so that they all aligh for inspection cut
- ,[ 8-pcbX, 48, 4, 3, 5, 4, 7, 16, yappBackLeft] // Shifted so that they all aligh for inspection cut
- ,[ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox] // Shifted so that they all aligh for inspection cut
+//  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners], // All of the corners of the PCB inset 10,10
+//  [ 8, 8, 4, 3, 5, 4, 7, yappCoordBox], //Defaults to yappBackLeft of yappCoordBox
+//  [ 8-wallThickness, 28, 4, 3, 5, 4, 7, 5, 1.6, yappBackLeft, yappCoordBoxInside], // Shifted so that they all aligh for inspection cut
+//  [ 8-pcbX(), 48, 4, 3, 5, 4, 7, 16, yappBackLeft], // Shifted so that they all aligh for inspection cut
+  [ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox], // Shifted so that they all aligh for inspection cut
+  [ 8, 38, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappThroughLid], // Shifted so that they all aligh for inspection cut
 ];
 
 //---- This is where the magic happens ----

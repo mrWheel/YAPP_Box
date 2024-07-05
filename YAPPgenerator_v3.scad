@@ -505,7 +505,7 @@ pcbStands =
 //  *** Connectors ***
 //  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
-//  Default origin =  yappCoordPCB : pcb[0,0,0]
+//  Default origin = yappCoordPCB : pcb[0,0,0]
 //  
 //  Parameters:
 //   Required:
@@ -525,6 +525,7 @@ pcbStands =
 //    n(c) = { yappNoFillet }
 //    n(d) = { yappCountersink }
 //    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //-------------------------------------------------------------------
 connectors   =
 [
@@ -2454,43 +2455,52 @@ module cutoutsForScrewHoles(type)
 {      
   for(conn = connectors)
   {
-    allCorners = (isTrue(yappAllCorners, conn)) ? true : false;
-    primeOrigin = (!isTrue(yappBackLeft, conn) && !isTrue(yappFrontLeft, conn) && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn) && !isTrue(yappAllCorners, conn) ) ? true : false;
-        
-    // Get the desired coordinate system    
-    theCoordSystem = getCoordSystem(conn, yappCoordPCB);    
-    face = (type==yappPartBase) ? yappBase : undef ;
- 
-    theLength = getLength(theCoordSystem);
-    theWidth = getWidth(theCoordSystem);
-   
-    posX = translate2Box_X (conn[0], face, theCoordSystem);
-    posY = translate2Box_Y (conn[1], face, theCoordSystem);
+    //-- Add yappThroughLid option
+    invertPart = isTrue(yappThroughLid, conn);
 
-    posX2 = translate2Box_X (theLength - conn[0], face, theCoordSystem);
-    posY2 = translate2Box_Y (theWidth - conn[1], face, theCoordSystem);
-    
-    if ((primeOrigin) || (allCorners) || isTrue(yappBackLeft, conn))
-    {
-      translate([posX, posY, -0.02])
-        screwHeadHole(conn);
-    }
-    if ((allCorners) || isTrue(yappFrontLeft, conn))
-    {
-      translate([posX2, posY, -0.02])
-        screwHeadHole (conn);
-    }
-    if ((allCorners) || isTrue(yappFrontRight, conn))
-    {
-      translate([posX2, posY2, -0.02])
-        screwHeadHole (conn);
-    }
-    if ((allCorners) || isTrue(yappBackRight, conn))
-    {
-      translate([posX, posY2, -0.02])
-        screwHeadHole (conn);
-    }     
-  } // for conn ..  
+    if ((!invertPart && type==yappPartBase) || (invertPart && type==yappPartLid)) 
+    {     
+      allCorners = (isTrue(yappAllCorners, conn)) ? true : false;
+      primeOrigin = (!isTrue(yappBackLeft, conn) && !isTrue(yappFrontLeft, conn) && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn) && !isTrue(yappAllCorners, conn) ) ? true : false;
+          
+      // Get the desired coordinate system    
+      theCoordSystem = getCoordSystem(conn, yappCoordPCB);    
+      face = (type==yappPartBase) ? yappBase : yappLid ;
+   
+      theLength = getLength(theCoordSystem);
+      theWidth = getWidth(theCoordSystem);
+      theHeight = shellHeight; //getHeight(theCoordSystem);
+     
+      posX = translate2Box_X (conn[0], face, theCoordSystem);
+      posY = translate2Box_Y (conn[1], face, theCoordSystem);
+
+      posX2 = translate2Box_X (theLength - conn[0], face, theCoordSystem);
+      posY2 = translate2Box_Y (theWidth - conn[1], face, theCoordSystem);
+
+      posZ = (invertPart) ? -lidPlaneThickness : 0;
+      
+      if ((primeOrigin) || (allCorners) || isTrue(yappBackLeft, conn))
+      {
+        translate([posX, posY, posZ-0.02])
+          screwHeadHole(conn);
+      }
+      if ((allCorners) || isTrue(yappFrontLeft, conn))
+      {
+        translate([posX2, posY, posZ-0.02])
+          screwHeadHole (conn);
+      }
+      if ((allCorners) || isTrue(yappFrontRight, conn))
+      {
+        translate([posX2, posY2, posZ-0.02])
+          screwHeadHole (conn);
+      }
+      if ((allCorners) || isTrue(yappBackRight, conn))
+      {
+        translate([posX, posY2, posZ-0.02])
+          screwHeadHole (conn);
+      }     
+    } // for conn ..  
+  }//if
 } //-- cutoutsForScrewHoles()
 
 
@@ -3721,7 +3731,7 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
             filletRadius = (d2-d1)/4; // 1/2 the width if the screw flange
             
             filletRad = min (filletRadius, (d4-d1)/2);
-            translate([0,0, screwHeadHeight-0.01])
+            translate([0,0, screwHeadHeight])
             {
               color("teal")
               pinFillet(-d2/2-0.01, -filletRad);
@@ -3786,10 +3796,15 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
 
         
 //===========================================================
-module shellConnectors(shellPart) 
+module shellConnectors(shellPartRaw) 
 {
   for ( conn = connectors )
   {
+    //-- Add yappThroughLid option
+    shellPart = (isTrue(yappThroughLid, conn)) ? ((shellPartRaw==yappPartBase) ? yappPartLid : yappPartBase) : shellPartRaw;
+    
+    invertPart = isTrue(yappThroughLid, conn);
+    
     allCorners = (isTrue(yappAllCorners, conn)) ? true : false;
     primeOrigin = (!isTrue(yappBackLeft, conn) && !isTrue(yappFrontLeft, conn) && !isTrue(yappFrontRight, conn) && !isTrue(yappBackRight, conn) && !isTrue(yappAllCorners, conn) ) ? true : false;
     
@@ -3808,37 +3823,41 @@ module shellConnectors(shellPart)
 
     outD    = minOutside(conn[5]+1, conn[6]);
     
-    if (primeOrigin || allCorners || isTrue(yappBackLeft, conn))
-      connectorNew(shellPart, 
-      theCoordSystem, 
-      connX, 
-      connY, 
-      conn, 
-      outD);
+    mirror([0,0,invertPart])
+    {
+      
+      if (primeOrigin || allCorners || isTrue(yappBackLeft, conn))
+        connectorNew(shellPart, 
+        theCoordSystem, 
+        connX, 
+        connY, 
+        conn, 
+        outD);
 
-    if (allCorners || isTrue(yappFrontLeft, conn))
-      connectorNew(shellPart, 
-      theCoordSystem, 
-      connX2, 
-      connY, 
-      conn, 
-      outD);
+      if (allCorners || isTrue(yappFrontLeft, conn))
+        connectorNew(shellPart, 
+        theCoordSystem, 
+        connX2, 
+        connY, 
+        conn, 
+        outD);
 
-    if (allCorners || isTrue(yappFrontRight, conn))
-      connectorNew(shellPart, 
-      theCoordSystem, 
-      connX2, 
-      connY2, 
-      conn, 
-      outD);
+      if (allCorners || isTrue(yappFrontRight, conn))
+        connectorNew(shellPart, 
+        theCoordSystem, 
+        connX2, 
+        connY2, 
+        conn, 
+        outD);
 
-    if (allCorners || isTrue(yappBackRight, conn))
-      connectorNew(shellPart, 
-      theCoordSystem, 
-      connX, 
-      connY2, 
-      conn, 
-      outD);
+      if (allCorners || isTrue(yappBackRight, conn))
+        connectorNew(shellPart, 
+        theCoordSystem, 
+        connX, 
+        connY2, 
+        conn, 
+        outD);
+    }//mirror
   } // for ..
 } //-- shellConnectors()
 
@@ -4404,6 +4423,7 @@ module drawLid()
    
     //-- Do all of the face cuts
     makeCutouts(yappPartLid);
+    cutoutsForScrewHoles(yappPartLid);
     makeRidgeExt(yappPartLid,true);
           
     printSnapJoins(yappPartLid);

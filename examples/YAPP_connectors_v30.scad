@@ -71,13 +71,13 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //  *** Connectors ***
 //  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
-//  Default origin = yappCoordPCB: pcb[0,0,0]
+//  Default origin = yappCoordPCB : pcb[0,0,0]
 //  
 //  Parameters:
 //   Required:
 //    p(0) = posx
 //    p(1) = posy
-//    p(2) = pcbStandHeight
+//    p(2) = StandHeight : From specified origin 
 //    p(3) = screwDiameter
 //    p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
 //    p(5) = insertDiameter
@@ -89,14 +89,18 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
+//    n(d) = { yappCountersink }
+//    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //-------------------------------------------------------------------
 connectors   =
 [
-  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners] // All of the corners of the PCB inset 10,10
- ,[ 8, 8, 4, 3, 5, 4, 7, yappCoordBox] //Defaults to yappBackLeft of yappCoordBox
- ,[ 8-wallThickness, 28, 4, 3, 5, 4, 7, 5, 1.6, yappBackLeft, yappCoordBoxInside] // Shifted so that they all aligh for inspection cut
- ,[ 8-pcbX, 48, 4, 3, 5, 4, 7, 16, yappBackLeft] // Shifted so that they all aligh for inspection cut
- ,[ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox] // Shifted so that they all aligh for inspection cut
+//  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners], // All of the corners of the PCB inset 10,10
+//  [ 8, 8, 4, 3, 5, 4, 7, yappCoordBox], //Defaults to yappBackLeft of yappCoordBox
+//  [ 8-wallThickness, 28, 4, 3, 5, 4, 7, 5, 1.6, yappBackLeft, yappCoordBoxInside], // Shifted so that they all aligh for inspection cut
+//  [ 8-pcbX(), 48, 4, 3, 5, 4, 7, 16, yappBackLeft], // Shifted so that they all aligh for inspection cut
+  [ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox], // Shifted so that they all aligh for inspection cut
+  [ 8, 38, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappThroughLid], // Shifted so that they all aligh for inspection cut
 ];
 
 //---- This is where the magic happens ----

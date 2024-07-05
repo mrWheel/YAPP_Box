@@ -71,13 +71,13 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //  *** Connectors ***
 //  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
-//  Default origin = yappCoordPCB: pcb[0,0,0]
+//  Default origin = yappCoordPCB : pcb[0,0,0]
 //  
 //  Parameters:
 //   Required:
 //    p(0) = posx
 //    p(1) = posy
-//    p(2) = pcbStandHeight
+//    p(2) = StandHeight : From specified origin 
 //    p(3) = screwDiameter
 //    p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
 //    p(5) = insertDiameter
@@ -89,7 +89,9 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(c) = { yappNoFillet }
-//    n(c) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
+//    n(d) = { yappCountersink }
+//    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //-------------------------------------------------------------------
 connectors   =
 [

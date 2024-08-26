@@ -184,7 +184,7 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //-------------------------------------------------------------------
 imagesPlane =
 [
-[ 40, 40, 0, 1, yappLid, "openscad-svgrepo-com.svg", 0.2 ]
+[ 40, 40, 0, 1, yappLid, "YAPP_Demo_imagesPlane.svg", 0.2 ]
 ];
 
 //---- This is where the magic happens ----

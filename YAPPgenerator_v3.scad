@@ -2055,14 +2055,13 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
       
       centeroffsetH = (isTrue(yappCenter, cutOut)) ? 0 : base_width / 2;
       centeroffsetV = (isTrue(yappCenter, cutOut)) ? 0 : base_height / 2;
+      zShift = invertZ ? -base_depth - zAdjustForCutFromInside : zAdjustForCutFromInside;
 			
       translate([offset_x, offset_y, offset_z]) 
       {
         rotate([rot_X, rot_Y, rot_Z])
         {
-					translate([base_pos_H + centeroffsetH, base_pos_V+centeroffsetV, 0])
-          translate([0, 0,((invertZ) ? wallDepth-base_depth : wallDepth) - 0.02])
-          translate([0, 0, zAdjustForCutFromInside])
+           translate([base_pos_H + centeroffsetH, base_pos_V+centeroffsetV, wallDepth + zShift - 0.02])
           color("Fuchsia")
           genMaskfromParam(maskDef, base_width, base_height, base_depth, maskhOffset, maskvOffset, maskRotation);
         }// rotate
@@ -2083,7 +2082,7 @@ module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, 
   theShape = cutOut[5];
   theAngle = getParamWithDefault(cutOut[7],0);
   
-  zShift = invertZ ? -base_depth : 0;
+  zShift = invertZ ? -base_depth - zAdjustForCutFromInside : zAdjustForCutFromInside;
   
   //-- Output all of the current parameters
   if (printMessages) echo("base_pos_H",base_pos_H);
@@ -2113,13 +2112,12 @@ module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, 
   {
     rotate([rot_X, rot_Y, rot_Z])
     {
-      translate([pos_X, pos_Y, zAdjustForCutFromInside]) 
+      translate([pos_X, pos_Y, wallDepth + zShift - 0.02]) 
       {
         if (printMessages) echo("Drawing cutout shape");
         // Draw the shape
           color("Fuchsia")
-              translate([0, 0,((invertZ) ? wallDepth-base_depth : wallDepth) - 0.02])
-                generateShape (theShape,(isTrue(yappCenter, cutOut)), base_width, base_height, base_depth + 0.04, theRadius, theAngle, thePolygon);
+            generateShape (theShape,(isTrue(yappCenter, cutOut)), base_width, base_height, base_depth + 0.04, theRadius, theAngle, thePolygon);
       } //translate
     }// rotate
   } //translate

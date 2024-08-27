@@ -1780,7 +1780,9 @@ module printPCB(thePCB) //posX, posY, posZ, length, width, thickness)
   posY = translate2Box_Y(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
   posZ = translate2Box_Z(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
   
-  translate([posX,posY,posZ])
+  
+  //-- Adjust to the bottom of the PCB is at posZ
+  translate([posX,posY,posZ-thePCB[5]])
   
   {
     //-- Draw the PCB 
@@ -5187,13 +5189,10 @@ function getPCBInfo(yappPCBName, vector) = (getVector(yappPCBName, vector) == fa
 
 function getPCBName(yappPCBName, vector) = (getVector(yappPCBName, vector) == false) ? "Main" : pcbByName(getVector(yappPCBName, vector))[0];
 
+//-- Change to reference the top of the PCB not the bottom
 function getPCB_X(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
 function getPCB_Y(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
-function getPCB_Z(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + basePlaneThickness; 
-
-function getPCB_Xa(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
-function getPCB_Ya(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
-function getPCB_Za(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVectorBase(pcbName, pcb))[5] + basePlaneThickness; 
+function getPCB_Z(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVectorBase(pcbName, pcb))[5] +  basePlaneThickness; 
 
 function pcbLength(pcbName="Main") = (getVectorBase(pcbName, pcb))[1]; 
 function pcbWidth(pcbName="Main") = (getVectorBase(pcbName, pcb))[2]; 

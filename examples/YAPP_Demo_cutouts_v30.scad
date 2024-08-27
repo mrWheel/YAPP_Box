@@ -100,7 +100,7 @@ alphaBase           = 1;//0.2;
 hideLidWalls        = false;    //-> false
 hideBaseWalls       = false;    //-> false
 showOrientation     = true;
-showPCB             = true;
+showPCB             = false;
 showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
@@ -160,103 +160,94 @@ pcbStands = [
 //  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
 //  yappPolygon         | width, length         | radius        | yappPolygonDef object must be provided
 //
-//
 //  Parameters:
 //   Required:
-//    p(0) = from Back
-//    p(1) = from Left
-//    p(2) = width
-//    p(3) = length
-//    p(4) = radius
-//    p(5) = shape : { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey }
+//    (0) = from Back
+//    (1) = from Left
+//    (2) = width
+//    (3) = length
+//    (4) = radius
+//    (5) = shape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect | yappCircleWithFlats | yappCircleWithKey}
 //  Optional:
-//    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
-//    p(7) = angle : Default = 0
-//    n(a) = { yappPolygonDef } : Required if shape = yappPolygon specified -
-//    n(b) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask 
-//                             for the cutout.
-//    n(c) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added 
-//                              it will be used as a mask for the cutout. With the Rotation 
-//                              and offsets applied. This can be used to fine tune the mask
-//                              placement within the opening.
-//    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(e) = { <yappOrigin>, yappCenter }
-//    n(f) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
-//    n(g) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
-//    n(h) = { yappFromInside } Make the cut from the inside towards the outside
+//    (6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
+//    (7) = angle : Default = 0
+//    (n) = { yappPolygonDef } : Required if shape = yappPolygon specified -
+//    (n) = { yappMaskDef } : If a yappMaskDef object is added it will be used as a mask for the cutout.
+//    (n) = { [yappMaskDef, hOffset, vOffset, rotation] } : If a list for a mask is added it will be used as a mask for the cutout. With the Rotation and offsets applied. This can be used to fine tune the mask placement within the opening.
+//    (n) = { <yappCoordBox> | yappCoordPCB }
+//    (n) = { <yappOrigin>, yappCenter }
+//  (n) = { yappLeftOrigin, <yappGlobalOrigin> } // Only affects Top(lid), Back and Right Faces
 //-------------------------------------------------------------------
 
 cutoutsBase = 
 [
  //--  0,  1,  2,  3, 4, n
-//    [120, 40, 30, 30, 10, yappPolygon, shape6ptStar]
-//   ,[ 60, 55, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter]
+    [120, 40, 30, 30, 10, yappPolygon, shape6ptStar]
+   ,[ 60, 55, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter]
 //-- Test
-//   ,[115, 95, 20, 30, 10, yappCircle, 10]       //--> [D(b)] OK!
-//   ,[140, 90, 20, 30,  1, yappRectangle, 10]    //--> [E(b)] OK!
-//   ,[165, 90, 20, 30,  3, yappRoundedRect, 10]  //--> [F(b)] OK!
+   ,[115, 95, 20, 30, 10, yappCircle, 10]       //--> [D(b)] OK!
+   ,[140, 90, 20, 30,  1, yappRectangle, 10]    //--> [E(b)] OK!
+   ,[165, 90, 20, 30,  3, yappRoundedRect, 10]  //--> [F(b)] OK!
 ];
 
 cutoutsLid  = 
 [
  //--  0,  1,  2,  3, 4, n
-//    [ 25, 70, 15, 25, 0, yappRectangle, undef, 30, yappCenter]
-//   ,[ 25, 30, 15, 25, 0, yappRectangle, yappCenter]
-//   ,[ 50, 70, 15, 25, 5, yappRoundedRect, undef, 30, yappCenter]
-//   ,[ 50, 30, 15, 25, 5, yappRoundedRect, yappCenter]
-//   ,[ 75, 30,  0,  0, 8, yappCircle, yappCenter]
-//   ,[100, 70, 12,  0, 8, yappCircleWithFlats, undef, 30, yappCenter]
-//   ,[100, 30, 12,  0, 8, yappCircleWithFlats, yappCenter]
-//   ,[125, 70,  4,  5, 8, yappCircleWithKey, undef, 30, yappCenter]
-//   ,[125, 30,  4,  5, 8, yappCircleWithKey, yappCenter]
-//   ,[160, 30, 30, 30, 8, yappPolygon, 
-//         [yappPolygonDef,[
-//            [-0.50,0],[-0.25,+0.433012],[+0.45,-0.433012],[-0.25,-0.433012]]
+    [ 25, 70, 15, 25, 0, yappRectangle, undef, 30, yappCenter]
+   ,[ 25, 30, 15, 25, 0, yappRectangle, yappCenter]
+   ,[ 50, 70, 15, 25, 5, yappRoundedRect, undef, 30, yappCenter]
+   ,[ 50, 30, 15, 25, 5, yappRoundedRect, yappCenter]
+   ,[ 75, 30,  0,  0, 8, yappCircle, yappCenter]
+   ,[100, 70, 12,  0, 8, yappCircleWithFlats, undef, 30, yappCenter]
+   ,[100, 30, 12,  0, 8, yappCircleWithFlats, yappCenter]
+   ,[125, 70,  4,  5, 8, yappCircleWithKey, undef, 30, yappCenter]
+   ,[125, 30,  4,  5, 8, yappCircleWithKey, yappCenter]
+   ,[160, 30, 30, 30, 8, yappPolygon, 
+         [yappPolygonDef,[
+            [-0.50,0],[-0.25,+0.433012],[+0.45,-0.433012],[-0.25,-0.433012]]
             
-//         ], yappCenter]
-//   ,[160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter]
+         ], yappCenter]
+   ,[160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter]
 //-- buggy
-//   ,[165, 90, 20, 30,  3, yappRoundedRect, 10] //--> [G(L)] BUG!
-//   ,[140, 90, 20, 30,  1, yappRectangle, 10]   //--> [H(L)] BUG!
-//   ,[115, 95, 20, 30, 10, yappCircle, 10]      //--> [J(L)] BUG!
+   ,[165, 90, 20, 30,  3, yappRoundedRect, 10] //--> [G(L)] BUG!
+   ,[140, 90, 20, 30,  1, yappRectangle, 10]   //--> [H(L)] BUG!
+   ,[115, 95, 20, 30, 10, yappCircle, 10]      //--> [J(L)] BUG!
 ];
 
 cutoutsFront = 
 [
-//    [20, 11, 15, 25, 3, yappRoundedRect]
-//   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
-//   ,[40, 11, 15, 25, 10, yappCircle]
-//   ,[70, 4, 15, 17, 10, yappCircleWithFlats]
+    [20, 11, 15, 25, 3, yappRoundedRect]
+   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
+   ,[40, 11, 15, 25, 10, yappCircle]
+   ,[70, 4, 15, 17, 10, yappCircleWithFlats]
 ];  
 
 
 cutoutsBack = 
 [
-//    [20, 40, 25, 15, 3, yappRoundedRect, 20]  //--> Bug!
+    [20, 40, 25, 15, 3, yappRoundedRect, 20]  //--> Bug!
 ];
 
 
 cutoutsLeft = 
 [
  //--  0,  1,  2,  3, 4, 5,6,7,n
-    [ 30,  0, 0, 0, 2, yappCircle, 5, yappCenter],
-    [ 35,  0, 0, 0, 2, yappCircle, 5, yappCenter, yappFromInside],
-//   [ 30, 0, 25, 15, 3, yappRoundedRect, 10] //--> OK
-//   [160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter],
-//   [ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter],  
-//   [ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter],  
+    [ 30,  3, 25, 15, 3, yappRoundedRect]
+   ,[ 30, 40, 25, 15, 3, yappRoundedRect, 10] //--> OK
+   ,[160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter]
+   ,[ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
+   ,[ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter]  
 ];
 
 cutoutsRight = 
 [
-//    [90,  5, 20, 15,  4, yappRoundedRect]   
-//   ,[15, -5, 20, 15, 10, yappCircle, 15]      //--> [A(r)] OK
-//   ,[40, -5, 20, 15,  5, yappRoundedRect, 15] //--> [B(r)]OK
-//   ,[65, -5, 20, 15,  0, yappRectangle, 15]   //--> [C(r)] OK
-//   ,[65, 40, 20, 15,  0, yappRectangle, 15]   //--> [K(b)] OK
-//   ,[40, 40, 20, 15,  5, yappRoundedRect, 15] //--> [M(b)] OK
-//   ,[15, 40, 20, 15, 10, yappCircle, 15]      //--> [N(b)] OK
+    [90,  5, 20, 15,  4, yappRoundedRect]   
+   ,[15, -5, 20, 15, 10, yappCircle, 15]      //--> [A(r)] OK
+   ,[40, -5, 20, 15,  5, yappRoundedRect, 15] //--> [B(r)]OK
+   ,[65, -5, 20, 15,  0, yappRectangle, 15]   //--> [C(r)] OK
+   ,[65, 40, 20, 15,  0, yappRectangle, 15]   //--> [K(b)] OK
+   ,[40, 40, 20, 15,  5, yappRoundedRect, 15] //--> [M(b)] OK
+   ,[15, 40, 20, 15, 10, yappCircle, 15]      //--> [N(b)] OK
 ];
 
 

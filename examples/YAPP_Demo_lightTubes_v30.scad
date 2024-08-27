@@ -100,7 +100,7 @@ alphaLid            = 0.8;//0.2;
 colorBase           = "BurlyWood";
 alphaBase           = 0.8;//0.2;
 showOrientation     = true;
-showPCB             = false;
+showPCB             = true;
 showSwitches        = false;
 showPCBmarkers      = false;
 showShellZero       = false;
@@ -282,8 +282,8 @@ boxMounts   =
 lightTubes = 
 [
  //-- 0,  1, 2,   3, 4, 5, 6/7
-    [15, 10, 5,   6, 1, 0.1, yappCircle]
-   ,[15, 30, 1.5, 5, 1, 0.1, yappRectangle, .5]
+    [15, 10, 5,   6, 1, 5, yappCircle]
+   ,[15, 30, 1.5, 5, 1, 2, yappRectangle, .5]
 ];     
 
              

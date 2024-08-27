@@ -1780,9 +1780,7 @@ module printPCB(thePCB) //posX, posY, posZ, length, width, thickness)
   posY = translate2Box_Y(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
   posZ = translate2Box_Z(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
   
-  
-  //-- Adjust to the bottom of the PCB is at posZ
-  translate([posX,posY,posZ-thePCB[5]])
+  translate([posX,posY,posZ])
   
   {
     //-- Draw the PCB 
@@ -2057,13 +2055,14 @@ module processCutoutList_Mask(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, o
       
       centeroffsetH = (isTrue(yappCenter, cutOut)) ? 0 : base_width / 2;
       centeroffsetV = (isTrue(yappCenter, cutOut)) ? 0 : base_height / 2;
-      zShift = invertZ ? -base_depth - zAdjustForCutFromInside : zAdjustForCutFromInside;
 			
       translate([offset_x, offset_y, offset_z]) 
       {
         rotate([rot_X, rot_Y, rot_Z])
         {
-           translate([base_pos_H + centeroffsetH, base_pos_V+centeroffsetV, wallDepth + zShift - 0.02])
+					translate([base_pos_H + centeroffsetH, base_pos_V+centeroffsetV, 0])
+          translate([0, 0,((invertZ) ? wallDepth-base_depth : wallDepth) - 0.02])
+          translate([0, 0, zAdjustForCutFromInside])
           color("Fuchsia")
           genMaskfromParam(maskDef, base_width, base_height, base_depth, maskhOffset, maskvOffset, maskRotation);
         }// rotate
@@ -2084,7 +2083,7 @@ module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, 
   theShape = cutOut[5];
   theAngle = getParamWithDefault(cutOut[7],0);
   
-  zShift = invertZ ? -base_depth - zAdjustForCutFromInside : zAdjustForCutFromInside;
+  zShift = invertZ ? -base_depth : 0;
   
   //-- Output all of the current parameters
   if (printMessages) echo("base_pos_H",base_pos_H);
@@ -2114,12 +2113,13 @@ module processCutoutList_Shape(cutOut, rot_X, rot_Y, rot_Z, offset_x, offset_y, 
   {
     rotate([rot_X, rot_Y, rot_Z])
     {
-      translate([pos_X, pos_Y, wallDepth + zShift - 0.02]) 
+      translate([pos_X, pos_Y, zAdjustForCutFromInside]) 
       {
         if (printMessages) echo("Drawing cutout shape");
         // Draw the shape
           color("Fuchsia")
-            generateShape (theShape,(isTrue(yappCenter, cutOut)), base_width, base_height, base_depth + 0.04, theRadius, theAngle, thePolygon);
+              translate([0, 0,((invertZ) ? wallDepth-base_depth : wallDepth) - 0.02])
+                generateShape (theShape,(isTrue(yappCenter, cutOut)), base_width, base_height, base_depth + 0.04, theRadius, theAngle, thePolygon);
       } //translate
     }// rotate
   } //translate
@@ -5189,10 +5189,13 @@ function getPCBInfo(yappPCBName, vector) = (getVector(yappPCBName, vector) == fa
 
 function getPCBName(yappPCBName, vector) = (getVector(yappPCBName, vector) == false) ? "Main" : pcbByName(getVector(yappPCBName, vector))[0];
 
-//-- Change to reference the top of the PCB not the bottom
 function getPCB_X(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
 function getPCB_Y(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
-function getPCB_Z(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVectorBase(pcbName, pcb))[5] +  basePlaneThickness; 
+function getPCB_Z(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + basePlaneThickness; 
+
+function getPCB_Xa(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
+function getPCB_Ya(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
+function getPCB_Za(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVectorBase(pcbName, pcb))[5] + basePlaneThickness; 
 
 function pcbLength(pcbName="Main") = (getVectorBase(pcbName, pcb))[1]; 
 function pcbWidth(pcbName="Main") = (getVectorBase(pcbName, pcb))[2]; 

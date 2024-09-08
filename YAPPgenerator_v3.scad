@@ -147,11 +147,11 @@ roundRadius         = wallThickness + 1;
 
 // Box Types are 0-4 with 0 as the default
 // 0 = All edges rounded with radius (roundRadius) above
-// 1 = All edges sqrtuare
+// 1 = All edges square
 // 2 = All edges chamfered by (roundRadius) above 
 // 3 = Square top and bottom edges (the ones that touch the build plate) and rounded vertical edges
 // 4 = Square top and bottom edges (the ones that touch the build plate) and chamfered vertical edges
-// 5 = Chanfered top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+// 5 = Chamfered top and bottom edges (the ones that touch the build plate) and rounded vertical edges
 boxType = 0; // Default type 0
 
 
@@ -342,7 +342,6 @@ shellEdgeVert = boxStyles[boxType][2];
 shellInsideWidth  = boxWidth+paddingLeft+paddingRight;
 shellInsideLength = boxLength+paddingFront+paddingBack;
 shellInsideHeight = baseWallHeight+lidWallHeight;
-
 
 shellWidth        = shellInsideWidth+(wallThickness*2);
 shellLength       = shellInsideLength+(wallThickness*2);

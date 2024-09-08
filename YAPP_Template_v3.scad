@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.1.2 (2024-04-16)
+//  Version 3.2 (2024-09-08)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -127,6 +127,14 @@ ridgeHeight         = 5.0;
 ridgeSlack          = 0.2;
 roundRadius         = 3.0;
 
+// Box Types are 0-4 with 0 as the default
+// 0 = All edges rounded with radius (roundRadius) above
+// 1 = All edges sqrtuare
+// 2 = All edges chamfered by (roundRadius) above 
+// 3 = Square top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+// 4 = Square top and bottom edges (the ones that touch the build plate) and chamfered vertical edges
+// 5 = Chanfered top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+boxType             = 0; // Default type 0
 
 // Set the layer height of your printer
 printerLayerHeight  = 0.2;

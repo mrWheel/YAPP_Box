@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.1.3 (2024-08-27)";
+Version="v3.2.0 (2024-09-08)";
 
 /*
 **
@@ -123,7 +123,7 @@ pcb =
 //-------------------------------------------------------------------
 
 //-- Edit these parameters for your own box dimensions
-wallThickness       = 2.0;
+wallThickness       = 2.6;
 basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 
@@ -144,6 +144,16 @@ ridgeSlack          = 0.3;
 
 //-- Radius of the shell corners
 roundRadius         = wallThickness + 1;
+
+// Box Types are 0-4 with 0 as the default
+// 0 = All edges rounded with radius (roundRadius) above
+// 1 = All edges square
+// 2 = All edges chamfered by (roundRadius) above 
+// 3 = Square top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+// 4 = Square top and bottom edges (the ones that touch the build plate) and chamfered vertical edges
+// 5 = Chamfered top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+boxType = 0; // Default type 0
+
 
 //---------------------------
 //--     MISC Options     --
@@ -221,6 +231,12 @@ yappRoundedRect         = -30003;
 yappCircleWithFlats     = -30004;
 yappCircleWithKey       = -30005;
 yappRing                = -30006;
+
+// NEW for 3.x 
+// Edge Shapes
+yappEdgeRounded         = -30090;
+yappEdgeSquare          = -30091;
+yappEdgeChamfered       = -30092;
 
 //Shell options
 yappBoth                = -30100;
@@ -302,6 +318,23 @@ minkowskiErrorCorrection = $preview ? 1.0125 : 1;
 boxLength = maxLength(pcb);
 boxWidth = maxWidth(pcb);
 
+//-- For New boxTypes (Default to all edges rounded)
+//-- options: 
+//--    yappEdgeRounded - rounded using roundRadius
+//--    yappEdgeSquare - squared corners
+//--    yappEdgeChamfered - chamfered with roundRadius sides
+
+boxStyles = [
+  [0, yappEdgeRounded, yappEdgeRounded],
+  [1, yappEdgeSquare, yappEdgeSquare],
+  [2, yappEdgeChamfered, yappEdgeChamfered],
+  [3, yappEdgeSquare, yappEdgeRounded],
+  [4, yappEdgeSquare, yappEdgeChamfered],
+  [5, yappEdgeChamfered, yappEdgeRounded],
+];
+
+shellEdgeTopBottom = boxStyles[boxType][1];
+shellEdgeVert = boxStyles[boxType][2];
 
 //-------------------------------------------------------------------
 // Misc internal values
@@ -309,7 +342,6 @@ boxWidth = maxWidth(pcb);
 shellInsideWidth  = boxWidth+paddingLeft+paddingRight;
 shellInsideLength = boxLength+paddingFront+paddingBack;
 shellInsideHeight = baseWallHeight+lidWallHeight;
-
 
 shellWidth        = shellInsideWidth+(wallThickness*2);
 shellLength       = shellInsideLength+(wallThickness*2);
@@ -1520,38 +1552,189 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
   //echo("minkowskiBox", shell=shell, L=L, W=W, H=H, rad=rad, plane=plane, wall=wall, preCutouts=preCutouts);
   iRad = getMinRad(rad, wall);
   cRad = (rad + iRad)/2;
-  
+  oRad = rad;
+    
   //--------------------------------------------------------
   module minkowskiOuterBox(L, W, H, rad, plane, wall)
-  {
-    
-    minkowski()
+  {    
+    if ((shellEdgeTopBottom == yappEdgeRounded) && (shellEdgeVert == yappEdgeRounded))
+    { 
+      minkowski()
+      {
+        cube([L+(wall*2)-(rad*2), W+(wall*2)-(rad*2), (H*2)+(plane*2)-(rad*2)], center=true);
+        sphere(rad*minkowskiErrorCorrection); // Compensate for minkowski error
+      }
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeSquare))
     {
-      cube([L+(wall*2)-(rad*2), W+(wall*2)-(rad*2), (H*2)+(plane*2)-(rad*2)], center=true);
-      sphere(rad*minkowskiErrorCorrection); // Compensate for minkowski error
-    }
+      cube([L+(wall*2), W+(wall*2), (H*2)+(plane*2)], center=true);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeRounded))
+    {
+      linear_extrude((H*2)+(plane*2),center=true)
+//      roundedRectangle2D(width=L+(wall*2),length=W+(wall*2),radius=(iRad*2)-wall/2);
+      roundedRectangle2D(width=L+(wall*2),length=W+(wall*2),radius=rad);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeChamfered))
+    {
+      linear_extrude((H*2)+(plane*2),center=true)
+      chamferedRectangle2D(L+(wall*2),W+(wall*2),rad);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeChamfered) && (shellEdgeVert == yappEdgeChamfered))
+    {
+      chamferCube3D(L+(wall*2),W+(wall*2),(H*2)+(plane*2),(rad),(rad),(rad));
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeChamfered) && (shellEdgeVert == yappEdgeRounded))
+    {
+      //--bottom
+      translate([0,0,-((H*2)+(plane*2)-((rad)))/2])
+      mirror([0,0,1])
+      linear_extrude(((rad)), scale = [1-(((rad))/(L+(wall*2))*2),1-(((rad))/(W+(wall*2))*2)],center=true)
+      roundedRectangle2D(width=L+(wall*2),length=W+(wall*2),radius=(rad));
 
+      //--main
+      linear_extrude((H*2)+(plane*2)-(((rad))*2),center=true)
+      roundedRectangle2D(width=L+(wall*2),length=W+(wall*2),radius=(rad));
+
+      //--top
+      translate([0,0,((H*2)+(plane*2)-((rad)))/2])
+      linear_extrude(((rad)), scale = [1-(((rad))/(L+(wall*2))*2),1-(((rad))/(W+(wall*2))*2)],center=true)
+      roundedRectangle2D(width=L+(wall*2),length=W+(wall*2),radius=(rad));
+    } 
+    else 
+    {
+      assert(false, "Unsupported edge combination");
+    } 
   } //-- minkowskiOuterBox()
 
   module minkowskiCutBox(L, W, H, rad, plane, wall)
   {
-    minkowski()
+    if ((shellEdgeTopBottom == yappEdgeRounded) && (shellEdgeVert == yappEdgeRounded))
+    { 
+      minkowski()
+      {
+        cube([L+(wall)-(rad*2), W+(wall)-(rad*2), (H*2)+(plane)-(rad*2)], center=true);
+        sphere(rad*minkowskiErrorCorrection); // Compensate for minkowski error
+      }
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeSquare))
     {
-      cube([L+(wall)-(rad*2), W+(wall)-(rad*2), (H*2)+(plane)-(rad*2)], center=true);
-      sphere(rad*minkowskiErrorCorrection);
-    }
+      cube([L+(wall), W+(wall), (H*2)+(plane)], center=true);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeRounded))
+    {
+      echo("SQ-Rnd Cut", rar=rad);
+      linear_extrude((H*2)+(plane),center=true)
+      roundedRectangle2D(width=L+(wall),length=W+(wall),radius=rad);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeChamfered))
+    {
+      echo ("SQ-CH-Cut", rad=rad);
+      linear_extrude((H*2)+(plane),center=true)
+      chamferedRectangle2D(L+(wall),W+(wall),(rad));
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeChamfered) && (shellEdgeVert == yappEdgeChamfered))
+    {
+      chamferCube3D(L+(wall),W+(wall),(H*2)+(plane),(rad),(rad),(rad*sqrt(2)));
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeChamfered) && (shellEdgeVert == yappEdgeRounded))
+    {
+      //--echo ("CH-RND-Cut", rad=rad, iRad=iRad, oRad=oRad, cRad=cRad, wall=wall, plane=plane);
+      
+      //--bottom
+      translate([0,0,-((H*2)+plane/2-rad)/2])
+      mirror([0,0,1])
+      linear_extrude( rad+plane/2 //((rad)-plane)
+        , scale = 
+          [1-((cRad)*2/(L)),
+           1-((cRad)*2/(W))],
+        center=true)
+      roundedRectangle2D(width=L+(wall*1),length=W+(wall*1),radius=rad);
 
+      //--main
+      linear_extrude((H*2)+plane*0-rad*2+0.02,center=true)
+      roundedRectangle2D(width=L+(wall*1),length=W+(wall*1),radius=rad);
+
+      //--top
+      translate([0,0,((H*2)+plane/2-rad)/2])
+      linear_extrude( rad+plane/2 //((rad)-plane)
+        , scale = 
+          [1-((cRad)*2/(L)),
+           1-((cRad)*2/(W))],
+        center=true)
+      roundedRectangle2D(width=L+(wall*1),length=W+(wall*1),radius=rad);
+    } 
+    else 
+    {
+      assert(false, "Unsupported edge combination");
+    }
   } //-- minkowskiCutBox()
   
   //--------------------------------------------------------
   module minkowskiInnerBox(L, W, H, iRad, plane, wall)
   {
-    minkowski()
+    echo(iRad=iRad);
+
+    if ((shellEdgeTopBottom == yappEdgeRounded) && (shellEdgeVert == yappEdgeRounded))
+    { 
+      minkowski()
+      {
+        cube([L-((iRad*2)), W-((iRad*2)), (H*2)-((iRad*2))], center=true);
+        sphere(iRad*minkowskiErrorCorrection); // Compensate for minkowski error
+      }
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeSquare))
     {
-      cube([L-((iRad*2)), W-((iRad*2)), (H*2)-((iRad*2))], center=true);
-      sphere(iRad*minkowskiErrorCorrection); // Compensate for minkowski error
-    }
+      cube([L, W, (H*2)], center=true);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeRounded))
+    {
+      linear_extrude(H*2,center=true)
+      roundedRectangle2D(width=L,length=W,radius=iRad);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeSquare) && (shellEdgeVert == yappEdgeChamfered))
+    {
+      echo ("SQ-CH-Inner", iRad=iRad, wall=wall);
+      
+      linear_extrude(H*2,center=true)
+      chamferedRectangle2D(L,W,iRad);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeChamfered) && (shellEdgeVert == yappEdgeChamfered))
+    {
+      chamferCube3D(L,W,H*2,iRad,iRad,iRad);
+    } 
+    else if ((shellEdgeTopBottom == yappEdgeChamfered) && (shellEdgeVert == yappEdgeRounded))
+    {
+      vClip = (rad)-(plane/sqrt(2));
+      //echo("CH-RND-inner", iRad=iRad, rad=rad, vClip=vClip);
+      //--bottom
+      translate([0,0,-((H*2)-vClip)/2])
+      mirror([0,0,1])
+      linear_extrude( vClip //((rad)-plane)
+        , scale = 
+          [1-((iRad)*2/(L)),
+           1-((iRad)*2/(W))],
+        center=true)
+      roundedRectangle2D(width=L+(wall*0),length=W+(wall*0),radius=iRad);
+
+      //--main
+      linear_extrude((H*2)-vClip*2+0.02,center=true)
+      roundedRectangle2D(width=L+(wall*0),length=W+(wall*0),radius=iRad);
+
+      //--top
+      translate([0,0,((H*2)-vClip)/2])
+      linear_extrude(vClip, scale =
+          [1-((iRad)*2/(L)),
+           1-((iRad)*2/(W))],
+        center=true)
+      roundedRectangle2D(width=L+(wall*0),length=W+(wall*0),radius=iRad); 
+    } 
+    else 
+    {
+      assert(false, "Unsupported edge combination");
+    } 
   } //-- minkowskiInnerBox()
+  
   //--------------------------------------------------------
   
   if (preCutouts) 
@@ -1572,7 +1755,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       difference()
       {
         //-- move it to the origin of the base
-        translate ([-L/2, -W/2, -H]) // -baseWallHeight])
+        translate ([-L/2, -W/2, -H])
           hookBaseOutsidePre();    
         minkowskiCutBox(L, W, H, cRad, plane, wall);
       } // difference()
@@ -1611,13 +1794,12 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
         } // difference()
       } // if (len(boxMounts) > 0)
 
-
       //color("Red")
       difference()
       {
         //-- Objects to be cut to outside the box 
         //-- move it to the origin of the base
-        translate ([-L/2, -W/2, H]) //lidWallHeight])
+        translate ([-L/2, -W/2, H])
         hookLidOutsidePre();
         minkowskiCutBox(L, W, H, cRad, plane, wall);
       } // difference()
@@ -1627,7 +1809,7 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       intersection()
       {
         minkowskiCutBox(L, W, H, cRad, plane, wall);
-        translate ([-L/2, -W/2, H]) // lidWallHeight])
+        translate ([-L/2, -W/2, H])
           hookLidInsidePre();
       } //intersection()
 
@@ -1642,7 +1824,6 @@ module minkowskiBox(shell, L, W, H, rad, plane, wall, preCutouts)
       //-- Draw the labels that are added (raised) from the case
       color("DarkGreen") drawLabels(yappPartLid, false);
       color("DarkGreen") drawImages(yappPartLid, false);
-
     }
   }
   else // preCutouts
@@ -3258,8 +3439,10 @@ module baseShell()
       wall = (wallThickness/2)+(ridgeSlack/2);  // 26-02-2022
       
       oRad = rad;
-      iRad = getMinRad(oRad, wall);
+      iRad = getMinRad(oRad, wallThickness);
+      cRad = (rad + iRad)/2;
 
+      //echo(rad=rad, oRad=oRad,iRad=iRad, wall=wall, cRad=cRad);
       
       difference()
       {
@@ -3277,13 +3460,26 @@ module baseShell()
         translate([0, 0, posZ])
         {
           linear_extrude(shellHeight+1)
-          //linear_extrude(H+1)
           {
-            minkowski()
-            {
-            square([(L-ridgeSlack)-((iRad*2)), (W-ridgeSlack)-((iRad*2))], center=true);  // 14-01-2023
-                circle(iRad*minkowskiErrorCorrection);
+            if (shellEdgeVert == yappEdgeRounded)
+            { 
+              //echo("Trim base ridge round", iRad=iRad, rad=rad);
+              //-- Changed to RoundedRectangle 
+              roundedRectangle2D(width=L-ridgeSlack,length=W-ridgeSlack,radius=cRad);
             }
+            else if (shellEdgeVert == yappEdgeSquare)
+            { 
+              square([(L-ridgeSlack), (W-ridgeSlack)], center=true);
+            }
+            else if (shellEdgeVert == yappEdgeChamfered)
+            { 
+              //echo ("SQ-CH-Ridge", rad=rad, ridgeSlack=ridgeSlack);
+              chamferedRectangle2D((L-ridgeSlack), (W-ridgeSlack), cRad);
+            }
+            else 
+            {
+              assert(false, "Unsupported edge combination");
+            } 
           } // linear_extrude..
         } // translate()
       } // diff
@@ -3361,6 +3557,9 @@ module lidShell()
       oRad = rad;
       iRad = getMinRad(oRad, wall);
        
+      iRad2 = getMinRad(oRad, wallThickness);
+      cRad = (rad + iRad2)/2;      
+      
       //echo(wall=wall, oRad=oRad, iRad=iRad, ridgeSlack=ridgeSlack);
 
       //-- hollow inside
@@ -3368,11 +3567,25 @@ module lidShell()
       {
         linear_extrude(H+shellHeight)
         {
-            minkowski()
-            {
-              square([L-(iRad*2)+(ridgeSlack/2), W-(iRad*2)+(ridgeSlack/2)], center=true); // 26-02-2022
-              circle(iRad*minkowskiErrorCorrection);
-            }
+          if (shellEdgeVert == yappEdgeRounded)
+          { 
+              //-- Changed to RoundedRectangle 
+              roundedRectangle2D(width=L-ridgeSlack,length=W-ridgeSlack,radius=cRad);
+          }
+          else if (shellEdgeVert == yappEdgeSquare)
+          { 
+            square([(L+(ridgeSlack/2)), (W+(ridgeSlack/2))], center=true);
+          }
+          else if (shellEdgeVert == yappEdgeChamfered)
+          { 
+            chamferedRectangle2D((L-ridgeSlack), (W-ridgeSlack), 
+              cRad-ridgeSlack/2
+            );
+          }
+          else 
+          {
+            assert(false, "Unsupported edge combination");
+          } 
         } // linear_extrude
       } //  translate  
     } //-- removeLidRidge()
@@ -4123,6 +4336,85 @@ module roundedRectangle2D(width,length,radius)
   }
 } //-- roundedRectangle2D()
 
+
+//===========================================================
+module chamferedRectangle2D(x,y,clip)
+{
+  if (clip > x/2 || clip > y/2) 
+  {
+      echo("Warning radius too large");
+  }
+  
+  translate([-x/2,-y/2,0])
+  polygon([[clip,0],
+    [x-clip,0],
+    [x,clip],
+    [x,y-clip],
+    [x-clip,y],
+    [clip,y],
+    [0,y-clip],
+    [0,clip],
+    [clip,0]
+]);
+  
+} //-- roundedRectangle2D()
+
+
+module chamferCube3D(x,y,z,clip_x,clip_y,clip_z)
+{
+  translate([-x/2,-y/2,-z/2])
+  
+  polyhedron
+    (points = [
+	    [clip_x, clip_y, 0], [x-clip_x, clip_y, 0], [x-clip_x, y-clip_y, 0], [clip_x, y-clip_y, 0], // bottom face
+	    [clip_x, clip_y, z], [x-clip_x, clip_y, z], [x-clip_x, y-clip_y, z], [clip_x, y-clip_y, z], // top face
+
+	    [0, clip_y, clip_z], [0, y-clip_y, clip_z], [0, y-clip_y, z-clip_z], [0, clip_y, z-clip_z], // left face
+	    [x, clip_y, clip_z], [x, y-clip_y, clip_z], [x, y-clip_y, z-clip_z], [x, clip_y, z-clip_z], // right face
+
+	    [clip_x, 0, clip_z], [x-clip_x, 0, clip_z], [x-clip_x, 0, z-clip_z], [clip_x, 0, z-clip_z], // front face
+	    [clip_x, y, clip_z], [x-clip_x, y, clip_z], [x-clip_x, y, z-clip_z], [clip_x, y, z-clip_z], // back face
+	   ], 
+     faces = [
+		  [0,1,2,3],  // Bottom
+		  [7,6,5,4],  // top
+		  [8,9,10,11],  // left
+		  [15,14,13,12],  // right
+		  [19,18,17,16],  // front
+		  [20,21,22,23],  // back
+  
+  	  [0,3,9,8],  // bottom/left
+  	  [11,10,7,4],  // top/left
+  
+  	  [12,13,2,1],  // bottom/right
+  	  [5,6,14,15],  // top/right
+
+  	  [16,17,1,0],  // bottom/front
+  	  [18,19,4,5],  // top/front
+
+  	  [3,2,21,20],  // bottom/back
+  	  [23,22,6,7],  // top/back
+  
+  	  [20,23,10,9],  // back/left
+  	  [22,21,13,14],  // back/right
+
+  	  [17,18,15,12],  // front/right
+  	  [19,16,8,11],  // front/left
+ 
+      [4,19,11],  // front/left/top
+      [8,16,0],  // front/left/bottom
+
+      [5,15,18],  // front/right/top
+      [1,17,12],  // front/right/bottom
+
+      [6,22,14],  // back/right/top
+      [2,13,21],  // back/right/bottom
+
+      [7,10,23],  // back/left/top
+      [3,20,9],  // back/left/bottom
+  	 ]
+  );
+} //chamferCube3D 
 
 //===========================================================
 module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, filletBorrom, Radius, Rotation, Polygon=undef, expand=0)
@@ -5148,8 +5440,10 @@ module displayMount(
 // General functions
 //===========================================================
 //===========================================================
-
-function getMinRad(p1, wall) = p1<wall ? 1 : (p1==wall ? p1 : p1 - wall);
+function getMinRad(p1, wall) = 
+  p1<wall ? 1      // if Radius is < wall then return 1
+  : (p1==wall ? 1 // if they are equal then return 1
+  : p1 - wall);    // otherwise return the difference 
 
 // Check the first 21 elements in an array (I don't think any will be over 21)
 function isTrue(constantValue, setArray) = (

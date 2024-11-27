@@ -34,13 +34,16 @@ paddingLeft         = 1;
 
 //Defined here so you can define the "Main" PCB using these if wanted
 pcbLength           = 140; // front to back (X axis)
-pcbWidth            = 120; // side to side (Y axis)
+pcbWidth            = 220; // side to side (Y axis)
 pcbThickness        = 1.6;
 standoffHeight      = 1.0;  //-- How much the PCB needs to be raised from the base to leave room for solderings 
 standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
 
+wallThickness       = 2.6;
+basePlaneThickness  = 1.6;
+lidPlaneThickness   = 1.6;
 
 //-- Total height of box = lidPlaneThickness 
 //                       + lidWallHeight 
@@ -185,7 +188,28 @@ displayMounts =
     17.0, //windowHeight
     0, //windowOffsetH
     -0.9, //windowOffsetV
-    false, //bevel
+    true, //bevel
+    0, // rotation
+    5.0,//snapDiameter
+    yappDefault,
+    yappCenter,  
+  ],
+  [ // This is for a 2004A 4x20 LCD Display - Mounted under the lid
+    80, //xPos
+    160, // yPos
+    98, // displayWidth
+    60, //displayHeight
+    2.2, //pinInsetH
+    2.2, //pinInsetV
+    3.3, //pinDiameter
+    3.3, //postOverhang
+    9.3, //walltoPCBGap
+    1.6, //pcbThickness
+    78.0, //windowWidth
+    29.0, //windowHeight
+    0, //windowOffsetH
+    -0.9, //windowOffsetV
+    true, //bevel
     0, // rotation
     5.0,//snapDiameter
     yappDefault,

@@ -70,14 +70,16 @@ lidPlaneThickness   = 1.0;
 //--                     + baseWallHeight + lidWallHeight
 //-- space between pcb and lidPlane :=
 //--      (bottonWallHeight+lidWallHeight) - (standoffHeight+pcbThickness)
-baseWallHeight      = 10;
-lidWallHeight       = 10;
+baseWallHeight      = 20;
+lidWallHeight       = 20;
 
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
 ridgeHeight         = 3.0;  //-> at least 1.8 * wallThickness
 ridgeSlack          = 0.2;
 roundRadius         = 8.0;
+
+boxtype = 5;
 
 //-- How much the PCB needs to be raised from the base
 //-- to leave room for solderings and whatnot

@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.2.0 (2024-09-08)";
+Version="v3.3.0 (2024-11-26)";
 
 /*
 **
@@ -124,8 +124,8 @@ pcb =
 
 //-- Edit these parameters for your own box dimensions
 wallThickness       = 2.6;
-basePlaneThickness  = 1.5;
-lidPlaneThickness   = 1.5;
+basePlaneThickness  = 1.6;
+lidPlaneThickness   = 1.6;
 
 //-- Total height of box = lidPlaneThickness 
 //                       + lidWallHeight 
@@ -231,6 +231,7 @@ yappRoundedRect         = -30003;
 yappCircleWithFlats     = -30004;
 yappCircleWithKey       = -30005;
 yappRing                = -30006;
+yappSphere              = -30007; // New
 
 // NEW for 3.x 
 // Edge Shapes
@@ -522,7 +523,7 @@ preDefinedMasks=[
 //    n(b) = { <yappPin>, yappHole, yappTopPin } 
 //             yappPin = Pin on Base and Hole on Lid 
 //             yappHole = Hole on Both
-//             yappHole = Hole on Base and Pin on Lid
+//             yappTopPin = Hole on Base and Pin on Lid
 //    n(c) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
@@ -586,6 +587,9 @@ connectors   =
 //                      |                       |               |   0 = No connectors
 //                      |                       |               |   positive = 2 connectors
 //                      |                       |               |   negative = 4 connectors
+//  yappSphere          | width, radius         |               | Width = Sphere center distance from
+//                      |                       |               |   center of depth.  negative = below
+//                      |                       |               | radius = sphere radius
 //----------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:
@@ -596,7 +600,7 @@ connectors   =
 //    p(3) = length
 //    p(4) = radius
 //    p(5) = shape : { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey }
+//                    | yappCircleWithFlats | yappCircleWithKey | yappSphere }
 //  Optional:
 //    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
 //    p(7) = angle : Default = 0
@@ -1276,7 +1280,7 @@ module printSnapJoins(casePart)
         
         if (isTrue(yappLeft, snj))
         {
-          translate([snapApos-(snapWidth/2), (wallThickness/2)+0.1, snapZpos])
+          translate([snapApos-(snapWidth/2), (wallThickness/2)+0.15, snapZpos])
           {
             scale([1,.60, 1])
               rotate([45,0,0])
@@ -1286,7 +1290,7 @@ module printSnapJoins(casePart)
           if (isTrue(yappSymmetric, snj))
           {
             translate([shellLength-(snapApos+(snapWidth/2)),
-                        (wallThickness/2)+0.1,
+                        (wallThickness/2)+0.15,
                         snapZpos])
             {
             scale([1,.60, 1])
@@ -1300,7 +1304,7 @@ module printSnapJoins(casePart)
         if (isTrue(yappRight, snj))
         {
           translate([snapApos-(snapWidth/2),
-                        shellWidth-((wallThickness/2)+0.1),
+                        shellWidth-((wallThickness/2)+0.15),
                         snapZpos])
           {
             scale([1,.60, 1])
@@ -1310,7 +1314,7 @@ module printSnapJoins(casePart)
           if (isTrue(yappSymmetric, snj))
           {
             translate([shellLength-(snapApos+(snapWidth/2)),
-                        shellWidth-((wallThickness/2)+0.1),
+                        shellWidth-((wallThickness/2)+0.15),
                         snapZpos])
             {
               scale([1,.60, 1])
@@ -1324,7 +1328,7 @@ module printSnapJoins(casePart)
         
         if (isTrue(yappBack, snj))
         {
-          translate([((wallThickness/2)+0.1),
+          translate([((wallThickness/2)+0.15),
                         snapApos-(snapWidth/2),
                         snapZpos])
           {
@@ -1334,7 +1338,7 @@ module printSnapJoins(casePart)
           }
           if (isTrue(yappSymmetric, snj))
           {
-            translate([((wallThickness/2)+0.1),
+            translate([((wallThickness/2)+0.15),
                           shellWidth-(snapApos+(snapWidth/2)),
                           snapZpos])
             {
@@ -1348,7 +1352,7 @@ module printSnapJoins(casePart)
         
         if (isTrue(yappFront, snj))
         {
-          translate([shellLength-((wallThickness/2)+0.1),
+          translate([shellLength-((wallThickness/2)+0.15),
                         snapApos-(snapWidth/2),
                         snapZpos])
           {
@@ -1358,7 +1362,7 @@ module printSnapJoins(casePart)
           }
           if (isTrue(yappSymmetric, snj))
           {
-            translate([shellLength-((wallThickness/2)+0.1),
+            translate([shellLength-((wallThickness/2)+0.15),
                           shellWidth-(snapApos+(snapWidth/2)),
                           snapZpos])
             {
@@ -1465,7 +1469,7 @@ module printSnapJoins(casePart)
         if (printMessages) echo ("making Diamond shaped snaps");
         if (isTrue(yappLeft, snj))
         {
-          translate([snapApos-(snapWidth/2)-0.5, (wallThickness/2)+0.04, snapZpos])
+          translate([snapApos-(snapWidth/2)-0.5, (wallThickness/2)+0.15, snapZpos])
           {
             scale([1,.60, 1])
                 rotate([45,0,0])
@@ -1473,7 +1477,8 @@ module printSnapJoins(casePart)
           }
           if (isTrue(yappSymmetric, snj))
           {
-            translate([shellLength-(snapApos+(snapWidth/2)+0.5), (wallThickness/2)+0.04, snapZpos])
+          //  translate([shellLength-(snapApos+(snapWidth/2)+0.5), (wallThickness/2)+0.04, snapZpos])
+            translate([shellLength-(snapApos+(snapWidth/2)+0.5), (wallThickness/2)+0.15, snapZpos])
             {
               scale([1,.60, 1])
                 rotate([45,0,0])
@@ -1484,7 +1489,7 @@ module printSnapJoins(casePart)
         
         if (isTrue(yappRight, snj))
         {
-          translate([snapApos-(snapWidth/2)-0.5, shellWidth-(wallThickness/2)+0.04, snapZpos])
+          translate([snapApos-(snapWidth/2)-0.5, shellWidth-(wallThickness/2)-0.15, snapZpos])
           {
             scale([1,.60, 1])
                 rotate([45,0,0])
@@ -1492,7 +1497,7 @@ module printSnapJoins(casePart)
           }
           if (isTrue(yappSymmetric, snj))
           {
-            translate([shellLength-(snapApos+(snapWidth/2)+0.5), shellWidth-(wallThickness/2)+0.04, snapZpos])
+            translate([shellLength-(snapApos+(snapWidth/2)+0.5), shellWidth-(wallThickness/2)-0.15, snapZpos])
             {
               scale([1,.60, 1])
                 rotate([45,0,0])
@@ -1503,7 +1508,7 @@ module printSnapJoins(casePart)
         
         if (isTrue(yappBack, snj))
         {
-          translate([(wallThickness/2)+0.04, snapApos-(snapWidth/2)-0.5, snapZpos])
+          translate([(wallThickness/2)+0.15, snapApos-(snapWidth/2)-0.5, snapZpos])
           {
             scale([0.6, 1, 1])
              rotate([45,0,90])
@@ -1512,7 +1517,7 @@ module printSnapJoins(casePart)
           }
           if (isTrue(yappSymmetric, snj))
           {
-            translate([(wallThickness/2)+0.04, shellWidth-(snapApos+(snapWidth/2))-0.5, snapZpos])
+            translate([(wallThickness/2)+0.15, shellWidth-(snapApos+(snapWidth/2))-0.5, snapZpos])
             {
               scale([0.6, 1, 1])
               rotate([45,0,90])
@@ -1525,7 +1530,7 @@ module printSnapJoins(casePart)
         
         if (isTrue(yappFront, snj))
         {
-          translate([shellLength-((wallThickness/2)+0.04), snapApos-(snapWidth/2)-0.5, snapZpos])
+          translate([shellLength-((wallThickness/2)+0.15), snapApos-(snapWidth/2)-0.5, snapZpos])
           {
               scale([0.6, 1, 1])
                 rotate([45,0,90])
@@ -1533,7 +1538,7 @@ module printSnapJoins(casePart)
           }
           if (isTrue(yappSymmetric, snj))
           {
-            translate([shellLength-((wallThickness/2)+0.04),  shellWidth-(snapApos+(snapWidth/2))-0.5,  snapZpos])
+            translate([shellLength-((wallThickness/2)+0.15),  shellWidth-(snapApos+(snapWidth/2))-0.5,  snapZpos])
             {
               scale([0.6, 1, 1])
                 rotate([45,0,90])
@@ -4185,9 +4190,12 @@ module showOrientation()
 //-- negative filletRadius makes it an internal fillet
 module pinFillet(pinRadius, filletRadius) 
 {
+   echo (pinRadius=pinRadius, filletRadius=filletRadius); 
   //-- Error checking for internal fillet bigger than the hole
-  filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius): filletRadius;
-  fr = abs(filletRad) - 0.001;
+  filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius - 0.001): filletRadius;
+  
+  fr = abs(filletRad);
+
   voffset = (pinRadius < 0) ? -fr : fr;
   voffset2 = (pinRadius < 0) ? 0 : -fr;  
   
@@ -4512,87 +4520,105 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
 module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotation, Polygon, expand=0)
 // Creates a shape centered at 0,0 in the XY and from 0-thickness in the Z
 { 
-//  echo (Shape=Shape, Center=Center, Width=Width, Length=Length, Thickness=Thickness, Radius=Radius, Rotation=Rotation, Polygon=Polygon);
+//  echo (Shape=Shape, useCenter=useCenter, Width=Width, Length=Length, Thickness=Thickness, Radius=Radius, Rotation=Rotation, Polygon=Polygon);
   
   rotate([0,0,Rotation])
   {
-    linear_extrude(height = Thickness)
-    { 
-      offset(expand)
+    //-- Sphere cutout handled as a 3d object not a 2d Extruded 
+    if (Shape == yappSphere) {
+      //translate([0,0,(Thickness-0.08)/2]) 
+      {
+        intersection() 
+        {
+          translate([0,0,(Thickness/2)+.02]) // adjust to center 
+        //  translate([0,0,0.04])
+            cube([Radius*3,Radius*3,Thickness], center=true);
+          
+          //translate([0,0,Width+(Radius/2)-((Thickness-0.08)/2)])
+          translate([0,0,Width+(Thickness/2)])
+            sphere(r=Radius);
+          
+        } //intersection
+      } //translate
+    } else {
+      linear_extrude(height = Thickness)
       { 
-        if (Shape == yappCircle)
-        {
-          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-          circle(r=Radius);
-        } 
-        else if (Shape == yappRing)
-        {
-          connectorCount=(Width==0) ? 0 : (Width>0) ? 1 : 2; 
-          connectorWidth=abs(Width);
-          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-            difference() {
-                difference() {
-                    circle(r=Radius);
-                    circle(r=Length);
-                }
-                if (connectorCount>0) 
-                {
-                  square([connectorWidth, Radius*2], center=true);
-                  if (connectorCount>1) 
-                  {
-                    rotate([0,0,90])
-                    square([connectorWidth, Radius*2], center=true);
-                  }
-                }
-            }
-        } 
-        else if (Shape == yappRectangle)
-        {
-          translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+        offset(expand)
+        { 
+          if (Shape == yappCircle)
           {
-            square([Width,Length], center=true); 
-          }
-        } 
-        else if (Shape == yappRoundedRect)
-        {
+            translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+            circle(r=Radius);
+          } 
+          else if (Shape == yappRing)
+          {
+            connectorCount=(Width==0) ? 0 : (Width>0) ? 1 : 2; 
+            connectorWidth=abs(Width);
+            translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+              difference() {
+                  difference() {
+                      circle(r=Radius);
+                      circle(r=Length);
+                  }
+                  if (connectorCount>0) 
+                  {
+                    square([connectorWidth, Radius*2], center=true);
+                    if (connectorCount>1) 
+                    {
+                      rotate([0,0,90])
+                      square([connectorWidth, Radius*2], center=true);
+                    }
+                  }
+              }
+          } 
+          else if (Shape == yappRectangle)
           {
             translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
-            roundedRectangle2D(Width,Length,Radius);
-          }
-        }
-        else if (Shape == yappPolygon)
-        {
-          translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
-          scale([Width,Length,0]){
-            polygon(Polygon);
-          }
-        }
-        else if (Shape == yappCircleWithFlats)
-        {
-          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-          {
-            intersection()
-            { 
-              circle(r=Radius);    
-              square([Width, Radius*2], center=true);
-            }
-          }
-        }
-        else if (Shape == yappCircleWithKey)
-        {
-          if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
-          translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
-          {
-            difference()
             {
-            circle(r=Radius); 
-            translate ([Radius - (Width/2),0,0]) 
-              square([Width, Length ], center=true);
+              square([Width,Length], center=true); 
+            }
+          } 
+          else if (Shape == yappRoundedRect)
+          {
+            {
+              translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+              roundedRectangle2D(Width,Length,Radius);
             }
           }
-        } 
-      } // offset
-    } // extrude
+          else if (Shape == yappPolygon)
+          {
+            translate([(useCenter) ? 0 : Width/2,(useCenter) ? 0 : Length/2,0])
+            scale([Width,Length,0]){
+              polygon(Polygon);
+            }
+          }
+          else if (Shape == yappCircleWithFlats)
+          {
+            translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+            {
+              intersection()
+              { 
+                circle(r=Radius);    
+                square([Width, Radius*2], center=true);
+              }
+            }
+          }
+          else if (Shape == yappCircleWithKey)
+          {
+            if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
+            translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
+            {
+              difference()
+              {
+              circle(r=Radius); 
+              translate ([Radius - (Width/2),0,0]) 
+                square([Width, Length ], center=true);
+              }
+            }
+          } 
+        } // offset
+      } // extrude
+    } // if (Shape == yappSphere)
   } // Rotate
 } //-- generateShape()
 
@@ -4698,54 +4724,83 @@ module genMask(pattern, width, height, hOffset, vOffset, thickness, hRepeat, vRe
 //===========================================================
 module drawLid() 
 {
-//-- Draw objects not cut by the lid
-//-- Comment out difference() to see objects instead of cutting them from the lid for debugging
-//-- xxxxx        
-  difference()  // (t1) 
+  difference()
   {
-    //-- Draw the lid
-    lidShell();
+    union() //(t2)
+    {
+    //-- Draw objects not cut by the lid
+    //-- Comment out difference() to see objects instead of cutting them from the lid for debugging
+    //-- xxxxx        
+      difference()  // (t1) 
+      {
+        union() {
+        //-- Draw the lid
+          lidShell();
+        }
+            //-- new for 3.1
+    //  addDisplayMounts(1); //-- Generate the Mount
+
+//          }
+        //-- Remove parts of it
+//        lightTubeCutout();
+//        buttonCutout();
+            
+        //-- new for 3.1
+        addDisplayMounts(0);  //-- Do the Cutout in the lid
+     
+      
+        //-- Do all of the face cuts
+//        makeCutouts(yappPartLid);
+//        cutoutsForScrewHoles(yappPartLid);
+//        makeRidgeExt(yappPartLid,true);
+             
+//        printSnapJoins(yappPartLid);
+
+//        //-- Draw the labels that are carved into the case
+//        color("Red") drawLabels(yappPartLid, true);
+//        color("Red") drawImages(yappPartLid, true);
         
+      } //  difference(t1)
+      
+      //-- Post cutouts operations
+      posZ00 = lidWallHeight+lidPlaneThickness;
+      translate([(shellLength/2), (shellWidth/2), (posZ00*-1)])
+      {
+        minkowskiBox(yappPartLid, shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, false);
+      }
+    
+      //-- new for 3.1
+      addDisplayMounts(1); //-- Generate the Mount
+
+    //-- Add the text
+    translate([shellLength-15, -15, 0])
+      linear_extrude(1) 
+        mirror([1,0,0])
+          %text("LEFT"
+                , font="Liberation Mono:style=bold"
+                , size=8
+                , direction="ltr"
+                , halign="left"
+                , valign="bottom");
+    } //union (t2)
+    
+    
+    // Stuff to Cut
     //-- Remove parts of it
     lightTubeCutout();
     buttonCutout();
-        
-    //-- new for 3.1
-    addDisplayMounts(0);
-   
+          
     //-- Do all of the face cuts
     makeCutouts(yappPartLid);
     cutoutsForScrewHoles(yappPartLid);
     makeRidgeExt(yappPartLid,true);
-          
+         
     printSnapJoins(yappPartLid);
 
     //-- Draw the labels that are carved into the case
     color("Red") drawLabels(yappPartLid, true);
     color("Red") drawImages(yappPartLid, true);
-    
-  } //  difference(t1)
-  
-  //-- Post cutouts operations
-  posZ00 = lidWallHeight+lidPlaneThickness;
-  translate([(shellLength/2), (shellWidth/2), (posZ00*-1)])
-  {
-    minkowskiBox(yappPartLid, shellInsideLength,shellInsideWidth, lidWallHeight, roundRadius, lidPlaneThickness, wallThickness, false);
-  }
-  
-  //-- new for 3.1
-  addDisplayMounts(1);
-
-  //-- Add the text
-  translate([shellLength-15, -15, 0])
-    linear_extrude(1) 
-      mirror([1,0,0])
-        %text("LEFT"
-              , font="Liberation Mono:style=bold"
-              , size=8
-              , direction="ltr"
-              , halign="left"
-              , valign="bottom");
+  } //difference
 } //-- drawLid()
 
 
@@ -5031,11 +5086,12 @@ module YAPPgenerate()
           minkowskiBox(yappPartBase, shellInsideLength, shellInsideWidth, baseWallHeight, roundRadius, basePlaneThickness, wallThickness, false);
         }
         
-        if (showOrientation) 
-        {
-          showOrientation();
-        }
       } // if printBaseShell ..
+      
+      if ($preview && showOrientation) 
+      {
+        showOrientation();
+      }
                   
      if (printMessages) echo ("* Print lid *");
      if (showSideBySide || !$preview)
@@ -5054,7 +5110,7 @@ module YAPPgenerate()
               } // printLidShell()
               // Add button extenders
               buildButtons(false);
-              addDisplayMounts(2);
+              addDisplayMounts(2); //-- Generate the clips
             } // translate
           } //  mirror  
         } //  mirror  
@@ -5071,7 +5127,7 @@ module YAPPgenerate()
           } // printLidShell()
           // Add button extenders
           buildButtons(false);
-          addDisplayMounts(3);
+       //   addDisplayMounts(3); // Does Nothing
         } //  translate ..
       } // lid on top off Base  
     } //union
@@ -5391,19 +5447,21 @@ module displayMount(
           cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
       }// color
 
+echo("Display Pins", pinDiameter=pinDiameter);
       color("blue")
       {
         //--pins
-        translate([pinInsetH,pinInsetV,walltoPCBGap+pcbThickness])
+//        translate([pinInsetH,pinInsetV,(walltoPCBGap/2)+pcbThickness+walltoPCBGap+lidPlaneThickness])
+        translate([pinInsetH,pinInsetV,walltoPCBGap+lidPlaneThickness])
           cylinder (d=pinDiameter, h=pcbThickness*2);
 
-        translate([pinInsetH,displayHeight-pinInsetV,walltoPCBGap+pcbThickness])
+        translate([pinInsetH,displayHeight-pinInsetV,walltoPCBGap+lidPlaneThickness])
           cylinder (d=pinDiameter, h=pcbThickness*2);
 
-        translate([displayWidth-pinInsetH,pinInsetV,walltoPCBGap+pcbThickness])
+        translate([displayWidth-pinInsetH,pinInsetV,walltoPCBGap+lidPlaneThickness])
           cylinder (d=pinDiameter, h=pcbThickness*2);
 
-        translate([displayWidth-pinInsetH,displayHeight-pinInsetV,walltoPCBGap+pcbThickness])
+        translate([displayWidth-pinInsetH,displayHeight-pinInsetV,walltoPCBGap+lidPlaneThickness])
           cylinder (d=pinDiameter, h=pcbThickness*2);
       }// color
     }// translate
@@ -5423,11 +5481,11 @@ module displayMount(
         cube([faceWidth,faceHeight, wallThickness],center=true);
       
       //-- Cutout Opening
-      translate([windowOffsetH, windowOffsetV, wallThickness + 0.01]) 
+      translate([windowOffsetH, windowOffsetV, wallThickness + 0.02]) 
       {
         rotate([180,0,0])
         // Bevel out at a either 90 or 45deg angle based on bevel parameter
-        linear_extrude(wallThickness + 0.02, scale = [xScale,yScale])
+        linear_extrude(wallThickness + 0.04, scale = [xScale,yScale])
           square([windowWidth,windowHeight],center=true);
       }// translate 
     }// difference

@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.2 (2024-09-08)
+//  Version 3.3.0 (2024-11-27)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -290,6 +290,9 @@ connectors   =
 //                      |                       |               |   0 = No connectors
 //                      |                       |               |   positive = 2 connectors
 //                      |                       |               |   negative = 4 connectors
+//  yappSphere          | width, radius         |               | Width = Sphere center distance from
+//                      |                       |               |   center of depth.  negative = below
+//                      |                       |               | radius = sphere radius
 //----------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:
@@ -300,7 +303,7 @@ connectors   =
 //    p(3) = length
 //    p(4) = radius
 //    p(5) = shape : { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                     | yappCircleWithFlats | yappCircleWithKey }
+//                     | yappCircleWithFlats | yappCircleWithKey | yappSphere }
 //  Optional:
 //    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
 //    p(7) = angle : Default = 0

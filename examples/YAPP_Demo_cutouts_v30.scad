@@ -208,8 +208,9 @@ cutoutsLid  =
 //   ,[ 75, 30,  0,  0, 8, yappCircle, yappCenter]
 //   ,[100, 70, 12,  0, 8, yappCircleWithFlats, undef, 30, yappCenter]
 //   ,[100, 30, 12,  0, 8, yappCircleWithFlats, yappCenter]
-//   ,[125, 70,  4,  5, 8, yappCircleWithKey, undef, 30, yappCenter]
-//   ,[125, 30,  4,  5, 8, yappCircleWithKey, yappCenter]
+   [125, 70,  4,  5, 8, yappCircleWithKey, undef, 30, yappCenter]
+   , [125, 50,  4,  5, 8, yappCircleWithOutsideKey, undef, 30, yappCenter]
+   ,[125, 30,  4,  5, 8, yappCircleWithKey, yappCenter]
 //   ,[160, 30, 30, 30, 8, yappPolygon, 
 //         [yappPolygonDef,[
 //            [-0.50,0],[-0.25,+0.433012],[+0.45,-0.433012],[-0.25,-0.433012]]

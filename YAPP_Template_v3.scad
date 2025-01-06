@@ -276,25 +276,25 @@ connectors   =
 //  Default origin = yappCoordBox: box[0,0,0]
 //
 //                        Required                Not Used        Note
-//----------------------+-----------------------+---------------+------------------------------------
-//  yappRectangle       | width, length         | radius        |
-//  yappCircle          | radius                | width, length |
-//  yappRoundedRect     | width, length, radius |               |     
-//  yappCircleWithFlats | width, radius         | length        | length=distance between flats
-//  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
-//  yappCircleWithOutKey| width, length, radius |               | width = key width length=key depth
-//  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
-//                      |                       |               | provided
-//  yappRing            | width, length, radius |               | radius = outer radius, 
-//                      |                       |               | length = inner radius
-//                      |                       |               | width = connection between rings
-//                      |                       |               |   0 = No connectors
-//                      |                       |               |   positive = 2 connectors
-//                      |                       |               |   negative = 4 connectors
-//  yappSphere          | width, radius         |               | Width = Sphere center distance from
-//                      |                       |               |   center of depth.  negative = below
-//                      |                       |               | radius = sphere radius
-//----------------------+-----------------------+---------------+------------------------------------
+//---------------------------+-----------------------+---------------+------------------------------------
+//  yappRectangle            | width, length         | radius        |
+//  yappCircle               | radius                | width, length |
+//  yappRoundedRect          | width, length, radius |               |     
+//  yappCircleWithFlats      | width, radius         | length        | length=distance between flats
+//  yappCircleWithKey        | width, length, radius |               | width = key width length=key depth
+//  yappCircleWithOutsideKey | width, length, radius |               | width = key width length=key depth
+//  yappPolygon              | width, length         | radius        | yappPolygonDef object must be
+//                           |                       |               | provided
+//  yappRing                 | width, length, radius |               | radius = outer radius, 
+//                           |                       |               | length = inner radius
+//                           |                       |               | width = connection between rings
+//                           |                       |               |   0 = No connectors
+//                           |                       |               |   positive = 2 connectors
+//                           |                       |               |   negative = 4 connectors
+//  yappSphere               | width, radius         |               | Width = Sphere center distance from
+//                           |                       |               |   center of depth.  negative = below
+//                           |                       |               | radius = sphere radius
+//---------------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:
 //   Required:

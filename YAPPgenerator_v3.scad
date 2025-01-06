@@ -232,7 +232,7 @@ yappCircleWithFlats     = -30004;
 yappCircleWithKey       = -30005;
 yappRing                = -30006;
 yappSphere              = -30007; // New
-yappCircleWithOutKey    = -30008;
+yappCircleWithOutsideKey = -30008;
 
 
 // NEW for 3.x 
@@ -575,25 +575,25 @@ connectors   =
 //  Default origin =  yappCoordPCB : pcb[0,0,0]
 //
 //                        Required                Not Used        Note
-//----------------------+-----------------------+---------------+------------------------------------
-//  yappRectangle       | width, length         | radius        |
-//  yappCircle          | radius                | width, length |
-//  yappRoundedRect     | width, length, radius |               |     
-//  yappCircleWithFlats | width, radius         | length        | length=distance between flats
-//  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
-//  yappCircleWithOutKey| width, length, radius |               | width = key width length=key depth
-//  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
-//                      |                       |               | provided
-//  yappRing            | width, length, radius |               | radius = outer radius, 
-//                      |                       |               | length = inner radius
-//                      |                       |               | width = connection between rings
-//                      |                       |               |   0 = No connectors
-//                      |                       |               |   positive = 2 connectors
-//                      |                       |               |   negative = 4 connectors
-//  yappSphere          | width, radius         |               | Width = Sphere center distance from
-//                      |                       |               |   center of depth.  negative = below
-//                      |                       |               | radius = sphere radius
-//----------------------+-----------------------+---------------+------------------------------------
+//---------------------------+-----------------------+---------------+------------------------------------
+//  yappRectangle            | width, length         | radius        |
+//  yappCircle               | radius                | width, length |
+//  yappRoundedRect          | width, length, radius |               |     
+//  yappCircleWithFlats      | width, radius         | length        | length=distance between flats
+//  yappCircleWithKey        | width, length, radius |               | width = key width length=key depth
+//  yappCircleWithOutsideKey | width, length, radius |               | width = key width length=key depth
+//  yappPolygon              | width, length         | radius        | yappPolygonDef object must be
+//                           |                       |               | provided
+//  yappRing                 | width, length, radius |               | radius = outer radius, 
+//                           |                       |               | length = inner radius
+//                           |                       |               | width = connection between rings
+//                           |                       |               |   0 = No connectors
+//                           |                       |               |   positive = 2 connectors
+//                           |                       |               |   negative = 4 connectors
+//  yappSphere               | width, radius         |               | Width = Sphere center distance from
+//                           |                       |               |   center of depth.  negative = below
+//                           |                       |               | radius = sphere radius
+//---------------------------+-----------------------+---------------+------------------------------------
 //
 //  Parameters:
 //   Required:
@@ -603,7 +603,7 @@ connectors   =
 //    p(3) = length
 //    p(4) = radius
 //    p(5) = shape : { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey | yappCircleWithOutKey | yappSphere }
+//                    | yappCircleWithFlats | yappCircleWithKey | yappCircleWithOutsideKey | yappSphere }
 //  Optional:
 //    p(6) = depth : Default = 0/Auto : 0 = Auto (plane thickness)
 //    p(7) = angle : Default = 0
@@ -741,7 +741,7 @@ lightTubes =
 //   Optional:
 //    p(9) = Height to top of PCB : Default = standoffHeight + pcbThickness
 //    p(10) = { yappRectangle | yappCircle | yappPolygon | yappRoundedRect 
-//                    | yappCircleWithFlats | yappCircleWithKey | yappCircleWithOutKey } : Shape, Default = yappRectangle
+//                    | yappCircleWithFlats | yappCircleWithKey | yappCircleWithOutsideKey } : Shape, Default = yappRectangle
 //    p(11) = angle : Default = 0
 //    p(12) = filletRadius          : Default = 0/Auto 
 //    p(13) = buttonWall            : Default = 2.0;
@@ -4513,7 +4513,7 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
             }
           }
         }
-        else if (Shape == yappCircleWithOutKey)
+        else if (Shape == yappCircleWithOutsideKey)
         {
           if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
           translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
@@ -4633,7 +4633,7 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
               }
             }
           }
-          else if (Shape == yappCircleWithOutKey)
+          else if (Shape == yappCircleWithOutsideKey)
           {
             if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
             translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
@@ -5047,13 +5047,13 @@ module YAPPgenerate()
   
   sanityCheckList(pcbStands, "pcbStands", 2);
   sanityCheckList(connectors, "connectors", 7);
-  sanityCheckList(cutoutsBase, "cutoutsBase", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutKey]);
-  sanityCheckList(cutoutsBase, "cutoutsLid", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutKey]);
-  sanityCheckList(cutoutsBase, "cutoutsFront", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutKey]);
-  sanityCheckList(cutoutsBase, "cutoutsBack", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutKey]);
-  sanityCheckList(cutoutsBase, "cutoutsLeft", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutKey]);
-  sanityCheckList(cutoutsBase, "cutoutsRight", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutKey]);
-  sanityCheckList(cutoutsBase, "cutoutsRight", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithOutKey]);
+  sanityCheckList(cutoutsBase, "cutoutsBase", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutsideKey]);
+  sanityCheckList(cutoutsBase, "cutoutsLid", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutsideKey]);
+  sanityCheckList(cutoutsBase, "cutoutsFront", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutsideKey]);
+  sanityCheckList(cutoutsBase, "cutoutsBack", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutsideKey]);
+  sanityCheckList(cutoutsBase, "cutoutsLeft", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutsideKey]);
+  sanityCheckList(cutoutsBase, "cutoutsRight", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithKey, yappCircleWithOutsideKey]);
+  sanityCheckList(cutoutsBase, "cutoutsRight", 6, 5, [yappRectangle, yappCircle, yappPolygon, yappRoundedRect, yappCircleWithFlats, yappCircleWithOutsideKey]);
   sanityCheckList(snapJoins, "snapJoins", 3, 2, [yappLeft, yappRight, yappFront, yappBack]);
   sanityCheckList(lightTubes, "lightTubes", 7, 6, [yappCircle, yappRectangle]);
   sanityCheckList(pushButtons, "pushButtons", 9);

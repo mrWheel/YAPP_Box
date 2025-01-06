@@ -282,6 +282,7 @@ connectors   =
 //  yappRoundedRect     | width, length, radius |               |     
 //  yappCircleWithFlats | width, radius         | length        | length=distance between flats
 //  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
+//  yappCircleWithOutKey| width, length, radius |               | width = key width length=key depth
 //  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
 //                      |                       |               | provided
 //  yappRing            | width, length, radius |               | radius = outer radius, 

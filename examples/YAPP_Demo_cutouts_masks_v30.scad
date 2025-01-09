@@ -115,32 +115,42 @@ inspectZfromTop     = false;    //-> View from the inspection cut down
 
 
 
-//===================================================================
-//   *** PCB Supports ***
-//   Pin and Socket standoffs 
-//-------------------------------------------------------------------
-//  Default origin =  yappCoordPCB : pcb[0,0,0]
-//
+//  *** Masks ***
+//------------------------------------------------------------------
 //  Parameters:
-//   Required:
-//    (0) = posx
-//    (1) = posy
-//   Optional:
-//    (2) = Height to bottom of PCB : Default = standoffHeight
-//    (3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
-//    (4) = standoffDiameter    Default = standoffDiameter;
-//    (5) = standoffPinDiameter Default = standoffPinDiameter;
-//    (6) = standoffHoleSlack   Default = standoffHoleSlack;
-//    (7) = filletRadius (0 = auto size)
-//    (n) = { <yappBoth> | yappLidOnly | yappBaseOnly }
-//    (n) = { yappHole, <yappPin> } // Baseplate support treatment
-//    (n) = { <yappAllCorners> | yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
-//    (n) = { yappCoordBox, <yappCoordPCB> }  
-//    (n) = { yappNoFillet }
-//-------------------------------------------------------------------
-pcbStands = [
-  //[5, 5, yappHole]
+//    maskName = [yappMaskDef,[
+//     p(0) = Grid pattern :{ yappPatternSquareGrid, yappPatternHexGrid }  
+//     p(1) = horizontal Repeat : if yappPatternSquareGrid then 0 = no repeat one 
+//                                shape per column, if yappPatternHexGrid 0 is not valid
+//     p(2) = vertical Repeat :   if yappPatternSquareGrid then 0 = no repeat one shape 
+//                                per row, if yappPatternHexGrid 0 is not valid
+//     p(3) = grid rotation
+//     p(4) = openingShape : {yappRectangle | yappCircle | yappPolygon | yappRoundedRect}
+//     p(5) = openingWidth, :  if yappPatternSquareGrid then 0 = no repeat one shape per 
+//                             column, if yappPatternHexGrid 0 is not valid
+//     p(6) = openingLength,   if yappPatternSquareGrid then 0 = no repeat one shape per 
+//                             row, if yappPatternHexGrid 0 is not valid
+//     p(7) = openingRadius
+//     p(8) = openingRotation
+//     p(9) = shape polygon : Required if openingShape = yappPolygon
+//   ]];
+//------------------------------------------------------------------
+
+// Custom Mask definition
+maskCustom1 = [yappMaskDef, 
+  [
+    yappPatternSquareGrid,// pattern
+    10,                   // hRepeat
+    10,                   // vRepeat
+    0,                    // rotation
+    yappCircle,           // openingShape
+    0,                    // openingWidth, 
+    0,                    // openingLength, 
+    1,                    // openingRadius
+    0,                    // openingRotation
+   ]
 ];
+
 
 
 
@@ -190,68 +200,32 @@ pcbStands = [
 
 cutoutsBase = 
 [
-//   [120, 40, 30, 30, 10, yappPolygon, shape6ptStar],
-//   [ 60, 55, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter],
-//   [115, 95, 20, 30, 10, yappCircle, 10],
-//   [140, 90, 20, 30,  1, yappRectangle, 10],
-//   [165, 90, 20, 30,  3, yappRoundedRect, 10],
+   [ 40, 30, 50, 50, 10, yappPolygon, shapeHexagon, maskHoneycomb, yappCenter], // Unshifted mask
+   [ 70, 70, 50, 50, 10, yappPolygon, shapeHexagon, [maskHoneycomb,0,3.3], yappCenter], // shifted to align the openings nicer
+   
+   [ 130, 50, 50, 50, 10, yappRectangle, maskCustom1, yappCenter], // Custom Mask defined above.
+
 ];
 
 cutoutsLid  = 
 [
-//   [ 25, 70, 15, 25, 0, yappRectangle, undef, 30, yappCenter],
-//   [ 25, 30, 15, 25, 0, yappRectangle, yappCenter],
-//   [ 50, 70, 15, 25, 5, yappRoundedRect, undef, 30, yappCenter],
-//   [ 50, 30, 15, 25, 5, yappRoundedRect, yappCenter],
-//   [ 75, 30,  0,  0, 8, yappCircle, yappCenter],
-//   [100, 70, 12,  0, 8, yappCircleWithFlats, undef, 30, yappCenter],
-//   [100, 30, 12,  0, 8, yappCircleWithFlats, yappCenter],
-   [125, 70,  6, -4, 8, yappCircleWithKey, undef, 0, yappCenter], // External key of height 4
-   [125, 50,  6,  0, 8, yappCircleWithKey, undef, 0, yappCenter], // a depth of Zero just creates the flat for a key
-   [125, 30,  6,  4, 8, yappCircleWithKey, undef, 0, yappCenter], // Key with depth of 4
-//   [160, 30, 30, 30, 8, yappPolygon, [yappPolygonDef,[[-0.50,0],[-0.25,+0.433012],[+0.45,-0.433012],[-0.25,-0.433012]]], yappCenter], // Cuts an inline defined polygon
-//   [160, 65, 30, 30, 10, yappPolygon, shape6ptStar, yappCenter],
-//   [165, 90, 20, 30,  3, yappRoundedRect, 10], // Cuts down the side of the case 10mm 
-//   [140, 90, 20, 30,  1, yappRectangle, 10],   // Cuts down the side of the case 10mm 
-//   [115, 95, 20, 30, 10, yappCircle, 10],   // Cuts down the side of the case 10mm 
 ];
 
 cutoutsFront = 
 [
-//   [20, 11, 15, 25, 3, yappRoundedRect],
-//   [ 30, 40, 25, 15, 3, yappRoundedRect, 10],
-//   [40, 11, 15, 25, 10, yappCircle],
-//   [70, 4, 15, 17, 10, yappCircleWithFlats],
 ];  
-
 
 cutoutsBack = 
 [
-//    [20, 40, 25, 15, 3, yappRoundedRect, 20],
 ];
-
 
 cutoutsLeft = 
 [
-//   [ 30,  0, 0, 0, 2, yappCircle, 5, yappCenter],
-//   [ 35,  0, 0, 0, 2, yappCircle, 5, yappCenter, yappFromInside],
-//   [ 30, 0, 25, 15, 3, yappRoundedRect, 10],
-//   [160, 35,  4,  3, 6, yappCircleWithKey, 0, 90, yappCenter],
-//   [ 90, 15, 30, 10, 0, yappRectangle, maskBars, yappCenter],  
-//   [ 90, 35, 30, 10, 0, yappRectangle, maskBars, yappCenter],  
 ];
 
 cutoutsRight = 
 [
-//   [90,  5, 20, 15,  4, yappRoundedRect],
-//   [15, -5, 20, 15, 10, yappCircle, 15],
-//   [40, -5, 20, 15,  5, yappRoundedRect, 15],
-//   [65, -5, 20, 15,  0, yappRectangle, 15],
-//   [65, 40, 20, 15,  0, yappRectangle, 15],
-//   [40, 40, 20, 15,  5, yappRoundedRect, 15],
-//   [15, 40, 20, 15, 10, yappCircle, 15],
 ];
-
 
 
 //---- This is where the magic happens ----

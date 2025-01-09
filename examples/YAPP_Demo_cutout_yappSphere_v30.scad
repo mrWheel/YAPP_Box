@@ -43,7 +43,7 @@ include <../YAPPgenerator_v3.scad>
 
 
 //-- which part(s) do you want to print?
-printBaseShell        = false;
+printBaseShell        = true;
 printLidShell         = true;
 printSwitchExtenders  = true;
 printDisplayClips     = true;
@@ -111,7 +111,8 @@ pcb =
     0, //xPos
     0, // yPos  
     1.6,          //pcbThickness
-    25-17.5,      //standoffHeight  // BoxInsideHeight - 16.5 
+    -16, //25-17.5,      //standoffHeight  // BoxInsideHeight - 17.5 (16-pcbthickness)
+  //  25-17.5,      //standoffHeight  // BoxInsideHeight - 17.5 (16-pcbthickness)
     7,            //standoffDiameter
     3.0           //standoffPinDiameter
   ]
@@ -297,7 +298,7 @@ cutoutsBase =
 cutoutsLid  = 
 [
 
-//Spherical cutout for Joystick
+  //Spherical cutout for Joystick
   [
     pcbLength("Joystick") - 12.25, //pcbLength("Joystick")/2, //xPos
     pcbWidth("Joystick")/2, // yPos
@@ -309,7 +310,7 @@ cutoutsLid  =
     //yappCoordBox,
     yappCenter,
     [yappPCBName, "Joystick"], 
-]
+  ]
 
 
 
@@ -335,7 +336,7 @@ cutoutsLeft =
 cutoutsRight = 
 [
   [pcbLength("Joystick")/2,  //    p(0) = from Back
-    5.6,//    p(1) = from Left
+    4,//    p(1) = from Left (height)
     13.5,//    p(2) = width
     2.5,//    p(3) = length
     undef, //    p(4) = radius

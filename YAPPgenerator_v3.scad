@@ -4,11 +4,11 @@
 **
 */
 
-Version="v3.3.0 (2024-11-26)";
+Version="v3.3.1 (2025-01-09)";
 
 /*
 **
-**  Copyright (c) 2021, 2022, 2023, 2024 Willem Aandewiel
+**  Copyright (c) 2021, 2022, 2023, 2024, 2025 Willem Aandewiel
 **
 **  With help from:
 **   - Keith Hadley (parameterized label depth)
@@ -99,7 +99,7 @@ standoffHoleSlack   = 0.4;
 //    p(3) = posx
 //    p(4) = posy
 //    p(5) = Thickness
-//    p(6) = standoff_Height
+//    p(6) = standoff_Height (negative values measure fron the lid to the top of the PCB)
 //    p(7) = standoff_Diameter
 //    p(8) = standoff_PinDiameter
 //   Optional:
@@ -145,7 +145,7 @@ ridgeSlack          = 0.3;
 //-- Radius of the shell corners
 roundRadius         = wallThickness + 1;
 
-// Box Types are 0-4 with 0 as the default
+// Box Types are 0-5 with 0 as the default
 // 0 = All edges rounded with radius (roundRadius) above
 // 1 = All edges square
 // 2 = All edges chamfered by (roundRadius) above 
@@ -231,7 +231,7 @@ yappRoundedRect         = -30003;
 yappCircleWithFlats     = -30004;
 yappCircleWithKey       = -30005;
 yappRing                = -30006;
-yappSphere              = -30007; // New
+yappSphere              = -30007; //-- New 3.3
 
 // NEW for 3.x 
 // Edge Shapes
@@ -494,6 +494,10 @@ preDefinedMasks=[
   ["maskOffsetBars", maskOffsetBars],
   ];
 
+//-- Define 3 optional custom masks that can be defined in the script
+maskCustom1 = [];
+maskCustom2 = [];
+maskCustom3 = [];
 
 
 //-- Show sample of a Mask.in the negative X,Y quadrant
@@ -579,6 +583,7 @@ connectors   =
 //  yappRoundedRect     | width, length, radius |               |     
 //  yappCircleWithFlats | width, radius         | length        | length=distance between flats
 //  yappCircleWithKey   | width, length, radius |               | width = key width length=key depth
+//                      |                       |               |  (negative indicates outside of circle)
 //  yappPolygon         | width, length         | radius        | yappPolygonDef object must be
 //                      |                       |               | provided
 //  yappRing            | width, length, radius |               | radius = outer radius, 
@@ -863,6 +868,9 @@ ridgeExtRight =
 //    p[15] : rotation
 //    p[16] : snapDiameter : default = pinDiameter*2
 //    p[17] : lidThickness : default = lidPlaneThickness
+
+//    p[18] : snapSlack : default = 0.05
+
 //    n(a) = { <yappOrigin>, yappCenter } 
 //    n(b) = { <yappCoordBox> | yappCoordPCB | yappCoordBoxInside }
 //    n(c) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
@@ -1962,26 +1970,34 @@ module showPCBMarkers(thePCB)
 //===========================================================
 module printPCB(thePCB) //posX, posY, posZ, length, width, thickness)
 {
-  posX = translate2Box_X(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
-  posY = translate2Box_Y(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
-  posZ = translate2Box_Z(0, yappBase, [yappCoordPCB,yappGlobalOrigin, thePCB[0]]);
+  pcbName = thePCB[0];
   
+  posX = translate2Box_X(0, yappBase, [yappCoordPCB,yappGlobalOrigin, pcbName]);
+  posY = translate2Box_Y(0, yappBase, [yappCoordPCB,yappGlobalOrigin, pcbName]);
+  posZ = translate2Box_Z(0, yappBase, [yappCoordPCB,yappGlobalOrigin, pcbName]);
   
+  echo (posZ=posZ);
   //-- Adjust to the bottom of the PCB is at posZ
-  translate([posX,posY,posZ-thePCB[5]])
+  //translate([posX,posY,posZ-thePCB[5]])
+  translate([posX,posY,posZ-pcbThickness(pcbName)])
   
   {
     //-- Draw the PCB 
     color("red", 0.5)
-      cube([thePCB[1], thePCB[2], thePCB[5]]);
+//      cube([thePCB[1], thePCB[2], thePCB[5]]);
+      cube([pcbLength(pcbName), pcbWidth(pcbName), pcbThickness(pcbName)]);
   
+//    hshift = (thePCB[1] > thePCB[2]) ? 0 : 4;
     hshift = (thePCB[1] > thePCB[2]) ? 0 : 4;
     //-- Add the name
-    linear_extrude(thePCB[5]+ 0.04) 
+//    linear_extrude(thePCB[5]+ 0.04) 
+    linear_extrude(pcbThickness(pcbName)+ 0.04) 
     {
       translate([2+hshift,3,0])
-      rotate([0,0,(thePCB[1] > thePCB[2]) ? 0 : 90])
-      text(thePCB[0]
+//      rotate([0,0,(thePCB[1] > thePCB[2]) ? 0 : 90])
+      rotate([0,0,(pcbLength(pcbName) > pcbWidth(pcbName)) ? 0 : 90])
+//      text(thePCB[0]
+      text(pcbName
             , size=3
             , direction="ltr"
             , halign="left"
@@ -2905,7 +2921,7 @@ module buildButtons(preCuts)
       thebuttonWall = getParamWithDefault(button[13],buttonWall);
       thebuttonPlateThickness = getParamWithDefault(button[14],buttonPlateThickness);
       thebuttonSlack = getParamWithDefault(button[15],buttonSlack);
-      theSnapSlack = getParamWithDefault(button[16],0.20);
+      theSnapSlack = getParamWithDefault(button[16],0.05);
       thePolygon = getVector(yappPolygonDef, button); 
 
               //
@@ -3027,7 +3043,7 @@ module buildButtons(preCuts)
       else // Post Cuts
       {
         // Create the button extension
-        if (printSwitchExtenders || $preview)  // only add to render if they are turned on
+        if (printSwitchExtenders)  // only add to render if they are turned on
         {
           // possible location of the SwitchExtender and plate
           // In lid (true)
@@ -4192,7 +4208,7 @@ module pinFillet(pinRadius, filletRadius)
 {
    echo (pinRadius=pinRadius, filletRadius=filletRadius); 
   //-- Error checking for internal fillet bigger than the hole
-  filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius - 0.001): filletRadius;
+  filletRad = ((filletRadius<0) && (-filletRadius > abs(pinRadius))) ? -abs(pinRadius + 0.001): filletRadius;
   
   fr = abs(filletRad);
 
@@ -4499,17 +4515,38 @@ module generateShapeFillet (Shape, useCenter, Width, Length, Depth, filletTop, f
         }
         else if (Shape == yappCircleWithKey)
         {
-          if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
           translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
           {
-            difference()
+            intersect = Radius - sqrt(Radius^2 - (Width/2)^2);  
+            depth = Length;
+            //--Add the Actual Key
+            if (depth <= 0) 
             {
-            circle(r=Radius); 
-            translate ([Radius - (Width/2),0,0]) 
-              square([Width, Length ], center=true);
+              //-- Create the circle with the flat for the key
+              difference()
+              {
+                circle(r=Radius); 
+                  translate ([Radius ,0,0]) 
+                    square([intersect*2, Width ], center=true);
+              }
+              //-- Add the outer cut
+             translate ([Radius - intersect + 0,0,0]) 
+                square([abs(depth*2), Width ], center=true);
+            }
+            else if (depth > 0) 
+            {
+              //-- Create the circle with the flat for the key
+              difference()
+              {
+                circle(r=Radius);  
+                //-- Remove the flat
+                translate ([Radius - depth/2,0,0]) 
+                  square([intersect*2 + depth, Width ], center=true);
+              }
             }
           }
-        }
+        } // if yappCircleWithKey
+
       }
     }
   }
@@ -4605,17 +4642,37 @@ module generateShape (Shape, useCenter, Width, Length, Thickness, Radius, Rotati
           }
           else if (Shape == yappCircleWithKey)
           {
-            if (printMessages) echo (Width=Width, Length=Length, Radius=Radius);  
             translate([(useCenter) ? 0 : Radius,(useCenter) ? 0 : Radius,0])
             {
-              difference()
+              intersect = Radius - sqrt(Radius^2 - (Width/2)^2);   
+              depth = Length;
+              //--Add the Actual Key
+              if (depth <= 0) 
               {
-              circle(r=Radius); 
-              translate ([Radius - (Width/2),0,0]) 
-                square([Width, Length ], center=true);
+                //-- Create the circle with the flat for the key
+                difference()
+                {
+                  circle(r=Radius); 
+                    translate ([Radius ,0,0]) 
+                      square([intersect*2, Width ], center=true);
+                }
+                //-- Add the outer cut
+               translate ([Radius - intersect + 0,0,0]) 
+                  square([abs(depth*2), Width ], center=true);
+              }
+              else if (depth > 0) 
+              {
+                //-- Create the circle with the flat for the key
+                difference()
+                {
+                  circle(r=Radius);  
+                  //-- Remove the flat
+                  translate ([Radius - depth/2,0,0]) 
+                    square([intersect*2 + depth, Width ], center=true);
+                }
               }
             }
-          } 
+          } // if yappCircleWithKey
         } // offset
       } // extrude
     } // if (Shape == yappSphere)
@@ -5295,24 +5352,21 @@ module drawSwitchOnPCB(thePCB)
 // Display Mount 
 // new Feature for v3.1
 
-module clip (capDiameter, pinDiameter, pcbThickness, count)
+module clip (capDiameter, capSlack, pinDiameter, pcbThickness, count)
 {
-  //
   for(i = [0:1:count-1]) {
-    
-  
-  translate([i*(capDiameter+2),-10,-pcbThickness*1.5])
-  difference()
-  {
-  color ("Yellow")
-    translate([0,0,0])
-      cylinder (d=capDiameter, h=pcbThickness*1.5);
-  color ("blue")
-    //translate([0,0,(pcbThickness/2)+0.02])
-    translate([0,0,-0.01])
-       cylinder (d=pinDiameter+0.2, h=pcbThickness);
-    }
-  }
+    translate([i*(capDiameter+2),-10,-pcbThickness*1.5])
+    difference()
+    {
+    color ("Yellow")
+      translate([0,0,0])
+        cylinder (d=capDiameter, h=pcbThickness*1.5);
+    color ("blue")
+      //translate([0,0,(pcbThickness/2)+0.02])
+      translate([0,0,-0.01])
+       cylinder (d=pinDiameter+capSlack, h=(pcbThickness*1.5)+0.02);
+    } //difference
+  } // for loop
 } //clip
 
 //===========================================================
@@ -5353,6 +5407,8 @@ module addDisplayMounts(mode)
     rotation = getParamWithDefault(displayMount[15],0);         //-- Display rotation
     capDiameter = getParamWithDefault(displayMount[16],pinDiameter*2);         //-- Display rotation
     wallThickness = getParamWithDefault(displayMount[17],lidPlaneThickness);
+    
+    capSlack = getParamWithDefault(displayMount[18],0);         //-- capSlack
     
     faceWidth = max(displayWidth + ((pinInsetH-pinDiameter/2 - postOverhang) * -2), windowWidth+(wallThickness*2));
     faceHeight = max(displayHeight + ((pinInsetV-pinDiameter/2 - postOverhang) * -2), windowHeight+(wallThickness*2));
@@ -5402,7 +5458,7 @@ module addDisplayMounts(mode)
      if (printDisplayClips) 
      {
        translate ([0,i*-10,0])
-        clip (capDiameter, pinDiameter, pcbThickness, 4);
+        clip (capDiameter, capSlack,  pinDiameter, pcbThickness, 4);
      }
    }//(mode == 2)
   } //-- for displayMounts
@@ -5433,17 +5489,17 @@ module displayMount(
       color("green") 
       {
         //-- Stands
-        translate([pinInsetH-pinDiameter/2,pinInsetV-(pinDiameter/2),walltoPCBGap/2+wallThickness ])
+        translate([(pinInsetH-(pinDiameter/2)),(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness ])
           cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
 
-        translate([displayWidth-(pinInsetH)+pinDiameter/2,pinInsetV-(pinDiameter/2),walltoPCBGap/2+wallThickness])
+        translate([displayWidth-(pinInsetH-(pinDiameter/2)),(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
           cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
         
         //-- Stands
-        translate([pinInsetH-pinDiameter/2,displayHeight-(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
+        translate([(pinInsetH-(pinDiameter/2)),displayHeight-(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
           cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
 
-        translate([displayWidth-(pinInsetH)+pinDiameter/2,displayHeight-(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
+        translate([displayWidth-(pinInsetH-(pinDiameter/2)),displayHeight-(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
           cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
       }// color
 
@@ -5542,16 +5598,21 @@ function getPCBInfo(yappPCBName, vector) = (getVector(yappPCBName, vector) == fa
 function getPCBName(yappPCBName, vector) = (getVector(yappPCBName, vector) == false) ? "Main" : pcbByName(getVector(yappPCBName, vector))[0];
 
 //-- Change to reference the top of the PCB not the bottom
-function getPCB_X(pcbName="Main") = (getVectorBase(pcbName, pcb))[3] + wallThickness + paddingBack; 
-function getPCB_Y(pcbName="Main") = (getVectorBase(pcbName, pcb))[4] + wallThickness + paddingLeft; 
-function getPCB_Z(pcbName="Main") = (getVectorBase(pcbName, pcb))[6] + (getVectorBase(pcbName, pcb))[5] +  basePlaneThickness; 
+function getPCB_X(pcbName="Main") = pcbX(pcbName) + wallThickness + paddingBack; 
+function getPCB_Y(pcbName="Main") = pcbY(pcbName) + wallThickness + paddingLeft; 
+function getPCB_Z(pcbName="Main") = standoffHeight(pcbName) + pcbThickness(pcbName) +  basePlaneThickness; 
 
 function pcbLength(pcbName="Main") = (getVectorBase(pcbName, pcb))[1]; 
 function pcbWidth(pcbName="Main") = (getVectorBase(pcbName, pcb))[2]; 
 function pcbThickness(pcbName="Main") = (getVectorBase(pcbName, pcb))[5]; 
 function pcbX(pcbName="Main") = (getVectorBase(pcbName, pcb))[3]; 
 function pcbY(pcbName="Main") = (getVectorBase(pcbName, pcb))[4]; 
-function standoffHeight(pcbName="Main") = (getVectorBase(pcbName, pcb))[6]; 
+//-- Change to allow for negative to reference the distance above the PCB
+function standoffHeight(pcbName="Main") = 
+  ((getVectorBase(pcbName, pcb))[6] < 0) 
+    ? shellInsideHeight - pcbThickness(pcbName) + (getVectorBase(pcbName, pcb))[6]
+    : (getVectorBase(pcbName, pcb))[6]; 
+
 function standoffDiameter(pcbName="Main") = (getVectorBase(pcbName, pcb))[7]; 
 function standoffPinDiameter(pcbName="Main") = (getVectorBase(pcbName, pcb))[8]; 
 function standoffHoleSlack(pcbName="Main") = (getVectorBase(pcbName, pcb))[9]; 

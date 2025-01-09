@@ -18,9 +18,10 @@
 include <../YAPPgenerator_v3.scad>
 
 //-- which part(s) do you want to print?
-printBaseShell        = true;
+printBaseShell        = false;
 printLidShell         = true;
 printSwitchExtenders  = true;
+printDisplayClips     = false;
 shiftLid              = 10;  // Set the distance between the lid and base when rendered or previewed side by side
                             
 //-- padding between pcb and inside wall
@@ -33,8 +34,8 @@ paddingLeft         = 1;
 // The Following will be used as the first element in the pbc array
 
 //Defined here so you can define the "Main" PCB using these if wanted
-pcbLength           = 140; // front to back (X axis)
-pcbWidth            = 190; // side to side (Y axis)
+pcbLength           = 104; // front to back (X axis)
+pcbWidth            = 66; // side to side (Y axis)
 pcbThickness        = 1.6;
 standoffHeight      = 1.0;  //-- How much the PCB needs to be raised from the base to leave room for solderings 
 standoffDiameter    = 7;
@@ -59,6 +60,16 @@ lidWallHeight       = 5;
 ridgeHeight         = 5.0;
 ridgeSlack          = 0.3;
 roundRadius         = 3.0;
+
+// Box Types are 0-5 with 0 as the default
+// 0 = All edges rounded with radius (roundRadius) above
+// 1 = All edges square
+// 2 = All edges chamfered by (roundRadius) above 
+// 3 = Square top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+// 4 = Square top and bottom edges (the ones that touch the build plate) and chamfered vertical edges
+// 5 = Chamfered top and bottom edges (the ones that touch the build plate) and rounded vertical edges
+boxType = 3; // Default type 0
+
 
 //---------------------------
 //--     C O N T R O L     --
@@ -197,20 +208,20 @@ displayMounts =
   ],
   */
   [ // This is for a 2004A 4x20 LCD Display - Mounted under the lid
-    80, //xPos
-    160, // yPos
-    98, // displayWidth
-    60, //displayHeight
+    55.5, //xPos
+    36.5, // yPos
+    98.0, // displayWidth
+    60.0, //displayHeight
     2.2, //pinInsetH
-    2.2, //pinInsetV
+    2.5, //pinInsetV
     3.3, //pinDiameter
     3.3, //postOverhang
     9.3, //walltoPCBGap
     1.6, //pcbThickness
-    78.0, //windowWidth
-    29.0, //windowHeight
+    79.0, //windowWidth
+    28.0, //windowHeight
     0, //windowOffsetH
-    -0.9, //windowOffsetV
+    0.0, //windowOffsetV
     true, //bevel
     0, // rotation
     5.0,//snapDiameter

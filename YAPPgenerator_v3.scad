@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.3.1 (2025-01-09)";
+Version="v3.3.2 (2025-01-21)";
 
 /*
 **
@@ -3462,16 +3462,13 @@ module baseShell()
       oRad = rad;
       iRad = getMinRad(oRad, wallThickness);
       cRad = (rad + iRad)/2;
-
-      //echo(rad=rad, oRad=oRad,iRad=iRad, wall=wall, cRad=cRad);
+      bRad = (rad + (wallThickness/2)) /2;
       
       difference()
       {
         translate([0,0,posZ])
         {
-          // The outside doesn't need to be a minkowski form so just use a cube
-          //-- outside of ridge
-          // Extent it by an extra case size in all directions so it will remove any raised text.  
+          //-- The outside doesn't need to be a minkowski form so just use a cube
           translate([-L ,-W, 0]) {
             cube([L*2, W*2, shellHeight]);
           }
@@ -3484,9 +3481,8 @@ module baseShell()
           {
             if (shellEdgeVert == yappEdgeRounded)
             { 
-              //echo("Trim base ridge round", iRad=iRad, rad=rad);
               //-- Changed to RoundedRectangle 
-              roundedRectangle2D(width=L-ridgeSlack,length=W-ridgeSlack,radius=cRad);
+              roundedRectangle2D(width=L-ridgeSlack,length=W-ridgeSlack,radius=cRad-(ridgeSlack/4));
             }
             else if (shellEdgeVert == yappEdgeSquare)
             { 
@@ -3494,8 +3490,7 @@ module baseShell()
             }
             else if (shellEdgeVert == yappEdgeChamfered)
             { 
-              //echo ("SQ-CH-Ridge", rad=rad, ridgeSlack=ridgeSlack);
-              chamferedRectangle2D((L-ridgeSlack), (W-ridgeSlack), cRad);
+            chamferedRectangle2D((L-ridgeSlack), (W-ridgeSlack), bRad - (ridgeSlack/4));
             }
             else 
             {
@@ -3580,9 +3575,8 @@ module lidShell()
        
       iRad2 = getMinRad(oRad, wallThickness);
       cRad = (rad + iRad2)/2;      
+      bRad = (rad + (wallThickness/2)) /2;
       
-      //echo(wall=wall, oRad=oRad, iRad=iRad, ridgeSlack=ridgeSlack);
-
       //-- hollow inside
       translate([0,0,-H-shellHeight])
       {
@@ -3591,17 +3585,15 @@ module lidShell()
           if (shellEdgeVert == yappEdgeRounded)
           { 
               //-- Changed to RoundedRectangle 
-              roundedRectangle2D(width=L-ridgeSlack,length=W-ridgeSlack,radius=cRad);
+              roundedRectangle2D(width=L+ridgeSlack,length=W+ridgeSlack,radius=cRad+(ridgeSlack/4));
           }
           else if (shellEdgeVert == yappEdgeSquare)
           { 
-            square([(L+(ridgeSlack/2)), (W+(ridgeSlack/2))], center=true);
+            square([(L+ridgeSlack), (W+ridgeSlack)], center=true);
           }
           else if (shellEdgeVert == yappEdgeChamfered)
           { 
-            chamferedRectangle2D((L-ridgeSlack), (W-ridgeSlack), 
-              cRad-ridgeSlack/2
-            );
+            chamferedRectangle2D((L+ridgeSlack), (W+ridgeSlack), bRad + (ridgeSlack/4));
           }
           else 
           {

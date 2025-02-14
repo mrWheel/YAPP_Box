@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.3.2 (2025-01-21)";
+Version="v3.3.3 (2025-02-14)";
 
 /*
 **
@@ -294,6 +294,7 @@ yappThroughLid          = -30500;  // lightTubes
 // Misc Options
 yappNoFillet            = -30600;  // pcbStands, Connectors, lightTubes, pushButtons
 yappCountersink         = -30601;  // connectors
+yappSelfThreading       = -30602;  // Connectors
 
 // Coordinate options
 yappCoordPCB            = -30700;  // pcbStands, connectors, Cutouts, boxMounts, lightTubes, pushButtons 
@@ -563,6 +564,7 @@ pcbStands =
 //    n(d) = { yappCountersink }
 //    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
+//    n(g) = {yappSelfThreading} : Make the insert self threading specify the Screw Diameter in the insertDiameter
 //-------------------------------------------------------------------
 connectors   =
 [
@@ -779,6 +781,7 @@ pushButtons =
 //   p(9) = Direction : { <yappTextLeftToRight>, yappTextRightToLeft, yappTextTopToBottom, yappTextBottomToTop }
 //   p(10) = Horizontal alignment : { <yappTextHAlignLeft>, yappTextHAlignCenter, yappTextHAlignRight }
 //   p(11) = Vertical alignment : {  yappTextVAlignTop, yappTextVAlignCenter, yappTextVAlignBaseLine, <yappTextVAlignBottom> } 
+//   p(12) = Character Spacing multiplier (1.0 = normal)
 //-------------------------------------------------------------------
 labelsPlane =
 [
@@ -4003,8 +4006,14 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
           //-- insert --
           color("blue")
           translate([0, 0, -0.01])
+          if (!isTrue(yappSelfThreading, conn))
+          {
             linear_extrude(ht + 0.02)
               circle(d = d3);
+          } else {
+            // qqqq
+            self_forming_screw(h=ht + 0.02, d=d3, center=false);
+          }
         } //  difference
         
         // Add stop if needed
@@ -5989,3 +5998,66 @@ module extrudeWithRadius(length,r1=0,r2=0,fn=30){
     }
   }
 } //-- extrudeWithRadius()
+
+
+//-- Self Forming thread functions - START
+
+module main_cylinder(height=10, diameter=3,center=false) {
+    cylinder(h=height, d=diameter, $fn=64,center=center);
+}
+
+// Funkcia na výpočet priemeru výrezového valca
+// Function to calculate the diameter of the cutout cylinder
+function hole_diameter(main_diameter) = sqrt((2 / 4.5) * main_diameter * main_diameter);
+
+// Funkcia na výpočet vzdialenosti výrezových valcov od stredu
+// Function to calculate the distance of the cutout cylinders from the center
+function hole_distance(main_diameter) = (main_diameter / 2.31) + (hole_diameter(main_diameter) / 2);
+
+// Funkcia na výpočet výšky valca bez zaoblenia
+// Function to calculate the height of a cylinder without rounding
+function cylinder_height(main_height, hole_diameter) = main_height - hole_diameter;
+
+// Modul pre výrezový valec so zaoblenými koncami
+// Module for a cutout cylinder with rounded ends
+module rounded_hole_cylinder(main_height, main_diameter) {
+    hole_d = hole_diameter(main_diameter);
+    cylinder_h = cylinder_height(main_height, hole_d);
+
+    union() {
+        // Valec
+        // Cylinder
+        translate([0, 0, hole_d / 2])
+            cylinder(h=cylinder_h, d=hole_d, $fn=64);
+        // Horná guľa pre zaoblenie
+        // Top ball for rounding
+        translate([0, 0, hole_d / 2 + cylinder_h ])
+            sphere(r=hole_d / 2, $fn=64);
+        // Dolná guľa pre zaoblenie
+        // Bottom ball for rounding
+        translate([0, 0, hole_d /2 ])
+            sphere(r=hole_d / 2, $fn=64);
+    }
+}
+
+//Hlavny modul
+//Main module
+module self_forming_screw(h=10, d=3,center=false) {
+    main_height=h;
+    main_diameter=d;
+    difference() {
+        main_cylinder(main_height, main_diameter,center=center);
+        // Vytvorenie troch výrezov do valca
+        // Create three cutouts in the cylinder
+        for (i = [0 : 2]) {
+            rotate([0, 0, i * 120])
+            translate([hole_distance(main_diameter), 0, 0])
+                rounded_hole_cylinder(main_height, main_diameter);
+        }
+    }
+}
+
+// Volanie hlavneho modulu s parametrami
+// Calling the main module with parameters
+//--self_forming_screw(h=15, d=6,center=false);
+//-- Self Forming thread functions - END

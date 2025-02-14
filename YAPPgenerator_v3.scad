@@ -4,7 +4,7 @@
 **
 */
 
-Version="v3.3.3 (2025-02-14)";
+Version="v3.3.4 (2025-02-14)";
 
 /*
 **
@@ -533,6 +533,9 @@ maskCustom3 = [];
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
 //    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(g) = yappSelfThreading : make the hole a self threading hole 
+//             This ignores the holeSlack and would only be usefull 
+//             if the opposing stand if deleted see sample in Demo_Connectors
 //-------------------------------------------------------------------
 pcbStands = 
 [
@@ -3694,7 +3697,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
   
    assert((thestandoff_PinDiameter+thestandoff_HoleSlack < thestandoff_Diameter), str("Pin Diameter [", thestandoff_PinDiameter, "] with Slack [", thestandoff_HoleSlack, "] is larger than PCB stand Diameter [", thestandoff_Diameter, "]" ));
   
-  
+  useSelfThreading = isTrue(yappSelfThreading, configList) ? true : false;
 
   pinLengthParam = getParamWithDefault(configList[8],0);
   
@@ -3744,7 +3747,6 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 			translate([0,0,pinZOffset])
 			{
 				color(color, 1.0)
-					
 				union() 
 				{
 				  if (useFillet) 
@@ -3762,7 +3764,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
     
     // **********************
 		//-- Use boxPart to determine where to place it
-    module standHole(boxPart, color)
+    module standHole(boxPart, color, useSelfThreading)
     {
       if (useFillet) 
       {
@@ -3783,28 +3785,47 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 				{
 					//--The Actual Hole
 					translate([0,0,holeZ]) 
-					cylinder(
-						d = thestandoff_PinDiameter+thestandoff_HoleSlack,
-						h = pcbStandHeight+0.02,
-						//h = pcbStandHeight+0.02-thestandoff_PinDiameter/2,
-						center = false);
-							
-					//-- The Fillet		
-					filletRadius = (filletRad==0) ? basePlaneThickness : filletRad; 
-					translate([0,0,filletZ+pcbGap]) 
-					color(color,1.0) 
-					pinFillet(-filletDiameter, -filletRadius);
+            
+            if (!useSelfThreading)
+            {            
+                cylinder(
+                    d = thestandoff_PinDiameter+thestandoff_HoleSlack,
+                    h = pcbStandHeight+0.02,
+                    //h = pcbStandHeight+0.02-thestandoff_PinDiameter/2,
+                    center = false);
+            } 
+            else
+            {
+                self_forming_screw(h=pcbStandHeight+0.02, d=thestandoff_PinDiameter,center=false);   
+            }
+                        
+            //-- The Fillet		
+            filletRadius = (filletRad==0) ? basePlaneThickness : filletRad; 
+            translate([0,0,filletZ+pcbGap]) 
+            color(color,1.0) 
+            pinFillet(-filletDiameter, -filletRadius);
 				} // difference
       } //if (useFillet) 
       else
       {
         color(color, 1.0)
         translate([0,0,-0.01])
-        cylinder(
-          d = thestandoff_PinDiameter+thestandoff_HoleSlack,
-          h = (pcbGap*2)+pcbStandHeight+0.02,
-          center = false);
-      }
+
+        if (!useSelfThreading)
+        {
+          cylinder(
+            d = thestandoff_PinDiameter+thestandoff_HoleSlack,
+            h = (pcbGap*2)+pcbStandHeight+0.02,
+            center = false);
+        } // Self Threading
+        else
+        {
+          self_forming_screw(
+            d=thestandoff_PinDiameter,
+            h=pcbStandHeight+0.02, 
+            center=false);   
+        } // Not Self Threading
+      } //if (useFillet) else 
     } //-- standhole()
     
 		
@@ -3826,7 +3847,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 			difference()
 			{
 				standoff(plane, color);
-				standHole(plane, color);
+				standHole(plane, color, useSelfThreading);
 			}   
 		} // yappPartLid
 	} //type == yappPin
@@ -3840,7 +3861,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 			difference() 
 			{
 				standoff(plane, color);
-				standHole(plane, color);
+				standHole(plane, color, useSelfThreading);
 			}
 		} //yappPartBase
 		else
@@ -3849,7 +3870,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 			difference() 
 			{
 				standoff(plane, color);
-				standHole(plane, color);
+				standHole(plane, color, useSelfThreading);
 			}
 		} //yappPartLid
 	} // type == yappHole
@@ -3869,7 +3890,7 @@ module pcbStandoff(plane, pcbStandHeight, filletRad, type, color, useFillet, con
 			difference()
 			{
 				standoff(plane, color);
-				standHole(plane, color);
+				standHole(plane, color, useSelfThreading);
 			}   
 		} //yappPartBase
 	} // type == yappTopPin
@@ -4011,7 +4032,6 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD)
             linear_extrude(ht + 0.02)
               circle(d = d3);
           } else {
-            // qqqq
             self_forming_screw(h=ht + 0.02, d=d3, center=false);
           }
         } //  difference

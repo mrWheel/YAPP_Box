@@ -66,6 +66,59 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //--     C O N T R O L     --
 //---------------------------
 
+//===================================================================
+// *** PCB Supports ***
+// Pin and Socket standoffs 
+//-------------------------------------------------------------------
+//  Default origin =  yappCoordPCB : pcb[0,0,0]
+//
+//  Parameters:
+//   Required:
+//    p(0) = posx
+//    p(1) = posy
+//   Optional:
+//    p(2) = Height to bottom of PCB : Default = standoffHeight
+//    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
+//    p(4) = standoffDiameter    Default = standoffDiameter;
+//    p(5) = standoffPinDiameter Default = standoffPinDiameter;
+//    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
+//    p(7) = filletRadius (0 = auto size)
+//    p(8) = Pin Length : Default = 0 -> PCB Gap + standoff_PinDiameter
+//             Indicated length of pin without the half sphere tip. 
+//             Example : pcbThickness() only leaves the half sphere tip above the PCB
+//    n(a) = { <yappBoth> | yappLidOnly | yappBaseOnly }
+//    n(b) = { <yappPin>, yappHole, yappTopPin } 
+//             yappPin = Pin on Base and Hole on Lid 
+//             yappHole = Hole on Both
+//             yappTopPin = Hole on Base and Pin on Lid
+//    n(c) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
+//    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
+//    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
+//    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(g) = yappSelfThreading : make the hole a self threading hole 
+//             This ignores the holeSlack and would only be usefull 
+//             if the opposing stand if deleted see sample in Demo_Connectors
+//-------------------------------------------------------------------
+pcbStands = 
+[
+  [ // Sample PCB Stand that only has the base part and a self threading hole for a screw mounted PCB
+      5, // p(0) = posx
+      5, // p(1) = posy
+//   Optional:
+      12,// p(2) = Height to bottom of PCB : Default = standoffHeight
+      undef, //    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
+      6, // p(4) = standoffDiameter    Default = standoffDiameter;
+      3, // p(5) = standoffPinDiameter Default = standoffPinDiameter;
+      undef, //    p(6) = standoffHoleSlack   Default = standoffHoleSlack;
+      undef, // p(7) = filletRadius (0 = auto size)
+      undef, //    p(8) = Pin Length : Default = 0 -> PCB Gap + standoff_PinDiameter
+      yappAllCorners,
+      yappTopPin,
+      yappBaseOnly,
+      yappSelfThreading,
+  ],
+];
+
 
 //===================================================================
 //  *** Connectors ***

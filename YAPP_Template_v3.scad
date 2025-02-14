@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.3.3 (2025-02-14)
+//  Version 3.3.4 (2025-02-14)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -232,6 +232,9 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    n(d) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
 //    n(e) = { yappNoFillet } : Removes the internal and external fillets and the Rounded tip on the pins
 //    n(f) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(g) = yappSelfThreading : make the hole a self threading hole 
+//             This ignores the holeSlack and would only be usefull 
+//             if the opposing stand if deleted see sample in Demo_Connectors
 //-------------------------------------------------------------------
 pcbStands = 
 [

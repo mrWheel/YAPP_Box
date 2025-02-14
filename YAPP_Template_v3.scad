@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.3.0 (2024-11-27)
+//  Version 3.3.3 (2025-02-14)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -262,6 +262,7 @@ pcbStands =
 //    n(d) = { yappCountersink }
 //    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
+//    n(g) = {yappSelfThreading} : Make the insert self threading specify the Screw Diameter in the insertDiameter
 //-------------------------------------------------------------------
 connectors   =
 [
@@ -466,13 +467,17 @@ pushButtons =
 //   p(0) = posx
 //   p(1) = posy/z
 //   p(2) = rotation degrees CCW
-//   p(3) = depth : positive values go into case (Remove) negative valies are raised (Add)
-//   p(4) = { yappLeft | yappRight | yappFront | yappBack | yappLid | yappBaseyappLid } : plane
+//   p(3) = depth : positive values go into case (Remove) negative values are raised (Add)
+//   p(4) = { yappLeft, yappRight, yappFront, yappBack, yappLid, yappBase } : plane
 //   p(5) = font
 //   p(6) = size
 //   p(7) = "label text"
 //  Optional:
 //   p(8) = Expand : Default = 0 : mm to expand text by (making it bolder) 
+//   p(9) = Direction : { <yappTextLeftToRight>, yappTextRightToLeft, yappTextTopToBottom, yappTextBottomToTop }
+//   p(10) = Horizontal alignment : { <yappTextHAlignLeft>, yappTextHAlignCenter, yappTextHAlignRight }
+//   p(11) = Vertical alignment : {  yappTextVAlignTop, yappTextVAlignCenter, yappTextVAlignBaseLine, <yappTextVAlignBottom> } 
+//   p(12) = Character Spacing multiplier (1.0 = normal)
 //-------------------------------------------------------------------
 labelsPlane =
 [

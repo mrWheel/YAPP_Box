@@ -78,7 +78,8 @@ standoffHoleSlack   = 0.4;
 //    p(3) = posx
 //    p(4) = posy
 //    p(5) = Thickness
-//    p(6) = standoff_Height
+//    p(6) = standoff_Height = Height to bottom of PCB from the inside of the base
+//             negative measures from inside of the lid to the top of the PCB
 //    p(7) = standoff_Diameter
 //    p(8) = standoff_PinDiameter
 //   Optional:
@@ -214,7 +215,8 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    p(0) = posx
 //    p(1) = posy
 //   Optional:
-//    p(2) = Height to bottom of PCB : Default = standoffHeight
+//    p(2) = Height to bottom of PCB from inside of base: Default = standoffHeight
+//             negative measures from inside of the lid to the top of the PCB
 //    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
 //    p(4) = standoffDiameter    Default = standoffDiameter;
 //    p(5) = standoffPinDiameter Default = standoffPinDiameter;
@@ -539,7 +541,7 @@ ridgeExtBack =
 //    p[4] : pinInsetH = Horizontal inset of the mounting hole
 //    p[5] : pinInsetV = Vertical inset of the mounting hole
 //    p[6] : pinDiameter,
-//    p[7] : postOverhang  = Extra distance on outside of pins for the display to sit on - pin Diameter is a good value
+//    p[7] : postOverhang  = Extra distance towards outside of pins to move the post for the display to sit on - 0 = centered : pin Diameter will move the post to align to the outside of the pin (moves it half the distance specified for compatability : -pinDiameter will move it in.
 //    p[8] : walltoPCBGap = Distance from the display PCB to the surface of the screen
 //    p[9] : pcbThickness  = Thickness of the display module PCB
 //    p[10] : windowWidth = opening width for the screen
@@ -555,6 +557,7 @@ ridgeExtBack =
 //    n(b) = { <yappCoordBox> | yappCoordPCB | yappCoordBoxInside }
 //    n(c) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(e) = {yappSelfThreading} : Replace the pins with self threading holes
 //-------------------------------------------------------------------
 displayMounts =
 [

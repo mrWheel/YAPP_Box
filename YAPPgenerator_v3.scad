@@ -99,7 +99,8 @@ standoffHoleSlack   = 0.4;
 //    p(3) = posx
 //    p(4) = posy
 //    p(5) = Thickness
-//    p(6) = standoff_Height (negative values measure fron the lid to the top of the PCB)
+//    p(6) = standoff_Height = Height to bottom of PCB from the inside of the base
+//             negative measures from inside of the lid to the top of the PCB
 //    p(7) = standoff_Diameter
 //    p(8) = standoff_PinDiameter
 //   Optional:
@@ -515,7 +516,8 @@ maskCustom3 = [];
 //    p(0) = posx
 //    p(1) = posy
 //   Optional:
-//    p(2) = Height to bottom of PCB : Default = standoffHeight
+//    p(2) = Height to bottom of PCB from inside of base: Default = standoffHeight
+//             negative measures from inside of the lid to the top of the PCB
 //    p(3) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
 //    p(4) = standoffDiameter    Default = standoffDiameter;
 //    p(5) = standoffPinDiameter Default = standoffPinDiameter;
@@ -862,7 +864,7 @@ ridgeExtRight =
 //    p[4] : pinInsetH = Horizontal inset of the mounting hole
 //    p[5] : pinInsetV = Vertical inset of the mounting hole
 //    p[6] : pinDiameter,
-//    p[7] : postOverhang  = Extra distance on outside of pins for the display to sit on - pin Diameter is a good value
+//    p[7] : postOverhang  = Extra distance towards outside of pins to move the post for the display to sit on - 0 = centered : pin Diameter will move the post to align to the outside of the pin (moves it half the distance specified for compatability : -pinDiameter will move it in.
 //    p[8] : walltoPCBGap = Distance from the display PCB to the surface of the screen
 //    p[9] : pcbThickness  = Thickness of the display module PCB
 //    p[10] : windowWidth = opening width for the screen
@@ -881,6 +883,7 @@ ridgeExtRight =
 //    n(b) = { <yappCoordBox> | yappCoordPCB | yappCoordBoxInside }
 //    n(c) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(e) = {yappSelfThreading} : Replace the pins with self threading holes
 //-------------------------------------------------------------------
 displayMounts =
 [
@@ -5417,7 +5420,8 @@ module addDisplayMounts(mode)
     pinInsetH= displayMount[4];
     pinInsetV= displayMount[5];
     pinDiameter = displayMount[6];
-    postOverhang  = displayMount[7];
+    postOverhang  = pinDiameter;
+    postOffset = displayMount[7];
     walltoPCBGap = displayMount[8];
     pcbThickness  = displayMount[9];
     windowWidth = displayMount[10];
@@ -5431,6 +5435,8 @@ module addDisplayMounts(mode)
     
     capSlack = getParamWithDefault(displayMount[18],0);         //-- capSlack
     
+    useSelfThreading = isTrue(yappSelfThreading, displayMount) ? true : false;
+
     faceWidth = max(displayWidth + ((pinInsetH-pinDiameter/2 - postOverhang) * -2), windowWidth+(wallThickness*2));
     faceHeight = max(displayHeight + ((pinInsetV-pinDiameter/2 - postOverhang) * -2), windowHeight+(wallThickness*2));
 
@@ -5471,12 +5477,14 @@ module addDisplayMounts(mode)
         windowHeight,
         windowOffsetH,
         windowOffsetV,
-        bevel);
+        bevel,
+        postOffset/2,
+        useSelfThreading);
    }//(mode == 1)
    if (mode == 2) 
    //-- Generate the clips
    {
-     if (printDisplayClips) 
+     if ((printDisplayClips) && (!useSelfThreading))
      {
        translate ([0,i*-10,0])
         clip (capDiameter, capSlack,  pinDiameter, pcbThickness, 4);
@@ -5500,47 +5508,89 @@ module displayMount(
           windowHeight,
           windowOffsetH,
           windowOffsetV,
-          bevel
+          bevel,
+          postOffset,
+          useSelfThreading,
         ) 
 {
   mirror([0,0,1])
   {
     translate([-(displayWidth)/2,-(displayHeight)/2, 0])//1.5*5/2])
     {
-      color("green") 
+      difference()
       {
-        //-- Stands
-        translate([(pinInsetH-(pinDiameter/2)),(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness ])
-          cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
+        union()
+        {
+          color("green") 
+          {
+            //-- Stands
+            translate([pinInsetH - postOffset,pinInsetV - postOffset,walltoPCBGap/2+wallThickness ])
+              cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
 
-        translate([displayWidth-(pinInsetH-(pinDiameter/2)),(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
-          cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
-        
-        //-- Stands
-        translate([(pinInsetH-(pinDiameter/2)),displayHeight-(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
-          cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
+            translate([displayWidth-(pinInsetH-postOffset),(pinInsetV-postOffset),walltoPCBGap/2+wallThickness])
+              cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
+            
+            //-- Stands
+            translate([(pinInsetH-postOffset),displayHeight-(pinInsetV-postOffset),walltoPCBGap/2+wallThickness])
+              cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
 
-        translate([displayWidth-(pinInsetH-(pinDiameter/2)),displayHeight-(pinInsetV-(pinDiameter/2)),walltoPCBGap/2+wallThickness])
-          cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
-      }// color
+            translate([displayWidth-(pinInsetH-postOffset),displayHeight-(pinInsetV-postOffset),walltoPCBGap/2+wallThickness])
+              cube([pinDiameter+postOverhang,pinDiameter+postOverhang,walltoPCBGap], center=true);
+          }// color
 
-echo("Display Pins", pinDiameter=pinDiameter);
-      color("blue")
-      {
-        //--pins
-//        translate([pinInsetH,pinInsetV,(walltoPCBGap/2)+pcbThickness+walltoPCBGap+lidPlaneThickness])
-        translate([pinInsetH,pinInsetV,walltoPCBGap+lidPlaneThickness])
-          cylinder (d=pinDiameter, h=pcbThickness*2);
+          if (!useSelfThreading)
+          {
+            echo("Display Pins", pinDiameter=pinDiameter);
+            color("blue")
+            {
+              //--pins
+              translate([pinInsetH,pinInsetV,walltoPCBGap+lidPlaneThickness])
+                cylinder (d=pinDiameter, h=pcbThickness*2);
 
-        translate([pinInsetH,displayHeight-pinInsetV,walltoPCBGap+lidPlaneThickness])
-          cylinder (d=pinDiameter, h=pcbThickness*2);
+              translate([pinInsetH,displayHeight-pinInsetV,walltoPCBGap+lidPlaneThickness])
+                cylinder (d=pinDiameter, h=pcbThickness*2);
 
-        translate([displayWidth-pinInsetH,pinInsetV,walltoPCBGap+lidPlaneThickness])
-          cylinder (d=pinDiameter, h=pcbThickness*2);
+              translate([displayWidth-pinInsetH,pinInsetV,walltoPCBGap+lidPlaneThickness])
+                cylinder (d=pinDiameter, h=pcbThickness*2);
 
-        translate([displayWidth-pinInsetH,displayHeight-pinInsetV,walltoPCBGap+lidPlaneThickness])
-          cylinder (d=pinDiameter, h=pcbThickness*2);
-      }// color
+              translate([displayWidth-pinInsetH,displayHeight-pinInsetV,walltoPCBGap+lidPlaneThickness])
+                cylinder (d=pinDiameter, h=pcbThickness*2);
+            }// color
+          } // Self Threading
+        }// Union
+
+        if (useSelfThreading)
+        {
+          //--echo("***** Add the self tapping holes *****");
+          color("blue")
+          {
+            //--pins
+            translate([pinInsetH,pinInsetV,lidPlaneThickness])
+            self_forming_screw(
+                d=pinDiameter,
+                h=walltoPCBGap + 0.02, 
+                center=false);   
+
+            translate([pinInsetH,displayHeight-pinInsetV,lidPlaneThickness])
+            self_forming_screw(
+                d=pinDiameter,
+                h=walltoPCBGap + 0.02, 
+                center=false);   
+
+            translate([displayWidth-pinInsetH,pinInsetV,lidPlaneThickness])
+            self_forming_screw(
+                d=pinDiameter,
+                h=walltoPCBGap + 0.02, 
+                center=false);   
+
+            translate([displayWidth-pinInsetH,displayHeight-pinInsetV,lidPlaneThickness])
+            self_forming_screw(
+                d=pinDiameter,
+                h=walltoPCBGap + 0.02, 
+                center=false);   
+          }// color
+        } // if(useSelfThreading)
+      } //difference
     }// translate
     
     faceWidth = max(displayWidth + ((pinInsetH-pinDiameter/2 - postOverhang) * -2), windowWidth+(wallThickness*2))+0.1;
@@ -6023,7 +6073,7 @@ module extrudeWithRadius(length,r1=0,r2=0,fn=30){
 //-- Self Forming thread functions - START
 
 module main_cylinder(height=10, diameter=3,center=false) {
-    cylinder(h=height, d=diameter, $fn=64,center=center);
+    cylinder(h=height, d=diameter, $fn=facetCount, center=center);
 }
 
 // Funkcia na výpočet priemeru výrezového valca
@@ -6048,15 +6098,15 @@ module rounded_hole_cylinder(main_height, main_diameter) {
         // Valec
         // Cylinder
         translate([0, 0, hole_d / 2])
-            cylinder(h=cylinder_h, d=hole_d, $fn=64);
+            cylinder(h=cylinder_h, d=hole_d, $fn=facetCount);
         // Horná guľa pre zaoblenie
         // Top ball for rounding
         translate([0, 0, hole_d / 2 + cylinder_h ])
-            sphere(r=hole_d / 2, $fn=64);
+            sphere(r=hole_d / 2, $fn=facetCount);
         // Dolná guľa pre zaoblenie
         // Bottom ball for rounding
         translate([0, 0, hole_d /2 ])
-            sphere(r=hole_d / 2, $fn=64);
+            sphere(r=hole_d / 2, $fn=facetCount);
     }
 }
 

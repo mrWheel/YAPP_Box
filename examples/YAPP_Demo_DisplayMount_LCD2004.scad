@@ -21,7 +21,7 @@ include <../YAPPgenerator_v3.scad>
 printBaseShell        = false;
 printLidShell         = true;
 printSwitchExtenders  = true;
-printDisplayClips     = false;
+printDisplayClips     = true;
 shiftLid              = 10;  // Set the distance between the lid and base when rendered or previewed side by side
                             
 //-- padding between pcb and inside wall
@@ -123,7 +123,7 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    p[4] : pinInsetH = Horizontal inset of the mounting hole
 //    p[5] : pinInsetV = Vertical inset of the mounting hole
 //    p[6] : pinDiameter,
-//    p[7] : postOverhang  = Extra distance on outside of pins for the display to sit on - pin Diameter is a good value
+//    p[7] : postOverhang  = Extra distance towards outside of pins to move the post for the display to sit on - 0 = centered : pin Diameter will move the post to align to the outside of the pin (moves it half the distance specified for compatability : -pinDiameter will move it in.
 //    p[8] : walltoPCBGap = Distance from the display PCB to the surface of the screen
 //    p[9] : pcbThickness  = Thickness of the display module PCB
 //    p[10] : windowWidth = opening width for the screen
@@ -139,6 +139,7 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //    n(b) = { <yappCoordBox> | yappCoordPCB | yappCoordBoxInside }
 //    n(c) = { <yappGlobalOrigin>, yappAltOrigin } // Only affects Top(lid), Back and Right Faces
 //    n(d) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
+//    n(e) = {yappSelfThreading} : Replace the pins with self threading holes
 //-------------------------------------------------------------------
 displayMounts =
 [
@@ -206,8 +207,7 @@ displayMounts =
     yappDefault,
     yappCenter,  
   ],
-  */
-  [ // This is for a 2004A 4x20 LCD Display - Mounted under the lid
+    [ // This is for a 2004A 4x20 LCD Display
     55.5, //xPos
     36.5, // yPos
     98.0, // displayWidth
@@ -215,7 +215,7 @@ displayMounts =
     2.2, //pinInsetH
     2.5, //pinInsetV
     3.3, //pinDiameter
-    3.3, //postOverhang
+    3.3, //postOverhang 
     9.3, //walltoPCBGap
     1.6, //pcbThickness
     79.0, //windowWidth
@@ -227,6 +227,30 @@ displayMounts =
     5.0,//snapDiameter
     yappDefault,
     yappCenter,  
+  ],
+
+  */
+  [ // This is for a 2004A 4x20 LCD Display - Mounted under the lid with screws
+    55.5, //xPos
+    36.5, // yPos
+    98.0, // displayWidth
+    60.0, //displayHeight
+    2.2, //pinInsetH
+    2.5, //pinInsetV
+    3.3, //pinDiameter
+    0, //postOverhang 
+    9.3, //walltoPCBGap
+    1.6, //pcbThickness
+    79.0, //windowWidth
+    28.0, //windowHeight
+    0, //windowOffsetH
+    0.0, //windowOffsetV
+    true, //bevel
+    0, // rotation
+    5.0,//snapDiameter
+    yappDefault,
+    yappCenter,  
+    yappSelfThreading,
   ],
   /*
   [ // This is for a 2.8 TFT SPI 240*320 V1.2 Display

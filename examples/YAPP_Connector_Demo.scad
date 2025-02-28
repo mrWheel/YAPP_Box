@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.3.5a (2025-02-28)
+//  Version 3.3.5 (2025-22-14)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -15,7 +15,7 @@
 //
 //-----------------------------------------------------------------------
 
-include <./YAPPgenerator_v3.scad>
+include <C:\SourceCode\YAPP_Box/YAPPgenerator_v3.scad>
 
 //---------------------------------------------------------
 // This design is parameterized based on the size of a PCB.
@@ -59,7 +59,7 @@ printDisplayClips     = true;
 pcbLength           = 150; // front to back (X axis)
 pcbWidth            = 100; // side to side (Y axis)
 pcbThickness        = 1.6; 
-standoffHeight      = 1.0; //-- How much the PCB needs to be raised from the base to leave room for solderings and whatnot
+standoffHeight      = 20.0; //-- How much the PCB needs to be raised from the base to leave room for solderings and whatnot
 standoffDiameter    = 7;
 standoffPinDiameter = 2.4;
 standoffHoleSlack   = 0.4;
@@ -166,7 +166,7 @@ showOriginCoordBoxInside  = false;      //-> Shows blue bars representing the or
 showOriginCoordPCB        = false;      //-> Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
 showMarkersPCB            = false;      //-> Shows black bars corners of the PCB : only in preview 
 showMarkersCenter         = false;      //-> Shows magenta bars along the centers of all faces  
-inspectX                  = 0;          //-> 0=none (>0 from Back)
+inspectX                  = 12;          //-> 0=none (>0 from Back)
 inspectY                  = 0;          //-> 0=none (>0 from Right)
 inspectZ                  = 0;          //-> 0=none (>0 from Bottom)
 inspectXfromBack          = true;       //-> View from the inspection cut foreward
@@ -238,10 +238,14 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //             This ignores the holeSlack and would only be usefull 
 //             if the opposing stand if deleted see sample in Demo_Connectors
 //-------------------------------------------------------------------
-pcbStands = 
-[
-];
-
+pcbStands =  
+  [
+    [
+    10, 20, 
+    yappAllCorners,
+    yappCoordPCB   //-- use [0,0,0] of the PCB os origen
+    ]
+  ];
 
 //===================================================================
 //  *** Connectors ***
@@ -269,9 +273,39 @@ pcbStands =
 //    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //    n(g) = {yappSelfThreading} : Make the insert self threading specify the Screw Diameter in the insertDiameter
 //-------------------------------------------------------------------
-connectors   =
-[
-];
+connectors =  
+  [
+    [ // Height equals the top of the PCB
+    10, 10, 
+    0, // Use 0 as the default coordinate system is from the PCB
+    3.4,           //-- diameter of the screw (add some slack)
+    5.6,             //-- the diameter of the screw head
+    4.1,           //-- the diameter of the insert
+    11,            //-- the outside diameter of the connector
+    yappAllCorners,
+ //   yappCoordPCB   //-- use [0,0,0] of the PCB os origen
+    ],
+    [ // Height equals standoffHeight from the outside of the box
+    10, 30, 
+    standoffHeight(),   //  ??? semble doublé sinon ???
+    3.4,           //-- diameter of the screw (add some slack)
+    5.6,             //-- the diameter of the screw head
+    4.1,           //-- the diameter of the insert
+    11,            //-- the outside diameter of the connector
+    yappAllCorners,
+    yappCoordBox   //-- use [0,0,0] of the PCB os origen
+    ],
+    [ // Height equals standoffHeight from the inside of the box
+    10, 40, 
+    standoffHeight(),   //  ??? semble doublé sinon ???
+    3.4,           //-- diameter of the screw (add some slack)
+    5.6,             //-- the diameter of the screw head
+    4.1,           //-- the diameter of the insert
+    11,            //-- the outside diameter of the connector
+    yappAllCorners,
+    yappCoordBoxInside   //-- use [0,0,0] of the PCB os origen
+    ]
+  ];
 
 
 //===================================================================

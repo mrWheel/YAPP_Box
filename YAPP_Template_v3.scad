@@ -3,7 +3,7 @@
 //
 //  This is a box for <template>
 //
-//  Version 3.3.5a (2025-02-28)
+//  Version 3.3.7 (2025-04-17)
 //
 // This design is parameterized based on the size of a PCB.
 //
@@ -125,7 +125,9 @@ lidWallHeight       = 23;
 //-- ridge where base and lid off box can overlap
 //-- Make sure this isn't less than lidWallHeight
 ridgeHeight         = 5.0;
-ridgeSlack          = 0.2;
+ridgeSlack          = 0.3; // Gap between the inside of the lid and the outside of the base
+//New in v3.3.7 
+ridgeGap            = 0.5; // Gap between the bottom of the base ridge and the bottom of the lid when assembled.
 roundRadius         = 3.0;
 
 // Box Types are 0-4 with 0 as the default
@@ -247,27 +249,30 @@ pcbStands =
 //  *** Connectors ***
 //  Standoffs with hole through base and socket in lid for screw type connections.
 //-------------------------------------------------------------------
-//  Default origin = yappCoordBox: box[0,0,0]
+//  Default origin = yappCoordPCB : pcb[0,0,0]
 //  
 //  Parameters:
 //   Required:
 //    p(0) = posx
 //    p(1) = posy
-//    p(2) = pcbStandHeight
+//    p(2) = StandHeight : From specified origin 
 //    p(3) = screwDiameter
-//    p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
+//    p(4) = screwHeadDiameter (don't forget to add extra for the fillet or specify yappNoInternalFillet)
 //    p(5) = insertDiameter
 //    p(6) = outsideDiameter
 //   Optional:
-//    p(7) = PCB Gap : Default = -1 : Default for yappCoordPCB=pcbThickness, yappCoordBox=0
-//    p(8) = filletRadius : Default = 0/Auto(0 = auto size)
-//    n(a) = { <yappAllCorners>, yappFrontLeft | yappFrontRight | yappBackLeft | yappBackRight }
+//    p(7) = insert Depth : default to entire connector
+//    p(8) = PCB Gap : Default if yappCoordPCB then pcbThickness else 0
+//    p(9) = filletRadius : Default = 0/Auto(0 = auto size)
+//    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(c) = { yappNoFillet }
+//    n(c) = { yappNoFillet } : Don't add fillets
 //    n(d) = { yappCountersink }
 //    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //    n(g) = {yappSelfThreading} : Make the insert self threading specify the Screw Diameter in the insertDiameter
+//    n(h) = { yappNoInternalFillet } : Don't add internal fillets (external fillets can still be added)
+
 //-------------------------------------------------------------------
 connectors   =
 [

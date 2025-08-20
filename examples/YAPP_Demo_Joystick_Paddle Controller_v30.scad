@@ -58,8 +58,8 @@ paddingLeft         = 20;
 // The Following will be used as the first element in the pbc array
 
 //Defined here so you can define the "Main" PCB using these if wanted
-pcbLength           = 1; // front to back (X axis)
-pcbWidth            = 1; // side to side (Y axis)
+pcbLength           = 10; // front to back (X axis)
+pcbWidth            = 10; // side to side (Y axis)
 pcbThickness        = 1.6;
 standoffHeight      = 25-16.5;// 1.0;  //-- How much the PCB needs to be raised from the base to leave room for solderings 
 standoffDiameter    = 7;
@@ -142,8 +142,8 @@ roundRadius         = 4.0;
 
 //-- C O N T R O L -------------//-> Default ---------
 showSideBySide      = true;     //-> true
-previewQuality      = 5;        //-> from 1 to 32, Default = 5
-renderQuality       = 8;        //-> from 1 to 32, Default = 8
+previewQuality      = 8;        //-> from 1 to 32, Default = 5
+renderQuality       = 5;        //-> from 1 to 32, Default = 8
 onLidGap            = 0;
 shiftLid            = 5;
 colorLid            = "gray";   
@@ -245,13 +245,17 @@ pcbStands =
 //-------------------------------------------------------------------
 connectors   =
 [
-  [14,14,
+ 
+ [14,14,
     3, //StandHeight
     3.1, //screwDiameter
     5.5, //screwHeadDiameter
     3.0, //insertDiameter
     8, //outsideDiameter
-    yappCoordBox, yappAllCorners, yappSelfThreading],
+    yappCoordBox, yappAllCorners
+    , yappSelfThreading
+    ],
+
 ];
 
 

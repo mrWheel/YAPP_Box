@@ -23,7 +23,7 @@
 */
 
 include <../YAPPgenerator_v3.scad>
-
+//printMessages = debug;
 
 //-- pcb dimensions -- very important!!!
 pcbLength           = 150; // Front to back
@@ -38,8 +38,8 @@ renderQuality             = 8;          //-> from 1 to 32, Default = 8
 
 // --Preview --
 previewQuality            = 5;          //-> from 1 to 32, Default = 5
-showSideBySide            = false;       //-> Default = true
-onLidGap                  = 1;  // tip don't override to animate the lid opening
+showSideBySide            = true;       //-> Default = true
+onLidGap                  = 0.05;  // tip don't override to animate the lid opening
 //onLidGap                  = ((ridgeHeight) - (ridgeHeight * abs(($t-0.5)*2)))*2;  // tip don't override to animate the lid opening/closing
 colorLid                  = "YellowGreen";   
 alphaLid                  = 1;
@@ -56,7 +56,8 @@ showOriginCoordBoxInside  = false;      // Shows blue bars representing the orig
 showOriginCoordPCB        = false;      // Shows blue bars representing the origin for yappCoordBoxInside : only in preview 
 showMarkersPCB            = false;      // Shows black bars corners of the PCB : only in preview 
 showMarkersCenter         = false;      // Shows magenta bars along the centers of all faces  
-inspectX                  = 8;          //-> 0=none (>0 from Back)
+// For this Demo cut at 5 to see profile of corner connections and 8 for others
+inspectX                  = 5;          //-> 0=none (>0 from Back)
 inspectY                  = 0;          //-> 0=none (>0 from Right)
 inspectZ                  = 0;          //-> 0=none (>0 from Bottom)
 inspectXfromBack          = true;       //-> View from the inspection cut foreward
@@ -99,6 +100,7 @@ inspectZfromBottom        = true;       //-> View from the inspection cut up
 //             This ignores the holeSlack and would only be usefull 
 //             if the opposing stand if deleted see sample in Demo_Connectors
 //-------------------------------------------------------------------
+/*
 pcbStands = 
 [
   [ // Sample PCB Stand that only has the base part and a self threading hole for a screw mounted PCB
@@ -118,7 +120,7 @@ pcbStands =
       yappSelfThreading,
   ],
 ];
-
+*/
 
 //===================================================================
 //  *** Connectors ***
@@ -132,7 +134,7 @@ pcbStands =
 //    p(1) = posy
 //    p(2) = StandHeight : From specified origin 
 //    p(3) = screwDiameter
-//    p(4) = screwHeadDiameter (don't forget to add extra for the fillet)
+//    p(4) = screwHeadDiameter (don't forget to add extra for the fillet or specify yappNoInternalFillet)
 //    p(5) = insertDiameter
 //    p(6) = outsideDiameter
 //   Optional:
@@ -141,22 +143,47 @@ pcbStands =
 //    p(9) = filletRadius : Default = 0/Auto(0 = auto size)
 //    n(a) = { yappAllCorners, yappFrontLeft | <yappBackLeft> | yappFrontRight | yappBackRight }
 //    n(b) = { <yappCoordPCB> | yappCoordBox | yappCoordBoxInside }
-//    n(c) = { yappNoFillet }
+//    n(c) = { yappNoFillet } : Don't add fillets
 //    n(d) = { yappCountersink }
 //    n(e) = [yappPCBName, "XXX"] : Specify a PCB. Defaults to [yappPCBName, "Main"]
 //    n(f) = { yappThroughLid = changes the screwhole to the lid and the socket to the base}
 //    n(g) = {yappSelfThreading} : Make the insert self threading specify the Screw Diameter in the insertDiameter
+//    n(h) = { yappNoInternalFillet } : Don't add internal fillets (external fillets can still be added)
+
 //-------------------------------------------------------------------
 connectors   =
 [
+  [2, 2, 
+    10, // Stand Height
+    4.0,// screwDiameter
+    7.5,// screwHeadDiameter
+    4.0,//insertDiameter
+    10.5,//outsideDiameter 
+    undef, //insert Depth
+    0.0, //PCB Gap
+    yappAllCorners, yappSelfThreading, yappThroughLid, yappNoInternalFillet,yappCoordBoxInside],
+    
 //  [ 10, 10, 4, 3, 5, 4, 7, yappAllCorners], // All of the corners of the PCB inset 10,10
-//  [ 8, 8, 4, 3, 5, 4, 7, yappCoordBox], //Defaults to yappBackLeft of yappCoordBox
+//  [ 8, 8, 4, 3, 5, 6, 7, yappCoordBox], //Defaults to yappBackLeft of yappCoordBox
 //  [ 8-wallThickness, 28, 4, 3, 5, 4, 7, 5, 1.6, yappBackLeft, yappCoordBoxInside], // Shifted so that they all aligh for inspection cut
 //  [ 8-pcbX(), 48, 4, 3, 5, 4, 7, 16, yappBackLeft], // Shifted so that they all aligh for inspection cut
-  [ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox], // Shifted so that they all aligh for inspection cut
-  [ 8, 38, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappThroughLid], // Shifted so that they all aligh for inspection cut
+  [ 8, 38, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappThroughLid, yappNoInternalFillet], // Shifted so that they all aligh for inspection cut
+  [ 8, 53, 14, 3.2, 5, 3, 7, undef, yappBackLeft, yappCoordBox, yappThroughLid, yappSelfThreading], // Shifted so that they all aligh for inspection cut
+  [ 8, 68, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappNoInternalFillet], // Shifted so that they all aligh for inspection cut
   [ 8, 83, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappSelfThreading], // Shifted so that they all aligh for inspection cut
-  [ 8, 53, 14, 3, 5, 4, 7, 6, yappBackLeft, yappCoordBox, yappThroughLid, yappSelfThreading], // Shifted so that they all aligh for inspection cut
+  
+  // Full height connector (1.6 = basPlaneThickness)
+  // 3.2mm Opening in the base with no screwhead recess
+  // 3.0mm Self Taping hole instead of insert
+  [ 8, 98, 10, 3.2, 5, 3, 7, undef, 0,  yappBackLeft, yappCoordBox, yappNoInternalFillet, yappSelfThreading], 
+  
+  // Full height connector (1.6 = basPlaneThickness)
+  // 3.2mm Opening in the base with no screwhead recess
+  // 3.0mm Self Taping hole instead of insert
+  [ 8, 113, 10, 3.2, 5, 3, 7, undef, 0,  yappBackLeft, yappCoordBox, yappNoInternalFillet, yappSelfThreading
+  , yappCountersink], 
+  
+  
 ];
 
 //---- This is where the magic happens ----

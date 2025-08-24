@@ -3884,8 +3884,7 @@ module connectorNew(shellPart, theCoordSystem, x, y, conn, outD, subtract)
   
   fR = getParamWithDefault(conn[9],0); //-- filletRadius
  
-//  pcbGap = (pcbGapTmp == undef ) ? ((theCoordSystem[0]==yappCoordPCB) ? pcb_Thickness : 0) : pcbGapTmp;
-  pcbGap = (pcbGapTmp == undef ) ? ((theCoordSystem[0]==yappCoordPCB) ? pcb_Thickness : 0) : 0;
+  pcbGap = (pcbGapTmp == undef ) ? ((theCoordSystem[0]==yappCoordPCB) ? pcb_Thickness : 0) : pcbGapTmp;
   
   if (printMessages) echo("connectorNew", pcbGap=pcbGap,connHeightRaw=connHeightRaw,connHeight=connHeight,shellHeight=shellHeight);
    
